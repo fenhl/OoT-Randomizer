@@ -421,7 +421,7 @@
         "hint": "Temple of Time",
         "locations": {
             "Master Sword Pedestal": "True",
-            "Sheik at Temple": "Forest_Medallion and is_adult"
+            "Sheik at Temple": "Fire_Medallion and Spirit_Medallion and Light_Medallion and Forest_Medallion and is_adult"
         },
         "exits": {
             "Temple of Time": "True"
@@ -579,7 +579,7 @@
             "Kak Anju as Adult": "is_adult",
             "Kak Anju as Child": "is_child",
             "Sheik in Kakariko": "
-                is_adult and Forest_Medallion and Fire_Medallion and Water_Medallion",
+                is_adult and Fire_Medallion and Spirit_Medallion and Light_Medallion and Forest_Medallion and Water_Medallion",
             "Kak GS House Under Construction": "is_child and at_night",
             "Kak GS Skulltula House": "is_child and at_night",
             "Kak GS Guards House": "is_child and at_night",

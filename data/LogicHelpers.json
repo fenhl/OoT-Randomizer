@@ -96,16 +96,16 @@
 
     # Bridge Requirements
     "has_all_stones": "Kokiri_Emerald and Goron_Ruby and Zora_Sapphire",
-    "has_all_medallions": "Forest_Medallion and Fire_Medallion and Water_Medallion and Shadow_Medallion and Spirit_Medallion and Light_Medallion",
+    "has_all_medallions": "Fire_Medallion and Spirit_Medallion and Light_Medallion and Forest_Medallion and Water_Medallion and Shadow_Medallion",
     "can_build_rainbow_bridge": "(
         (bridge == 'open') or
-        (bridge == 'vanilla' and Shadow_Medallion and Spirit_Medallion and Light_Arrows) or
+        (bridge == 'vanilla' and Fire_Medallion and Spirit_Medallion and Light_Medallion and Forest_Medallion and Water_Medallion and Shadow_Medallion and Light_Arrows) or
         (bridge == 'stones' and has_all_stones) or
         (bridge == 'medallions' and has_all_medallions) or
         (bridge == 'dungeons' and has_all_stones and has_all_medallions) or
         (bridge == 'tokens' and (Gold_Skulltula_Token, bridge_tokens)))",
     "can_trigger_lacs": "(
-        (lacs_condition == 'vanilla' and Shadow_Medallion and Spirit_Medallion) or
+        (lacs_condition == 'vanilla' and Fire_Medallion and Spirit_Medallion and Light_Medallion and Forest_Medallion and Water_Medallion and Shadow_Medallion) or
         (lacs_condition == 'stones' and has_all_stones) or
         (lacs_condition == 'medallions' and has_all_medallions) or
         (lacs_condition == 'dungeons' and has_all_stones and has_all_medallions))"
