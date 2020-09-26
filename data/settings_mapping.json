@@ -318,6 +318,7 @@
             "correct_chest_sizes",
             "clearer_hints",
             "hints",
+            "setting_hints",
             "hint_dist",
             "text_shuffle",
             "damage_multiplier",

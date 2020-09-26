@@ -1633,7 +1633,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
                 else:
                     map_message = "\x13\x76\x08You found the \x05\x41Dungeon Map\x05\x40\x01for %s\x05\x40!\x01It\'s %s!\x09" % (dungeon_name, "masterful" if world.dungeon_mq[dungeon] else "ordinary")
 
-                if world.mq_dungeons_random or world.mq_dungeons != 0 and world.mq_dungeons != 12:
+                if world.setting_hints > 0 or world.mq_dungeons_random or world.mq_dungeons != 0 and world.mq_dungeons != 12:
                     update_message_by_id(messages, map_id, map_message)
             else:
                 dungeon_name, boss_name, compass_id, map_id = dungeon_list[dungeon]
@@ -1643,7 +1643,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
                 else:
                     compass_message = "\x13\x75\x08You found the \x05\x41Compass\x05\x40\x01for %s\x05\x40!\x01It holds the %s!\x09" % (dungeon_name, dungeon_reward)
                 update_message_by_id(messages, compass_id, compass_message)
-                if world.mq_dungeons_random or world.mq_dungeons != 0 and world.mq_dungeons != 12:
+                if world.setting_hints > 0 or world.mq_dungeons_random or world.mq_dungeons != 0 and world.mq_dungeons != 12:
                     if world.world_count > 1:
                         map_message = "\x13\x76\x08\x05\x42\x0F\x05\x40 found the \x05\x41Dungeon Map\x05\x40\x01for %s\x05\x40!\x09" % (dungeon_name)
                     else:

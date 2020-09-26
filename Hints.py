@@ -6,7 +6,7 @@ import struct
 import random
 from collections import OrderedDict
 
-from HintList import getHint, getHintGroup, Hint, hintExclusions
+from HintList import getHint, getHintGroup, Hint, hintExclusions, settingsHintTable
 from Item import MakeEventItem
 from Messages import update_message_by_id
 from Search import Search
@@ -595,6 +595,13 @@ def buildWorldGossipHints(spoiler, world, checkedLocations=None):
     hint_types, hint_prob = zip(*hint_dist.items())
     hint_prob, _ = zip(*hint_prob)
 
+    # Add setting hints
+    placed_setting_hints = set()
+    while len(placed_setting_hints) < len(settingsHintTable) and len(placed_setting_hints) / len(gossipLocations) < world.setting_hints / 100:
+        setting = random.choice(set(settingsHintTable) - placed_setting_hints)
+        add_hint(spoiler, world, stoneIDs, settingsHintTable[setting](GossipText, world, getattr(world.settings, setting)), 1)
+        placed_setting_hints.add(setting)
+
     # Add required location hints
     alwaysLocations = getHintGroup('always', world)
     for hint in alwaysLocations:
@@ -612,9 +619,9 @@ def buildWorldGossipHints(spoiler, world, checkedLocations=None):
         logging.getLogger('').debug('Placed always hint for %s.', location.name)
 
     # Add trial hints
-    if world.trials_random and world.trials == 6:
+    if (world.setting_hints > 0 or world.trials_random) and world.trials == 6:
         add_hint(spoiler, world, stoneIDs, GossipText("#Ganon's Tower# is protected by a powerful barrier.", ['Pink']), hint_dist['trial'][1], force_reachable=True)
-    elif world.trials_random and world.trials == 0:
+    elif (world.setting_hints > 0 or world.trials_random) and world.trials == 0:
         add_hint(spoiler, world, stoneIDs, GossipText("Sheik dispelled the barrier around #Ganon's Tower#.", ['Yellow']), hint_dist['trial'][1], force_reachable=True)
     elif world.trials < 6 and world.trials > 3:
         for trial,skipped in world.skipped_trials.items():

@@ -2861,6 +2861,31 @@ setting_infos = [
         ''',
         shared         = True,
     ),
+    Scale(
+        name           = 'setting_hints',
+        gui_text       = "Setting Hints Percentage",
+        default        = 0,
+        min            = 0,
+        max            = 100,
+        gui_tooltip    = '''\
+            The given percentage of Gossip Stones
+            will give hints about active settings.
+
+            Intended to be used with random settings
+            (rando rando) or plandomizer.
+
+            All remaining Gossip Stones will use
+            the Hint Distribution setting below.
+
+            If this is enabled (greater than 0),
+            the trial hint will be included even if
+            0 or 6 trials are active, and if combined with
+            'Maps and Compasses give Information',
+            maps will say whether the dungeon is MQ
+            even if none or all dungeons are MQ.
+        ''',
+        shared         = True,
+    ),
     Combobox(
         name           = 'hint_dist',
         gui_text       = 'Hint Distribution',

@@ -1236,3 +1236,83 @@ def hintExclusions(world, clear_cache=False):
 
 
 hintExclusions.exclusions = None
+
+
+settingsHintTable = {}
+
+def setting_hint(f):
+    settingsHintTable[f.__name__] = f
+    return f
+
+#TODO open_forest settings_hint that adjusts for incompatibilities?
+
+@setting_hint
+def open_kakariko(GossipText, world, value):
+    return {
+        'open': GossipText("#Death Mountain# is #unguarded#.", ['Blue', 'Yellow']),
+        'zelda': GossipText("the #Mask Shop# is open for #friends of the royal family#.", ['Yellow', 'Blue']),
+        'closed': GossipText("#Death Mountain# is #guarded#.", ['Blue', 'Yellow'])
+    }[value]
+
+@setting_hint
+def open_door_of_time(GossipText, world, value):
+    if value:
+        return GossipText("the #Door of Time# is #open#.", ['Blue', 'Yellow'])
+    else:
+        return GossipText("the #Door of Time# is #closed#.", ['Blue', 'Yellow'])
+
+@setting_hint
+def zora_fountain(GossipText, world, value):
+    return {
+        'closed': GossipText("#King Zora# sits #on his throne#.", ['Blue', 'Yellow']),
+        'adult': GossipText("a #frozen king# is #not in the way#.", ['Blue', 'Yellow']),
+        'open': GossipText("#Zora's Fountain# is #open# for visitors.", ['Blue', 'Yellow'])
+    }[value]
+
+@setting_hint
+def gerudo_fortress(GossipText, world, value):
+    return {
+        'normal': GossipText("#Gerudo thieves# have captured #four carpenters#.", ['Blue', 'Yellow']),
+        'fast': GossipText("#Gerudo thieves# have captured #one carpenter#.", ['Blue', 'Yellow']),
+        'open': GossipText("the #Gerudo Training Grounds# are #open# for visitors.", ['Blue', 'Yellow'])
+    }[value]
+
+# no setting hints for bridge or bridge_tokens since they're shown on the Temple of Time altar
+# no setting hints for triforce_hunt or triforce_goal_per_world since they're shown on the inventory screen
+
+@setting_hint
+def all_reachable(GossipText, world, value):
+    if value:
+        return GossipText("#all# of Hyrule is #reachable#.", ['Yellow', 'Blue']),
+    else:
+        return GossipText("#not all# locations may be #reachable#.", ['Yellow', 'Blue'])
+
+@setting_hint
+def bombchus_in_logic(GossipText, world, value):
+    if value:
+        return GossipText("#Bombchus# can be found #in the grass#.", ['Blue', 'Yellow'])
+    else:
+        return GossipText("#Bombchus# are #illogical#.", ['Blue', 'Yellow'])
+
+# no setting hints for trials_random or trials since there's already a separate hint type for them
+
+@setting_hint
+def no_escape_sequence(GossipText, world, value):
+    if value:
+        return GossipText("#Ganon's Tower# must be #escaped#.", ['Blue', 'Yellow'])
+    else:
+        return GossipText("@ will #warp# to face #Ganon#.", ['Yellow', 'Blue'])
+
+@setting_hint
+def no_guard_stealth(GossipText, world, value):
+    if value:
+        return GossipText("#Hyrule Castle# is heavily #guarded#.", ['Blue', 'Yellow'])
+    else:
+        return GossipText("a #crawlspace# leads directly to the #castle courtyard#.", ['Blue', 'Yellow'])
+
+@setting_hint
+def no_epona_race(GossipText, world, value):
+    if value:
+        return GossipText("@ may claim #Epona# #without competition#.", ['Blue', 'Yellow'])
+    else:
+        return GossipText("Ingo would yield #Epona# to someone who can #beat him in a race#.", ['Blue', 'Yellow'])
