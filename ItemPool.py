@@ -480,7 +480,6 @@ fixedlocations = {
     'Deliver Rutos Letter': 'Deliver Letter',
     'Master Sword Pedestal': 'Time Travel',
     'Market Bombchu Bowling Bombchus': 'Bombchu Drop',
-    'Wasteland Bombchu Salesman': 'Bombchus',
 }
 
 droplocations = {
@@ -497,7 +496,7 @@ droplocations = {
     'Wandering Bugs': 'Bugs',
     'Fairy Pot': 'Fairy',
     'Free Fairies': 'Fairy',
-    'Wall Switch Fairy': 'Fairy',
+    'Wall Fairy': 'Fairy',
     'Butterfly Fairy': 'Fairy',
     'Gossip Stone Fairy': 'Fairy',
     'Bean Plant Fairy': 'Fairy',
@@ -856,6 +855,11 @@ def get_pool_core(world):
     else:
         placed_items['ZR Magic Bean Salesman'] = 'Magic Bean'
 
+    if world.shuffle_medigoron_carpet_salesman:
+        pool.append('Giants Knife')
+    else:
+        placed_items['GC Medigoron'] = 'Giants Knife'
+
     if world.dungeon_mq['Deku Tree']:
         skulltula_locations_final = skulltula_locations + [
             'Deku Tree MQ GS Lobby',
@@ -1013,6 +1017,8 @@ def get_pool_core(world):
             pool.extend(['Bombchus'])
         if world.dungeon_mq['Gerudo Training Grounds']:
             pool.extend(['Bombchus'])
+        if world.shuffle_medigoron_carpet_salesman:
+            pool.append('Bombchus')
 
     else:
         pool.extend(['Bombchus (5)'] + ['Bombchus (10)'] * 2)
@@ -1028,6 +1034,11 @@ def get_pool_core(world):
             pool.extend(['Bombchus (10)'])
         else:
             pool.extend(['Bombchus (20)'])
+        if world.shuffle_medigoron_carpet_salesman:
+            pool.append('Bombchus (10)')
+
+    if not world.shuffle_medigoron_carpet_salesman:
+        placed_items['Wasteland Bombchu Salesman'] = 'Bombchus (10)'
 
     pool.extend(['Ice Trap'])
     if not world.dungeon_mq['Gerudo Training Grounds']:
@@ -1218,7 +1229,7 @@ def get_pool_core(world):
     pool.append(tradeitem)
 
     pool.extend(songlist)
-    if world.shuffle_song_items and world.item_pool_value == 'plentiful':
+    if world.shuffle_song_items == 'any' and world.item_pool_value == 'plentiful':
         pending_junk_pool.extend(songlist)
 
     if world.free_scarecrow:
