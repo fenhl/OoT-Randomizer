@@ -445,6 +445,19 @@ class World(object):
 
         bossCount -= self.distribution.fill_bosses(self, prize_locs, prizepool)
 
+        # for Rainbow Run, put a stone into Link's pocket without requiring a plando file
+        stones = {'Kokiri Emerald', 'Goron Ruby', 'Zora Sapphire'}
+        if any(loc.name == 'Links Pocket' for loc in empty_boss_locations) and any(item.name in stones for item in prizepool):
+            bossCount -= 1
+            stones = [item for item in prizepool if item.name in stones]
+            item = random.choice(stones)
+            prizepool.remove(item)
+            loc = [loc for loc in prize_locs if loc.name == 'Links Pocket'][0]
+            prize_locs.remove(loc)
+            self.push_item(loc, item)
+
+        medallion_rainbow = ['Fire Medallion', 'Spirit Medallion', 'Light Medallion', 'Forest Medallion', 'Water Medallion', 'Shadow Medallion']
+        medallion_locations = {}
         while bossCount:
             bossCount -= 1
             random.shuffle(prizepool)
@@ -452,6 +465,15 @@ class World(object):
             item = prizepool.pop()
             loc = prize_locs.pop()
             self.push_item(loc, item)
+            if item.name in medallion_rainbow:
+                medallion_locations[item.name] = loc
+
+        # Consider rainbow run requirements for playthrough and hint logic
+        for i in range(6):
+            medallion = medallion_rainbow[i]
+            location = medallion_locations[medallion]
+            for required_medallion in medallion_rainbow[:i]:
+                location.add_rule(self.parser.parse_rule(repr(required_medallion)))
 
 
     def get_region(self, regionname):
