@@ -329,7 +329,7 @@ def get_woth_hint(spoiler, world, checked):
     if world.triforce_hunt:
         return (GossipText('#%s# is on the path of gold.' % location_text, ['Light Blue']), location)
     else:
-        return (GossipText('#%s# is on the way of the hero.' % location_text, ['Light Blue']), location)
+        return (GossipText('#%s# is on the rainbow road.' % location_text, ['Light Blue']), location)
 
 
 def get_barren_hint(spoiler, world, checked):
