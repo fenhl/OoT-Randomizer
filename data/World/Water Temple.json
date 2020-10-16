@@ -23,9 +23,6 @@
     {
         "region_name": "Water Temple Highest Water Level",
         "dungeon":  "Water Temple",
-        "events": {
-            "Water Temple Clear": "Boss_Key_Water_Temple and can_use(Longshot)"
-        },
         "locations": {
             "Morpha": "Boss_Key_Water_Temple and can_use(Longshot)",
             "Water Temple Morpha Heart": "Boss_Key_Water_Temple and can_use(Longshot)",

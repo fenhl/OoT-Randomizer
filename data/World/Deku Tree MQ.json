@@ -79,11 +79,6 @@
                 here(has_fire_source_with_torch) and here(has_shield) and
                 (is_adult or Kokiri_Sword or Sticks)"
         },
-        "events": {
-            "Deku Tree Clear": "
-                here(has_fire_source_with_torch) and here(has_shield) and
-                (is_adult or Kokiri_Sword or Sticks)"
-        },
         "exits" : {
             "Deku Tree Basement Back Room": "is_child",
             "Deku Tree Lobby": "True"

@@ -232,7 +232,7 @@
             "LH Underwater Item": "is_child and can_dive",
             "LH Sun": "
                 is_adult and 
-                (can_use(Distant_Scarecrow) or 'Water Temple Clear' or can_hover) and can_use(Bow)",
+                (can_use(Distant_Scarecrow) or can_hover) and can_use(Bow)",
             "LH Freestanding PoH": "
                 is_adult and
                 (can_use(Scarecrow) or here(can_plant_bean))",
@@ -251,7 +251,7 @@
             "Zoras Domain": "True",
             "LH Lab": "True",
             "LH Fishing Hole": "
-                is_child or can_use(Scarecrow) or here(can_plant_bean) or 'Water Temple Clear' or can_isg",
+                is_child or can_use(Scarecrow) or here(can_plant_bean) or can_isg",
             "Water Temple Lobby": "True",
             "LH Grotto": "can_stun_deku"
         }
