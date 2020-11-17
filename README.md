@@ -224,6 +224,14 @@ do that.
   * Many locations that did not previously have item hints now have hints, in case a custom hint distribution makes use of them.
   * Using the hint distribution "Bingo" allows setting a "Bingosync URL" to build hints for the specific OoTR Bingo board. Otherwise it's a generic hint distribution for OoTR Bingo.
 * Hint distributions can configure groups of stones to all have the same hint, and can also disable stones from receiving useful hints (give them junk hints instead).
+* New hint subtype: Opportunity
+  * These are weaker versions of Way of the Hero hints that appear if there are optional goals and there are not enough Way of the Hero locations.
+  * Optional goals are settings that have the requirements be less than the available, such as medallions, stones, triforce pieces.
+  * These hints are like Way of the Hero, but they are items needed to complete all optional objectives.
+  * This replaces the previous Path of Gold hints.
+* Triforce Hunt changes
+  * When playing beatable only, there is no longer a guarantee that all triforces are reachable (the minimum is still guaranteed).
+  * Path of Gold is replaced with Opportunity hints, and Way of the Hero hints are now able to be generated.
 * Tournament hint distribution changes <!-- keep updated if there are changes later -->
   * Temple of Time stones all provide the same hint.
   * Grotto stones are disabled and only provide junk hints.
@@ -231,6 +239,7 @@ do that.
   * Deku Theater Skull Mask is an "always" hint.
   * Only "always" and "WotH" hints have duplicates now.
   * Number of unique hints of each type are now (not counting seed-dependent hint types like 'always' and 'trial'): 4 WotH, 0 barren, 4(remainder) sometimes.
+  * See Opportunity hint subtype above for when settings contain optional goals.
 * Added options to `Background Music` and `Fanfares` for randomly selecting only from [custom music](https://wiki.ootrandomizer.com/index.php?title=Readme#Custom_Music_and_Fanfares).
 * Tricks can be filtered in the GUI using a new dropdown.
 * Various Quality of Life improvements
