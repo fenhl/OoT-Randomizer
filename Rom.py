@@ -54,6 +54,10 @@ class Rom(BigStream):
         self.buffer.extend(bytearray([0x00] * (0x4000000 - len(self.buffer))))
         self.original = self.copy()
 
+        # Add version number to header.
+        self.write_bytes(0x35, get_version_bytes(__version__)[:3])
+        self.force_patch.extend([0x35, 0x36, 0x37])
+
 
     def copy(self):
         new_rom = Rom()
@@ -127,6 +131,8 @@ class Rom(BigStream):
         self.changed_dma = {}
         self.force_patch = []
         self.last_address = None
+        self.write_bytes(0x35, get_version_bytes(__version__)[:3])
+        self.force_patch.extend([0x35, 0x36, 0x37])
 
 
     def sym(self, symbol_name):
@@ -141,10 +147,8 @@ class Rom(BigStream):
 
 
     def update_header(self):
-        version_bytes = get_version_bytes(__version__)
-        self.write_bytes(0x35, version_bytes[:3])
         crc = calculate_crc(self)
-        self.write_int32s(0x10, [crc[0], crc[1]])
+        self.write_bytes(0x10, crc)
 
 
     def read_rom(self, file):

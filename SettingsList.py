@@ -1,17 +1,19 @@
 import argparse
+from itertools import chain
 import re
 import math
 import json
+import operator
+
 from Colors import get_tunic_color_options, get_navi_color_options, get_sword_trail_color_options, \
     get_bombchu_trail_color_options, get_boomerang_trail_color_options, get_gauntlet_color_options, \
     get_magic_color_options, get_heart_color_options, get_shield_frame_color_options, get_a_button_color_options,\
     get_b_button_color_options, get_c_button_color_options, get_start_button_color_options
+from Hints import HintDistList, HintDistTips
 from Location import LocationIterator
 import Sounds as sfx
-from Utils import data_path
-from itertools import chain
 import StartingItems
-from Hints import HintDistList, HintDistTips
+from Utils import data_path
 
 # holds the info for a single setting
 class Setting_Info():
@@ -2193,7 +2195,7 @@ setting_infos = [
             'glitched'  : {'settings' : ['allowed_tricks', 'mq_dungeons_random', 'mq_dungeons', 'shuffle_interior_entrances',
                                          'shuffle_grotto_entrances', 'shuffle_dungeon_entrances', 'shuffle_overworld_entrances',
                                          'mix_entrance_pools', 'decouple_entrances', 'owl_drops', 'warp_songs', 'spawn_positions']},
-            'none'      : {'tabs'     : ['detailed_tab']},
+            'none'      : {'settings' : ['allowed_tricks', 'logic_no_night_tokens_without_suns_song', 'all_reachable']},
         },
         shared         = True,
     ),
@@ -2209,6 +2211,9 @@ setting_infos = [
             to beat the game will be guaranteed reachable.
         ''',
         default        = True,
+        gui_params={
+            "hide_when_disabled": True,
+        },
         shared         = True
     ),
     Checkbutton(
@@ -2390,6 +2395,9 @@ setting_infos = [
             Song to collect them. This prevents needing
             to wait until night for some locations.
         ''',
+        gui_params={
+            "hide_when_disabled": True,
+        },
         shared         = True,
     ),
     Checkbutton(
@@ -3158,17 +3166,10 @@ setting_infos = [
         ''',
         shared         = True,
         disable={
-            'remove':           {'settings': ['lacs_medallions', 'lacs_stones', 'lacs_rewards', 'lacs_tokens']},
-            'vanilla':          {'settings': ['lacs_medallions', 'lacs_stones', 'lacs_rewards', 'lacs_tokens']},
-            'dungeon':          {'settings': ['lacs_medallions', 'lacs_stones', 'lacs_rewards', 'lacs_tokens']},
-            'overworld':        {'settings': ['lacs_medallions', 'lacs_stones', 'lacs_rewards', 'lacs_tokens']},
-            'any_dungeon':      {'settings': ['lacs_medallions', 'lacs_stones', 'lacs_rewards', 'lacs_tokens']},
-            'keysanity':        {'settings': ['lacs_medallions', 'lacs_stones', 'lacs_rewards', 'lacs_tokens']},
-            'lacs_vanilla':     {'settings': ['lacs_medallions', 'lacs_stones', 'lacs_rewards', 'lacs_tokens']},
-            'lacs_stones':      {'settings': ['lacs_medallions', 'lacs_rewards', 'lacs_tokens']},
-            'lacs_medallions':  {'settings': ['lacs_stones', 'lacs_rewards', 'lacs_tokens']},
-            'lacs_dungeons':    {'settings': ['lacs_medallions', 'lacs_stones', 'lacs_tokens']},
-            'lacs_tokens':      {'settings': ['lacs_medallions', 'lacs_stones', 'lacs_rewards']},
+            '!lacs_stones':  {'settings': ['lacs_stones']},
+            '!lacs_medallions':  {'settings': ['lacs_medallions']},
+            '!lacs_dungeons':  {'settings': ['lacs_rewards']},
+            '!lacs_tokens':  {'settings': ['lacs_tokens']},
         },
         gui_params     = {
             'randomize_key': 'randomize_settings',
@@ -3344,7 +3345,8 @@ setting_infos = [
         default        = [],
         gui_params     = {
             'choice_tooltip': {choice['name']: choice['tooltip'] for choice in logic_tricks.values()},
-            'filterdata': {val['name']: val['tags'] for _, val in logic_tricks.items()}
+            'filterdata': {val['name']: val['tags'] for _, val in logic_tricks.items()},
+            "hide_when_disabled": True,
         },
         gui_tooltip='''
             Tricks moved to the right column are in-logic
@@ -3525,12 +3527,7 @@ setting_infos = [
         gui_tooltip    = HintDistTips(),
         shared         = True,
         disable        = {
-            'balanced'      : {'settings' : ['bingosync_url']},
-            'strong'        : {'settings' : ['bingosync_url']},
-            'tournament'    : {'settings' : ['bingosync_url']},
-            'tournament_s3' : {'settings' : ['bingosync_url']},
-            'useless'       : {'settings' : ['bingosync_url']},
-            'very_strong'   : {'settings' : ['bingosync_url']},
+            '!bingo' : {'settings' : ['bingosync_url']},
         },
     ),
     Setting_Info(
@@ -4659,13 +4656,14 @@ def get_setting_info(name):
     return si_dict[name]
 
 
-def create_dependency(setting, disabling_setting, option):
+def create_dependency(setting, disabling_setting, option, negative=False):
     disabled_info = get_setting_info(setting)
+    op = operator.__ne__ if negative else operator.__eq__
     if disabled_info.dependency is None:
-        disabled_info.dependency = lambda settings: getattr(settings, disabling_setting.name) == option
+        disabled_info.dependency = lambda settings: op(getattr(settings, disabling_setting.name), option)
     else:
         old_dependency = disabled_info.dependency
-        disabled_info.dependency = lambda settings: getattr(settings, disabling_setting.name) == option or old_dependency(settings)
+        disabled_info.dependency = lambda settings: op(getattr(settings, disabling_setting.name), option) or old_dependency(settings)
 
 
 def get_settings_from_section(section_name):
@@ -4707,11 +4705,15 @@ for info in setting_infos:
 
     if info.disable != None:
         for option, disabling in info.disable.items():
+            negative = False
+            if isinstance(option, str) and option[0] == '!':
+                negative = True
+                option = option[1:]
             for setting in disabling.get('settings', []):
-                create_dependency(setting, info, option)
+                create_dependency(setting, info, option, negative)
             for section in disabling.get('sections', []):
                 for setting in get_settings_from_section(section):
-                    create_dependency(setting, info, option)
+                    create_dependency(setting, info, option, negative)
             for tab in disabling.get('tabs', []):
                 for setting in get_settings_from_tab(tab):
-                    create_dependency(setting, info, option)
+                    create_dependency(setting, info, option, negative)
