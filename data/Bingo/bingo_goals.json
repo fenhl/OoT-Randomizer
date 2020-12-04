@@ -1,232 +1,2624 @@
 {
-   "1 Skulltula from each Adult Dungeon": {},
-   "1 Skulltula from each Child Dungeon": {},
-   "Obtain 1 Small Key in each Adult Dungeon": {},
-   "15 Different Skulltulas": {},
-   "2 Boss Keys": {},
-   "3 Boots": {},
-   "3 Boss Keys": {},
-   "3 Lake Hylia Skulltulas": {},
-   "3 Shields": {},
-   "3 Shields & 3 Boots": {},
-   "3 Shields & 3 Tunics": {},
-   "3 Skulltulas in Water Temple": {"Iron Boots": {"type": "item", "count": 1}},
-   "3 Swords": {},
-   "3rd Sword Slot Occupied": {},
-   "3 Swords & 3 Boots": {},
-   "3 Swords & 3 Shields": {},
-   "3 Swords & 3 Tunics": {},
-   "3 Swords, Tunics, Boots, and Shields": {},
-   "3 Tunics": {},
-   "3 Tunics & 3 Boots": {},
-   "Obtain 3 Different Keys in Gerudo Training Grounds": {},
-   "30 Deku Nut Capacity or Better": {},
-   "4 Compasses": {},
-   "4 Maps": {},
-   "4 Skulltulas in Shadow Temple": {"Hover Boots": {"type": "item", "count": 1}},
-   "Obtain 4 Different Keys in Forest Temple": {"Song of Time": {"type": "song", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}},
-   "Obtain 4 Different Keys in Gerudo Training Grounds": {"Progressive Strength Upgrade": {"type": "item", "count": 2}},
-   "5 Compasses": {},
-   "Buy a Magic Bean for 50 Rupees": {},
-   "5 Maps": {},
-   "Obtain 5 Different Keys in Gerudo Training Grounds": {},
-   "500 Rupees": {},
-   "6 Compasses": {},
-   "6 Maps": {},
-   "Obtain 6 Different Keys in Gerudo Training Grounds": {"Progressive Strength Upgrade": {"type": "item", "count": 2}},
-   "7 Compasses": {},
-   "Buy a Magic Bean for 70 Rupees": {},
-   "Obtain 7 Different Keys in Gerudo Training Grounds": {"Progressive Strength Upgrade": {"type": "item", "count": 2}},
-   "7 Maps": {},
-   "Obtain 8 Different Keys in Gerudo Training Grounds": {"Bow": {"type": "item", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}},
-   "8 Songs": {},
-   "9 Songs": {},
-   "10 Songs": {},
-   "10 Hearts": {},
-   "11 Hearts": {},
-   "12 Hearts": {},
-   "All 3 Elemental Arrows": {},
-   "All 3 Kokiri Forest area Skulltulas": {"Bottle": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "All 3 Skulltulas in Bottom of the Well": {"Boomerang": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Zeldas Lullaby": {"type": "song", "count": 1}},
-   "All 3 Skulltulas in Ice Cavern": {"Progressive Hookshot": {"type": "item", "count": 1}, "Bottle": {"type": "item", "count": 1}},
-   "All 4 Gerudo Valley area Skulltulas": {"Boomerang": {"type": "item", "count": 1}, "Bottle": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "All 4 Lon-Lon Ranch area Skulltulas": {"Boomerang": {"type": "item", "count": 1}},
-   "All 4 Lost Woods area Skulltulas": {"Bottle": {"type": "item", "count": 1}},
-   "All 4 Market area Skulltulas": {"Boomerang": {"type": "item", "count": 1}},
-   "All 4 Skulltulas in Deku Tree": {"Boomerang": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}},
-   "All 4 Skulltulas in Jabu-Jabu": {"Boomerang": {"type": "item", "count": 1}},
-   "All 4 Wasteland/ Colossus area Skulltulas": {"Bottle": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "All 5 Lake Hylia Skulltulas": {"Boomerang": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 2}, "Iron Boots": {"type": "item", "count": 1}},
-   "All 5 Skulltulas in Dodongo's Cavern": {"Progressive Hookshot": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}},
-   "All 5 Skulltulas in Fire Temple": {"Megaton Hammer": {"type": "item", "count": 1}, "Song of Time": {"type": "song", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}},
-   "All 5 Skulltulas in Forest Temple": {"Progressive Strength Upgrade": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "All 5 Skulltulas in Shadow Temple": {"Hover Boots": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}},
-   "All 5 Skulltulas in Spirit Temple": {"Song of Time": {"type": "song", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 2}, "Boomerang": {"type": "item", "count": 1}, "Zeldas Lullaby": {"type": "song", "count": 1}},
-   "All 5 Skulltulas in Water Temple": {"Song of Time": {"type": "song", "count": 1}, "Iron Boots": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 2}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}},
-   "All 8 Death Mountain area Skulltulas": {"Megaton Hammer": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Bottle": {"type": "item", "count": 1}},
-   "All 8 Kakariko area Skulltulas": {"Boomerang": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "All 8 Zora's Domain area Skulltulas": {"Boomerang": {"type": "item", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 2}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "Obtain 5 Different Small Keys in Water Temple": {"Song of Time": {"type": "song", "count": 1}, "Iron Boots": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 2}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}},
-   "Beat Dodongo's Cavern": {},
-   "Beat Jabu-Jabu's Belly": {"Boomerang": {"type": "item", "count": 1}},
-   "Beat the Deku Tree": {},
-   "Beat the Fire Temple": {"Megaton Hammer": {"type": "item", "count": 1}},
-   "Beat the Forest Temple": {},
-   "Beat the Shadow Temple": {},
-   "Beat the Spirit Temple": {"Mirror Shield": {"type": "item", "count": 1}},
-   "Beat the Water Temple": {"Progressive Hookshot": {"type": "item", "count": 1}},
-   "Blue Fire": {},
-   "Bolero of Fire": {},
-   "Bomb Bag 30 or Better": {},
-   "Boomerang": {},
-   "Both Gerudo's Fortress area Skulltulas": {"Progressive Hookshot": {"type": "item", "count": 1}},
-   "Both Hyrule Field area Skulltulas": {"Magic Meter": {"type": "item", "count": 1}},
-   "Bottled Fairy": {},
-   "Bullet Bag 40 or Better": {},
-   "Bullet Bag 50": {},
-   "Cow in House": {"Eponas Song": {"type": "song", "count": 1}},
-   "Defeat 4 Different Iron Knuckles": {"Bomb Bag": {"type": "item", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 2}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Mirror Shield": {"type": "item", "count": 1}},
-   "Defeat a Skull Kid": {},
-   "Defeat a White Wolfos": {},
-   "Defeat all Lizalfos in Dodongo's Cavern": {},
-   "Defeat Amy (Green Poe)": {"Progressive Strength Upgrade": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}},
-   "Defeat Barinade": {"Boomerang": {"type": "item", "count": 1}},
-   "Defeat Big Octo": {"Boomerang": {"type": "item", "count": 1}},
-   "Defeat Bongo-Bongo": {},
-   "Defeat both Flare Dancers": {"Megaton Hammer": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}},
-   "Defeat Dark Link": {"Progressive Hookshot": {"type": "item", "count": 1}, "Iron Boots": {"type": "item", "count": 1}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}},
-   "Defeat King Dodongo": {},
-   "Defeat Meg (purple Poe)": {"Progressive Strength Upgrade": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}},
-   "Defeat Morpha": {"Progressive Hookshot": {"type": "item", "count": 1}},
-   "Defeat Nabooru-Knuckle": {},
-   "Defeat Phantom Ganon": {},
-   "Defeat Queen Gohma": {},
-   "Defeat Twinrova": {"Mirror Shield": {"type": "item", "count": 1}},
-   "Defeat Volvagia": {"Megaton Hammer": {"type": "item", "count": 1}},
-   "Din's Fire": {},
-   "Double Defense": {},
-   "Double Magic": {},
-   "Epona's Song": {},
-   "20 Deku Stick Capacity or Better": {},
-   "30 Deku Stick Capacity": {},
-   "Fairy Bow": {},
-   "Fairy Slingshot": {},
-   "Farore's Wind": {},
-   "Fill all 4 Bottle Slots": {},
-   "Fire Arrows": {},
-   "Fire Temple Boss Key": {"Megaton Hammer": {"type": "item", "count": 1}},
-   "Forest Temple Boss Key": {"Progressive Strength Upgrade": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}},
-   "Free all 9 Gorons in Fire Temple": {"Megaton Hammer": {"type": "item", "count": 1}, "Song of Time": {"type": "song", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}},
-   "Frogs' All Songs Reward": {},
-   "Frogs' Song of Storms Reward": {},
-   "Ganon's Castle Boss Key": {},
-   "Gerudo's Card": {},
-   "Get to the end of Fire Trial": {"Progressive Strength Upgrade": {"type": "item", "count": 3}},
-   "Get to the end of Forest Trial": {"Magic Meter": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "Get to the end of Light Trial": {"Progressive Strength Upgrade": {"type": "item", "count": 3}, "Progressive Hookshot": {"type": "item", "count": 1}, "Zeldas Lullaby": {"type": "song", "count": 1}},
-   "Get to the end of Shadow Trial": {"Megaton Hammer": {"type": "item", "count": 1}},
-   "Get to the end of Spirit Trial": {"Progressive Hookshot": {"type": "item", "count": 1}, "Mirror Shield": {"type": "item", "count": 1}, "Fire Arrows": {"type": "item", "count": 1}},
-   "Get to the end of Water Trial": {"Megaton Hammer": {"type": "item", "count": 1}, "Bottle": {"type": "item", "count": 1}},
-   "Giant's Wallet": {},
-   "Golden Gauntlets": {},
-   "Goron Bracelet or Better": {},
-   "Silver Gauntlets or Better": {},
-   "Goron Tunic": {},
-   "Ice Arrows": {},
-   "Iron Boots": {},
-   "Spooky Mask": {},
-   "Lens of Truth": {},
-   "Light Arrows": {},
-   "Longshot": {},
-   "Map & Compass in Bottom of the Well": {"Bomb Bag": {"type": "item", "count": 1}, "Zeldas Lullaby": {"type": "item", "count": 1}},
-   "Map & Compass in Deku Tree": {},
-   "Map & Compass in Dodongo's Cavern": {"Bomb Bag": {"type": "item", "count": 1}},
-   "Map & Compass in Fire Temple": {"Megaton Hammer": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}},
-   "Map & Compass in Forest Temple": {"Progressive Strength Upgrade": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "Map & Compass in Ice Cavern": {"Bottle": {"type": "item", "count": 1}},
-   "Map & Compass in Jabu-Jabu": {"Boomerang": {"type": "item", "count": 1}},
-   "Map & Compass in Shadow Temple": {"Hover Boots": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "Map & Compass in Spirit Temple": {"Mirror Shield": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 2}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}},
-   "Map & Compass in Water Temple": {"Progressive Hookshot": {"type": "item", "count": 1}, "Iron Boots": {"type": "item", "count": 1}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}, "Song of Time": {"type": "song", "count": 1}},
-   "Megaton Hammer": {},
-   "Milk": {},
-   "Minuet of Forest": {},
-   "Mirror Shield": {},
-   "Nayru's Love": {},
-   "Obtain all 5 Small Keys in Forest Temple": {"Progressive Strength Upgrade": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "Obtain all 5 Small Keys in Shadow Temple": {"Hover Boots": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Magic Meter": {"type": "item", "count": 1}, "Dins Fire": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "Obtain all 8 Small Keys in Fire Temple": {"Megaton Hammer": {"type": "item", "count": 1}, "Song of Time": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}},
-   "Plant bean in Death Mountain Crater": {},
-   "Quiver 40 or Better": {},
-   "Quiver 50": {},
-   "Requiem of Spirit": {},
-   "Find Ruto's Letter": {},
-   "Saria's Song": {},
-   "Shadow Temple Boss Key": {"Hover Boots": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Magic Meter": {"type": "item", "count": 1}, "Dins Fire": {"type": "item", "count": 1}},
-   "Silver Scale or Better": {},
-   "Golden Scale": {},
-   "Spirit Temple Boss Key": {"Mirror Shield": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 2}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}},
-   "Stone of Agony": {},
-   "Two Fairy Spells": {},
-   "Water Temple Boss Key": {"Iron Boots": {"type": "item", "count": 1}, "Song of Time": {"type": "song", "count": 1}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 2}},
-   "Win A Bombchu Bowling Prize": {},
-   "Zora Tunic": {},
-   "Fall Prey to 3 Trap Chests": {},
-   "2 Stones": {},
-   "3 Medallions": {},
-   "4 Medallions": {},
-   "Beat 2 Temples": {},
-   "All 4 Adult Zora's Domain area Skulltulas": {"Progressive Strength Upgrade": {"type": "item", "count": 2}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "Find the Randomized Green Rupee": {},
-   "Bomb Bag 40": {},
-   "40 Deku Nut Capacity": {},
-   "1 Skulltula from 3 different Adult Dungeons": {},
-   "Obtain 1 Small Key in 3 different Adult Dungeons": {},
-   "Beat 2 adult dungeons": {},
-   "At least 2 Boots": {},
-   "At least 2 Shields": {},
-   "Map & Compass in Dodongo's Cavern": {"Bomb Bag": {"type": "item", "count": 1}},
-   "Giant's Wallet or better": {},
-   "Fill at least 2 Bottle Slots": {},
-   "5 Songs": {},
-   "6 Songs": {},
-   "At least 4 warpsongs": {},
-   "Collect All 6 Warpsongs": {},
-   "9 Hearts": {},
-   "4 Skulltulas in Fire Temple": {"Megaton Hammer": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}},
-   "4 Skulltulas in Spirit Temple": {"Progressive Strength Upgrade": {"type": "item", "count": 2}},
-   "All 4 Child Zora's Domain area Skulltulas": {"Boomerang": {"type": "item", "count": 1}},
-   "4 Soft Soil Skulltulas": {"Bottle": {"type": "item", "count": 1}},
-   "Defeat all Lizalfos in Spirit Temple": {},
-   "Free 7 Different Gorons in Fire Temple": {"Bomb Bag": {"type": "item", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}},
-   "Obtain 4 Different Small Keys in Water Temple": {"Iron Boots": {"type": "item", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "Obtain 4 Different Small Keys in Shadow Temple": {"Hover Boots": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}},
-   "Obtain 6 Different Small Keys in Fire Temple": {"Megaton Hammer": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}},
-   "Bottle of Blue Fire": {},
-   "Bottle of Milk": {},
-   "Double Defense OR Double Magic": {},
-   "At least two Fairy Spells": {},
-   "Fall Prey to 3 Ice Traps": {},
-   "Collect the reward for 10 skulltula tokens": {},
-   "Collect the reward for 20 skulltula tokens": {},
-   "Collect the song/item from Sheik at Colossus": {},
-   "Collect the item/song from the pot in Goron City": {},
-   "Collect the item/song from Deku Theatre Skull Mask": {},
-   "Complete 3 Silver Rupee Rooms": {},
-   "Complete 4 Silver Rupee Rooms": {},
-   "Complete 8 Silver Rupee Rooms": {},
-   "Complete All 3 Silver Rupee Rooms in Shadow Temple": {"Hover Boots": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Progressive Hookshot": {"type": "item", "count": 1}},
-   "Complete All 3 Silver Rupee Rooms in Gerudo Training Grounds": {"Progressive Hookshot": {"type": "item", "count": 1}, "Iron Boots": {"type": "item", "count": 1}, "Song of Time": {"type": "song", "count": 1}},
-   "At least 2 Elemental Arrows": {},
-   "Defeat 3 Different Big Poes": {"Bottle": {"type": "item", "count": 1}, "Eponas Song": {"type": "song", "count": 1}},
-   "Defeat 4 Different Like-Likes": {},
-   "Open Shadow Temple": {"Magic Meter": {"type": "item", "count": 1}, "Dins Fire": {"type": "item", "count": 1}},
-   "Clear all 4 silver rupee rooms in Trials": {"Progressive Strength Upgrade": {"type": "item", "count": 3}, "Progressive Hookshot": {"type": "item", "count": 1}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Magic Meter": {"type": "item", "count": 1}, "Hover Boots": {"type": "item", "count": 1}},
-   "All 9 Soft Soil Skulltulas": {"Bottle": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}},
-   "Find the Randomised Green Rupee": {},
-   "3 Skulltulas in Forest Temple": {"Progressive Hookshot": {"type": "item", "count": 1}},
-   "3 Skulltulas in Fire Temple": {"Megaton Hammer": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}},
-   "3 Skulltulas in Water Temple": {"Progressive Hookshot": {"type": "item", "count": 2}, "Iron Boots": {"type": "item", "count": 1}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Progressive Strength Upgrade": {"type": "item", "count": 1}, "Bow": {"type": "item", "count": 1}},
-   "3 Skulltulas in Shadow Temple": {"Progressive Hookshot": {"type": "item", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}, "Hover Boots": {"type": "item", "count": 1}},
-   "3 Skulltulas in Spirit Temple": {"Progressive Strength Upgrade": {"type": "item", "count": 2}, "Zeldas Lullaby": {"type": "song", "count": 1}, "Bomb Bag": {"type": "item", "count": 1}}
+    "1 Skulltula from each Adult Dungeon": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Forest Temple",
+                    "Fire Temple",
+                    "Water Temple",
+                    "Shadow Temple",
+                    "Spirit Temple"
+                ]
+            }
+        ]
+    },
+    "1 Skulltula from each Child Dungeon": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Deku Tree",
+                    "Dodongos Cavern",
+                    "Jabu Jabus Belly"
+                ]
+            }
+        ]
+    },
+    "Obtain 1 Small Key in each Adult Dungeon": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Small Key (Forest Temple)",
+                    "Small Key (Fire Temple)",
+                    "Small Key (Water Temple)",
+                    "Small Key (Shadow Temple)",
+                    "Small Key (Spirit Temple)"
+                ]
+            }
+        ]
+    },
+    "15 Different Skulltulas": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token"
+            }
+        ]
+    },
+    "2 Boss Keys": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "BossKey",
+                    "GanonBossKey"
+                ]
+            }
+        ]
+    },
+    "3 Boots": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Iron Boots",
+                    "Hover Boots"
+                ]
+            }
+        ]
+    },
+    "3 Boss Keys": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "BossKey",
+                    "GanonBossKey"
+                ]
+            }
+        ]
+    },
+    "3 Lake Hylia Skulltulas": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Lake Hylia"
+                ]
+            }
+        ]
+    },
+    "3 Shields": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Deku Shield",
+                    "Buy Deku Shield",
+                    "Hylian Shield",
+                    "Buy Hylian Shield",
+                    "Mirror Shield"
+                ]
+            }
+        ]
+    },
+    "3 Shields & 3 Boots": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Deku Shield",
+                    "Buy Deku Shield",
+                    "Hylian Shield",
+                    "Buy Hylian Shield",
+                    "Mirror Shield",
+                    "Iron Boots",
+                    "Hover Boots"
+                ]
+            }
+        ]
+    },
+    "3 Shields & 3 Tunics": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Deku Shield",
+                    "Buy Deku Shield",
+                    "Hylian Shield",
+                    "Buy Hylian Shield",
+                    "Mirror Shield",
+                    "Goron Tunic",
+                    "Buy Goron Tunic",
+                    "Zora Tunic",
+                    "Buy Zora Tunic"
+                ]
+            }
+        ]
+    },
+    "3 Skulltulas in Water Temple": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 2
+            },
+            "Iron Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Water Temple"
+                ]
+            }
+        ]
+    },
+    "3 Swords": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Kokiri Sword",
+                    "Giants Knife",
+                    "Biggoron Sword"
+                ]
+            },
+            {
+                "type": "masterSword"
+            }
+        ]
+    },
+    "3rd Sword Slot Occupied": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Giants Knife",
+                    "Biggoron Sword"
+                ]
+            }
+        ]
+    },
+    "3 Swords & 3 Boots": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Kokiri Sword",
+                    "Giants Knife",
+                    "Biggoron Sword",
+                    "Iron Boots",
+                    "Hover Boots"
+                ]
+            },
+            {
+                "type": "masterSword"
+            }
+        ]
+    },
+    "3 Swords & 3 Shields": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Kokiri Sword",
+                    "Giants Knife",
+                    "Biggoron Sword",
+                    "Deku Shield",
+                    "Buy Deku Shield",
+                    "Hylian Shield",
+                    "Buy Hylian Shield",
+                    "Mirror Shield"
+                ]
+            },
+            {
+                "type": "masterSword"
+            }
+        ]
+    },
+    "3 Swords & 3 Tunics": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Kokiri Sword",
+                    "Giants Knife",
+                    "Biggoron Sword",
+                    "Goron Tunic",
+                    "Buy Goron Tunic",
+                    "Zora Tunic",
+                    "Buy Zora Tunic"
+                ]
+            },
+            {
+                "type": "masterSword"
+            }
+        ]
+    },
+    "3 Swords, Tunics, Boots, and Shields": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Kokiri Sword",
+                    "Giants Knife",
+                    "Biggoron Sword",
+                    "Goron Tunic",
+                    "Buy Goron Tunic",
+                    "Zora Tunic",
+                    "Buy Zora Tunic",
+                    "Iron Boots",
+                    "Hover Boots",
+                    "Deku Shield",
+                    "Buy Deku Shield",
+                    "Hylian Shield",
+                    "Buy Hylian Shield",
+                    "Mirror Shield"
+                ]
+            },
+            {
+                "type": "masterSword"
+            }
+        ]
+    },
+    "3 Tunics": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Goron Tunic",
+                    "Buy Goron Tunic",
+                    "Zora Tunic",
+                    "Buy Zora Tunic"
+                ]
+            }
+        ]
+    },
+    "3 Tunics & 3 Boots": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Goron Tunic",
+                    "Buy Goron Tunic",
+                    "Zora Tunic",
+                    "Buy Zora Tunic",
+                    "Iron Boots",
+                    "Hover Boots"
+                ]
+            }
+        ]
+    },
+    "Obtain 3 Different Keys in Gerudo Training Grounds": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Small Key (Gerudo Training Grounds)"
+                ]
+            }
+        ]
+    },
+    "30 Deku Nut Capacity or Better": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Deku Nut Capacity"
+                ]
+            }
+        ]
+    },
+    "4 Compasses": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "Compass"
+                ]
+            }
+        ]
+    },
+    "4 Maps": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "Map"
+                ]
+            }
+        ]
+    },
+    "4 Skulltulas in Shadow Temple": {
+        "hints": {
+            "Hover Boots": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Shadow Temple"
+                ]
+            }
+        ]
+    },
+    "Obtain 4 Different Keys in Forest Temple": {
+        "hints": {
+            "Song of Time": {
+                "type": "song",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Small Key (Forest Temple)",
+                    "Boss Key (Forest Temple)"
+                ]
+            }
+        ]
+    },
+    "Obtain 4 Different Keys in Gerudo Training Grounds": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 2
+            }
+        },
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Small Key (Gerudo Training Grounds)"
+                ]
+            }
+        ]
+    },
+    "5 Compasses": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "Compass"
+                ]
+            }
+        ]
+    },
+    "Buy a Magic Bean for 50 Rupees": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Magic Bean",
+                    "Magic Bean Pack"
+                ]
+            }
+        ]
+    },
+    "5 Maps": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "Map"
+                ]
+            }
+        ]
+    },
+    "Obtain 5 Different Keys in Gerudo Training Grounds": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Small Key (Gerudo Training Grounds)"
+                ]
+            }
+        ]
+    },
+    "500 Rupees": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Progressive Wallet"
+                ]
+            }
+        ]
+    },
+    "6 Compasses": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "Compass"
+                ]
+            }
+        ]
+    },
+    "6 Maps": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "Map"
+                ]
+            }
+        ]
+    },
+    "Obtain 6 Different Keys in Gerudo Training Grounds": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 2
+            }
+        },
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Small Key (Gerudo Training Grounds)"
+                ]
+            }
+        ]
+    },
+    "7 Compasses": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "Compass"
+                ]
+            }
+        ]
+    },
+    "Buy a Magic Bean for 70 Rupees": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Magic Bean",
+                    "Magic Bean Pack"
+                ]
+            }
+        ]
+    },
+    "Obtain 7 Different Keys in Gerudo Training Grounds": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 2
+            }
+        },
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Small Key (Gerudo Training Grounds)"
+                ]
+            }
+        ]
+    },
+    "7 Maps": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "Map"
+                ]
+            }
+        ]
+    },
+    "Obtain 8 Different Keys in Gerudo Training Grounds": {
+        "hints": {
+            "Bow": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Small Key (Gerudo Training Grounds)"
+                ]
+            }
+        ]
+    },
+    "8 Songs": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "Song"
+                ]
+            }
+        ]
+    },
+    "9 Songs": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "Song"
+                ]
+            }
+        ]
+    },
+    "10 Songs": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "itemTypes": [
+                    "Song"
+                ]
+            }
+        ]
+    },
+    "10 Hearts": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Piece of Heart",
+                    "Piece of Heart (Treasure Chest Game)",
+                    "Heart Container",
+                    "Heart Container (Boss)"
+                ]
+            }
+        ]
+    },
+    "11 Hearts": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Piece of Heart",
+                    "Piece of Heart (Treasure Chest Game)",
+                    "Heart Container",
+                    "Heart Container (Boss)"
+                ]
+            }
+        ]
+    },
+    "12 Hearts": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Piece of Heart",
+                    "Piece of Heart (Treasure Chest Game)",
+                    "Heart Container",
+                    "Heart Container (Boss)"
+                ]
+            }
+        ]
+    },
+    "All 3 Elemental Arrows": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Fire Arrows",
+                    "Ice Arrows",
+                    "Light Arrows"
+                ]
+            }
+        ]
+    },
+    "All 3 Kokiri Forest area Skulltulas": {
+        "hints": {
+            "Bottle": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Kokiri Forest"
+                ]
+            }
+        ]
+    },
+    "All 3 Skulltulas in Bottom of the Well": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Bottom of the Well"
+                ]
+            }
+        ]
+    },
+    "All 3 Skulltulas in Ice Cavern": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Bottle": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Ice Cavern"
+                ]
+            }
+        ]
+    },
+    "All 4 Gerudo Valley area Skulltulas": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            },
+            "Bottle": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Gerudo Valley"
+                ]
+            }
+        ]
+    },
+    "All 4 Lon-Lon Ranch area Skulltulas": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Lon Lon Ranch"
+                ]
+            }
+        ]
+    },
+    "All 4 Lost Woods area Skulltulas": {
+        "hints": {
+            "Bottle": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "the Lost Woods",
+                    "Sacred Forest Meadow"
+                ]
+            }
+        ]
+    },
+    "All 4 Market area Skulltulas": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "names": [
+                    "Market GS Guard House",
+                    "HC GS Tree",
+                    "HC GS Storms Grotto",
+                    "OGC GS"
+                ]
+            }
+        ]
+    },
+    "All 4 Skulltulas in Deku Tree": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Deku Tree"
+                ]
+            }
+        ]
+    },
+    "All 4 Skulltulas in Jabu-Jabu": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Jabu Jabus Belly"
+                ]
+            }
+        ]
+    },
+    "All 4 Wasteland/ Colossus area Skulltulas": {
+        "hints": {
+            "Bottle": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Haunted Wasteland",
+                    "Desert Colossus"
+                ]
+            }
+        ]
+    },
+    "All 5 Lake Hylia Skulltulas": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 2
+            },
+            "Iron Boots": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Lake Hylia"
+                ]
+            },
+            {
+                "type": "locations",
+                "names": [
+                    "LH GS Lab Crate"
+                ]
+            }
+        ]
+    },
+    "All 5 Skulltulas in Dodongo's Cavern": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Dodongos Cavern"
+                ]
+            }
+        ]
+    },
+    "All 5 Skulltulas in Fire Temple": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            },
+            "Song of Time": {
+                "type": "song",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Fire Temple"
+                ]
+            }
+        ]
+    },
+    "All 5 Skulltulas in Forest Temple": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Forest Temple"
+                ]
+            }
+        ]
+    },
+    "All 5 Skulltulas in Shadow Temple": {
+        "hints": {
+            "Hover Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Shadow Temple"
+                ]
+            }
+        ]
+    },
+    "All 5 Skulltulas in Spirit Temple": {
+        "hints": {
+            "Song of Time": {
+                "type": "song",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 2
+            },
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Spirit Temple"
+                ]
+            }
+        ]
+    },
+    "All 5 Skulltulas in Water Temple": {
+        "hints": {
+            "Song of Time": {
+                "type": "song",
+                "count": 1
+            },
+            "Iron Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 2
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Water Temple"
+                ]
+            }
+        ]
+    },
+    "All 8 Death Mountain area Skulltulas": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Bottle": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Death Mountain Trail",
+                    "Death Mountain Crater",
+                    "Goron City"
+                ]
+            }
+        ]
+    },
+    "All 8 Kakariko area Skulltulas": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Kakariko Village",
+                    "the Graveyard"
+                ]
+            }
+        ]
+    },
+    "All 8 Zora's Domain area Skulltulas": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 2
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Zora's River",
+                    "Zora's Domain",
+                    "Zora's Fountain"
+                ]
+            }
+        ]
+    },
+    "Obtain 5 Different Small Keys in Water Temple": {
+        "hints": {
+            "Song of Time": {
+                "type": "song",
+                "count": 1
+            },
+            "Iron Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 2
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Small Key (Water Temple)"
+                ]
+            }
+        ]
+    },
+    "Beat Dodongo's Cavern": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "locations",
+                "names": [
+                    "King Dodongo"
+                ]
+            }
+        ]
+    },
+    "Beat Jabu-Jabu's Belly": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "names": [
+                    "Barinade"
+                ]
+            }
+        ]
+    },
+    "Beat the Deku Tree": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "locations",
+                "names": [
+                    "Queen Gohma"
+                ]
+            }
+        ]
+    },
+    "Beat the Fire Temple": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "names": [
+                    "Volvagia"
+                ]
+            }
+        ]
+    },
+    "Beat the Forest Temple": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "locations",
+                "names": [
+                    "Phantom Ganon"
+                ]
+            }
+        ]
+    },
+    "Beat the Shadow Temple": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "locations",
+                "names": [
+                    "Bongo Bongo"
+                ]
+            }
+        ]
+    },
+    "Beat the Spirit Temple": {
+        "hints": {
+            "Mirror Shield": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "names": [
+                    "Twinrova"
+                ]
+            }
+        ]
+    },
+    "Beat the Water Temple": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "names": [
+                    "Morpha"
+                ]
+            }
+        ]
+    },
+    "Blue Fire": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Bottle",
+                    "Bottle with Milk",
+                    "Rutos Letter",
+                    "Deliver Letter",
+                    "Bottle with Red Potion",
+                    "Bottle with Green Potion",
+                    "Bottle with Blue Potion",
+                    "Bottle with Fairy",
+                    "Bottle with Fish",
+                    "Bottle with Blue Fire",
+                    "Bottle with Bugs",
+                    "Bottle with Big Poe",
+                    "Sell Big Poe",
+                    "Bottle with Poe",
+                    "Blue Fire",
+                    "Buy Blue Fire"
+                ]
+            }
+        ]
+    },
+    "Bolero of Fire": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Bolero of Fire"
+                ]
+            }
+        ]
+    },
+    "Bomb Bag 30 or Better": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Bomb Bag"
+                ]
+            }
+        ]
+    },
+    "Boomerang": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Boomerang"
+                ]
+            }
+        ]
+    },
+    "Both Gerudo's Fortress area Skulltulas": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "hintRegions": [
+                    "Gerudo's Fortress"
+                ]
+            }
+        ]
+    },
+    "Both Hyrule Field area Skulltulas": {
+        "hints": {
+            "Magic Meter": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "locationType": "GS Token",
+                "names": [
+                    "HF GS Cow Grotto",
+                    "HF GS Near Kak Grotto"
+                ]
+            }
+        ]
+    },
+    "Bottled Fairy": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Bottle",
+                    "Bottle with Milk",
+                    "Rutos Letter",
+                    "Deliver Letter",
+                    "Bottle with Red Potion",
+                    "Bottle with Green Potion",
+                    "Bottle with Blue Potion",
+                    "Bottle with Fairy",
+                    "Bottle with Fish",
+                    "Bottle with Blue Fire",
+                    "Bottle with Bugs",
+                    "Bottle with Big Poe",
+                    "Sell Big Poe",
+                    "Bottle with Poe",
+                    "Fairy",
+                    "Buy Fairy's Spirit"
+                ]
+            }
+        ]
+    },
+    "Bullet Bag 40 or Better": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Slingshot"
+                ]
+            }
+        ]
+    },
+    "Bullet Bag 50": {
+        "hints": {},
+        "goals": [
+            {
+                "type": "items",
+                "names": [
+                    "Slingshot"
+                ]
+            }
+        ]
+    },
+    "Cow in House": {
+        "hints": {
+            "Eponas Song": {
+                "type": "song",
+                "count": 1
+            }
+        },
+        "goals": [
+            {
+                "type": "locations",
+                "names": [
+                    "KF Links House Cow"
+                ]
+            }
+        ]
+    },
+    "Defeat 4 Different Iron Knuckles": {
+        "hints": {
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 2
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Mirror Shield": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Defeat a Skull Kid": {
+        "hints": {},
+        "goals": []
+    },
+    "Defeat a White Wolfos": {
+        "hints": {},
+        "goals": []
+    },
+    "Defeat all Lizalfos in Dodongo's Cavern": {
+        "hints": {},
+        "goals": []
+    },
+    "Defeat Amy (Green Poe)": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Defeat Barinade": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Defeat Big Octo": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Defeat Bongo-Bongo": {
+        "hints": {},
+        "goals": []
+    },
+    "Defeat both Flare Dancers": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Defeat Dark Link": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Iron Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Defeat King Dodongo": {
+        "hints": {},
+        "goals": []
+    },
+    "Defeat Meg (purple Poe)": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Defeat Morpha": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Defeat Nabooru-Knuckle": {
+        "hints": {},
+        "goals": []
+    },
+    "Defeat Phantom Ganon": {
+        "hints": {},
+        "goals": []
+    },
+    "Defeat Queen Gohma": {
+        "hints": {},
+        "goals": []
+    },
+    "Defeat Twinrova": {
+        "hints": {
+            "Mirror Shield": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Defeat Volvagia": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Din's Fire": {
+        "hints": {},
+        "goals": []
+    },
+    "Double Defense": {
+        "hints": {},
+        "goals": []
+    },
+    "Double Magic": {
+        "hints": {},
+        "goals": []
+    },
+    "Epona's Song": {
+        "hints": {},
+        "goals": []
+    },
+    "20 Deku Stick Capacity or Better": {
+        "hints": {},
+        "goals": []
+    },
+    "30 Deku Stick Capacity": {
+        "hints": {},
+        "goals": []
+    },
+    "Fairy Bow": {
+        "hints": {},
+        "goals": []
+    },
+    "Fairy Slingshot": {
+        "hints": {},
+        "goals": []
+    },
+    "Farore's Wind": {
+        "hints": {},
+        "goals": []
+    },
+    "Fill all 4 Bottle Slots": {
+        "hints": {},
+        "goals": []
+    },
+    "Fire Arrows": {
+        "hints": {},
+        "goals": []
+    },
+    "Fire Temple Boss Key": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Forest Temple Boss Key": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Free all 9 Gorons in Fire Temple": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            },
+            "Song of Time": {
+                "type": "song",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Frogs' All Songs Reward": {
+        "hints": {},
+        "goals": []
+    },
+    "Frogs' Song of Storms Reward": {
+        "hints": {},
+        "goals": []
+    },
+    "Ganon's Castle Boss Key": {
+        "hints": {},
+        "goals": []
+    },
+    "Gerudo's Card": {
+        "hints": {},
+        "goals": []
+    },
+    "Get to the end of Fire Trial": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 3
+            }
+        },
+        "goals": []
+    },
+    "Get to the end of Forest Trial": {
+        "hints": {
+            "Magic Meter": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Get to the end of Light Trial": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 3
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Get to the end of Shadow Trial": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Get to the end of Spirit Trial": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Mirror Shield": {
+                "type": "item",
+                "count": 1
+            },
+            "Fire Arrows": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Get to the end of Water Trial": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            },
+            "Bottle": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Giant's Wallet": {
+        "hints": {},
+        "goals": []
+    },
+    "Golden Gauntlets": {
+        "hints": {},
+        "goals": []
+    },
+    "Goron Bracelet or Better": {
+        "hints": {},
+        "goals": []
+    },
+    "Silver Gauntlets or Better": {
+        "hints": {},
+        "goals": []
+    },
+    "Goron Tunic": {
+        "hints": {},
+        "goals": []
+    },
+    "Ice Arrows": {
+        "hints": {},
+        "goals": []
+    },
+    "Iron Boots": {
+        "hints": {},
+        "goals": []
+    },
+    "Spooky Mask": {
+        "hints": {},
+        "goals": []
+    },
+    "Lens of Truth": {
+        "hints": {},
+        "goals": []
+    },
+    "Light Arrows": {
+        "hints": {},
+        "goals": []
+    },
+    "Longshot": {
+        "hints": {},
+        "goals": []
+    },
+    "Map & Compass in Bottom of the Well": {
+        "hints": {
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Zeldas Lullaby": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Map & Compass in Deku Tree": {
+        "hints": {},
+        "goals": []
+    },
+    "Map & Compass in Dodongo's Cavern": {
+        "hints": {
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Map & Compass in Fire Temple": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Map & Compass in Forest Temple": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Map & Compass in Ice Cavern": {
+        "hints": {
+            "Bottle": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Map & Compass in Jabu-Jabu": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Map & Compass in Shadow Temple": {
+        "hints": {
+            "Hover Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Map & Compass in Spirit Temple": {
+        "hints": {
+            "Mirror Shield": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 2
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Map & Compass in Water Temple": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Iron Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Song of Time": {
+                "type": "song",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Megaton Hammer": {
+        "hints": {},
+        "goals": []
+    },
+    "Milk": {
+        "hints": {},
+        "goals": []
+    },
+    "Minuet of Forest": {
+        "hints": {},
+        "goals": []
+    },
+    "Mirror Shield": {
+        "hints": {},
+        "goals": []
+    },
+    "Nayru's Love": {
+        "hints": {},
+        "goals": []
+    },
+    "Obtain all 5 Small Keys in Forest Temple": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Obtain all 5 Small Keys in Shadow Temple": {
+        "hints": {
+            "Hover Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Magic Meter": {
+                "type": "item",
+                "count": 1
+            },
+            "Dins Fire": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Obtain all 8 Small Keys in Fire Temple": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            },
+            "Song of Time": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Plant bean in Death Mountain Crater": {
+        "hints": {},
+        "goals": []
+    },
+    "Quiver 40 or Better": {
+        "hints": {},
+        "goals": []
+    },
+    "Quiver 50": {
+        "hints": {},
+        "goals": []
+    },
+    "Requiem of Spirit": {
+        "hints": {},
+        "goals": []
+    },
+    "Find Ruto's Letter": {
+        "hints": {},
+        "goals": []
+    },
+    "Saria's Song": {
+        "hints": {},
+        "goals": []
+    },
+    "Shadow Temple Boss Key": {
+        "hints": {
+            "Hover Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Magic Meter": {
+                "type": "item",
+                "count": 1
+            },
+            "Dins Fire": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Silver Scale or Better": {
+        "hints": {},
+        "goals": []
+    },
+    "Golden Scale": {
+        "hints": {},
+        "goals": []
+    },
+    "Spirit Temple Boss Key": {
+        "hints": {
+            "Mirror Shield": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 2
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Bow": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Stone of Agony": {
+        "hints": {},
+        "goals": []
+    },
+    "Two Fairy Spells": {
+        "hints": {},
+        "goals": []
+    },
+    "Water Temple Boss Key": {
+        "hints": {
+            "Iron Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Song of Time": {
+                "type": "song",
+                "count": 1
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 2
+            }
+        },
+        "goals": []
+    },
+    "Win A Bombchu Bowling Prize": {
+        "hints": {},
+        "goals": []
+    },
+    "Zora Tunic": {
+        "hints": {},
+        "goals": []
+    },
+    "Fall Prey to 3 Trap Chests": {
+        "hints": {},
+        "goals": []
+    },
+    "2 Stones": {
+        "hints": {},
+        "goals": []
+    },
+    "3 Medallions": {
+        "hints": {},
+        "goals": []
+    },
+    "4 Medallions": {
+        "hints": {},
+        "goals": []
+    },
+    "Beat 2 Temples": {
+        "hints": {},
+        "goals": []
+    },
+    "All 4 Adult Zora's Domain area Skulltulas": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 2
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Find the Randomized Green Rupee": {
+        "hints": {},
+        "goals": []
+    },
+    "Bomb Bag 40": {
+        "hints": {},
+        "goals": []
+    },
+    "40 Deku Nut Capacity": {
+        "hints": {},
+        "goals": []
+    },
+    "1 Skulltula from 3 different Adult Dungeons": {
+        "hints": {},
+        "goals": []
+    },
+    "Obtain 1 Small Key in 3 different Adult Dungeons": {
+        "hints": {},
+        "goals": []
+    },
+    "Beat 2 adult dungeons": {
+        "hints": {},
+        "goals": []
+    },
+    "At least 2 Boots": {
+        "hints": {},
+        "goals": []
+    },
+    "At least 2 Shields": {
+        "hints": {},
+        "goals": []
+    },
+    "Giant's Wallet or better": {
+        "hints": {},
+        "goals": []
+    },
+    "Fill at least 2 Bottle Slots": {
+        "hints": {},
+        "goals": []
+    },
+    "5 Songs": {
+        "hints": {},
+        "goals": []
+    },
+    "6 Songs": {
+        "hints": {},
+        "goals": []
+    },
+    "At least 4 warpsongs": {
+        "hints": {},
+        "goals": []
+    },
+    "Collect All 6 Warpsongs": {
+        "hints": {},
+        "goals": []
+    },
+    "9 Hearts": {
+        "hints": {},
+        "goals": []
+    },
+    "4 Skulltulas in Fire Temple": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "4 Skulltulas in Spirit Temple": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 2
+            }
+        },
+        "goals": []
+    },
+    "All 4 Child Zora's Domain area Skulltulas": {
+        "hints": {
+            "Boomerang": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "4 Soft Soil Skulltulas": {
+        "hints": {
+            "Bottle": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Defeat all Lizalfos in Spirit Temple": {
+        "hints": {},
+        "goals": []
+    },
+    "Free 7 Different Gorons in Fire Temple": {
+        "hints": {
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Obtain 4 Different Small Keys in Water Temple": {
+        "hints": {
+            "Iron Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Obtain 4 Different Small Keys in Shadow Temple": {
+        "hints": {
+            "Hover Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Obtain 6 Different Small Keys in Fire Temple": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Bottle of Blue Fire": {
+        "hints": {},
+        "goals": []
+    },
+    "Bottle of Milk": {
+        "hints": {},
+        "goals": []
+    },
+    "Double Defense OR Double Magic": {
+        "hints": {},
+        "goals": []
+    },
+    "At least two Fairy Spells": {
+        "hints": {},
+        "goals": []
+    },
+    "Fall Prey to 3 Ice Traps": {
+        "hints": {},
+        "goals": []
+    },
+    "Collect the reward for 10 skulltula tokens": {
+        "hints": {},
+        "goals": []
+    },
+    "Collect the reward for 20 skulltula tokens": {
+        "hints": {},
+        "goals": []
+    },
+    "Collect the song/item from Sheik at Colossus": {
+        "hints": {},
+        "goals": []
+    },
+    "Collect the item/song from the pot in Goron City": {
+        "hints": {},
+        "goals": []
+    },
+    "Collect the item/song from Deku Theatre Skull Mask": {
+        "hints": {},
+        "goals": []
+    },
+    "Complete 3 Silver Rupee Rooms": {
+        "hints": {},
+        "goals": []
+    },
+    "Complete 4 Silver Rupee Rooms": {
+        "hints": {},
+        "goals": []
+    },
+    "Complete 8 Silver Rupee Rooms": {
+        "hints": {},
+        "goals": []
+    },
+    "Complete All 3 Silver Rupee Rooms in Shadow Temple": {
+        "hints": {
+            "Hover Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Complete All 3 Silver Rupee Rooms in Gerudo Training Grounds": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Iron Boots": {
+                "type": "item",
+                "count": 1
+            },
+            "Song of Time": {
+                "type": "song",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "At least 2 Elemental Arrows": {
+        "hints": {},
+        "goals": []
+    },
+    "Defeat 3 Different Big Poes": {
+        "hints": {
+            "Bottle": {
+                "type": "item",
+                "count": 1
+            },
+            "Eponas Song": {
+                "type": "song",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Defeat 4 Different Like-Likes": {
+        "hints": {},
+        "goals": []
+    },
+    "Open Shadow Temple": {
+        "hints": {
+            "Magic Meter": {
+                "type": "item",
+                "count": 1
+            },
+            "Dins Fire": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Clear all 4 silver rupee rooms in Trials": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 3
+            },
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Magic Meter": {
+                "type": "item",
+                "count": 1
+            },
+            "Hover Boots": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "All 9 Soft Soil Skulltulas": {
+        "hints": {
+            "Bottle": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "Find the Randomised Green Rupee": {
+        "hints": {},
+        "goals": []
+    },
+    "3 Skulltulas in Forest Temple": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "3 Skulltulas in Fire Temple": {
+        "hints": {
+            "Megaton Hammer": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "3 Skulltulas in Shadow Temple": {
+        "hints": {
+            "Progressive Hookshot": {
+                "type": "item",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            },
+            "Hover Boots": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    },
+    "3 Skulltulas in Spirit Temple": {
+        "hints": {
+            "Progressive Strength Upgrade": {
+                "type": "item",
+                "count": 2
+            },
+            "Zeldas Lullaby": {
+                "type": "song",
+                "count": 1
+            },
+            "Bomb Bag": {
+                "type": "item",
+                "count": 1
+            }
+        },
+        "goals": []
+    }
 }
