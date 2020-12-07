@@ -520,28 +520,8 @@ export class GUIGlobal {
         console.log("Remote:", remoteVersion);
         result.latestVersion = remoteVersion;
 
-        let currentSplit = res.replace('R-', '').replace('v', '').replace(' ', '.').split('.');
-        let remoteSplit = remoteVersion.replace('R-', '').replace('v', '').replace(' ', '.').split('.');
-
         //Compare versions
-        if (Number(remoteSplit[0]) > Number(currentSplit[0])) {
-          result.hasUpdate = true;
-        }
-        else if (Number(remoteSplit[0]) == Number(currentSplit[0])) {
-          if (Number(remoteSplit[1]) > Number(currentSplit[1])) {
-            result.hasUpdate = true;
-          }
-          else if (Number(remoteSplit[1]) == Number(currentSplit[1])) {
-            if (Number(remoteSplit[2]) > Number(currentSplit[2])) {
-              result.hasUpdate = true;
-            }
-            else if (Number(remoteSplit[2]) == Number(currentSplit[2])) {
-              if (Number(remoteSplit[3]) > Number(currentSplit[3])) {
-                result.hasUpdate = true;
-              }
-            }
-          }
-        }
+        result.hasUpdate = this.isVersionNewer(remoteVersion, res);
 
         return result;  
       }
@@ -553,6 +533,49 @@ export class GUIGlobal {
       console.error(err);
       throw Error(err);
     }
+  }
+
+  isVersionNewer(newVersion: string, oldVersion: string) {
+
+    //Strip away dev strings
+    if (oldVersion.startsWith("dev_"))
+      oldVersion = oldVersion.replace('dev_', '');
+
+    if (newVersion.startsWith("dev_"))
+      newVersion = newVersion.replace('dev_', '');
+
+    let oldSplit = oldVersion.replace('R-', '').replace('v', '').replace(' ', '.').split('.');
+    let newSplit = newVersion.replace('R-', '').replace(' ', '.').split('.');
+
+    //Version is not newer if the new version doesn't satisfy the format
+    if (newSplit.length < 4)
+      return false;
+
+    //Version is newer if the old version doesn't satisfy the format
+    if (oldSplit.length < 4)
+      return true;
+
+    //Compare major.minor.revision.r
+    if (Number(newSplit[0]) > Number(oldSplit[0])) {
+      return true;
+    }
+    else if (Number(newSplit[0]) == Number(oldSplit[0])) {
+      if (Number(newSplit[1]) > Number(oldSplit[1])) {
+        return true;
+      }
+      else if (Number(newSplit[1]) == Number(oldSplit[1])) {
+        if (Number(newSplit[2]) > Number(oldSplit[2])) {
+          return true;
+        }
+        else if (Number(newSplit[2]) == Number(oldSplit[2])) {
+          if (Number(newSplit[3]) > Number(oldSplit[3])) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   findSettingByName(settingName: string) {
