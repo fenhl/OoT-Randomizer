@@ -1484,6 +1484,27 @@ logic_tricks = {
                     Removes the requirements for the Lens of Truth
                     in Spirit Temple.
                     '''},
+    'Vanilla Water Temple': {
+        'name'    : 'logic_vanilla_water_temple',
+        'tags'    : ("Water Temple",),
+        'tooltip' : '''\
+                    Normally the logic ensures the seed is beatable if
+                    the door to the north basement is unlocked before
+                    going to the Dark Link area. This trick removes that
+                    protection, thus reducing the number of keys required
+                    for the Dark Link area enough to make the vanilla seed
+                    generate.
+                    '''},
+    'Vanilla Spirit Temple': {
+        'name'    : 'logic_vanilla_spirit_temple',
+        'tags'    : ("Spirit Temple",),
+        'tooltip' : '''\
+                    Normally the logic ensures the seed is beatable if
+                    keys from the child side of Spirit Temple are used in
+                    the adult side. This trick removes that protection,
+                    thus reducing the number of keys required for the
+                    child side enough to make the vanilla seed generate.
+                    '''},
 }
 
 
