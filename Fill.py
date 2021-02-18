@@ -4,7 +4,7 @@ from State import State
 from Rules import set_shop_rules
 from Location import DisableType
 from LocationList import location_groups
-from ItemPool import songlist, get_junk_item, item_groups, remove_junk_items, remove_junk_set
+from ItemPool import remove_junk_items, remove_junk_set
 from ItemList import item_table
 from Item import ItemFactory
 from Search import Search

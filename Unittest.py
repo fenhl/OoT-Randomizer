@@ -8,7 +8,7 @@ import random
 import unittest
 
 from ItemList import item_table
-from ItemPool import remove_junk_items, item_groups
+from ItemPool import remove_junk_items
 from LocationList import location_groups, location_is_viewable
 from Main import main, resolve_settings, build_world_graphs
 from Settings import Settings

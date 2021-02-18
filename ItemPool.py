@@ -5,7 +5,7 @@ from itertools import chain
 from Utils import random_choices
 from Item import ItemFactory
 from ItemList import item_table
-from LocationList import location_groups
+from LocationList import dungeons, location_groups, location_table
 from decimal import Decimal, ROUND_HALF_UP
 
 
@@ -70,10 +70,10 @@ easy_items = ([
     'Progressive Scale',
     'Progressive Wallet',
     'Magic Meter',
-    'Deku Stick Capacity', 
-    'Deku Nut Capacity', 
-    'Bow', 
-    'Slingshot', 
+    'Deku Stick Capacity',
+    'Deku Nut Capacity',
+    'Bow',
+    'Slingshot',
     'Bomb Bag',
     'Double Defense'] +
     ['Heart Container'] * 16 +
@@ -92,12 +92,12 @@ item_difficulty_max = {
         'Bombchus (5)': 1,
         'Bombchus (10)': 2,
         'Bombchus (20)': 0,
-        'Magic Meter': 1, 
-        'Double Defense': 0, 
-        'Deku Stick Capacity': 1, 
-        'Deku Nut Capacity': 1, 
-        'Bow': 2, 
-        'Slingshot': 2, 
+        'Magic Meter': 1,
+        'Double Defense': 0,
+        'Deku Stick Capacity': 1,
+        'Deku Nut Capacity': 1,
+        'Bow': 2,
+        'Slingshot': 2,
         'Bomb Bag': 2,
         'Heart Container': 0,
     },
@@ -107,12 +107,12 @@ item_difficulty_max = {
         'Bombchus (10)': 0,
         'Bombchus (20)': 0,
         'Nayrus Love': 0,
-        'Magic Meter': 1, 
-        'Double Defense': 0, 
-        'Deku Stick Capacity': 0, 
-        'Deku Nut Capacity': 0, 
-        'Bow': 1, 
-        'Slingshot': 1, 
+        'Magic Meter': 1,
+        'Double Defense': 0,
+        'Deku Stick Capacity': 0,
+        'Deku Nut Capacity': 0,
+        'Bow': 1,
+        'Slingshot': 1,
         'Bomb Bag': 1,
         'Heart Container': 0,
         'Piece of Heart': 0,
@@ -251,70 +251,9 @@ shopsanity_rupees = (
 
 
 vanilla_shop_items = {
-    'KF Shop Item 1': 'Buy Deku Shield',
-    'KF Shop Item 2': 'Buy Deku Nut (5)',
-    'KF Shop Item 3': 'Buy Deku Nut (10)',
-    'KF Shop Item 4': 'Buy Deku Stick (1)',
-    'KF Shop Item 5': 'Buy Deku Seeds (30)',
-    'KF Shop Item 6': 'Buy Arrows (10)',
-    'KF Shop Item 7': 'Buy Arrows (30)',
-    'KF Shop Item 8': 'Buy Heart',
-    'Kak Potion Shop Item 1': 'Buy Deku Nut (5)',
-    'Kak Potion Shop Item 2': 'Buy Fish',
-    'Kak Potion Shop Item 3': 'Buy Red Potion [30]',
-    'Kak Potion Shop Item 4': 'Buy Green Potion',
-    'Kak Potion Shop Item 5': 'Buy Blue Fire',
-    'Kak Potion Shop Item 6': 'Buy Bottle Bug',
-    'Kak Potion Shop Item 7': 'Buy Poe',
-    'Kak Potion Shop Item 8': 'Buy Fairy\'s Spirit',
-    'Market Bombchu Shop Item 1': 'Buy Bombchu (5)',
-    'Market Bombchu Shop Item 2': 'Buy Bombchu (10)',
-    'Market Bombchu Shop Item 3': 'Buy Bombchu (10)',
-    'Market Bombchu Shop Item 4': 'Buy Bombchu (10)',
-    'Market Bombchu Shop Item 5': 'Buy Bombchu (20)',
-    'Market Bombchu Shop Item 6': 'Buy Bombchu (20)',
-    'Market Bombchu Shop Item 7': 'Buy Bombchu (20)',
-    'Market Bombchu Shop Item 8': 'Buy Bombchu (20)',
-    'Market Potion Shop Item 1': 'Buy Green Potion',
-    'Market Potion Shop Item 2': 'Buy Blue Fire',
-    'Market Potion Shop Item 3': 'Buy Red Potion [30]',
-    'Market Potion Shop Item 4': 'Buy Fairy\'s Spirit',
-    'Market Potion Shop Item 5': 'Buy Deku Nut (5)',
-    'Market Potion Shop Item 6': 'Buy Bottle Bug',
-    'Market Potion Shop Item 7': 'Buy Poe',
-    'Market Potion Shop Item 8': 'Buy Fish',
-    'Market Bazaar Item 1': 'Buy Hylian Shield',
-    'Market Bazaar Item 2': 'Buy Bombs (5) [35]',
-    'Market Bazaar Item 3': 'Buy Deku Nut (5)',
-    'Market Bazaar Item 4': 'Buy Heart',
-    'Market Bazaar Item 5': 'Buy Arrows (10)',
-    'Market Bazaar Item 6': 'Buy Arrows (50)',
-    'Market Bazaar Item 7': 'Buy Deku Stick (1)',
-    'Market Bazaar Item 8': 'Buy Arrows (30)',
-    'Kak Bazaar Item 1': 'Buy Hylian Shield',
-    'Kak Bazaar Item 2': 'Buy Bombs (5) [35]',
-    'Kak Bazaar Item 3': 'Buy Deku Nut (5)',
-    'Kak Bazaar Item 4': 'Buy Heart',
-    'Kak Bazaar Item 5': 'Buy Arrows (10)',
-    'Kak Bazaar Item 6': 'Buy Arrows (50)',
-    'Kak Bazaar Item 7': 'Buy Deku Stick (1)',
-    'Kak Bazaar Item 8': 'Buy Arrows (30)',
-    'ZD Shop Item 1': 'Buy Zora Tunic',
-    'ZD Shop Item 2': 'Buy Arrows (10)',
-    'ZD Shop Item 3': 'Buy Heart',
-    'ZD Shop Item 4': 'Buy Arrows (30)',
-    'ZD Shop Item 5': 'Buy Deku Nut (5)',
-    'ZD Shop Item 6': 'Buy Arrows (50)',
-    'ZD Shop Item 7': 'Buy Fish',
-    'ZD Shop Item 8': 'Buy Red Potion [50]',
-    'GC Shop Item 1': 'Buy Bombs (5) [25]',
-    'GC Shop Item 2': 'Buy Bombs (10)',
-    'GC Shop Item 3': 'Buy Bombs (20)',
-    'GC Shop Item 4': 'Buy Bombs (30)',
-    'GC Shop Item 5': 'Buy Goron Tunic',
-    'GC Shop Item 6': 'Buy Heart',
-    'GC Shop Item 7': 'Buy Red Potion [40]',
-    'GC Shop Item 8': 'Buy Heart',
+    name: data[4]
+    for name, data in location_table.items()
+    if data[0] == 'Shop'
 }
 
 
@@ -388,65 +327,6 @@ songlist = [
     'Requiem of Spirit']
 
 
-skulltula_locations = ([
-    'KF GS Know It All House',
-    'KF GS Bean Patch',
-    'KF GS House of Twins',
-    'LW GS Bean Patch Near Bridge',
-    'LW GS Bean Patch Near Theater',
-    'LW GS Above Theater',
-    'SFM GS',
-    'HF GS Near Kak Grotto',
-    'HF GS Cow Grotto',
-    'Market GS Guard House',
-    'HC GS Tree',
-    'HC GS Storms Grotto',
-    'OGC GS',
-    'LLR GS Tree',
-    'LLR GS Rain Shed',
-    'LLR GS House Window',
-    'LLR GS Back Wall',
-    'Kak GS House Under Construction',
-    'Kak GS Skulltula House',
-    'Kak GS Guards House',
-    'Kak GS Tree',
-    'Kak GS Watchtower',
-    'Kak GS Above Impas House',
-    'Graveyard GS Wall',
-    'Graveyard GS Bean Patch',
-    'DMT GS Bean Patch',
-    'DMT GS Near Kak',
-    'DMT GS Falling Rocks Path',
-    'DMT GS Above Dodongos Cavern',
-    'GC GS Boulder Maze',
-    'GC GS Center Platform',
-    'DMC GS Crate',
-    'DMC GS Bean Patch',
-    'ZR GS Ladder',
-    'ZR GS Tree',
-    'ZR GS Near Raised Grottos',
-    'ZR GS Above Bridge',
-    'ZD GS Frozen Waterfall',
-    'ZF GS Tree',
-    'ZF GS Above the Log',
-    'ZF GS Hidden Cave',
-    'LH GS Bean Patch',
-    'LH GS Lab Wall',
-    'LH GS Small Island',
-    'LH GS Tree',
-    'LH GS Lab Crate',
-    'GV GS Small Bridge',
-    'GV GS Bean Patch',
-    'GV GS Behind Tent',
-    'GV GS Pillar',
-    'GF GS Archery Range',
-    'GF GS Top Floor',
-    'Wasteland GS',
-    'Colossus GS Bean Patch',
-    'Colossus GS Tree',
-    'Colossus GS Hill'])
-
-
 tradeitems = (
     'Pocket Egg',
     'Pocket Cucco',
@@ -473,174 +353,32 @@ tradeitemoptions = (
 
 
 fixedlocations = {
-    'Ganon': 'Triforce',
-    'Pierre': 'Scarecrow Song',
-    'Deliver Rutos Letter': 'Deliver Letter',
-    'Master Sword Pedestal': 'Time Travel',
-    'Market Bombchu Bowling Bombchus': 'Bombchu Drop',
+    name: location_table[name][4]
+    for name in ('Ganon', 'Pierre', 'Deliver Rutos Letter', 'Master Sword Pedestal', 'Market Bombchu Bowling Bombchus')
 }
 
 droplocations = {
-    'Deku Baba Sticks': 'Deku Stick Drop',
-    'Deku Baba Nuts': 'Deku Nut Drop',
-    'Stick Pot': 'Deku Stick Drop',
-    'Nut Pot': 'Deku Nut Drop',
-    'Nut Crate': 'Deku Nut Drop',
-    'Blue Fire': 'Blue Fire',
-    'Lone Fish': 'Fish',
-    'Fish Group': 'Fish',
-    'Bug Rock': 'Bugs',
-    'Bug Shrub': 'Bugs',
-    'Wandering Bugs': 'Bugs',
-    'Fairy Pot': 'Fairy',
-    'Free Fairies': 'Fairy',
-    'Wall Fairy': 'Fairy',
-    'Butterfly Fairy': 'Fairy',
-    'Gossip Stone Fairy': 'Fairy',
-    'Bean Plant Fairy': 'Fairy',
-    'Fairy Pond': 'Fairy',
-    'Big Poe Kill': 'Big Poe',
+    name: data[4]
+    for name, data in location_table.items()
+    if data[0] == 'Drop'
 }
 
 vanillaBK = {
-    'Fire Temple Boss Key Chest': 'Boss Key (Fire Temple)',
-    'Shadow Temple Boss Key Chest': 'Boss Key (Shadow Temple)',
-    'Spirit Temple Boss Key Chest': 'Boss Key (Spirit Temple)',
-    'Water Temple Boss Key Chest': 'Boss Key (Water Temple)',
-    'Forest Temple Boss Key Chest': 'Boss Key (Forest Temple)',
-
-    'Fire Temple MQ Boss Key Chest': 'Boss Key (Fire Temple)',
-    'Shadow Temple MQ Boss Key Chest': 'Boss Key (Shadow Temple)',
-    'Spirit Temple MQ Boss Key Chest': 'Boss Key (Spirit Temple)',
-    'Water Temple MQ Boss Key Chest': 'Boss Key (Water Temple)',
-    'Forest Temple MQ Boss Key Chest': 'Boss Key (Forest Temple)',    
+    name: data[4]
+    for name, data in location_table.items()
+    if data[4] is not None and item_table[data[4]][0] == 'BossKey'
 }
 
 vanillaMC = {
-    'Bottom of the Well Compass Chest': 'Compass (Bottom of the Well)',
-    'Deku Tree Compass Chest': 'Compass (Deku Tree)',
-    'Dodongos Cavern Compass Chest': 'Compass (Dodongos Cavern)',
-    'Fire Temple Compass Chest': 'Compass (Fire Temple)',
-    'Forest Temple Blue Poe Chest': 'Compass (Forest Temple)',
-    'Ice Cavern Compass Chest': 'Compass (Ice Cavern)',
-    'Jabu Jabus Belly Compass Chest': 'Compass (Jabu Jabus Belly)',
-    'Shadow Temple Compass Chest': 'Compass (Shadow Temple)',
-    'Spirit Temple Compass Chest': 'Compass (Spirit Temple)',
-    'Water Temple Compass Chest': 'Compass (Water Temple)',
-
-    'Bottom of the Well Map Chest': 'Map (Bottom of the Well)',
-    'Deku Tree Map Chest': 'Map (Deku Tree)',
-    'Dodongos Cavern Map Chest': 'Map (Dodongos Cavern)',
-    'Fire Temple Map Chest': 'Map (Fire Temple)',
-    'Forest Temple Map Chest': 'Map (Forest Temple)',
-    'Ice Cavern Map Chest': 'Map (Ice Cavern)',
-    'Jabu Jabus Belly Map Chest': 'Map (Jabu Jabus Belly)',
-    'Shadow Temple Map Chest': 'Map (Shadow Temple)',
-    'Spirit Temple Map Chest': 'Map (Spirit Temple)',
-    'Water Temple Map Chest': 'Map (Water Temple)',
-
-    'Bottom of the Well MQ Compass Chest': 'Compass (Bottom of the Well)',
-    'Deku Tree MQ Compass Chest': 'Compass (Deku Tree)',
-    'Dodongos Cavern MQ Compass Chest': 'Compass (Dodongos Cavern)',
-    'Fire Temple MQ Compass Chest': 'Compass (Fire Temple)',
-    'Forest Temple MQ Compass Chest': 'Compass (Forest Temple)',
-    'Ice Cavern MQ Compass Chest': 'Compass (Ice Cavern)',
-    'Jabu Jabus Belly MQ Compass Chest': 'Compass (Jabu Jabus Belly)',
-    'Shadow Temple MQ Compass Chest': 'Compass (Shadow Temple)',
-    'Spirit Temple MQ Compass Chest': 'Compass (Spirit Temple)',
-    'Water Temple MQ Compass Chest': 'Compass (Water Temple)',
-
-    'Bottom of the Well MQ Map Chest': 'Map (Bottom of the Well)',
-    'Deku Tree MQ Map Chest': 'Map (Deku Tree)',
-    'Dodongos Cavern MQ Map Chest': 'Map (Dodongos Cavern)',
-    'Fire Temple MQ Map Chest': 'Map (Fire Temple)',
-    'Forest Temple MQ Map Chest': 'Map (Forest Temple)',
-    'Ice Cavern MQ Map Chest': 'Map (Ice Cavern)',
-    'Jabu Jabus Belly MQ Map Chest': 'Map (Jabu Jabus Belly)',
-    'Shadow Temple MQ Map Chest': 'Map (Shadow Temple)',
-    'Spirit Temple MQ Map Chest': 'Map (Spirit Temple)',
-    'Water Temple MQ Map Chest': 'Map (Water Temple)',
+    name: data[4]
+    for name, data in location_table.items()
+    if data[4] is not None and item_table[data[4]][0] in ('Compass', 'Map')
 }
 
 vanillaSK = {
-    'Bottom of the Well Front Left Fake Wall Chest': 'Small Key (Bottom of the Well)',
-    'Bottom of the Well Right Bottom Fake Wall Chest': 'Small Key (Bottom of the Well)',
-    'Bottom of the Well Freestanding Key': 'Small Key (Bottom of the Well)',
-    'Fire Temple Big Lava Room Blocked Door Chest': 'Small Key (Fire Temple)',
-    'Fire Temple Big Lava Room Lower Open Door Chest': 'Small Key (Fire Temple)',
-    'Fire Temple Boulder Maze Shortcut Chest': 'Small Key (Fire Temple)',
-    'Fire Temple Boulder Maze Lower Chest': 'Small Key (Fire Temple)',
-    'Fire Temple Boulder Maze Side Room Chest': 'Small Key (Fire Temple)',
-    'Fire Temple Boulder Maze Upper Chest': 'Small Key (Fire Temple)',
-    'Fire Temple Near Boss Chest': 'Small Key (Fire Temple)',
-    'Fire Temple Highest Goron Chest': 'Small Key (Fire Temple)',
-    'Forest Temple First Stalfos Chest': 'Small Key (Forest Temple)',
-    'Forest Temple First Room Chest': 'Small Key (Forest Temple)',
-    'Forest Temple Floormaster Chest': 'Small Key (Forest Temple)',
-    'Forest Temple Red Poe Chest': 'Small Key (Forest Temple)',
-    'Forest Temple Well Chest': 'Small Key (Forest Temple)',
-    'Ganons Castle Light Trial Invisible Enemies Chest': 'Small Key (Ganons Castle)',
-    'Ganons Castle Light Trial Lullaby Chest': 'Small Key (Ganons Castle)',
-    'Gerudo Training Grounds Beamos Chest': 'Small Key (Gerudo Training Grounds)',
-    'Gerudo Training Grounds Eye Statue Chest': 'Small Key (Gerudo Training Grounds)',
-    'Gerudo Training Grounds Hammer Room Switch Chest': 'Small Key (Gerudo Training Grounds)',
-    'Gerudo Training Grounds Heavy Block Third Chest': 'Small Key (Gerudo Training Grounds)',
-    'Gerudo Training Grounds Hidden Ceiling Chest': 'Small Key (Gerudo Training Grounds)',
-    'Gerudo Training Grounds Near Scarecrow Chest': 'Small Key (Gerudo Training Grounds)',
-    'Gerudo Training Grounds Stalfos Chest': 'Small Key (Gerudo Training Grounds)',
-    'Gerudo Training Grounds Underwater Silver Rupee Chest': 'Small Key (Gerudo Training Grounds)',
-    'Gerudo Training Grounds Freestanding Key': 'Small Key (Gerudo Training Grounds)',
-    'Shadow Temple After Wind Hidden Chest': 'Small Key (Shadow Temple)',
-    'Shadow Temple Early Silver Rupee Chest': 'Small Key (Shadow Temple)',
-    'Shadow Temple Falling Spikes Switch Chest': 'Small Key (Shadow Temple)',
-    'Shadow Temple Invisible Floormaster Chest': 'Small Key (Shadow Temple)',
-    'Shadow Temple Freestanding Key': 'Small Key (Shadow Temple)',
-    'Spirit Temple Child Early Torches Chest': 'Small Key (Spirit Temple)',
-    'Spirit Temple Early Adult Right Chest': 'Small Key (Spirit Temple)',
-    'Spirit Temple Near Four Armos Chest': 'Small Key (Spirit Temple)',
-    'Spirit Temple Statue Room Hand Chest': 'Small Key (Spirit Temple)',
-    'Spirit Temple Sun Block Room Chest': 'Small Key (Spirit Temple)',
-    'Water Temple Central Bow Target Chest': 'Small Key (Water Temple)',
-    'Water Temple Central Pillar Chest': 'Small Key (Water Temple)',
-    'Water Temple Cracked Wall Chest': 'Small Key (Water Temple)',
-    'Water Temple Dragon Chest': 'Small Key (Water Temple)',
-    'Water Temple River Chest': 'Small Key (Water Temple)',
-    'Water Temple Torches Chest': 'Small Key (Water Temple)',
-
-    'Bottom of the Well MQ Dead Hand Freestanding Key': 'Small Key (Bottom of the Well)',
-    'Bottom of the Well MQ East Inner Room Freestanding Key': 'Small Key (Bottom of the Well)',
-    'Fire Temple MQ Big Lava Room Blocked Door Chest': 'Small Key (Fire Temple)',
-    'Fire Temple MQ Near Boss Chest': 'Small Key (Fire Temple)',
-    'Fire Temple MQ Lizalfos Maze Side Room Chest': 'Small Key (Fire Temple)',
-    'Fire Temple MQ Chest On Fire': 'Small Key (Fire Temple)',
-    'Fire Temple MQ Freestanding Key': 'Small Key (Fire Temple)',
-    'Forest Temple MQ Wolfos Chest': 'Small Key (Forest Temple)',
-    'Forest Temple MQ First Room Chest': 'Small Key (Forest Temple)',
-    'Forest Temple MQ Raised Island Courtyard Lower Chest': 'Small Key (Forest Temple)',
-    'Forest Temple MQ Raised Island Courtyard Upper Chest': 'Small Key (Forest Temple)',
-    'Forest Temple MQ Redead Chest': 'Small Key (Forest Temple)',
-    'Forest Temple MQ Well Chest': 'Small Key (Forest Temple)',
-    'Ganons Castle MQ Shadow Trial Eye Switch Chest': 'Small Key (Ganons Castle)',
-    'Ganons Castle MQ Spirit Trial Sun Back Left Chest': 'Small Key (Ganons Castle)',
-    'Ganons Castle MQ Forest Trial Freestanding Key': 'Small Key (Ganons Castle)',
-    'Gerudo Training Grounds MQ Dinolfos Chest': 'Small Key (Gerudo Training Grounds)',
-    'Gerudo Training Grounds MQ Flame Circle Chest': 'Small Key (Gerudo Training Grounds)',
-    'Gerudo Training Grounds MQ Underwater Silver Rupee Chest': 'Small Key (Gerudo Training Grounds)',
-    'Shadow Temple MQ Falling Spikes Switch Chest': 'Small Key (Shadow Temple)',
-    'Shadow Temple MQ Invisible Blades Invisible Chest': 'Small Key (Shadow Temple)',
-    'Shadow Temple MQ Early Gibdos Chest': 'Small Key (Shadow Temple)',
-    'Shadow Temple MQ Near Ship Invisible Chest': 'Small Key (Shadow Temple)',
-    'Shadow Temple MQ Wind Hint Chest': 'Small Key (Shadow Temple)',
-    'Shadow Temple MQ Freestanding Key': 'Small Key (Shadow Temple)',
-    'Spirit Temple MQ Child Hammer Switch Chest': 'Small Key (Spirit Temple)',
-    'Spirit Temple MQ Child Climb South Chest': 'Small Key (Spirit Temple)',
-    'Spirit Temple MQ Map Room Enemy Chest': 'Small Key (Spirit Temple)',
-    'Spirit Temple MQ Entrance Back Left Chest': 'Small Key (Spirit Temple)',
-    'Spirit Temple MQ Entrance Front Right Chest': 'Small Key (Spirit Temple)',
-    'Spirit Temple MQ Mirror Puzzle Invisible Chest': 'Small Key (Spirit Temple)',
-    'Spirit Temple MQ Silver Block Hallway Chest': 'Small Key (Spirit Temple)',
-    'Water Temple MQ Central Pillar Chest': 'Small Key (Water Temple)',
-    'Water Temple MQ Freestanding Key': 'Small Key (Water Temple)',    
+    name: data[4]
+    for name, data in location_table.items()
+    if data[4] is not None and item_table[data[4]][0] == 'SmallKey'
 }
 
 junk_pool_base = [
@@ -747,7 +485,7 @@ def replace_max_item(items, item, max):
 
 def generate_itempool(world):
     junk_pool[:] = list(junk_pool_base)
-    if world.junk_ice_traps == 'on': 
+    if world.junk_ice_traps == 'on':
         junk_pool.append(('Ice Trap', 10))
     elif world.junk_ice_traps in ['mayhem', 'onslaught']:
         junk_pool[:] = [('Ice Trap', 1)]
@@ -817,10 +555,26 @@ def get_pool_core(world):
         'HC Zeldas Letter': 'Zeldas Letter',
     }
 
-    if world.shuffle_kokiri_sword:
-        pool.append('Kokiri Sword')
-    else:
-        placed_items['KF Kokiri Sword Chest'] = 'Kokiri Sword'
+    def conditional_locations(condition, locations, *, junk=False):
+        """
+        If `condition` is true, the items in `locations` are shuffled, and the vanilla items from those locations are added to the item pool. Use `junk` to add that many junk items instead.
+        If `condition` is false, the `locations` are set to have their vanilla items.
+        """
+        nonlocal pool, placed_items
+
+        if condition:
+            if junk:
+                pool += get_junk_item(len(locations))
+            else:
+                pool += [
+                    location_table[location][4]
+                    for location in locations
+                ]
+        else:
+            for location in locations:
+                placed_items[location] = location_table[location][4]
+
+    conditional_locations(world.shuffle_kokiri_sword, ['KF Kokiri Sword Chest'])
 
     ruto_bottles = 1
     if world.zora_fountain == 'open':
@@ -830,10 +584,8 @@ def get_pool_core(world):
 
     if world.skip_child_zelda:
         placed_items['HC Malon Egg'] = 'Recovery Heart'
-    elif world.shuffle_weird_egg:
-        pool.append('Weird Egg')
     else:
-        placed_items['HC Malon Egg'] = 'Weird Egg'
+        conditional_locations(world.shuffle_weird_egg, ['HC Malon Egg'])
 
     if world.shuffle_ocarinas:
         pool.extend(['Ocarina'] * 2)
@@ -843,20 +595,18 @@ def get_pool_core(world):
         placed_items['LW Gift from Saria'] = 'Ocarina'
         placed_items['HF Ocarina of Time Item'] = 'Ocarina'
 
-    if world.shuffle_cows:
-        pool.extend(get_junk_item(10 if world.dungeon_mq['Jabu Jabus Belly'] else 9))
-    else:
-        placed_items['LLR Stables Left Cow'] = 'Milk'
-        placed_items['LLR Stables Right Cow'] = 'Milk'
-        placed_items['LLR Tower Left Cow'] = 'Milk'
-        placed_items['LLR Tower Right Cow'] = 'Milk'
-        placed_items['KF Links House Cow'] = 'Milk'
-        placed_items['Kak Impas House Cow'] = 'Milk'
-        placed_items['GV Cow'] = 'Milk'
-        placed_items['DMT Cow Grotto Cow'] = 'Milk'
-        placed_items['HF Cow Grotto Cow'] = 'Milk'
-        if world.dungeon_mq['Jabu Jabus Belly']:
-            placed_items['Jabu Jabus Belly MQ Cow'] = 'Milk'
+    conditional_locations(world.shuffle_cows, [
+        'LLR Stables Left Cow',
+        'LLR Stables Right Cow',
+        'LLR Tower Left Cow',
+        'LLR Tower Right Cow',
+        'KF Links House Cow',
+        'Kak Impas House Cow',
+        'GV Cow',
+        'DMT Cow Grotto Cow',
+        'HF Cow Grotto Cow',
+    ], junk=True)
+    conditional_locations(world.shuffle_cows and world.dungeon_mq['Jabu Jabus Belly'], ['Jabu Jabus Belly MQ Cow'], junk=True)
 
     if world.shuffle_beans:
         if world.distribution.get_starting_item('Magic Bean') < 10:
@@ -868,139 +618,19 @@ def get_pool_core(world):
     else:
         placed_items['ZR Magic Bean Salesman'] = 'Magic Bean'
 
-    if world.shuffle_medigoron_carpet_salesman:
-        pool.append('Giants Knife')
-    else:
-        placed_items['GC Medigoron'] = 'Giants Knife'
+    conditional_locations(world.shuffle_medigoron_carpet_salesman, ['GC Medigoron'])
 
-    if world.dungeon_mq['Deku Tree']:
-        skulltula_locations_final = skulltula_locations + [
-            'Deku Tree MQ GS Lobby',
-            'Deku Tree MQ GS Compass Room',
-            'Deku Tree MQ GS Basement Graves Room',
-            'Deku Tree MQ GS Basement Back Room']
-    else:
-        skulltula_locations_final = skulltula_locations + [
-            'Deku Tree GS Compass Room',
-            'Deku Tree GS Basement Vines',
-            'Deku Tree GS Basement Gate',
-            'Deku Tree GS Basement Back Room']
-    if world.dungeon_mq['Dodongos Cavern']:
-        skulltula_locations_final.extend([
-            'Dodongos Cavern MQ GS Scrub Room',
-            'Dodongos Cavern MQ GS Song of Time Block Room',
-            'Dodongos Cavern MQ GS Lizalfos Room',
-            'Dodongos Cavern MQ GS Larvae Room',
-            'Dodongos Cavern MQ GS Back Area'])
-    else:
-        skulltula_locations_final.extend([
-            'Dodongos Cavern GS Side Room Near Lower Lizalfos',
-            'Dodongos Cavern GS Vines Above Stairs',
-            'Dodongos Cavern GS Back Room',
-            'Dodongos Cavern GS Alcove Above Stairs',
-            'Dodongos Cavern GS Scarecrow'])
-    if world.dungeon_mq['Jabu Jabus Belly']:
-        skulltula_locations_final.extend([
-            'Jabu Jabus Belly MQ GS Tailpasaran Room',
-            'Jabu Jabus Belly MQ GS Invisible Enemies Room',
-            'Jabu Jabus Belly MQ GS Boomerang Chest Room',
-            'Jabu Jabus Belly MQ GS Near Boss'])
-    else:
-        skulltula_locations_final.extend([
-            'Jabu Jabus Belly GS Water Switch Room',
-            'Jabu Jabus Belly GS Lobby Basement Lower',
-            'Jabu Jabus Belly GS Lobby Basement Upper',
-            'Jabu Jabus Belly GS Near Boss'])
-    if world.dungeon_mq['Forest Temple']:
-        skulltula_locations_final.extend([
-            'Forest Temple MQ GS First Hallway',
-            'Forest Temple MQ GS Block Push Room',
-            'Forest Temple MQ GS Raised Island Courtyard',
-            'Forest Temple MQ GS Level Island Courtyard',
-            'Forest Temple MQ GS Well'])
-    else:
-        skulltula_locations_final.extend([
-            'Forest Temple GS First Room',
-            'Forest Temple GS Lobby',
-            'Forest Temple GS Raised Island Courtyard',
-            'Forest Temple GS Level Island Courtyard',
-            'Forest Temple GS Basement'])
-    if world.dungeon_mq['Fire Temple']:
-        skulltula_locations_final.extend([
-            'Fire Temple MQ GS Above Fire Wall Maze',
-            'Fire Temple MQ GS Fire Wall Maze Center',
-            'Fire Temple MQ GS Big Lava Room Open Door',
-            'Fire Temple MQ GS Fire Wall Maze Side Room',
-            'Fire Temple MQ GS Skull On Fire'])
-    else:
-        skulltula_locations_final.extend([
-            'Fire Temple GS Song of Time Room',
-            'Fire Temple GS Boulder Maze',
-            'Fire Temple GS Scarecrow Climb',
-            'Fire Temple GS Scarecrow Top',
-            'Fire Temple GS Boss Key Loop'])
-    if world.dungeon_mq['Water Temple']:
-        skulltula_locations_final.extend([
-            'Water Temple MQ GS Before Upper Water Switch',
-            'Water Temple MQ GS Freestanding Key Area',
-            'Water Temple MQ GS Lizalfos Hallway',
-            'Water Temple MQ GS River',
-            'Water Temple MQ GS Triple Wall Torch'])
-    else:
-        skulltula_locations_final.extend([
-            'Water Temple GS Behind Gate',
-            'Water Temple GS River',
-            'Water Temple GS Falling Platform Room',
-            'Water Temple GS Central Pillar',
-            'Water Temple GS Near Boss Key Chest'])
-    if world.dungeon_mq['Spirit Temple']:
-        skulltula_locations_final.extend([
-            'Spirit Temple MQ GS Symphony Room',
-            'Spirit Temple MQ GS Leever Room',
-            'Spirit Temple MQ GS Nine Thrones Room West',
-            'Spirit Temple MQ GS Nine Thrones Room North',
-            'Spirit Temple MQ GS Sun Block Room'])
-    else:
-        skulltula_locations_final.extend([
-            'Spirit Temple GS Metal Fence',
-            'Spirit Temple GS Sun on Floor Room',
-            'Spirit Temple GS Hall After Sun Block Room',
-            'Spirit Temple GS Boulder Room',
-            'Spirit Temple GS Lobby'])
-    if world.dungeon_mq['Shadow Temple']:
-        skulltula_locations_final.extend([
-            'Shadow Temple MQ GS Falling Spikes Room',
-            'Shadow Temple MQ GS Wind Hint Room',
-            'Shadow Temple MQ GS After Wind',
-            'Shadow Temple MQ GS After Ship',
-            'Shadow Temple MQ GS Near Boss'])
-    else:
-        skulltula_locations_final.extend([
-            'Shadow Temple GS Like Like Room',
-            'Shadow Temple GS Falling Spikes Room',
-            'Shadow Temple GS Single Giant Pot',
-            'Shadow Temple GS Near Ship',
-            'Shadow Temple GS Triple Giant Pot'])
-    if world.dungeon_mq['Bottom of the Well']:
-        skulltula_locations_final.extend([
-            'Bottom of the Well MQ GS Basement',
-            'Bottom of the Well MQ GS Coffin Room',
-            'Bottom of the Well MQ GS West Inner Room'])
-    else:
-        skulltula_locations_final.extend([
-            'Bottom of the Well GS West Inner Room',
-            'Bottom of the Well GS East Inner Room',
-            'Bottom of the Well GS Like Like Cage'])
-    if world.dungeon_mq['Ice Cavern']:
-        skulltula_locations_final.extend([
-            'Ice Cavern MQ GS Scarecrow',
-            'Ice Cavern MQ GS Ice Block',
-            'Ice Cavern MQ GS Red Ice'])
-    else:
-        skulltula_locations_final.extend([
-            'Ice Cavern GS Spinning Scythe Room',
-            'Ice Cavern GS Heart Piece Room',
-            'Ice Cavern GS Push Block Room'])
+    skulltula_locations_final = [
+        name
+        for name, data in location_table.items()
+        if data[5] is not None # has categories
+        and 'Skulltulas' in data[5]
+        and all(
+            ('Master Quest' if world.dungeon_mq[dungeon.replace("'", '')] else 'Vanilla') in data[5]
+            for dungeon in dungeons
+            if dungeon in data[5]
+        )
+    ]
     if world.tokensanity == 'off':
         for location in skulltula_locations_final:
             placed_items[location] = 'Gold Skulltula Token'
@@ -1019,36 +649,27 @@ def get_pool_core(world):
     else:
         pool.extend(['Gold Skulltula Token'] * 100)
 
+    pool.extend(['Bombchus (5)'] + ['Bombchus (10)'] * 2)
+    if world.dungeon_mq['Jabu Jabus Belly']:
+            pool.extend(['Bombchus (10)'])
+    if world.dungeon_mq['Spirit Temple']:
+            pool.extend(['Bombchus (10)'] * 2)
+    if not world.dungeon_mq['Bottom of the Well']:
+            pool.extend(['Bombchus (10)'])
+    if world.dungeon_mq['Gerudo Training Grounds']:
+            pool.extend(['Bombchus (10)'])
+    if world.dungeon_mq['Ganons Castle']:
+        pool.extend(['Bombchus (10)'])
+    else:
+        pool.extend(['Bombchus (20)'])
+    if world.shuffle_medigoron_carpet_salesman:
+        pool.append('Bombchus (10)')
 
     if world.bombchus_in_logic:
-        pool.extend(['Bombchus'] * 4)
-        if world.dungeon_mq['Jabu Jabus Belly']:
-            pool.extend(['Bombchus'])
-        if world.dungeon_mq['Spirit Temple']:
-            pool.extend(['Bombchus'] * 2)
-        if not world.dungeon_mq['Bottom of the Well']:
-            pool.extend(['Bombchus'])
-        if world.dungeon_mq['Gerudo Training Grounds']:
-            pool.extend(['Bombchus'])
-        if world.shuffle_medigoron_carpet_salesman:
-            pool.append('Bombchus')
-
-    else:
-        pool.extend(['Bombchus (5)'] + ['Bombchus (10)'] * 2)
-        if world.dungeon_mq['Jabu Jabus Belly']:
-                pool.extend(['Bombchus (10)'])
-        if world.dungeon_mq['Spirit Temple']:
-                pool.extend(['Bombchus (10)'] * 2)
-        if not world.dungeon_mq['Bottom of the Well']:
-                pool.extend(['Bombchus (10)'])
-        if world.dungeon_mq['Gerudo Training Grounds']:
-                pool.extend(['Bombchus (10)'])
-        if world.dungeon_mq['Ganons Castle']:
-            pool.extend(['Bombchus (10)'])
-        else:
-            pool.extend(['Bombchus (20)'])
-        if world.shuffle_medigoron_carpet_salesman:
-            pool.append('Bombchus (10)')
+        pool = [
+            'Bombchus' if item in ('Bombchus (5)', 'Bombchus (10)', 'Bombchus (20)') else item
+            for item in pool
+        ]
 
     if not world.shuffle_medigoron_carpet_salesman:
         placed_items['Wasteland Bombchu Salesman'] = 'Bombchus (10)'
@@ -1188,7 +809,7 @@ def get_pool_core(world):
         placed_items.update(vanilla_deku_scrubs)
 
     pool.extend(alwaysitems)
-    
+
     if world.dungeon_mq['Deku Tree']:
         pool.extend(DT_MQ)
     else:
@@ -1247,7 +868,7 @@ def get_pool_core(world):
 
     if world.free_scarecrow:
         world.state.collect(ItemFactory('Scarecrow Song'))
-    
+
     if world.no_epona_race:
         world.state.collect(ItemFactory('Epona', event=True))
 
@@ -1322,7 +943,7 @@ def get_pool_core(world):
     if not world.shuffle_kokiri_sword:
         replace_max_item(pool, 'Kokiri Sword', 0)
 
-    if world.junk_ice_traps == 'off': 
+    if world.junk_ice_traps == 'off':
         replace_max_item(pool, 'Ice Trap', 0)
     elif world.junk_ice_traps == 'onslaught':
         for item in [item for item, weight in junk_pool_base] + ['Recovery Heart', 'Bombs (20)', 'Arrows (30)']:
