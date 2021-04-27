@@ -128,27 +128,17 @@ dungeon_rewards = [
 ]
 
 
-normal_rupees = (
-    ['Rupees (5)'] * 13 +
+# if shops sell non-shop items, replace some blue rupees with more money and an extra wallet
+shopsanity_rupee_upgrades = (
     ['Rupees (20)'] * 5 +
-    ['Rupees (50)'] * 7 +
-    ['Rupees (200)'] * 3)
+    ['Rupees (50)'] * 3 +
+    ['Rupees (200)'] * 2 +
+    ['Progressive Wallet']
+)
 
-shopsanity_rupees = (
-    ['Rupees (5)'] * 2 +
-    ['Rupees (20)'] * 10 +
-    ['Rupees (50)'] * 10 +
-    ['Rupees (200)'] * 5 +
-    ['Progressive Wallet'])
-
-
-vanilla_shop_items = {
-    name: data[4]
-    for name, data in location_table.items()
-    if data[0] == 'Shop'
-}
-
-
+# Make sure these items remain in shops even in shopsanity.
+# The total length of this list must remain at 32 or below,
+# since that is the number of shop slots available at shopsanity 4.
 min_shop_items = (
     ['Buy Deku Shield'] +
     ['Buy Hylian Shield'] +
@@ -213,24 +203,6 @@ trade_item_options = (
 IGNORE_LOCATION = 'Ice Trap'
 
 
-vanillaBK = {
-    name: data[4]
-    for name, data in location_table.items()
-    if data[4] is not None and item_table[data[4]][0] == 'BossKey'
-}
-
-vanillaMC = {
-    name: data[4]
-    for name, data in location_table.items()
-    if data[4] is not None and item_table[data[4]][0] in ('Compass', 'Map')
-}
-
-vanillaSK = {
-    name: data[4]
-    for name, data in location_table.items()
-    if data[4] is not None and item_table[data[4]][0] == 'SmallKey'
-}
-
 junk_pool_base = [
     ('Bombs (5)',       8),
     ('Bombs (10)',      2),
@@ -268,7 +240,7 @@ remove_junk_items = [
 ]
 remove_junk_set = set(remove_junk_items)
 
-exclude_from_major = [ 
+exclude_from_major = [
     'Deliver Letter',
     'Sell Big Poe',
     'Magic Bean',
@@ -330,14 +302,35 @@ def converted_item(item):
     May return None to indicate that it should be shuffled as a random junk item.
     """
     return {
+        'Buy Arrows (10)': 'Arrows (10)',
         'Buy Arrows (30)': 'Arrows (30)',
+        'Buy Arrows (50)': 'Arrows (30)', # Arrows (50) doesn't seem to exist
+        'Buy Blue Fire': None,
+        'Buy Bombchu (5)': 'Bombchus (5)',
+        'Buy Bombchu (10)': 'Bombchus (10)',
+        'Buy Bombchu (20)': 'Bombchus (20)',
+        'Buy Bombs (5) [25]': 'Bombs (5)',
         'Buy Bombs (5) [35]': 'Bombs (5)',
-        'Buy Deku Nut (5)': 'Deku Nut (5)',
+        'Buy Bombs (10)': 'Bombs (10)',
+        'Buy Bombs (20)': 'Bombs (20)',
+        'Buy Bombs (30)': 'Bombs (20)', # Bombs (30) doesn't seem to exist
+        'Buy Bottle Bug': None,
+        'Buy Deku Nut (5)': 'Deku Nuts (5)',
+        'Buy Deku Nut (10)': 'Deku Nuts (10)',
         'Buy Deku Seeds (30)': 'Deku Seeds (30)',
         'Buy Deku Shield': 'Deku Shield',
         'Buy Deku Stick (1)': 'Deku Stick (1)',
+        'Buy Fairy\'s Spirit': None,
+        'Buy Fish': None,
+        'Buy Goron Tunic': 'Goron Tunic',
         'Buy Green Potion': None,
+        'Buy Heart': 'Recovery Heart',
+        'Buy Hylian Shield': 'Hylian Shield',
+        'Buy Poe': None,
         'Buy Red Potion [30]': None,
+        'Buy Red Potion [40]': None,
+        'Buy Red Potion [50]': None,
+        'Buy Zora Tunic': 'Zora Tunic',
         'Magic Bean': 'Magic Bean Pack',
         'Milk': None,
     }.get(item, item)
@@ -378,19 +371,25 @@ def generate_itempool(world):
     world.distribution.set_complete_itempool(world.itempool)
 
 
+# generate an item pool based on the vanilla location/item mapping (sampled in random order)
+# and on the settings
 def get_pool_core(world):
     pool = []
     placed_items = {}
 
     extra_rutos_letter = False
     removed_heart_pieces = 0
+    remain_shop_items = min_shop_items.copy()
+    num_shop_slots = sum(loc_type == 'Shop' for loc_type, _, _, _, _ in location_table.values()) - len(world.shop_prices) # number of empty non-special-deal shop locations
+    rupee_upgrades = shopsanity_rupee_upgrades.copy()
 
-    for location, (loc_type, scene, _, _, vanilla_item, categories) in location_table.items():
+    for location, (loc_type, scene, _, _, vanilla_item, categories) in random.sample(location_table.items(), len(location_table)):
         categories = categories or ()
         if not matches_mq(world, categories):
             continue
 
         shuffle_condition = True # most locations are always shuffled
+        convert_vanilla_item = True # replace the item with one that can be placed anywhere if necessary
 
         if location in ('HC Zeldas Letter', 'Market Bombchu Bowling Bombchus'):
             shuffle_condition = False
@@ -415,6 +414,17 @@ def get_pool_core(world):
                 shuffle_condition = world.tokensanity in ('overworld', 'all')
             else:
                 shuffle_condition = world.tokensanity in ('dungeons', 'all')
+        elif loc_type == 'Shop':
+            shuffle_condition = world.shopsanity != 'off'
+            if vanilla_item in remain_shop_items:
+                convert_vanilla_item = False
+                remain_shop_items.remove(vanilla_item)
+                num_shop_slots -= 1
+            elif len(remain_shop_items) >= num_shop_slots:
+                pass # all remaining shop slots should be filled with remain-shop items, so move this one to the main item pool
+            else:
+                convert_vanilla_item = False
+                num_shop_slots -= 1
 
         if vanilla_item in ('Bombchus (5)', 'Bombchus (10)', 'Bombchus (20)'):
             if world.bombchus_in_logic and (world.shuffle_medigoron_carpet_salesman or location != 'Wasteland Bombchu Salesman'):
@@ -450,6 +460,9 @@ def get_pool_core(world):
             trade_item = random.choice(tradeitems[earliest_trade:latest_trade + 1])
             world.selected_adult_trade_item = trade_item
             vanilla_item = trade_item
+        elif vanilla_item == 'Rupees (5)':
+            if world.shopsanity not in ('off', '0') and rupee_upgrades:
+                vanilla_item = rupee_upgrades.pop()
         elif vanilla_item == 'Rutos Letter':
             if world.zora_fountain == 'open':
                 vanilla_item = random.choice(normal_bottles)
@@ -463,39 +476,31 @@ def get_pool_core(world):
                 vanilla_item = 'Rutos Letter'
                 extra_rutos_letter = True
 
+        vanilla_item_type, _, _, _ = item_table[vanilla_item]
+        if vanilla_item_type == 'BossKey':
+            shuffle_condition = world.shuffle_bosskeys != 'vanilla'
+        elif vanilla_item_type == 'SmallKey':
+            shuffle_condition = world.shuffle_smallkeys != 'vanilla'
+        elif vanilla_item_type in ('Compass', 'Map'):
+            shuffle_condition = world.shuffle_mapcompass != 'vanilla'
+
         if 'Cow' in categories:
             shuffle_condition = world.shuffle_cows
         elif 'Deku Scrub' in categories and 'Deku Scrub Upgrades' not in categories:
             shuffle_condition = world.shuffle_scrubs != 'off'
             if world.shuffle_scrubs != 'off' and vanilla_item in ('Buy Deku Seeds (30)', 'Buy Arrows (30)'):
+                # in vanilla, these scrubs sell Deku seeds as child and arrows as adult
                 vanilla_item = 'Arrows (30)' if random.randint(0, 3) > 0 else 'Deku Seeds (30)'
 
         if shuffle_condition:
-            converted_vanilla_item = converted_item(vanilla_item)
-            if converted_vanilla_item is not None:
-                pool.append(converted_vanilla_item)
+            if convert_vanilla_item:
+                vanilla_item = converted_item(vanilla_item)
+            if vanilla_item is not None:
+                pool.append(vanilla_item)
         else:
             placed_items[location] = vanilla_item
 
     pool += ['Piece of Heart'] * removed_heart_pieces
-
-    if world.shopsanity != 'off':
-        remain_shop_items = list(vanilla_shop_items.values())
-        pool.extend(min_shop_items)
-        for item in min_shop_items:
-            remain_shop_items.remove(item)
-
-        shop_slots_count = len(remain_shop_items)
-        shop_nonitem_count = len(world.shop_prices)
-        shop_item_count = shop_slots_count - shop_nonitem_count
-
-        pool.extend(random.sample(remain_shop_items, shop_item_count))
-        if shop_nonitem_count:
-            pool.extend(get_junk_item(shop_nonitem_count))
-        if world.shopsanity == '0':
-            pool.extend(normal_rupees)
-        else:
-            pool.extend(shopsanity_rupees)
 
     if world.shuffle_song_items == 'any' and world.item_pool_value == 'plentiful':
         # songs need special handling in plentiful because there are only extra copies if they're shuffled anywhere
@@ -524,20 +529,7 @@ def get_pool_core(world):
             world.state.collect(item)
             pool.extend(get_junk_item())
 
-    if world.shuffle_mapcompass == 'vanilla':
-        for location, item in vanillaMC.items():
-            try:
-                world.get_location(location)
-                placed_items[location] = item
-            except KeyError:
-                continue
     if world.shuffle_smallkeys == 'vanilla':
-        for location, item in vanillaSK.items():
-            try:
-                world.get_location(location)
-                placed_items[location] = item
-            except KeyError:
-                continue
         # Logic cannot handle vanilla key layout in some dungeons
         # this is because vanilla expects the dungeon major item to be
         # locked behind the keys, which is not always true in rando.
@@ -547,13 +539,6 @@ def get_pool_core(world):
             world.state.collect(ItemFactory('Small Key (Spirit Temple)'))
             world.state.collect(ItemFactory('Small Key (Spirit Temple)'))
             world.state.collect(ItemFactory('Small Key (Spirit Temple)'))
-    if world.shuffle_bosskeys == 'vanilla':
-        for location, item in vanillaBK.items():
-            try:
-                world.get_location(location)
-                placed_items[location] = item
-            except KeyError:
-                continue
 
     if not world.keysanity and not world.dungeon_mq['Fire Temple']:
         world.state.collect(ItemFactory('Small Key (Fire Temple)'))
