@@ -371,7 +371,7 @@ class World(object):
             for location in region.locations:
                 if location.item != None:
                     location.item.world = self
-        for item in [item for dungeon in self.dungeons for item in dungeon.all_items]:
+        for item in [item for dungeon in self.dungeons for item in dungeon.all_items]: #TODO remove?
             item.world = self
 
 
@@ -506,42 +506,17 @@ class World(object):
         return [loc.item for loc in self.get_filled_locations()] + self.itempool
 
 
-    def get_itempool_with_dungeon_items(self):
-        return self.get_restricted_dungeon_items() + self.get_unrestricted_dungeon_items() + self.itempool
-
-
-    # get a list of items that should stay in their proper dungeon
-    def get_restricted_dungeon_items(self):
-        itempool = []
-        if self.shuffle_mapcompass == 'dungeon':
-            itempool.extend([item for dungeon in self.dungeons for item in dungeon.dungeon_items])
-        if self.shuffle_smallkeys == 'dungeon':
-            itempool.extend([item for dungeon in self.dungeons for item in dungeon.small_keys])
-        if self.shuffle_bosskeys == 'dungeon':
-            itempool.extend([item for dungeon in self.dungeons if dungeon.name != 'Ganons Castle' for item in dungeon.boss_key])
-        if self.shuffle_ganon_bosskey == 'dungeon':
-            itempool.extend([item for dungeon in self.dungeons if dungeon.name == 'Ganons Castle' for item in dungeon.boss_key])
-
-        for item in itempool:
-            item.world = self
-        return itempool
-
-
-    # get a list of items that don't have to be in their proper dungeon
-    def get_unrestricted_dungeon_items(self):
-        itempool = []
-        if self.shuffle_mapcompass in ['any_dungeon', 'overworld', 'keysanity']:
-            itempool.extend([item for dungeon in self.dungeons for item in dungeon.dungeon_items])
-        if self.shuffle_smallkeys in ['any_dungeon', 'overworld', 'keysanity']:
-            itempool.extend([item for dungeon in self.dungeons for item in dungeon.small_keys])
-        if self.shuffle_bosskeys in ['any_dungeon', 'overworld', 'keysanity']:
-            itempool.extend([item for dungeon in self.dungeons if dungeon.name != 'Ganons Castle' for item in dungeon.boss_key])
-        if self.shuffle_ganon_bosskey in ['any_dungeon', 'overworld', 'keysanity']:
-            itempool.extend([item for dungeon in self.dungeons if dungeon.name == 'Ganons Castle' for item in dungeon.boss_key])
-
-        for item in itempool:
-            item.world = self
-        return itempool
+    # whether an item should stay in its proper dungeon
+    def is_restricted_dungeon_item(self, item):
+        if item.type in ('Compass', 'Map'):
+            return self.shuffle_mapcompass == 'dungeon'
+        if item.type == 'SmallKey':
+            return self.shuffle_smallkeys == 'dungeon'
+        if item.type == 'BossKey':
+            return self.shuffle_bosskeys == 'dungeon'
+        if item.type == 'GanonBossKey':
+            return self.shuffle_ganon_bosskey == 'dungeon'
+        return False
 
 
     def find_items(self, item):

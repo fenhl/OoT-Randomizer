@@ -12,7 +12,7 @@ from EntranceShuffle import EntranceShuffleError, change_connections, confirm_re
 from Hints import gossipLocations, GossipText
 from Item import ItemFactory, ItemIterator, IsItem
 from ItemList import item_table
-from ItemPool import item_groups, get_junk_item
+from ItemPool import get_junk_item, normal_bottles, remove_junk_items, songlist, tradeitems
 from Location import LocationIterator, LocationFactory, IsLocation
 from LocationList import location_groups, location_table
 from Search import Search
@@ -39,6 +39,50 @@ per_world_keys = (
     ':barren_regions',
     'gossip_stones',
 )
+
+
+dungeon_rewards = [
+    'Kokiri Emerald',
+    'Goron Ruby',
+    'Zora Sapphire',
+    'Forest Medallion',
+    'Fire Medallion',
+    'Water Medallion',
+    'Shadow Medallion',
+    'Spirit Medallion',
+    'Light Medallion',
+]
+
+exclude_from_major = [
+    'Deliver Letter',
+    'Sell Big Poe',
+    'Magic Bean',
+    'Zeldas Letter',
+    'Bombchus (5)',
+    'Bombchus (10)',
+    'Bombchus (20)',
+    'Odd Potion',
+    'Triforce Piece'
+]
+
+item_groups = {
+    'Junk': remove_junk_items,
+    'JunkSong': ('Prelude of Light', 'Serenade of Water'),
+    'AdultTrade': tradeitems,
+    'Bottle': normal_bottles,
+    'Spell': ('Dins Fire', 'Farores Wind', 'Nayrus Love'),
+    'Shield': ('Deku Shield', 'Hylian Shield'),
+    'Song': songlist,
+    'NonWarpSong': songlist[0:6],
+    'WarpSong': songlist[6:],
+    'HealthUpgrade': ('Heart Container', 'Piece of Heart'),
+    'ProgressItem': [name for (name, data) in item_table.items() if data[0] == 'Item' and data[1]],
+    'MajorItem': [name for (name, data) in item_table.items() if (data[0] == 'Item' or data[0] == 'Song') and data[1] and name not in exclude_from_major],
+    'DungeonReward': dungeon_rewards,
+
+    'ForestFireWater': ('Forest Medallion', 'Fire Medallion', 'Water Medallion'),
+    'FireWater': ('Fire Medallion', 'Water Medallion'),
+}
 
 
 def SimpleRecord(props):

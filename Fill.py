@@ -65,17 +65,20 @@ def distribute_items_restrictive(window, worlds, fill_locations=None):
     window.fillcount = 0
 
     # Generate the itempools
-    shopitempool = [item for world in worlds for item in world.itempool if item.type == 'Shop']
-    songitempool = [item for world in worlds for item in world.itempool if item.type == 'Song']
-    itempool =     [item for world in worlds for item in world.itempool if item.type != 'Shop' and item.type != 'Song']
-
-    if worlds[0].shuffle_song_items == 'any':
-        itempool.extend(songitempool)
-        songitempool = []
-
-    # add unrestricted dungeon items to main item pool
-    itempool.extend([item for world in worlds for item in world.get_unrestricted_dungeon_items()])
-    dungeon_items = [item for world in worlds for item in world.get_restricted_dungeon_items()]
+    shopitempool = []
+    songitempool = []
+    dungeon_items = []
+    itempool = []
+    for world in worlds:
+        for item in world.itempool:
+            if item.type == 'Shop':
+                shopitempool.append(item)
+            elif item.type == 'Song' and world.shuffle_song_items != 'any':
+                songitempool.append(item)
+            elif world.is_restricted_dungeon_item(item):
+                dungeon_items.append(item)
+            else:
+                itempool.append(item)
 
     random.shuffle(itempool) # randomize item placement order. this ordering can greatly affect the location accessibility bias
     progitempool = [item for item in itempool if item.advancement]

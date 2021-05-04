@@ -3,6 +3,7 @@ from Utils import random_choices
 from Item import ItemFactory
 from ItemList import item_table
 from LocationList import dungeons, location_table
+from collections import defaultdict
 from decimal import Decimal, ROUND_HALF_UP
 
 
@@ -57,10 +58,7 @@ plentiful_extra_items = [
     'Boss Key (Ganons Castle)',
 ]
 
-
 item_pool_max = {
-    'plentiful': {},
-    'balanced': {},
     'scarce': {
         'Bombchus': 3,
         'Bombchus (5)': 1,
@@ -112,19 +110,7 @@ normal_bottles = [
     'Bottle with Bugs',
     'Bottle with Poe',
     'Bottle with Big Poe',
-    'Bottle with Blue Fire']
-
-
-dungeon_rewards = [
-    'Kokiri Emerald',
-    'Goron Ruby',
-    'Zora Sapphire',
-    'Forest Medallion',
-    'Fire Medallion',
-    'Water Medallion',
-    'Shadow Medallion',
-    'Spirit Medallion',
-    'Light Medallion'
+    'Bottle with Blue Fire',
 ]
 
 
@@ -155,7 +141,8 @@ min_shop_items = (
     ['Buy Blue Fire'] +
     ['Buy Fairy\'s Spirit'] +
     ['Buy Bottle Bug'] +
-    ['Buy Fish'])
+    ['Buy Fish']
+)
 
 
 songlist = [
@@ -170,7 +157,8 @@ songlist = [
     'Bolero of Fire',
     'Serenade of Water',
     'Nocturne of Shadow',
-    'Requiem of Spirit']
+    'Requiem of Spirit',
+]
 
 
 tradeitems = (
@@ -183,7 +171,8 @@ tradeitems = (
     'Prescription',
     'Eyeball Frog',
     'Eyedrops',
-    'Claim Check')
+    'Claim Check',
+)
 
 trade_item_options = (
     'pocket_egg',
@@ -195,7 +184,8 @@ trade_item_options = (
     'prescription',
     'eyeball_frog',
     'eyedrops',
-    'claim_check')
+    'claim_check',
+)
 
 
 # a useless placeholder item placed at locations that aren't accessible
@@ -203,6 +193,9 @@ trade_item_options = (
 IGNORE_LOCATION = 'Ice Trap'
 
 
+# these items are added if there are more locations than items,
+# because items have been removed (e.g. Keysy)
+# and/or locations have been added (e.g. cow shuffle)
 junk_pool_base = [
     ('Bombs (5)',       8),
     ('Bombs (10)',      2),
@@ -216,7 +209,6 @@ junk_pool_base = [
     ('Rupees (50)',     1),
 ]
 
-pending_junk_pool = []
 junk_pool = []
 
 
@@ -240,60 +232,25 @@ remove_junk_items = [
 ]
 remove_junk_set = set(remove_junk_items)
 
-exclude_from_major = [
-    'Deliver Letter',
-    'Sell Big Poe',
-    'Magic Bean',
-    'Zeldas Letter',
-    'Bombchus (5)',
-    'Bombchus (10)',
-    'Bombchus (20)',
-    'Odd Potion',
-    'Triforce Piece'
-]
-
-item_groups = {
-    'Junk': remove_junk_items,
-    'JunkSong': ('Prelude of Light', 'Serenade of Water'),
-    'AdultTrade': tradeitems,
-    'Bottle': normal_bottles,
-    'Spell': ('Dins Fire', 'Farores Wind', 'Nayrus Love'),
-    'Shield': ('Deku Shield', 'Hylian Shield'),
-    'Song': songlist,
-    'NonWarpSong': songlist[0:6],
-    'WarpSong': songlist[6:],
-    'HealthUpgrade': ('Heart Container', 'Piece of Heart'),
-    'ProgressItem': [name for (name, data) in item_table.items() if data[0] == 'Item' and data[1]],
-    'MajorItem': [name for (name, data) in item_table.items() if (data[0] == 'Item' or data[0] == 'Song') and data[1] and name not in exclude_from_major],
-    'DungeonReward': dungeon_rewards,
-
-    'ForestFireWater': ('Forest Medallion', 'Fire Medallion', 'Water Medallion'),
-    'FireWater': ('Fire Medallion', 'Water Medallion'),
-}
-
 
 def get_junk_item(count=1, pool=None, plando_pool=None):
     if count < 1:
         raise ValueError("get_junk_item argument 'count' must be greater than 0.")
 
-    return_pool = []
-    if pending_junk_pool:
-        pending_count = min(len(pending_junk_pool), count)
-        return_pool = [pending_junk_pool.pop() for _ in range(pending_count)]
-        count -= pending_count
-
     if pool and plando_pool:
-        jw_list = [(junk, weight) for (junk, weight) in junk_pool
-                   if junk not in plando_pool or pool.count(junk) < plando_pool[junk].count]
+        jw_list = [
+            (junk, weight)
+            for (junk, weight) in junk_pool
+            if junk not in plando_pool or pool.count(junk) < plando_pool[junk].count
+        ]
         try:
             junk_items, junk_weights = zip(*jw_list)
         except ValueError:
             raise RuntimeError("Not enough junk is available in the item pool to replace removed items.")
     else:
         junk_items, junk_weights = zip(*junk_pool)
-    return_pool.extend(random_choices(junk_items, weights=junk_weights, k=count))
 
-    return return_pool
+    return random_choices(junk_items, weights=junk_weights, k=count)
 
 
 def converted_item(item):
@@ -344,15 +301,6 @@ def matches_mq(world, categories):
     )
 
 
-def replace_max_item(items, item, max):
-    count = 0
-    for i,val in enumerate(items):
-        if val == item:
-            if count >= max:
-                items[i] = get_junk_item()[0]
-            count += 1
-
-
 def generate_itempool(world):
     junk_pool[:] = list(junk_pool_base)
     if world.junk_ice_traps == 'on':
@@ -380,10 +328,10 @@ def get_pool_core(world):
     extra_rutos_letter = False
     removed_heart_pieces = 0
     remain_shop_items = min_shop_items.copy()
-    num_shop_slots = sum(loc_type == 'Shop' for loc_type, _, _, _, _ in location_table.values()) - len(world.shop_prices) # number of empty non-special-deal shop locations
+    num_shop_slots = sum(loc_type == 'Shop' for loc_type, _, _, _, _, _ in location_table.values()) - len(world.shop_prices) # number of empty non-special-deal shop locations
     rupee_upgrades = shopsanity_rupee_upgrades.copy()
 
-    for location, (loc_type, scene, _, _, vanilla_item, categories) in random.sample(location_table.items(), len(location_table)):
+    for location, (loc_type, scene, _, _, vanilla_item, categories) in random.sample(list(location_table.items()), len(location_table)):
         categories = categories or ()
         if not matches_mq(world, categories):
             continue
@@ -403,6 +351,19 @@ def get_pool_core(world):
             shuffle_condition = world.gerudo_fortress not in ('open', 'fast') and world.shuffle_fortresskeys != 'vanilla'
             if world.gerudo_fortress in ('open', 'fast'):
                 vanilla_item = IGNORE_LOCATION
+        elif location == 'Ganons Tower Boss Key Chest':
+            shuffle_condition = world.shuffle_ganon_bosskey not in ('vanilla', 'on_lacs', 'remove', 'triforce')
+            if world.shuffle_ganon_bosskey == 'on_lacs':
+                vanilla_item = None
+            elif world.shuffle_ganon_bosskey in ('remove', 'triforce'):
+                world.state.collect(ItemFactory(vanilla_item))
+                vanilla_item = None
+        elif location == 'ToT Light Arrow Cutscene':
+            shuffle_condition = world.shuffle_ganon_bosskey != 'on_lacs'
+            if world.shuffle_ganon_bosskey == 'on_lacs':
+                # make sure the card is shuffled but the vanilla location is Ganon's boss key
+                pool.append('Gerudo Membership Card')
+                vanilla_item = 'Boss Key (Ganons Castle)'
         elif location in ('KF Shop Item 8', 'Kak Bazaar Item 4', 'Market Bazaar Item 4'):
             if world.shopsanity == 'off' and world.bombchus_in_logic:
                 vanilla_item = 'Buy Bombchu (5)'
@@ -435,6 +396,9 @@ def get_pool_core(world):
                 # make sure the card is shuffled but the vanilla location is junk
                 pool.append('Gerudo Membership Card')
                 vanilla_item = IGNORE_LOCATION
+        elif vanilla_item == 'Ice Trap':
+            if world.junk_ice_traps == 'off':
+                vanilla_item = None
         elif vanilla_item == 'Kokiri Sword':
             shuffle_condition = world.shuffle_kokiri_sword
         elif vanilla_item == 'Magic Bean':
@@ -476,13 +440,27 @@ def get_pool_core(world):
                 vanilla_item = 'Rutos Letter'
                 extra_rutos_letter = True
 
-        vanilla_item_type, _, _, _ = item_table[vanilla_item]
+        if vanilla_item in (*junk_pool_base, 'Recovery Heart', 'Bombs (20)', 'Arrows (30)'):
+            # checked here because it should not apply to the extra wallet in shopsanity created by the 'Rupees (5)' check
+            if world.junk_ice_traps == 'onslaught':
+                vanilla_item = None
+
+        vanilla_item_type, _, _, _ = item_table.get(vanilla_item, (None, ..., ..., ...))
         if vanilla_item_type == 'BossKey':
             shuffle_condition = world.shuffle_bosskeys != 'vanilla'
+            if world.shuffle_bosskeys == 'remove':
+                world.state.collect(ItemFactory(vanilla_item))
+                vanilla_item = None
         elif vanilla_item_type == 'SmallKey':
             shuffle_condition = world.shuffle_smallkeys != 'vanilla'
+            if world.shuffle_smallkeys == 'remove':
+                world.state.collect(ItemFactory(vanilla_item))
+                vanilla_item = None
         elif vanilla_item_type in ('Compass', 'Map'):
             shuffle_condition = world.shuffle_mapcompass != 'vanilla'
+            if world.shuffle_mapcompass == 'remove' or world.shuffle_mapcompass == 'startwith':
+                world.state.collect(ItemFactory(vanilla_item))
+                vanilla_item = None
 
         if 'Cow' in categories:
             shuffle_condition = world.shuffle_cows
@@ -498,13 +476,16 @@ def get_pool_core(world):
             if vanilla_item is not None:
                 pool.append(vanilla_item)
         else:
-            placed_items[location] = vanilla_item
+            if vanilla_item is not None:
+                placed_items[location] = vanilla_item
 
     pool += ['Piece of Heart'] * removed_heart_pieces
 
-    if world.shuffle_song_items == 'any' and world.item_pool_value == 'plentiful':
-        # songs need special handling in plentiful because there are only extra copies if they're shuffled anywhere
-        pending_junk_pool.extend(songlist)
+    if world.item_pool_value == 'plentiful':
+        pool += filter(lambda item: item in pool, plentiful_extra_items)
+        if world.shuffle_song_items == 'any':
+            # songs need special handling in plentiful because there are only extra copies if they're shuffled anywhere
+            pool += songlist
 
     if world.free_scarecrow:
         world.state.collect(ItemFactory('Scarecrow Song'))
@@ -512,93 +493,37 @@ def get_pool_core(world):
     if world.no_epona_race:
         world.state.collect(ItemFactory('Epona', event=True))
 
-    if world.shuffle_mapcompass == 'remove' or world.shuffle_mapcompass == 'startwith':
-        for item in [item for dungeon in world.dungeons for item in dungeon.dungeon_items]:
-            world.state.collect(item)
-            pool.extend(get_junk_item())
-    if world.shuffle_smallkeys == 'remove':
-        for item in [item for dungeon in world.dungeons for item in dungeon.small_keys]:
-            world.state.collect(item)
-            pool.extend(get_junk_item())
-    if world.shuffle_bosskeys == 'remove':
-        for item in [item for dungeon in world.dungeons if dungeon.name != 'Ganons Castle' for item in dungeon.boss_key]:
-            world.state.collect(item)
-            pool.extend(get_junk_item())
-    if world.shuffle_ganon_bosskey in ['remove', 'triforce']:
-        for item in [item for dungeon in world.dungeons if dungeon.name == 'Ganons Castle' for item in dungeon.boss_key]:
-            world.state.collect(item)
-            pool.extend(get_junk_item())
+    # Logic cannot handle the vanilla key layout in some dungeons.
+    # This is because vanilla expects the dungeon major items to be
+    # locked behind the keys, which is not always true in rando.
+    # We can resolve this by starting with some extra keys...
+    if world.shuffle_smallkeys == 'vanilla' and world.dungeon_mq['Spirit Temple']:
+        # Yes somehow you need 3 keys. This dungeon is bonkers
+        world.state.collect(ItemFactory(['Small Key (Spirit Temple)'] * 3))
 
-    if world.shuffle_smallkeys == 'vanilla':
-        # Logic cannot handle vanilla key layout in some dungeons
-        # this is because vanilla expects the dungeon major item to be
-        # locked behind the keys, which is not always true in rando.
-        # We can resolve this by starting with some extra keys
-        if world.dungeon_mq['Spirit Temple']:
-            # Yes somehow you need 3 keys. This dungeon is bonkers
-            world.state.collect(ItemFactory('Small Key (Spirit Temple)'))
-            world.state.collect(ItemFactory('Small Key (Spirit Temple)'))
-            world.state.collect(ItemFactory('Small Key (Spirit Temple)'))
-
+    # ...or by unlocking some of the doors.
     if not world.keysanity and not world.dungeon_mq['Fire Temple']:
+        # The door to the Boss Key Chest in Fire Temple is unlocked in these settings.
         world.state.collect(ItemFactory('Small Key (Fire Temple)'))
 
     if world.triforce_hunt:
         triforce_count = int((TriforceCounts[world.item_pool_value] * world.triforce_goal_per_world).to_integral_value(rounding=ROUND_HALF_UP))
-        pending_junk_pool.extend(['Triforce Piece'] * triforce_count)
+        pool += ['Triforce Piece'] * triforce_count
 
-    if world.shuffle_ganon_bosskey == 'on_lacs':
-        placed_items['ToT Light Arrows Cutscene'] = 'Boss Key (Ganons Castle)'
-    elif world.shuffle_ganon_bosskey == 'vanilla':
-        placed_items['Ganons Tower Boss Key Chest'] = 'Boss Key (Ganons Castle)'
-
-    if world.item_pool_value == 'plentiful':
-        pool += filter(lambda item: item in pool, plentiful_extra_items)
-
-    if not world.shuffle_kokiri_sword:
-        replace_max_item(pool, 'Kokiri Sword', 0)
-
-    if world.junk_ice_traps == 'off':
-        replace_max_item(pool, 'Ice Trap', 0)
-    elif world.junk_ice_traps == 'onslaught':
-        for item in [item for item, weight in junk_pool_base] + ['Recovery Heart', 'Bombs (20)', 'Arrows (30)']:
-            replace_max_item(pool, item, 0)
-
-    for item, max in item_pool_max[world.item_pool_value].items():
-        replace_max_item(pool, item, max)
-
-    if world.damage_multiplier in ['ohko', 'quadruple'] and world.item_pool_value == 'minimal':
-        pending_junk_pool.append('Nayrus Love')
+    if world.item_pool_value in item_pool_max:
+        # reduce item counts for minimal/scarce
+        max_counts = item_pool_max[world.item_pool_value].copy()
+        if world.damage_multiplier in ('quadruple', 'ohko'):
+            max_counts['Nayrus Love'] = 1
+        counts = defaultdict(int)
+        new_pool = []
+        for item in pool:
+            if item not in max_counts or counts[item] < max_counts[item]:
+                new_pool.append(item)
+                counts[item] += 1
+        pool = new_pool
 
     world.distribution.alter_pool(world, pool)
-
-    # Make sure our pending_junk_pool is empty. If not, remove some random junk here.
-    if pending_junk_pool:
-        for item in set(pending_junk_pool):
-            # Ensure pending_junk_pool contents don't exceed values given by distribution file
-            if item in world.distribution.item_pool:
-                while pending_junk_pool.count(item) > world.distribution.item_pool[item].count:
-                    pending_junk_pool.remove(item)
-                # Remove pending junk already added to the pool by alter_pool from the pending_junk_pool
-                if item in pool:
-                    count = min(pool.count(item), pending_junk_pool.count(item))
-                    for _ in range(count):
-                        pending_junk_pool.remove(item)
-
-        remove_junk_pool, _ = zip(*junk_pool_base)
-        # Omits Rupees (200) and Deku Nuts (10)
-        remove_junk_pool = list(remove_junk_pool) + ['Recovery Heart', 'Bombs (20)', 'Arrows (30)', 'Ice Trap']
-
-        junk_candidates = [item for item in pool if item in remove_junk_pool]
-        while pending_junk_pool:
-            pending_item = pending_junk_pool.pop()
-            if not junk_candidates:
-                raise RuntimeError("Not enough junk exists in item pool for %s to be added." % pending_item)
-            junk_item = random.choice(junk_candidates)
-            junk_candidates.remove(junk_item)
-            pool.remove(junk_item)
-            pool.append(pending_item)
-
     world.distribution.configure_starting_items_settings(world)
     world.distribution.collect_starters(world.state)
 

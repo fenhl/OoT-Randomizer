@@ -364,7 +364,7 @@ def set_entrances(worlds):
 def shuffle_random_entrances(worlds):
 
     # Store all locations reachable before shuffling to differentiate which locations were already unreachable from those we made unreachable
-    complete_itempool = [item for world in worlds for item in world.get_itempool_with_dungeon_items()]
+    complete_itempool = [item for world in worlds for item in world.itempool]
     max_search = Search.max_explore([world.state for world in worlds], complete_itempool)
 
     non_drop_locations = [location for world in worlds for location in world.get_locations() if location.type not in ('Drop', 'Event')]
@@ -564,7 +564,7 @@ def shuffle_entrance_pool(world, worlds, entrance_pool, target_entrances, locati
                 shuffle_entrances(worlds, soft_entrances, target_entrances, rollbacks)
 
             # Fully validate the resulting world to ensure everything is still fine after shuffling this pool
-            complete_itempool = [item for world in worlds for item in world.get_itempool_with_dungeon_items()]
+            complete_itempool = [item for world in worlds for item in world.itempool]
             validate_world(world, worlds, None, locations_to_ensure_reachable, complete_itempool)
 
             # If all entrances could be connected without issues, log connections and continue
@@ -593,7 +593,7 @@ def split_entrances_by_requirements(worlds, entrances_to_split, assumed_entrance
 
     # Generate the states with all assumed entrances disconnected
     # This ensures no assumed entrances corresponding to those we are shuffling are required in order for an entrance to be reachable as some age/tod
-    complete_itempool = [item for world in worlds for item in world.get_itempool_with_dungeon_items()]
+    complete_itempool = [item for world in worlds for item in world.itempool]
     max_search = Search.max_explore([world.state for world in worlds], complete_itempool)
 
     restrictive_entrances = []
@@ -668,7 +668,7 @@ def place_one_way_priority_entrance(worlds, world, priority_name, allowed_region
 def shuffle_entrances(worlds, entrances, target_entrances, rollbacks, locations_to_ensure_reachable=()):
 
     # Retrieve all items in the itempool, all worlds included
-    complete_itempool = [item for world in worlds for item in world.get_itempool_with_dungeon_items()]
+    complete_itempool = [item for world in worlds for item in world.itempool]
 
     random.shuffle(entrances)
 
