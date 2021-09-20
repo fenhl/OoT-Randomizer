@@ -18,12 +18,14 @@ from World import World
 from Spoiler import Spoiler
 from Rom import Rom
 from Patches import patch_rom
+from PatchesJP import patch_rom_jp
 from Cosmetics import patch_cosmetics
 from DungeonList import create_dungeons
 from Fill import distribute_items_restrictive, ShuffleError
 from Item import Item
 from ItemPool import generate_itempool
 from Hints import buildGossipHints
+from HintsJP import buildGossipHints as JPGossip
 from Utils import default_output_path, is_bundled, subprocess_args, data_path
 from version import __version__
 from N64Patch import create_patch_file, apply_patch_file
@@ -190,7 +192,10 @@ def make_spoiler(settings, worlds, window=dummy_window()):
         window.update_status('Calculating Hint Data')
         logger.info('Calculating hint data.')
         update_required_items(spoiler)
-        buildGossipHints(spoiler, worlds)
+        if settings.language_selection == 'english':
+            buildGossipHints(spoiler, worlds)
+        elif settings.language_selection == 'japanese':
+            JPGossip(spoiler, worlds)
         window.update_progress(55)
     elif settings.misc_hints:
         # Ganon may still provide the Light Arrows hint
@@ -228,7 +233,10 @@ def patch_and_output(settings, window, spoiler, rom):
                 patchfilename = '%s.zpf' % outfilebase
 
             random.setstate(rng_state)
-            patch_rom(spoiler, world, rom)
+            if settings.language_selection == 'english':
+                patch_rom(spoiler, world, rom)
+            elif settings.language_selection == 'japanese':
+                patch_rom_jp(spoiler, world, rom)
             cosmetics_log = patch_cosmetics(settings, rom)
             rom.update_header()
 
@@ -265,7 +273,10 @@ def patch_and_output(settings, window, spoiler, rom):
 
     elif settings.compress_rom not in ['None', 'Temp']:
         window.update_status('Patching ROM')
-        patch_rom(spoiler, worlds[settings.player_num - 1], rom)
+        if settings.language_selection == 'english':
+            patch_rom(spoiler, worlds[settings.player_num - 1], rom)
+        elif settings.language_selection == 'japanese':
+            patch_rom_jp(spoiler, worlds[settings.player_num - 1], rom)
         cosmetics_log = patch_cosmetics(settings, rom)
         window.update_progress(65)
 
