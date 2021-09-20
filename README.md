@@ -2,6 +2,7 @@
 
 This is a randomizer for _The Legend of Zelda: Ocarina of Time_ for the Nintendo 64.
 
+* [Changes](#changes)
 * [Installation](#installation)
 * [General Description](#general-description)
   * [Getting Stuck](#getting-stuck)
@@ -13,6 +14,57 @@ This is a randomizer for _The Legend of Zelda: Ocarina of Time_ for the Nintendo
   * [5.1](#51)
   * [5.0](#50)
   * [4.0](#40)
+
+## Changes
+This is the fork of OOTRandomizer which to play it in Japanese.
+
+
+Below this is the file informations.
+
+> **HintsJP.py**
+_Same as Hints.py but with Japanese decode functions_
+
+>**HintsListJP.py**
+_Same as HintsList.py but all hints (except exclude tagged hints) are in Japanese_
+
+>**LocationTransJP.py**
+_Translate some location words (Such as Forest Temple) to Japanese_
+
+>**MessagesJP.py**
+_Includes most functions that Messages.py has but with some extra 
+functions to read JPtexts_
+
+>**PatchesJP.py**
+_Same as Patches.py but all of the texts to input are in Japanese_
+
+>**textJP.py**
+_Raw text of OOT JProm with some transformation for texts_
+
+>**data/titleJP.bin**
+_title.bin for JP rom title screen_
+
+
+Below this is the major definitions I made.
+
+>**parsejp(text, mode = 0)**
+_parse the Encoded JPtext (mode 0 = tag, 1 = ending)_
+
+>**text_to_bytes(text, width, signed=False)**
+_convert Encoded JPtext to int and to an array of bytes of the given width_
+
+>**JPencode(text, mode = 0, replace_chars=True)**
+_encode JPtext written in Japanese and additional CONTROL_CHARS (mode = 0 normal, 1 scrub, 2 item)
+when its mode is 2, CONTROL_CHARS are written differently due to icon bytes_
+
+>**update_message_jp(messages, id, text, opts=None, mode = 0)**
+_write Encoded JPtexts to temporal.py (mode = 0 normal, 1 scrub, 2 item)
+template: (id{:04x}): ((Encoded JPtext), (opts), (tags), (ending)),_
+
+>**shuffle_messages_jp(messages, except_hints=True, always_allow_skip=True)**
+_mostly identical function to def shuffle_messages. (return is shuffled groups)_
+
+>**write_messages(rom, shuffle = False, shuffle_group = None)**
+_write all texts inside temporal.py to the rom (when shuffle = True, need shuffle_messages_jp)_
 
 ## Installation
 
