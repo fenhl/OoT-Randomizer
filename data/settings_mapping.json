@@ -20,6 +20,7 @@
             "count",
             "create_spoiler",
             "create_cosmetics_log",
+			"language_selection",
             "compress_rom",
             "open_output_dir",
             "open_python_dir"
