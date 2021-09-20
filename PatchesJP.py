@@ -431,7 +431,7 @@ def patch_rom_jp(spoiler:Spoiler, world:World, rom:Rom):
     rom.scan_dmadata_update()
 
     # Write Randomizer title screen logo
-    with open(data_path('titleJP_1.bin'), 'rb') as stream:
+    with open(data_path('titleJP.bin'), 'rb') as stream:
         writeAddress = 0x01795300
         titleBytesComp = stream.read()
 
