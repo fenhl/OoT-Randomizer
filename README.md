@@ -1,6 +1,6 @@
-# OoTRandomizer
+# OoTRandomizer + Japanese
 
-This is a randomizer for _The Legend of Zelda: Ocarina of Time_ for the Nintendo 64.
+This is a fork of the randomizer for _The Legend of Zelda: Ocarina of Time_ for the Nintendo 64.
 
 * [Changes](#changes)
 * [Installation](#installation)
