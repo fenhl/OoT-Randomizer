@@ -11,6 +11,8 @@ from Spoiler import Spoiler
 from LocationList import business_scrubs
 from HintsJP import writeGossipStoneHints, buildAltarHints, \
         buildGanonText, getSimpleHintNoPrefix
+from HintListJP import HT
+from TransJP import LocationJP, ItemTrJP
 from Utils import data_path
 from MessagesJP import update_message_jp, read_shop_items, \
         write_shop_items, jp_start, update_warp_song_text_jp, \
@@ -356,32 +358,54 @@ def place_shop_items(rom, world, shop_items, messages, locations, init_shop_id=F
             
 
             if item_display.dungeonitem:
-                split_item_name = item_display.name.split('(')
-                split_item_name[1] = '(' + split_item_name[1]
+                dungeon_item_name = item_display.name
 
-                if location.item.name == 'Ice Trap':
-                    split_item_name[0] = create_fake_name(split_item_name[0])
+                if dungeon_item_name == 'Ice Trap':
+                    dungeon_item_name = create_fake_name(dungeon_item_name)
+                
+                iname = None
+                for en, jp in HT.items():
+                        textOptions, clearText, type = jp
+                        if (en == dungeon_item_name) is True:
+                            iname = clearText
+                            break
+                        if (clearText == dungeon_item_name) is True:
+                            iname = clearText
+                            break
+                if iname is None:
+                    iname = ""
 
                 if world.settings.world_count > 1:
                     price = str(location.price).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)}))
-                    description_text = '<#\x01%sルピー#\x00&一点もの！>*O' % price
+                    description_text = '<#\x01%s　%sルピー#\x00&一点もの！>*O' % (iname, price)
                 else:
                     price = str(location.price).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)}))
-                    description_text = '<#\x01%sルピー#\x00&一点もの！>*O' % price
-                purchase_text = '<%sルピー&:2#\x02かう&やめとく#\x00>' % price
+                    description_text = '<#\x01%s　%sルピー#\x00&一点もの！>*O' % (iname, price)
+                purchase_text = '<%s　%sルピー&:2#\x02かう&やめとく#\x00>' % (iname, price)
             else:
                 shop_item_name = getSimpleHintNoPrefix(item_display)
-                if location.item.name == 'Ice Trap':
+                if shop_item_name == 'Ice Trap':
                     shop_item_name = create_fake_name(shop_item_name)
+                    
+                iname = None
+                for en, jp in HT.items():
+                        textOptions, clearText, type = jp
+                        if (en == shop_item_name) is True:
+                            iname = clearText
+                            break
+                        if (clearText == shop_item_name) is True:
+                            iname = clearText
+                            break
+                if iname is None:
+                    iname = ""
 
                 if world.settings.world_count > 1:
                     price = str(location.price).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)}))
-                    description_text = '<#\x01%sルピー#\x00&一点もの！>*O' % price
+                    description_text = '<#\x01%s　%sルピー#\x00&一点もの！>*O' % (iname, price)
                 else:
                     price = str(location.price).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)}))
-                    description_text = '<#\x01%sルピー#\x00&一点もの！>*O' % price
-                purchase_text = '<%sルピー&:2#\x02かう&やめとく#\x00>' % price
-            
+                    description_text = '<#\x01%s　%sルピー#\x00&一点もの！>*O' % (iname, price)
+                purchase_text = '<%s　%sルピー&:2#\x02かう&やめとく#\x00>' % (iname, price)
 
             update_message_jp(messages, shop_item.description_message, description_text, 0x03)
             update_message_jp(messages, shop_item.purchase_message, purchase_text, 0x03)
@@ -1924,7 +1948,11 @@ def patch_rom_jp(spoiler:Spoiler, world:World, rom:Rom):
         if default_price != price:
             text = "<$まいったピー！&アイテム　売るッピー！&#\x01%sルピー#\x00だピー！^<アイテム　%sルピー&:2#\x02かう&やめとく#\x00>"% (cnge, cnge)
         if item_name is not None:
-            text = text.replace('アイテム', item_name)
+            for en, jp in ItemTrJP.items():
+                textOptions, clearText, type = jp
+                if((item_name == en)is True):
+                    text = text.replace('アイテム', clearText)
+            
         return text
 
     single_item_scrubs = {
@@ -2085,25 +2113,25 @@ def patch_rom_jp(spoiler:Spoiler, world:World, rom:Rom):
             elif dungeon in ['Bottom of the Well', 'Ice Cavern']:
                 dungeon_name, boss_name, compass_id, map_id = dungeon_list[dungeon]
                 if world.settings.world_count > 1:
-                    map_message = "~~\x76<<%s##\x00の&&##\x01地図##\x00を入手！" % (dungeon_name)
+                    map_message = "~~\x76<<%sの&&##\x01地図##\x00を入手！" % (dungeon_name)
                 else:
-                    map_message = "~~\x76<<%s##\x00の&&##\x01地図##\x00を入手！&&%s向きに巻かれている！" % (dungeon_name, "裏" if world.dungeon_mq[dungeon] else "表")
+                    map_message = "~~\x76<<%sの&&##\x01地図##\x00を入手！&&%s向きに巻かれている！" % (dungeon_name, "##\x01裏##\x00" if world.dungeon_mq[dungeon] else "##\x01表##\x00")
 
                 if world.settings.mq_dungeons_random or world.settings.mq_dungeons != 0 and world.settings.mq_dungeons != 12:
-                    update_message_jp(messages, map_id, map_message)
+                    update_message_jp(messages, map_id, map_message, mode = 2)
             else:
                 dungeon_name, boss_name, compass_id, map_id = dungeon_list[dungeon]
                 dungeon_reward = reward_list[world.get_location(boss_name).item.name]
                 if world.settings.world_count > 1:
-                    compass_message = "~~\x75<<%s##\x00の&&##\x01コンパス##\x00を入手！" % (dungeon_name)
+                    compass_message = "~~\x75<<%sの&&##\x01コンパス##\x00を入手！" % (dungeon_name)
                 else:
-                    compass_message = "~~\x75<<%s##\x00の&&#\x01コンパス##\x00を入手！&&%sがあるようだ！" % (dungeon_name, dungeon_reward)
-                update_message_jp(messages, compass_id, compass_message)
+                    compass_message = "~~\x75<<%sの&&#\x01コンパス##\x00を入手！&&%sがあるようだ！" % (dungeon_name, dungeon_reward)
+                update_message_jp(messages, compass_id, compass_message, mode = 2)
                 if world.settings.mq_dungeons_random or world.settings.mq_dungeons != 0 and world.settings.mq_dungeons != 12:
                     if world.settings.world_count > 1:
-                        map_message = "~~\x76<<%s##\x00の&&##\x01地図##\x00を入手！" % (dungeon_name)
+                        map_message = "~~\x76<<%sの&&##\x01地図##\x00を入手！" % (dungeon_name)
                     else:
-                        map_message = "~~\x76<<%s##\x00の&&##\x01地図##\x00を入手！&&%s向きに巻かれている！" % (dungeon_name, "裏" if world.dungeon_mq[dungeon] else "表")
+                        map_message = "~~\x76<<%sの&&##\x01地図##\x00を入手！&&%s向きに巻かれている！" % (dungeon_name, "##\x01裏##\x00" if world.dungeon_mq[dungeon] else "##\x01表##\x00")
                     update_message_jp(messages, map_id, map_message, mode = 2)
 
     # Set hints on the altar inside ToT

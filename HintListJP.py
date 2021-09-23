@@ -36,15 +36,30 @@ class Hint(object):
                 self.text = random.choice(text)
             else:
                 self.text = text[choice]
+                
+class HintEX(object):
+    name = ""
+    text = ""
+    type = []
 
+    def __init__(self, name, text, type, choice=None):
+        self.name = name
+        self.type = [type] if not isinstance(type, list) else type
+        self.text = name
 
 def getHint(name, clearer_hint=False):
     textOptions, clearText, type = hintTable[name]
     if clearer_hint:
         if clearText is None:
+            if type == 'exclude':
+                return HintEX(name, textOptions, type, 0)
             return Hint(name, textOptions, type, 0)
+        if type == 'exclude':
+            return HintEX(name, clearText, type)
         return Hint(name, clearText, type)
     else:
+        if type == 'exclude':
+            return HintEX(name, textOptions, type)
         return Hint(name, textOptions, type)
 
 
@@ -54,14 +69,14 @@ def getHintGroup(group, world):
 
         hint = getHint(name, world.settings.clearer_hints)
 
-        if hint.name in world.always_hints and group == 'always':
+        if type(hint) != str and hint.name in world.always_hints and group == 'always':
             hint.type = 'always'
 
         # Hint inclusion override from distribution
         if group in world.added_hint_types or group in world.item_added_hint_types:
-            if hint.name in world.added_hint_types[group]:
+            if type(hint) != str and hint.name in world.added_hint_types[group]:
                 hint.type = group
-            if nameIsLocation(name, hint.type, world):
+            if type(hint) != str and nameIsLocation(name, hint.type, world):
                 location = world.get_location(name)
                 for i in world.item_added_hint_types[group]:
                     if i == location.item.name:
@@ -74,12 +89,12 @@ def getHintGroup(group, world):
             if name in world.hint_type_overrides[group]:
                 type_override = True
         if group in world.item_hint_type_overrides:
-            if nameIsLocation(name, hint.type, world):
+            if type(hint) != str and nameIsLocation(name, hint.type, world):
                 location = world.get_location(name)
                 if location.item.name in world.item_hint_type_overrides[group]:
                     type_override = True
 
-        if group in hint.type and (name not in hintExclusions(world)) and not type_override:
+        if type(hint) != str and group in hint.type and (name not in hintExclusions(world)) and not type_override:
             ret.append(hint)
     return ret
 
@@ -88,7 +103,7 @@ def getRequiredHints(world):
     ret = []
     for name in hintTable:
         hint = getHint(name)
-        if 'always' in hint.type or hint.name in conditional_always and conditional_always[hint.name](world):
+        if type(hint) != str and 'always' in hint.type or hint.name in conditional_always and conditional_always[hint.name](world):
             ret.append(hint)
     return ret
 
@@ -318,11 +333,11 @@ hintTable = {
     'Sheik in Kakariko':                                           ("C荒廃した村Cは", None, ['song', 'sometimes']),
     'Sheik at Colossus':                                           ("C荒れ地の先Cでは", None, ['song', 'sometimes']),
 
-    'Market 10 Big Poes':                                          ("CゴーストハンターCは", "CビッグポーCは", ['overworld', 'sometimes']),
-    'Deku Theater Skull Mask':                                     ("Cドクロのお面Cは", None, ['overworld', 'sometimes']),
-    'Deku Theater Mask of Truth':                                  ("Cウソの無きお面Cは", "Cまことのお面Cは", ['overworld', 'sometimes']),
+    'Market 10 Big Poes':                                          ("CゴーストハンターCは", "C１０匹のビッグポーCを売ると", ['overworld', 'sometimes']),
+    'Deku Theater Skull Mask':                                     ("Cドクロのお面の評価Cは", None, ['overworld', 'sometimes']),
+    'Deku Theater Mask of Truth':                                  ("Cウソ無きお面の世論Cは", "Cまことのお面の評価Cは", ['overworld', 'sometimes']),
     'HF Ocarina of Time Item':                                     ("Cゼルダの投げるお宝Cは", None, ['overworld', 'sometimes']),
-    'DMT Biggoron':                                                ("CダイゴロンCは", None, ['overworld', 'sometimes']),
+    'DMT Biggoron':                                                ("CダイゴロンCの持つものは", None, ['overworld', 'sometimes']),
     'Kak 50 Gold Skulltula Reward':                                (["C５０個の虫Cは", "C５０個のクモの魂Cは", "C５０匹のクモCは"], "C５０個のトークンCは", ['overworld', 'sometimes']),
     'Kak 40 Gold Skulltula Reward':                                (["C４０個の虫Cは", "C４０個のクモの魂Cは", "C４０匹のクモCは"], "C４０個のトークンCは", ['overworld', 'sometimes']),
     'Kak 30 Gold Skulltula Reward':                                (["C３０個の虫Cは", "C３０個のクモの魂Cは", "C３０匹のクモCは"], "C３０個のトークンCは", ['overworld', 'sometimes']),
@@ -332,10 +347,10 @@ hintTable = {
     'LW Skull Kid':                                                ("CスタルキッドCは", None, ['overworld', 'sometimes']),
     'LH Sun':                                                      ("C太陽Cを見つめると", "C太陽Cを撃つと", ['overworld', 'sometimes']),
     'Market Treasure Chest Game Reward':                           (["C賭けに勝つCと", "C１／３２の確立Cで"], "C宝箱屋Cは", ['overworld', 'sometimes']),
-    'GF HBA 1500 Points':                                          ("CやぶさめCは", "Cやぶさめで１５００点C取ると", ['overworld', 'sometimes']),
+    'GF HBA 1500 Points':                                          ("CやぶさめCの特賞は", "Cやぶさめで１５００点C取ると", ['overworld', 'sometimes']),
     'Graveyard Heart Piece Grave Chest':                           ("C太陽の歌Cを穴で奏でると", None, ['overworld', 'sometimes']),
-    'GC Maze Left Chest':                                          ("CゴロンシティCでハンマーは", None, ['overworld', 'sometimes']),
-    'GV Chest':                                                    ("Cゲルドの谷Cでハンマーは", None, ['overworld', 'sometimes']),
+    'GC Maze Left Chest':                                          ("CゴロンシティCの錆びた所は", None, ['overworld', 'sometimes']),
+    'GV Chest':                                                    ("Cゲルドの谷Cの錆びた所は", None, ['overworld', 'sometimes']),
     'GV Cow':                                                      ("Cゲルドの谷の牛Cは", None, ['overworld', 'sometimes']),
     'HC GS Storms Grotto':                                         ("C穴中の壁裏のクモCは", None, ['overworld', 'sometimes']),
     'HF GS Cow Grotto':                                            ("C穴中の巣に隠れたクモCは", None, ['overworld', 'sometimes']),
@@ -347,7 +362,7 @@ hintTable = {
     'ZF Bottom Freestanding PoH':                                  ("C氷の下Cは", None, ['overworld', 'sometimes']),
     'GC Pot Freestanding PoH':                                     ("CゴロンのツボCは", None, ['overworld', 'sometimes']),
     'ZD King Zora Thawed':                                         ("C解けた王Cは", "CキングゾーラCは", ['overworld', 'sometimes']),
-    'DMC Deku Scrub':                                              ("C火口のナッツCは", None, ['overworld', 'sometimes']),
+    'DMC Deku Scrub':                                              ("C火口のアキンドCは", None, ['overworld', 'sometimes']),
     'DMC GS Crate':                                                ("C火口のクモCは", None, ['overworld', 'sometimes']),
 
     'Deku Tree MQ After Spinning Log Chest':                       ("C木の中の石Cは", "Cデクの樹の石Cは", ['dungeon', 'sometimes']),
@@ -1192,31 +1207,31 @@ hintTable = {
     '1035':                                                     ("<トウルルル……　トウルルル……&ハロー！ うるりらじいさんじゃ&？？？番号を　まちがえたみたいだ", None, 'junk'),
     '1036':                                                     ("<チンクル、チンクル、&クルリンパ！", None, 'junk'),
     '1037':                                                     ("<そんな装備で大丈夫か？&大丈夫だ問題ない。", None, 'junk'),
-    '1038':                                                     ("<ガノンがスマブラで剣士になったらしい。", None, 'junk'),
+    '1038':                                                     ("<ガノンがスマブラで&剣士になったらしい。", None, 'junk'),
     '1039':                                                     ("<ダイゴロンはブレワイの&開発版を売ってるらしい。", None, 'junk'),
     '1040':                                                     ("<僕にも質問する権利はあるはずだ！", None, 'junk'),
     '1041':                                                     ("<もう少しで詰むところだったな&@。", None, 'junk'),
     '1042':                                                     ("<僕は最も助けになるヒントだ。", None, 'junk'),
-    '1043':                                                     ("<@へ&遊びに来て下さい。ケーキを作って&待ってます。ーゼルダよりー", None, 'junk'),
-    '1044':                                                     ("<詰んだら空き瓶を使うといいらしいよ。", None, 'junk'),
+    '1043':                                                     ("<@へ&遊びに来て下さい。ケーキを作って&待ってます。　ゼルダより", None, 'junk'),
+    '1044':                                                     ("<詰んだら空き瓶を&使うといいらしいよ。", None, 'junk'),
     '1045':                                                     ("<大神は最高のゼルダーゲームらしい。", None, 'junk'),
     '1046':                                                     ("<クエストは話せる石が導くらしいよ。", None, 'junk'),
     '1047':                                                     ("<探しているアイテムは&ハイラルの地にあるらしいよ。", None, 'junk'),
     '1048':                                                     ("<ムニッ&ムニッ&ムニッ^<ムニッ&ムニッ&ムニッ^<ムニッ&ムニッ&ムニッ", None, 'junk'),
-    '1049':                                                     ("<バリねーどはデクの実が嫌いらしいよ。", None, 'junk'),
-    '1050':                                                     ("<フレアダンサーはダイゴロン刀を&恐れないらしいよ。", None, 'junk'),
-    '1051':                                                     ("<モーファは角に追い込みやすいらしいよ。", None, 'junk'),
-    '1052':                                                     ("<ボンゴボンゴは寒いのが嫌いらしいよ。", None, 'junk'),
+    '1049':                                                     ("<バリネードはデクの実が&嫌いらしいよ。", None, 'junk'),
+    '1050':                                                     ("<フレアダンサーは&ダイゴロン刀を&恐れないらしいよ。", None, 'junk'),
+    '1051':                                                     ("<モーファは角に&追い込みやすいらしいよ。", None, 'junk'),
+    '1052':                                                     ("<ボンゴボンゴは&寒いのが嫌いらしいよ。", None, 'junk'),
     '1053':                                                     ("<しゃがみ攻撃は前のダメージを&引き継ぐらしいよ。", None, 'junk'),
     '1054':                                                     ("<バルバジアの入った穴を爆発させると&いいことがあるらしいよ。", None, 'junk'),
     '1055':                                                     ("<透明な幽霊はデクの実で見えるようになるらしいよ。", None, 'junk'),
     '1056':                                                     ("<本物のファントムガノンは&明るくてうるさいらしいよ。", None, 'junk'),
-    '1057':                                                     ("<後ろ歩きは本当に早いらしいよ。", None, 'junk'),
+    '1057':                                                     ("<後ろ歩きが一番早いらしいよ。", None, 'junk'),
     '1058':                                                     ("<城下町の門を飛ぶと&いいことがあるらしいよ。", None, 'junk'),
     '1059':                                                     ("<ランダマイザーを日本語化したのは&一人の男性らしいよ。", None, 'junk'),
     '1060':                                                     ("<聖なる岩を見つけた！", None, 'junk'),
     '1061':                                                     ("<棒は剣よりも強し。", None, 'junk'),
-    '1062':                                                     ("<@…^@…^目覚めるのです！", None, 'junk'),
+    '1062':                                                     ("<@…^@…^目覚めるのです&@！", None, 'junk'),
     '1063':                                                     ("<任意コード実行は&クレジットに&つながるらしいよ。", None, 'junk'),
     '1064':                                                     ("<ツインローバは最初三回は&同じ呪文を唱えるらしいよ。", None, 'junk'),
     '1065':                                                     ("<このバージョンは&不安定かもしれないよ。", None, 'junk'),
@@ -1292,7 +1307,7 @@ hintTable = {
     '2010':                                                     ("<コホリント島で君がしたことに&比べればこんなこと&ちっぽけだろう？", None, 'ganonLine'),
     '2011':                                                     ("<今、勇者のいない&時間軸が出来上がる！", None, 'ganonLine'),
 }
-
+HT = {**hintTable}
 
 # This specifies which hints will never appear due to either having known or known useless contents or due to the locations not existing.
 def hintExclusions(world, clear_cache=False):
@@ -1312,14 +1327,13 @@ def hintExclusions(world, clear_cache=False):
     location_hints = []
     for name in hintTable:
         hint = getHint(name, world.settings.clearer_hints)
-        if any(item in hint.type for item in 
+        if type(hint) != str and any(item in hint.type for item in 
                 ['always',
                  'sometimes',
                  'overworld',
                  'dungeon',
                  'song']):
             location_hints.append(hint)
-
     for hint in location_hints:
         if hint.name not in world_location_names and hint.name not in hintExclusions.exclusions:
             hintExclusions.exclusions.append(hint.name)

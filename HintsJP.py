@@ -4,6 +4,7 @@ import logging
 import os
 import struct
 import random
+import re
 from collections import OrderedDict
 import urllib.request
 from urllib.error import URLError, HTTPError
@@ -11,8 +12,8 @@ import json
 from enum import Enum
 import itertools
 
-from LocationTransJP import LocationJP
-from HintListJP import getHint, getHintGroup, Hint, hintExclusions
+from TransJP import LocationJP, ItemTrJP
+from HintListJP import getHint, getHintGroup, Hint, hintExclusions, HT
 from Item import MakeEventItem
 from MessagesJP import update_message_jp
 from StartingItems import everything
@@ -121,6 +122,47 @@ gossipLocations_reversemap = {
     stone.name : stone_id for stone_id, stone in gossipLocations.items()
 }
 
+def has_eng(text):
+    lowerReg = re.compile(r'^[a-zA-BD-Z]+$')
+    return lowerReg.match(text) is not None
+def loctextJ(text):
+    location_text_J = None
+    for region, (opt, clear, type) in HT.items():
+        if clear is None:
+            clear = opt
+        if ((clear == text) is True and (has_eng(clear)) is False and type is not 'exclude'):
+            location_text_J = clear
+            break
+        if ((text in opt) is True and (opt == text) is False and (has_eng(opt[opt.index(text)])) is False and type is not 'exclude'):
+            location_text_J = opt[opt.index(text)]
+            break
+        if ((opt == text) is True and (has_eng(opt)) is False and type is not 'exclude'):
+            location_text_J = opt
+            break
+        if (type is 'exclude'):
+            text = region
+            break
+    if location_text_J is None:
+        for region, (orih, replace, prior) in LocationJP.items():
+            if ((region in text)is True and prior is "Low"):
+                location_text_J = replace
+                break
+            if ((region in text)is True and prior is "Middle"):
+                location_text_J = replace
+                break
+            if ((region in text)is True and prior is "High"):
+                location_text_J = replace
+                break
+            if ((text == orih) is True):
+                location_text_J = replace
+                break
+            if ((replace in text) is True):
+                location_text_J = replace
+                break
+    if location_text_J is None:
+        location_text_J = "どこか"
+    return location_text_J
+    
 def getItemGenericName(item):
     if item.unshuffled_dungeon_item:
         return item.type
@@ -253,8 +295,10 @@ hintPrefixes = [
 ]
 
 def getSimpleHintNoPrefix(item):
-    hint = getHint(item.name, True).text
-
+    if type(getHint(item.name, True)) != str:
+        hint = getHint(item.name, True).text
+    elif type(getHint(item.name, True)) == str:
+        hint = getHint(item.name, True)
     for prefix in hintPrefixes:
         if hint.startswith(prefix):
             # return without the prefix
@@ -341,15 +385,13 @@ def get_woth_hint(spoiler, world, checked):
 
     if location.parent_region.dungeon:
         world.woth_dungeon += 1
-        location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints).text
+        if type(getHint(location.parent_region.dungeon.name, world.settings.clearer_hints)) != str:
+            location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints).text
+        else:
+            location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints)
     else:
         location_text = get_hint_area(location)
-    location_text_J = None    
-    for region, (text, replace) in LocationJP.items():
-        if ((location_text == text) is True):
-            location_text_J = replace
-    if location_text_J is None:
-        location_text_J = "どこか"
+    location_text_J = loctextJ(location_text)  
 
     if world.settings.triforce_hunt:
         return (GossipText('<C%sCは&金への道' % location_text_J, ['Light Blue']), location)
@@ -404,12 +446,7 @@ def get_barren_hint(spoiler, world, checked):
         world.barren_dungeon += 1
 
     checked.add(area)
-    area_J = None
-    for region, (text, replace) in LocationJP.items():
-        if ((area == text) is True):
-            area_J = replace
-    if area_J is None:
-        area_J = "どこか"
+    area_J = loctextJ(area)  
 
     return (GossipText("<C%sCに&行くことはおろかな選択だ" % area_J, ['Pink']), None)
 
@@ -437,22 +474,15 @@ def get_good_item_hint(spoiler, world, checked):
 
     item_text = getHint(getItemGenericName(location.item), world.settings.clearer_hints).text
     if location.parent_region.dungeon:
-        location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints).text
-        location_text_J = None
-        for region, (text, replace) in LocationJP.items():
-            if ((location_text == text) is True):
-                location_text_J = replace
-        if location_text_J is None:
-            location_text_J = "どこか"
+        if type(getHint(location.parent_region.dungeon.name, world.settings.clearer_hints)) != str:
+            location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints).text
+        else:
+            location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints)
+        location_text_J = loctextJ(location_text)  
         return (GossipText('<C%sCは&C%sCを&つかさどる' % (location_text_J, item_text), ['Green', 'Red']), location)
     else:
         location_text = get_hint_area(location)
-        location_text_J = None
-        for region, (text, replace) in LocationJP.items():
-            if ((location_text == text) is True):
-                location_text_J = replace
-        if location_text_J is None:
-            location_text_J = "どこか"
+        location_text_J = loctextJ(location_text)  
         return (GossipText('<C%sCは&C%sCで&見つけられる' % (item_text, location_text_J), ['Red', 'Green']), location)
 
 
@@ -491,25 +521,18 @@ def get_specific_item_hint(spoiler, world, checked):
     item_text = getHint(getItemGenericName(location.item), world.settings.clearer_hints).text
     
     if location.parent_region.dungeon:
-        location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints).text
-        location_text_J = None
-        for region, (text, replace) in LocationJP.items():
-            if ((location_text == text) is True):
-                location_text_J = replace
-        if location_text_J is None:
-            location_text_J = "どこか"
+        if type(getHint(location.parent_region.dungeon.name, world.settings.clearer_hints)) != str:
+            location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints).text
+        else:
+            location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints)
+        location_text_J = loctextJ(location_text)  
         if world.hint_dist_user.get('vague_named_items', False):
             return (GossipText('<C%sCは&勇者への道' % (location_text_J), ['Green']), location)
         else:
             return (GossipText('<C%sCは&C%sCを&つかさどる' % (location_text_J, item_text), ['Green', 'Red']), location)
     else:
         location_text = get_hint_area(location)
-        location_text_J = None
-        for region, (text, replace) in LocationJP.items():
-            if ((location_text == text) is True):
-                location_text_J = replace
-        if location_text_J is None:
-            location_text_J = "どこか"
+        location_text_J = loctextJ(location_text)  
         if world.hint_dist_user.get('vague_named_items', False):
             return (GossipText('<C%sCは&勇者への道' % (location_text_J), ['Green']), location)
         else:
@@ -535,22 +558,15 @@ def get_random_location_hint(spoiler, world, checked):
 
     item_text = getHint(getItemGenericName(location.item), world.settings.clearer_hints).text
     if dungeon:
-        location_text = getHint(dungeon.name, world.settings.clearer_hints).text
-        location_text_J = None
-        for region, (text, replace) in LocationJP.items():
-            if ((location_text == text) is True):
-                location_text = replace
-        if location_text_J is None:
-            location_text_J = "どこか"
+        if type(getHint(dungeon.name, world.settings.clearer_hints)) != str:
+            location_text = getHint(dungeon.name, world.settings.clearer_hints).text
+        else:
+            location_text = getHint(dungeon.name, world.settings.clearer_hints)
+        location_text_J = loctextJ(location_text)  
         return (GossipText('<C%sCは&C%sCを&つかさどる' % (location_text_J, item_text), ['Green', 'Red']), location)
     else:
         location_text = get_hint_area(location)
-        location_text_J = None
-        for region, (text, replace) in LocationJP.items():
-            if ((location_text == text) is True):
-                location_text_J = replace
-        if location_text_J is None:
-            location_text_J = "どこか"
+        location_text_J = loctextJ(location_text)  
         return (GossipText('<C%sCは&C%sCで&見つけられる' % (item_text, location_text_J), ['Red', 'Green']), location)
 
 
@@ -568,12 +584,7 @@ def get_specific_hint(spoiler, world, checked, type):
         location_text = world.hint_text_overrides[location.name]
     else:
         location_text = hint.text
-    location_text_J = None
-    for region, (text, replace) in LocationJP.items():
-        if ((location_text == text) is True):
-            location_text_J = replace
-    if location_text_J is None:
-        location_text_J = "どこか"
+    location_text_J = loctextJ(location_text)
     if 'C' not in location_text_J:
         location_text_J = 'C%sC' % location_text_J
     item_text = getHint(getItemGenericName(location.item), world.settings.clearer_hints).text
@@ -617,22 +628,29 @@ def get_entrance_hint(spoiler, world, checked):
     checked.add(entrance.name)
 
     entrance_text = entrance_hint.text
+    
 
     if 'C' not in entrance_text:
         entrance_text = 'C%sC' % entrance_text
 
     connected_region = entrance.connected_region
     if connected_region.dungeon:
-        region_text = getHint(connected_region.dungeon.name, world.settings.clearer_hints).text
+        if type(getHint(connected_region.dungeon.name, world.settings.clearer_hints)) != str:
+            region_text = getHint(connected_region.dungeon.name, world.settings.clearer_hints).text
+        else:
+            region_text = getHint(connected_region.dungeon.name, world.settings.clearer_hints)
     else:
-        region_text = getHint(connected_region.name, world.settings.clearer_hints).text
+        if type(getHint(connected_region.name, world.settings.clearer_hints)) != str:
+            region_text = getHint(connected_region.name, world.settings.clearer_hints).text
+        else:
+            region_text = getHint(connected_region.name, world.settings.clearer_hints)
 
     if 'C' not in region_text:
         region_text = 'C%sC' % region_text
 
     return (GossipText('<%s&%s' % (entrance_text, region_text), ['Light Blue', 'Green']), None)
 
-
+   
 def get_junk_hint(spoiler, world, checked):
     hints = getHintGroup('junk', world)
     hints = list(filter(lambda hint: hint.name not in checked, hints))
@@ -871,17 +889,10 @@ def buildWorldGossipHints(spoiler, world, checkedLocations=None):
                 world.named_item_pool.remove(always_item)
 
             if location.name in world.hint_text_overrides:
-                location_text_O = world.hint_text_overrides[location.name]
-                
-                location_
+                location_text = world.hint_text_overrides[location.name]
             else:
                 location_text = getHint(location.name, world.settings.clearer_hints).text
-            location_text_J = None
-            for region, (text, replace) in LocationJP.items():
-                if ((location_text == text) is True):
-                    location_text_J = replace
-            if location_text_J is None:
-                location_text_J = "どこか"
+            location_text_J = loctextJ(location_text)  
             if 'C' not in location_text_J:
                 location_text_J = 'C%sC' % location_text_J
             item_text = getHint(getItemGenericName(location.item), world.settings.clearer_hints).text
@@ -1037,13 +1048,12 @@ def buildBossString(reward, color, world):
     for location in world.get_filled_locations():
         if location.item.name == reward:
             item_icon = chr(location.item.special['item_id'])
-            location_text = getHint(location.name, world.settings.clearer_hints).text
-            location_text_J = None
-            for region, (text, replace) in LocationJP.items():
-                if ((location_text == text) is True):
-                    location_text_J = replace
-            if location_text_J is None:
-                location_text_J = "どこか"
+            
+            if type(getHint(location.name, world.settings.clearer_hints)) != str:
+                location_text = getHint(location.name, world.settings.clearer_hints).text
+            else:
+                location_text = getHint(location.name, world.settings.clearer_hints)
+            location_text_J = loctextJ(location_text)  
             return str(GossipText("<~%s%s" % (item_icon, location_text_J), [color], prefix='')) + '^'
     return ''
 
@@ -1126,12 +1136,7 @@ def buildGanonText(world, messages):
         text = get_raw_text(getHint('Light Arrow Location', world.settings.clearer_hints).text)
         location = world.light_arrow_location
         location_hint = get_hint_area(location)
-        location_hint_J = None
-        for region, (text, replace) in LocationJP.items():
-            if ((location_hint == text) is True):
-                location_hint_J = replace
-        if location_hint_J is None:
-            location_hint_J = "どっか"
+        location_hint_J = loctextJ(location_hint)  
         if world.id != location.world.id:
             text += "#\x02%s#\x00" % (get_raw_text(location_hint_J))
         else:
