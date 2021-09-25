@@ -123,44 +123,66 @@ gossipLocations_reversemap = {
 }
 
 def has_eng(text):
-    lowerReg = re.compile(r'^[a-zA-BD-Z]+$')
-    return lowerReg.match(text) is not None
+    if text is None:
+        return False
+    return re.search(r'[a-z]+', text) is not None
+    
 def loctextJ(text):
     location_text_J = None
-    for region, (opt, clear, type) in HT.items():
-        if clear is None:
-            clear = opt
-        if ((clear == text) is True and (has_eng(clear)) is False and type is not 'exclude'):
-            location_text_J = clear
-            break
-        if ((text in opt) is True and (opt == text) is False and (has_eng(opt[opt.index(text)])) is False and type is not 'exclude'):
-            location_text_J = opt[opt.index(text)]
-            break
-        if ((opt == text) is True and (has_eng(opt)) is False and type is not 'exclude'):
-            location_text_J = opt
-            break
-        if (type is 'exclude'):
-            text = region
-            break
-    if location_text_J is None:
-        for region, (orih, replace, prior) in LocationJP.items():
-            if ((region in text)is True and prior is "Low"):
-                location_text_J = replace
+    if not (has_eng(text)):
+        location_text_J = text.replace('City','Bity')
+        location_text_J = text.replace('C','')
+        location_text_J = text.replace('Bity','City')
+        count = location_text_J.rfind('は')
+        list_loc = list(location_text_J)
+        if (len(location_text_J) - count) < 3:
+            list_loc[count] = ""
+            location_text_J = "".join(list_loc)
+    elif has_eng(text) or has_eng(location_text_J):
+        for region, (opt, clear, type) in HT.items():
+            if ((clear == text) is True and not(has_eng(clear))):
+                location_text_J = clear
                 break
-            if ((region in text)is True and prior is "Middle"):
-                location_text_J = replace
+            if ((text in opt) is True and (opt == text) is False and not (has_eng(opt[opt.find(text)]))):
+                if len(opt[opt.find(text)]) == 1:
+                    location_text_J = opt.replace('C','')
+                    if (int(len(location_text_J)) - int(location_text_J.find("は"))) < 3 and int(location_text_J.find("は")) is not 0:
+                        count = location_text_J.rfind('は')
+                        list_loc = list(location_text_J)
+                        list_loc[count] = ""
+                        location_text_J = "".join(list_loc)
+                    break
+                else:
+                    location_text_J = opt[opt.find(text)]
+                    break
+            if ((opt == text) is True and (has_eng(opt)) == False):
+                location_text_J = opt
                 break
-            if ((region in text)is True and prior is "High"):
-                location_text_J = replace
+            if (((opt == text) or (text in opt))is True and (has_eng(opt))):
+                text = region
+                location_text_J = None
                 break
-            if ((text == orih) is True):
-                location_text_J = replace
-                break
-            if ((replace in text) is True):
-                location_text_J = replace
-                break
-    if location_text_J is None:
-        location_text_J = "どこか"
+        if (location_text_J is None) or (has_eng(location_text_J)):
+            for region2, (orih, replace, prior) in LocationJP.items():
+                if ((text == orih) is True):
+                    location_text_J = replace
+                    break
+                if ((replace in text) is True):
+                    location_text_J = replace
+                    break
+                if (((region2 in text) is True ) and prior is "Low"):
+                    location_text_J = replace
+                    break
+                if (((region2 in text) is True ) and prior is "Middle"):
+                    location_text_J = replace
+                    break
+                if (((region2 in text) is True ) and prior is "High"):
+                    location_text_J = replace
+                    break
+            if location_text_J is None:
+                location_text_J = "どこか"
+    if has_eng(location_text_J):
+        return loctextJ(location_text_J)
     return location_text_J
     
 def getItemGenericName(item):
@@ -899,6 +921,14 @@ def buildWorldGossipHints(spoiler, world, checkedLocations=None):
             add_hint(spoiler, world, stoneGroups, GossipText('<%s&C%sC' % (location_text_J, item_text), ['Green', 'Red']), hint_dist['always'][1], location, force_reachable=True)
             logging.getLogger('').debug('Placed always hint for %s.', location.name)
 
+    trial_translate = [
+        ('Light',  '光'),
+        ('Forest', '森'),
+        ('Fire',   '炎'),
+        ('Water',  '水'),
+        ('Shadow', '闇'),
+        ('Spirit', '魂'),
+    ]
     # Add trial hints, only if hint copies > 0
     if hint_dist['trial'][1] > 0:
         if world.settings.trials_random and world.settings.trials == 6:
@@ -907,12 +937,22 @@ def buildWorldGossipHints(spoiler, world, checkedLocations=None):
             add_hint(spoiler, world, stoneGroups, GossipText("<シークはCガノン城Cの&バリアを破壊した", ['Yellow']), hint_dist['trial'][1], force_reachable=True)
         elif world.settings.trials < 6 and world.settings.trials > 3:
             for trial,skipped in world.skipped_trials.items():
+                trialjp = "どこか"
                 if skipped:
-                    add_hint(spoiler, world, stoneGroups,GossipText("<シークはC%sCの&バリアを破壊した" % trial, ['Yellow']), hint_dist['trial'][1], force_reachable=True)
+                    for (en, jp) in trial_translate:
+                        if trial == en:
+                            trialjp = jp
+                            break
+                    add_hint(spoiler, world, stoneGroups,GossipText("<シークはC%sCの&バリアを破壊した" % trialjp, ['Yellow']), hint_dist['trial'][1], force_reachable=True)
         elif world.settings.trials <= 3 and world.settings.trials > 0:
             for trial,skipped in world.skipped_trials.items():
+                trialjp = "どこか"
                 if not skipped:
-                    add_hint(spoiler, world, stoneGroups, GossipText("<ガノン城はC%sCに&守られている" % trial, ['Pink']), hint_dist['trial'][1], force_reachable=True)
+                    for (en, jp) in trial_translate:
+                        if trial == en:
+                            trialjp = jp
+                            break
+                    add_hint(spoiler, world, stoneGroups, GossipText("<ガノン城はC%sCに&守られている" % trialjp, ['Pink']), hint_dist['trial'][1], force_reachable=True)
 
     # Add user-specified hinted item locations if using a built-in hint distribution
     # Raise error if hint copies is zero

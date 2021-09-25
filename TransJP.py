@@ -14,7 +14,8 @@ locateJP = {
     "Market":    ("the Market", "城下町", "Low"),
     "ToT":   ("Temple of Time", "時の神殿", "Middle"),
     "HC":    ("Hyrule Castle", "ハイラル城", "Low"),
-    "OGC":   ("outside Ganon's Castle", "ガノン城外", "High"),
+    "OGC":   ("outside Ganon's Castle", "ガノン城外", "Middle"),
+    "Great Fairy": ("oubevoi", "大妖精の泉", "High"),
     "Kak":    ("Kakariko Village", "カカリコ村", "Low"),
     "Graveyard":    ("the Graveyard", "墓地", "Middle"),
     "DMT":   ("Death Mountain Trail", "登山道", "Low"),
@@ -37,7 +38,7 @@ locateJP = {
     "Ice Cavern":    ("Ice Cavern", "氷の洞窟", "High"),
     "Bottom of the Well":  ("Bottom of the Well", "井戸の下", "High"),
     "Gerudo Training Ground":   ("Gerudo Training Ground", "修練場", "High"),
-    "Ganons Castle":   ("Ganon\'s Castle", "ガノン城", "Middle"),
+    "Ganons Castle":   ("Ganon\'s Castle", "ガノン城", "Low"),
     "Ganons Tower":    ("liyviuv;", "ガノン城", "Middle"),
 }
 LocationJP = {**locateJP}

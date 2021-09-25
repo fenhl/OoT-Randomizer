@@ -1873,7 +1873,7 @@ def patch_rom_jp(spoiler:Spoiler, world:World, rom:Rom):
     shop_items[0x0019].price = 99
     shop_items[0x001C].price = 99
     update_message_jp(messages, 0x80BC, "<#\x01ボムチュウ（１０コ）　９９ルピー#\x00&自分で走る　新型バクダン。>*O", 0x03)
-    update_message_jp(messages, 0x808C, " <ボムチュウ（１０コ）　９９ルピー&:2#\x02かう&やめとく#\x00>", 0x03)
+    update_message_jp(messages, 0x808C, "<ボムチュウ（１０コ）　９９ルピー&:2#\x02かう&やめとく#\x00>", 0x03)
 
 
     # kokiri shop
@@ -1944,9 +1944,9 @@ def patch_rom_jp(spoiler:Spoiler, world:World, rom:Rom):
     def update_scrub_text_jp(id, default_price, price, item_name=None):
         cnge = str(price).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)}))
         dflt = str(default_price).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)}))
-        text = "<$まいったピー！&アイテム　売るッピー！&#\x01%sルピー#\x00だピー！^<アイテム　%sルピー&:2#\x02かう&やめとく#\x00>"% (dflt, dflt)
+        text = "<$まいったピー！&アイテム　売るッピー！^<%sルピー&:2#\x02かう&やめとく#\x00>"% dflt
         if default_price != price:
-            text = "<$まいったピー！&アイテム　売るッピー！&#\x01%sルピー#\x00だピー！^<アイテム　%sルピー&:2#\x02かう&やめとく#\x00>"% (cnge, cnge)
+            text = "<$まいったピー！&アイテム　売るッピー！^<%sルピー&:2#\x02かう&やめとく#\x00>"% cnge
         if item_name is not None:
             for en, jp in ItemTrJP.items():
                 textOptions, clearText, type = jp
@@ -1989,7 +1989,7 @@ def patch_rom_jp(spoiler:Spoiler, world:World, rom:Rom):
             rom.write_int32(None, 0x80A74FF8)  # Can_Buy_Func
             rom.write_int32(None, 0x80A75354)  # Buy_Func
 
-            scrub_message_dict[text_id] = update_scrub_text_jp(id, default_price, price)
+            scrub_message_dict[text_id] = update_scrub_text_jp(text_id, default_price, price)
 
         # update actor IDs
         set_deku_salesman_data(rom)
@@ -2155,7 +2155,7 @@ def patch_rom_jp(spoiler:Spoiler, world:World, rom:Rom):
     # Add 3rd Wallet Upgrade
     rom.write_int16(0xB6D57E, 0x0003)
     rom.write_int16(0xB6EC52, 999)
-    tycoon_message = "<<~~\x57##\x03富豪のサイフ##\x00を　手に入れた！&&##\x06９９９ルピー##\x00まで　持てるゾ！"
+    tycoon_message = "<<~~\x57##\x03大金持ちのサイフ##\x00を　手に入れた！&&##\x06９９９ルピー##\x00まで　持てるゾ！"
     update_message_jp(messages, 0x00F8, tycoon_message, 0x23, 2)
 
     write_shop_items(rom, shop_item_file.start + 0x1DEC, shop_items)
