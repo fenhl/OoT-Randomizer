@@ -154,7 +154,7 @@ export class GeneratorComponent implements OnInit {
     return filteredTabList;
   }
 
-  generateSeed(fromPatchFile: boolean = false, webRaceSeed: boolean = false) {
+  generateSeed(fromPatchFile: boolean = false, webRaceSeed: boolean = false, goalHintsConfirmed: boolean = false) {
 
     this.generateSeedButtonEnabled = false;
     this.seedString = this.seedString.trim().replace(/[^a-zA-Z0-9_-]/g, '');
@@ -163,9 +163,10 @@ export class GeneratorComponent implements OnInit {
     //console.log(this.global.generator_settingsMap);
     //console.log(this.global.generator_customColorMap);
 
-    if (this.global.getGlobalVar('electronAvailable')) { //Electron
-
-      //Delay the generation if settings are currently locked to avoid race conditions
+    //Delay the generation if settings are currently locked to avoid race conditions.
+    //Do this here so the goal hint confirmation dialog can be defined once for
+    //Electron and Web
+    if (this.global.getGlobalVar('electronAvailable')) {
       if (this.settingsLocked) {
         setTimeout(() => {
           this.generateSeed(fromPatchFile, webRaceSeed);
@@ -173,6 +174,29 @@ export class GeneratorComponent implements OnInit {
 
         return;
       }
+    }
+
+    let goalErrorText = "The selected hint distribution includes the Goal hint type. This can drastically increase generation time for large multiworld seeds. Continue?";
+    let goalDistros = this.global.getGlobalVar('generatorGoalDistros');
+
+    if (!goalHintsConfirmed && goalDistros.indexOf(this.global.generator_settingsMap["hint_dist"]) > -1 && this.global.generator_settingsMap["world_count"] > 5) {
+      this.dialogService.open(ConfirmationWindow, {
+        autoFocus: true, closeOnBackdropClick: false, closeOnEsc: false, hasBackdrop: true, hasScroll: false, context: { dialogHeader: "Goal Hint Warning", dialogMessage: goalErrorText }
+      }).onClose.subscribe(confirmed => {
+        //User acknowledged increased generation time for multiworld seeds with goal hints
+        if (confirmed) {
+          this.generateSeed(fromPatchFile, webRaceSeed, true);
+        }
+      });
+
+      this.generateSeedButtonEnabled = true;
+      this.cd.markForCheck();
+      this.cd.detectChanges();
+
+      return;
+    }
+
+    if (this.global.getGlobalVar('electronAvailable')) { //Electron
 
       //Hack: Fix Generation Count being None occasionally
       if (!this.global.generator_settingsMap["count"] || this.global.generator_settingsMap["count"] < 1)

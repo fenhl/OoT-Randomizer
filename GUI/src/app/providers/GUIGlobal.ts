@@ -34,7 +34,8 @@ export class GUIGlobal {
       ["generatorSettingsArray", []],
       ["generatorSettingsObj", {}],
       ["generatorCosmeticsArray", []],
-      ["generatorCosmeticsObj", {}]
+      ["generatorCosmeticsObj", {}],
+      ["generatorGoalDistros", []]
     ]);
   }
 
@@ -483,12 +484,14 @@ export class GUIGlobal {
     console.log("JSON Settings Data:", guiSettings);
     console.log("Last User Settings:", userSettings);
     console.log("Final Settings Map", this.generator_settingsMap);
+    console.log("Goal Hint Distros", guiSettings.distroArray);
 
     //Save settings after parsing them
     this.setGlobalVar('generatorSettingsArray', guiSettings.settingsArray);
     this.setGlobalVar('generatorSettingsObj', guiSettings.settingsObj);
     this.setGlobalVar('generatorCosmeticsArray', guiSettings.cosmeticsArray);
     this.setGlobalVar('generatorCosmeticsObj', guiSettings.cosmeticsObj);
+    this.setGlobalVar('generatorGoalDistros', guiSettings.distroArray);
 
     this.generator_presets = guiSettings.presets;
   }
