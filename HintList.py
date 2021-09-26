@@ -57,15 +57,22 @@ def getHintGroup(group, world):
         if hint.name in world.always_hints and group == 'always':
             hint.type = 'always'
 
+        conditional_keep = True
+        type_append = False
+        if group in ['overworld', 'dungeon', 'sometimes'] and hint.name in conditional_sometimes.keys():
+            conditional_keep = conditional_sometimes[hint.name](world)
+
         # Hint inclusion override from distribution
         if group in world.added_hint_types or group in world.item_added_hint_types:
             if hint.name in world.added_hint_types[group]:
                 hint.type = group
+                type_append = True
             if nameIsLocation(name, hint.type, world):
                 location = world.get_location(name)
                 for i in world.item_added_hint_types[group]:
                     if i == location.item.name:
                         hint.type = group
+                        type_append = True
                 for i in world.item_hint_type_overrides[group]:
                     if i == location.item.name:
                         hint.type = []
@@ -79,7 +86,7 @@ def getHintGroup(group, world):
                 if location.item.name in world.item_hint_type_overrides[group]:
                     type_override = True
 
-        if group in hint.type and (name not in hintExclusions(world)) and not type_override:
+        if group in hint.type and (name not in hintExclusions(world)) and not type_override and (conditional_keep or type_append):
             ret.append(hint)
     return ret
 
@@ -155,6 +162,11 @@ conditional_always = {
     'Kak 50 Gold Skulltula Reward': lambda world: tokens_required_by_settings(world) < 50,
 }
 
+# Some sometimes hints should only be enabled under certain settings
+conditional_sometimes = {
+    'HC Great Fairy Reward':        lambda world: world.settings.shuffle_interior_entrances == 'off',
+    'OGC Great Fairy Reward':       lambda world: world.settings.shuffle_interior_entrances == 'off',
+}
 
 # table of hints, format is (name, hint text, clear hint text, type of hint) there are special characters that are read for certain in game commands:
 # ^ is a box break
@@ -349,6 +361,11 @@ hintTable = {
     'ZD King Zora Thawed':                                         ("a #defrosted dignitary# gifts", "unfreezing #King Zora# grants", ['overworld', 'sometimes']),
     'DMC Deku Scrub':                                              ("a single #scrub in the crater# sells", None, ['overworld', 'sometimes']),
     'DMC GS Crate':                                                ("a spider under a #crate in the crater# holds", None, ['overworld', 'sometimes']),
+    'LW Target in Woods':                                          ("shooting a #target in the woods# grants", None, ['overworld', 'sometimes']),
+    'ZR Frogs in the Rain':                                        ("#frogs in a storm# gift", None, ['overworld', 'sometimes']),
+    'LH Lab Dive':                                                 ("a #diving experiment# is rewarded with", None, ['overworld', 'sometimes']),
+    'HC Great Fairy Reward':                                       ("the #fairy of fire# holds", "a #fairy outside Hyrule Castle# holds", ['overworld', 'sometimes']),
+    'OGC Great Fairy Reward':                                      ("the #fairy of strength# holds", "a #fairy outside Ganon's Castle# holds", ['overworld', 'sometimes']),
 
     'Deku Tree MQ After Spinning Log Chest':                       ("a #temporal stone within a tree# contains", "a #temporal stone within the Deku Tree# contains", ['dungeon', 'sometimes']),
     'Deku Tree MQ GS Basement Graves Room':                        ("a #spider on a ceiling in a tree# holds", "a #spider on a ceiling in the Deku Tree# holds", ['dungeon', 'sometimes']),
@@ -361,8 +378,10 @@ hintTable = {
     'Fire Temple MQ Chest On Fire':                                ("the #Flare Dancer atop the volcano# guards a chest containing", "the #Flare Dancer atop the Fire Temple# guards a chest containing", ['dungeon', 'sometimes']),
     'Fire Temple MQ GS Skull On Fire':                             ("a #spider under a block in the volcano# holds", "a #spider under a block in the Fire Temple# holds", ['dungeon', 'sometimes']),
     'Water Temple River Chest':                                    ("beyond the #river under the lake# waits", "beyond the #river in the Water Temple# waits", ['dungeon', 'sometimes']),
+    'Water Temple Central Pillar Chest':                           ("beneath a #tall tower under a vast lake# lies", "a chest in the #central pillar of Water Temple# contains", ['dungeon', 'sometimes']),
     'Water Temple Boss Key Chest':                                 ("dodging #rolling boulders under the lake# leads to", "dodging #rolling boulders in the Water Temple# leads to", ['dungeon', 'sometimes']),
     'Water Temple GS Behind Gate':                                 ("a spider behind a #gate under the lake# holds", "a spider behind a #gate in the Water Temple# holds", ['dungeon', 'sometimes']),
+    'Water Temple MQ Central Pillar Chest':                        ("beneath a #tall tower under a vast lake# lies", "a chest in the #central pillar of Water Temple# contains", ['dungeon', 'sometimes']),
     'Water Temple MQ Freestanding Key':                            ("hidden in a #box under the lake# lies", "hidden in a #box in the Water Temple# lies", ['dungeon', 'sometimes']),
     'Water Temple MQ GS Freestanding Key Area':                    ("the #locked spider under the lake# holds", "the #locked spider in the Water Temple# holds", ['dungeon', 'sometimes']),
     'Water Temple MQ GS Triple Wall Torch':                        ("a spider behind a #gate under the lake# holds", "a spider behind a #gate in the Water Temple# holds", ['dungeon', 'sometimes']),
@@ -370,15 +389,18 @@ hintTable = {
     'Gerudo Training Ground MQ Underwater Silver Rupee Chest':     (["those who seek #sunken silver rupees# will find", "the #thieves' underwater training# rewards"], None, ['dungeon', 'sometimes']),
     'Gerudo Training Ground Maze Path Final Chest':                ("the final prize of #the thieves' training# is", None, ['dungeon', 'sometimes']),
     'Gerudo Training Ground MQ Ice Arrows Chest':                  ("the final prize of #the thieves' training# is", None, ['dungeon', 'sometimes']),
-    'Bottom of the Well Lens of Truth Chest':                      (["the well's #grasping ghoul# hides", "a #nether dweller in the well# holds"], "#Dead Hand in the well# holds", ['dungeon', 'sometimes']),
-    'Bottom of the Well MQ Compass Chest':                         (["the well's #grasping ghoul# hides", "a #nether dweller in the well# holds"], "#Dead Hand in the well# holds", ['dungeon', 'sometimes']),
     'Spirit Temple Silver Gauntlets Chest':                        ("the treasure #sought by Nabooru# is", "upon the #Colossus's right hand# is", ['dungeon', 'sometimes']),
     'Spirit Temple Mirror Shield Chest':                           ("upon the #Colossus's left hand# is", None, ['dungeon', 'sometimes']),
     'Spirit Temple MQ Child Hammer Switch Chest':                  ("a #temporal paradox in the Colossus# yields", "a #temporal paradox in the Spirit Temple# yields", ['dungeon', 'sometimes']),
     'Spirit Temple MQ Symphony Room Chest':                        ("a #symphony in the Colossus# yields", "a #symphony in the Spirit Temple# yields", ['dungeon', 'sometimes']),
     'Spirit Temple MQ GS Symphony Room':                           ("a #spider's symphony in the Colossus# yields", "a #spider's symphony in the Spirit Temple# yields", ['dungeon', 'sometimes']),
-    'Shadow Temple Invisible Floormaster Chest':                   ("shadows in an #invisible maze# guard", None, ['dungeon', 'sometimes']),
+    'Shadow Temple Freestanding Key':                              ("a #burning skull in the house of the dead# holds", "a #giant pot in the Shadow Temple# holds", ['dungeon', 'sometimes']),
     'Shadow Temple MQ Bomb Flower Chest':                          ("shadows in an #invisible maze# guard", None, ['dungeon', 'sometimes']),
+    'Shadow Temple MQ Stalfos Room Chest':                         ("near an #empty pedestal within the house of the dead# lies", "#stalfos in the Shadow Temple# guard", ['dungeon', 'sometimes']),
+    'Ice Cavern Iron Boots Chest':                                 ("a #monster in a frozen cavern# guards", "the #final treasure of Ice Cavern# is", ['dungeon', 'sometimes']),
+    'Ice Cavern MQ Iron Boots Chest':                              ("a #monster in a frozen cavern# guards", "the #final treasure of Ice Cavern# is", ['dungeon', 'sometimes']),
+    'Ganons Castle Shadow Trial Golden Gauntlets Chest':           ("#deep in the test of darkness# lies", "a #like-like in Ganon's Shadow Trial# guards", ['dungeon', 'sometimes']),
+    'Ganons Castle MQ Shadow Trial Eye Switch Chest':              ("#deep in the test of darkness# lies", "shooting an #eye switch in Ganon's Shadow Trial# reveals", ['dungeon', 'sometimes']),
 
     'KF Kokiri Sword Chest':                                       ("the #hidden treasure of the Kokiri# is", None, 'exclude'),
     'KF Midos Top Left Chest':                                     ("the #leader of the Kokiri# hides", "#inside Mido's house# is", 'exclude'),
@@ -407,11 +429,9 @@ hintTable = {
     'ToT Light Arrows Cutscene':                                   ("the #final gift of a princess# is", None, 'exclude'),
     'LW Gift from Saria':                                          (["a #potato hoarder# holds", "a rooty tooty #flutey cutey# gifts"], "#Saria's Gift# is", 'exclude'),
     'ZF Great Fairy Reward':                                       ("the #fairy of winds# holds", None, 'exclude'),
-    'HC Great Fairy Reward':                                       ("the #fairy of fire# holds", None, 'exclude'),
     'Colossus Great Fairy Reward':                                 ("the #fairy of love# holds", None, 'exclude'),
     'DMT Great Fairy Reward':                                      ("a #magical fairy# gifts", None, 'exclude'),
     'DMC Great Fairy Reward':                                      ("a #magical fairy# gifts", None, 'exclude'),
-    'OGC Great Fairy Reward':                                      ("the #fairy of strength# holds", None, 'exclude'),
 
     'Song from Impa':                                              ("#deep in a castle#, Impa teaches", None, 'exclude'),
     'Song from Malon':                                             ("#a farm girl# sings", None, 'exclude'),
@@ -423,7 +443,6 @@ hintTable = {
     'ZD Diving Minigame':                                          ("an #unsustainable business model# gifts", "those who #dive for Zora rupees# will find", 'exclude'),
     'LH Child Fishing':                                            ("#fishing in youth# bestows", None, 'exclude'),
     'LH Adult Fishing':                                            ("#fishing in maturity# bestows", None, 'exclude'),
-    'LH Lab Dive':                                                 ("a #diving experiment# is rewarded with", None, 'exclude'),
     'GC Rolling Goron as Adult':                                   ("#comforting yourself# provides", "#reassuring a young Goron# is rewarded with", 'exclude'),
     'Market Bombchu Bowling First Prize':                          ("the #first explosive prize# is", None, 'exclude'),
     'Market Bombchu Bowling Second Prize':                         ("the #second explosive prize# is", None, 'exclude'),
@@ -432,11 +451,9 @@ hintTable = {
     'Kak 10 Gold Skulltula Reward':                                (["#10 bug badges# rewards", "#10 spider souls# yields", "#10 auriferous arachnids# lead to"], "slaying #10 Gold Skulltulas# reveals", 'exclude'),
     'Kak Man on Roof':                                             ("a #rooftop wanderer# holds", None, 'exclude'),
     'ZR Magic Bean Salesman':                                      ("a seller of #colorful crops# has", "a #bean seller# offers", 'exclude'),
-    'ZR Frogs in the Rain':                                        ("#frogs in a storm# gift", None, 'exclude'),
     'GF HBA 1000 Points':                                          ("scoring 1000 in #horseback archery# grants", None, 'exclude'),
     'Market Shooting Gallery Reward':                              ("#shooting in youth# grants", None, 'exclude'),
     'Kak Shooting Gallery Reward':                                 ("#shooting in maturity# grants", None, 'exclude'),
-    'LW Target in Woods':                                          ("shooting a #target in the woods# grants", None, 'exclude'),
     'Kak Anju as Adult':                                           ("a #chicken caretaker# offers adults", None, 'exclude'),
     'LLR Talons Chickens':                                         ("#finding Super Cuccos# is rewarded with", None, 'exclude'),
     'GC Rolling Goron as Child':                                   ("the prize offered by a #large rolling Goron# is", None, 'exclude'),
@@ -517,13 +534,14 @@ hintTable = {
     'Forest Temple Raised Island Courtyard Chest':                 ("a #chest on a small island# in the Forest Temple holds", None, 'exclude'),
     'Forest Temple Falling Ceiling Room Chest':                    ("beneath a #checkerboard falling ceiling# lies", None, 'exclude'),
     'Forest Temple Eye Switch Chest':                              ("a #sharp eye# will spot", "#blocks of stone# in the Forest Temple surround", 'exclude'),
-    'Forest Temple Boss Key Chest':                                ("a #turned trunk# contains", None, 'exclude'),
     'Forest Temple Floormaster Chest':                             ("deep in the forest #shadows guard a chest# containing", None, 'exclude'),
     'Forest Temple Bow Chest':                                     ("an #army of the dead# guards", "#Stalfos deep in the Forest Temple# guard", 'exclude'),
     'Forest Temple Red Poe Chest':                                 ("#Joelle# guards", "a #red ghost# guards", 'exclude'),
     'Forest Temple Blue Poe Chest':                                ("#Beth# guards", "a #blue ghost# guards", 'exclude'),
     'Forest Temple Basement Chest':                                ("#revolving walls# in the Forest Temple conceal", None, 'exclude'),
+    'Forest Temple Boss Key Chest':                                ("a #turned trunk# contains", "a #sideways chest in the Forest Temple# hides", 'exclude'),
 
+    'Forest Temple MQ Boss Key Chest':                             ("a #turned trunk# contains", "a #sideways chest in the Forest Temple# hides", 'exclude'),
     'Forest Temple MQ First Room Chest':                           ("a #tree in the Forest Temple# supports", None, 'exclude'),
     'Forest Temple MQ Wolfos Chest':                               ("#defeating enemies beneath a falling ceiling# in Forest Temple yields", None, 'exclude'),
     'Forest Temple MQ Bow Chest':                                  ("an #army of the dead# guards", "#Stalfos deep in the Forest Temple# guard", 'exclude'),
@@ -535,7 +553,6 @@ hintTable = {
     'Forest Temple MQ Falling Ceiling Room Chest':                 ("beneath a #checkerboard falling ceiling# lies", None, 'exclude'),
     'Forest Temple MQ Basement Chest':                             ("#revolving walls# in the Forest Temple conceal", None, 'exclude'),
     'Forest Temple MQ Redead Chest':                               ("deep in the forest #undead guard a chest# containing", None, 'exclude'),
-    'Forest Temple MQ Boss Key Chest':                             ("a #turned trunk# contains", None, 'exclude'),
 
     'Fire Temple Near Boss Chest':                                 ("#near a dragon# is", None, 'exclude'),
     'Fire Temple Flare Dancer Chest':                              ("the #Flare Dancer behind a totem# guards", None, 'exclude'),
@@ -567,11 +584,9 @@ hintTable = {
     'Water Temple Torches Chest':                                  ("#fire in the Water Temple# reveals", None, 'exclude'),
     'Water Temple Dragon Chest':                                   ("a #serpent's prize# in the Water Temple is", None, 'exclude'),
     'Water Temple Central Bow Target Chest':                       ("#blinding an eye# in the Water Temple leads to", None, 'exclude'),
-    'Water Temple Central Pillar Chest':                           ("in the #depths of the Water Temple# lies", None, 'exclude'),
     'Water Temple Cracked Wall Chest':                             ("#through a crack# in the Water Temple is", None, 'exclude'),
     'Water Temple Longshot Chest':                                 (["#facing yourself# reveals", "a #dark reflection# of yourself guards"], "#Dark Link# guards", 'exclude'),
 
-    'Water Temple MQ Central Pillar Chest':                        ("in the #depths of the Water Temple# lies", None, 'exclude'),
     'Water Temple MQ Boss Key Chest':                              ("fire in the Water Temple unlocks a #vast gate# revealing a chest with", None, 'exclude'),
     'Water Temple MQ Longshot Chest':                              ("#through a crack# in the Water Temple is", None, 'exclude'),
     'Water Temple MQ Compass Chest':                               ("#fire in the Water Temple# reveals", None, 'exclude'),
@@ -628,8 +643,8 @@ hintTable = {
     'Shadow Temple After Wind Enemy Chest':                        ("#mummies guarding a ferry# hide", None, 'exclude'),
     'Shadow Temple After Wind Hidden Chest':                       ("#mummies guarding a ferry# hide", None, 'exclude'),
     'Shadow Temple Spike Walls Left Chest':                        ("#walls consumed by a ball of fire# reveal", None, 'exclude'),
+    'Shadow Temple Invisible Floormaster Chest':                   ("shadows in an #invisible maze# guard", None, 'exclude'),
     'Shadow Temple Boss Key Chest':                                ("#walls consumed by a ball of fire# reveal", None, 'exclude'),
-    'Shadow Temple Freestanding Key':                              ("#inside a burning skull# lies", None, 'exclude'),
 
     'Shadow Temple MQ Compass Chest':                              ("the #Eye of Truth# pierces a hall of faces to reveal", None, 'exclude'),
     'Shadow Temple MQ Hover Boots Chest':                          ("#Dead Hand in the Shadow Temple# holds", None, 'exclude'),
@@ -642,7 +657,6 @@ hintTable = {
     'Shadow Temple MQ Invisible Spikes Chest':                     ("the #dead roam among invisible spikes# guarding", None, 'exclude'),
     'Shadow Temple MQ Boss Key Chest':                             ("#walls consumed by a ball of fire# reveal", None, 'exclude'),
     'Shadow Temple MQ Spike Walls Left Chest':                     ("#walls consumed by a ball of fire# reveal", None, 'exclude'),
-    'Shadow Temple MQ Stalfos Room Chest':                         ("near an #empty pedestal# within the Shadow Temple lies", None, 'exclude'),
     'Shadow Temple MQ Invisible Blades Invisible Chest':           ("#invisible blades# guard", None, 'exclude'),
     'Shadow Temple MQ Invisible Blades Visible Chest':             ("#invisible blades# guard", None, 'exclude'),
     'Shadow Temple MQ Wind Hint Chest':                            ("an #invisible chest guarded by the dead# holds", None, 'exclude'),
@@ -664,18 +678,18 @@ hintTable = {
     'Bottom of the Well Fire Keese Chest':                         ("#perilous pits# in the well guard the path to", None, 'exclude'),
     'Bottom of the Well Like Like Chest':                          ("#locked in a cage# in the well lies", None, 'exclude'),
     'Bottom of the Well Freestanding Key':                         ("#inside a coffin# hides", None, 'exclude'),
+    'Bottom of the Well Lens of Truth Chest':                      (["the well's #grasping ghoul# hides", "a #nether dweller in the well# holds"], "#Dead Hand in the well# holds", 'exclude'),
 
+    'Bottom of the Well MQ Compass Chest':                         (["the well's #grasping ghoul# hides", "a #nether dweller in the well# holds"], "#Dead Hand in the well# holds", 'exclude'),
     'Bottom of the Well MQ Map Chest':                             ("a #royal melody in the well# uncovers", None, 'exclude'),
     'Bottom of the Well MQ Lens of Truth Chest':                   ("an #army of the dead# in the well guards", None, 'exclude'),
     'Bottom of the Well MQ Dead Hand Freestanding Key':            ("#Dead Hand's explosive secret# is", None, 'exclude'),
     'Bottom of the Well MQ East Inner Room Freestanding Key':      ("an #invisible path in the well# leads to", None, 'exclude'),
 
-    'Ice Cavern Map Chest':                                        ("#winds of ice# surround", None, 'exclude'),
+    'Ice Cavern Map Chest':                                        ("#winds of ice# surround", "a chest #atop a pillar of ice# contains", 'exclude'),
     'Ice Cavern Compass Chest':                                    ("a #wall of ice# protects", None, 'exclude'),
-    'Ice Cavern Iron Boots Chest':                                 ("a #monster in a frozen cavern# guards", None, 'exclude'),
     'Ice Cavern Freestanding PoH':                                 ("a #wall of ice# protects", None, 'exclude'),
 
-    'Ice Cavern MQ Iron Boots Chest':                              ("a #monster in a frozen cavern# guards", None, 'exclude'),
     'Ice Cavern MQ Compass Chest':                                 ("#winds of ice# surround", None, 'exclude'),
     'Ice Cavern MQ Map Chest':                                     ("a #wall of ice# protects", None, 'exclude'),
     'Ice Cavern MQ Freestanding PoH':                              ("#winds of ice# surround", None, 'exclude'),
@@ -723,7 +737,6 @@ hintTable = {
     'Ganons Castle Water Trial Left Chest':                        ("the #test of the seas# holds", None, 'exclude'),
     'Ganons Castle Water Trial Right Chest':                       ("the #test of the seas# holds", None, 'exclude'),
     'Ganons Castle Shadow Trial Front Chest':                      ("#music in the test of darkness# unveils", None, 'exclude'),
-    'Ganons Castle Shadow Trial Golden Gauntlets Chest':           ("#light in the test of darkness# unveils", None, 'exclude'),
     'Ganons Castle Spirit Trial Crystal Switch Chest':             ("the #test of the sands# holds", None, 'exclude'),
     'Ganons Castle Spirit Trial Invisible Chest':                  ("the #test of the sands# holds", None, 'exclude'),
     'Ganons Castle Light Trial First Left Chest':                  ("the #test of radiance# holds", None, 'exclude'),
@@ -740,7 +753,6 @@ hintTable = {
     'Ganons Castle MQ Forest Trial Frozen Eye Switch Chest':       ("the #test of the wilds# holds", None, 'exclude'),
     'Ganons Castle MQ Light Trial Lullaby Chest':                  ("#music in the test of radiance# reveals", None, 'exclude'),
     'Ganons Castle MQ Shadow Trial Bomb Flower Chest':             ("the #test of darkness# holds", None, 'exclude'),
-    'Ganons Castle MQ Shadow Trial Eye Switch Chest':              ("the #test of darkness# holds", None, 'exclude'),
     'Ganons Castle MQ Spirit Trial Golden Gauntlets Chest':        ("#reflected light in the test of the sands# reveals", None, 'exclude'),
     'Ganons Castle MQ Spirit Trial Sun Back Right Chest':          ("#reflected light in the test of the sands# reveals", None, 'exclude'),
     'Ganons Castle MQ Spirit Trial Sun Back Left Chest':           ("#reflected light in the test of the sands# reveals", None, 'exclude'),
@@ -1293,6 +1305,20 @@ hintTable = {
     '2011':                                                     ("Today, let's begin down&'The Hero is Defeated' timeline.", None, 'ganonLine'),
 }
 
+# Separate table for goal names to avoid duplicates in the hint table.
+# Link's Pocket will always be an empty goal, but it's included here to 
+# prevent key errors during the dungeon reward lookup.
+goalTable = {
+    'Queen Gohma':                                              ("path to the #Spider#", "path to #Queen Gohma#", "Green"),
+    'King Dodongo':                                             ("path to the #Dinosaur#", "path to #King Dodongo#", "Red"),
+    'Barinade':                                                 ("path to the #Tentacle#", "path to #Barinade#", "Blue"),
+    'Phantom Ganon':                                            ("path to the #Puppet#", "path to #Phantom Ganon#", "Green"),
+    'Volvagia':                                                 ("path to the #Dragon#", "path to #Volvagia#", "Red"),
+    'Morpha':                                                   ("path to the #Amoeba#", "path to #Morpha#", "Blue"),
+    'Bongo Bongo':                                              ("path to the #Hands#", "path to #Bongo Bongo#", "Pink"),
+    'Twinrova':                                                 ("path to the #Witches#", "path to #Twinrova#", "Yellow"),
+    'Links Pocket':                                             ("path to #Links Pocket#", "path to #Links Pocket#", "Light Blue"),
+}
 
 # This specifies which hints will never appear due to either having known or known useless contents or due to the locations not existing.
 def hintExclusions(world, clear_cache=False):
@@ -1317,7 +1343,8 @@ def hintExclusions(world, clear_cache=False):
                  'sometimes',
                  'overworld',
                  'dungeon',
-                 'song']):
+                 'song',
+                 'exclude']):
             location_hints.append(hint)
 
     for hint in location_hints:
@@ -1329,9 +1356,9 @@ def hintExclusions(world, clear_cache=False):
 def nameIsLocation(name, hint_type, world):
     if isinstance(hint_type, (list, tuple)):
         for htype in hint_type:
-            if htype in ['sometimes', 'song', 'overworld', 'dungeon', 'always'] and name not in hintExclusions(world):
+            if htype in ['sometimes', 'song', 'overworld', 'dungeon', 'always', 'exclude'] and name not in hintExclusions(world):
                 return True
-    elif hint_type in ['sometimes', 'song', 'overworld', 'dungeon', 'always'] and name not in hintExclusions(world):
+    elif hint_type in ['sometimes', 'song', 'overworld', 'dungeon', 'always', 'exclude'] and name not in hintExclusions(world):
         return True
     return False
 

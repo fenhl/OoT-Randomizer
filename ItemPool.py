@@ -106,8 +106,8 @@ item_difficulty_max = {
         'Bombchus (5)': 1,
         'Bombchus (10)': 0,
         'Bombchus (20)': 0,
-        'Nayrus Love': 0,
         'Magic Meter': 1, 
+        'Nayrus Love': 1,
         'Double Defense': 0, 
         'Deku Stick Capacity': 0, 
         'Deku Nut Capacity': 0, 
@@ -1336,9 +1336,6 @@ def get_pool_core(world):
 
     for item,max in item_difficulty_max[world.settings.item_pool_value].items():
         replace_max_item(pool, item, max)
-
-    if world.settings.damage_multiplier in ['ohko', 'quadruple'] and world.settings.item_pool_value == 'minimal':
-        pending_junk_pool.append('Nayrus Love')
 
     world.distribution.alter_pool(world, pool)
 
