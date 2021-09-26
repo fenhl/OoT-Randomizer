@@ -1204,13 +1204,13 @@ def buildBridgeReqsString(world):
     else:
         item_req_string = getHint('bridge_' + world.settings.bridge, world.settings.clearer_hints).text
         if world.settings.bridge == 'medallions':
-            item_req_string = str(world.settings.bridge_medallions) + ' ' + item_req_string
+            item_req_string = str(world.settings.bridge_medallions).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + ' ' + item_req_string
         elif world.settings.bridge == 'stones':
-            item_req_string = str(world.settings.bridge_stones) + ' ' + item_req_string
+            item_req_string = str(world.settings.bridge_stones).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + ' ' + item_req_string
         elif world.settings.bridge == 'dungeons':
-            item_req_string = str(world.settings.bridge_rewards) + ' ' + item_req_string
+            item_req_string = str(world.settings.bridge_rewards).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + ' ' + item_req_string
         elif world.settings.bridge == 'tokens':
-            item_req_string = str(world.settings.bridge_tokens) + ' ' + item_req_string
+            item_req_string = str(world.settings.bridge_tokens).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + ' ' + item_req_string
         if '#' not in item_req_string:
             item_req_string = 'C%sC' % item_req_string
         string += "賢者たちは勇者が&%sを&集めるのを待っている。" % item_req_string
