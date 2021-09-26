@@ -38,6 +38,7 @@ per_world_keys = (
     'entrances',
     'locations',
     ':woth_locations',
+    ':goal_locations',
     ':barren_regions',
     'gossip_stones',
 )
@@ -237,6 +238,7 @@ class WorldDistribution(object):
             'entrances': {name: EntranceRecord(record) for (name, record) in src_dict.get('entrances', {}).items()},
             'locations': {name: [LocationRecord(rec) for rec in record] if is_pattern(name) else LocationRecord(record) for (name, record) in src_dict.get('locations', {}).items() if not is_output_only(name)},
             'woth_locations': None,
+            'goal_locations': None,
             'barren_regions': None,
             'gossip_stones': {name: [GossipRecord(rec) for rec in record] if is_pattern(name) else GossipRecord(record) for (name, record) in src_dict.get('gossip_stones', {}).items()},
         }
@@ -268,6 +270,7 @@ class WorldDistribution(object):
             'entrances': {name: record.to_json() for (name, record) in self.entrances.items()},
             'locations': {name: [rec.to_json() for rec in record] if is_pattern(name) else record.to_json() for (name, record) in self.locations.items()},
             ':woth_locations': None if self.woth_locations is None else {name: record.to_json() for (name, record) in self.woth_locations.items()},
+            ':goal_locations': self.goal_locations,
             ':barren_regions': self.barren_regions,
             'gossip_stones': SortedDict({name: [rec.to_json() for rec in record] if is_pattern(name) else record.to_json() for (name, record) in self.gossip_stones.items()}),
         }
@@ -1162,6 +1165,20 @@ class Distribution(object):
             world_dist.entrances = {ent.name: EntranceRecord.from_entrance(ent) for ent in spoiler.entrances[world.id]}
             world_dist.locations = {loc: LocationRecord.from_item(item) for (loc, item) in spoiler.locations[world.id].items()}
             world_dist.woth_locations = {loc.name: LocationRecord.from_item(loc.item) for loc in spoiler.required_locations[world.id]}
+            world_dist.goal_locations = {}
+            if world.id in spoiler.goal_locations and spoiler.goal_locations[world.id]:
+                for cat_name, goals in spoiler.goal_locations[world.id].items():
+                    world_dist.goal_locations[cat_name] = {}
+                    for goal_name, location_worlds in goals.items():
+                        goal = spoiler.goal_categories[world.id][cat_name].get_goal(goal_name)
+                        goal_text = goal.hint_text.replace('#', '')
+                        goal_text = goal_text[0].upper() + goal_text[1:]
+                        world_dist.goal_locations[cat_name][goal_text] = {}
+                        for location_world, locations in location_worlds.items():
+                            if len(self.world_dists) == 1:
+                                world_dist.goal_locations[cat_name][goal_text] = {loc.name: LocationRecord.from_item(loc.item).to_json() for loc in locations}
+                            else:
+                                world_dist.goal_locations[cat_name][goal_text]['from World ' + str(location_world + 1)] = {loc.name: LocationRecord.from_item(loc.item).to_json() for loc in locations}
             world_dist.barren_regions = [*world.empty_areas]
             world_dist.gossip_stones = {gossipLocations[loc].name: GossipRecord(spoiler.hints[world.id][loc].to_json()) for loc in spoiler.hints[world.id]}
 

@@ -1,14 +1,18 @@
+from collections import OrderedDict
 import copy
+from decimal import Decimal, ROUND_HALF_UP
 import logging
 import random
 import os
 
 from DungeonList import create_dungeons
 from Entrance import Entrance
+from Goals import Goal, GoalCategory
 from HintList import getRequiredHints
 from Hints import get_hint_area, hint_dist_keys, HintDistFiles
 from Item import Item, ItemFactory, MakeEventItem
 from ItemList import item_table
+from ItemPool import TriforceCounts
 from Location import Location, LocationFactory
 from LocationList import business_scrubs
 from Plandomizer import InvalidFileException
@@ -23,7 +27,6 @@ class World(object):
 
     def __init__(self, id, settings, resolveRandomizedSettings=True):
         self.id = id
-        self.shuffle = 'vanilla'
         self.dungeons = []
         self.regions = []
         self.itempool = []
@@ -178,8 +181,8 @@ class World(object):
         max_tokens = 0
         if self.settings.bridge == 'tokens':
             max_tokens = max(max_tokens, self.settings.bridge_tokens)
-        if self.settings.lacs_condition == 'tokens':
-            max_tokens = max(max_tokens, self.settings.lacs_tokens)
+        if self.settings.shuffle_ganon_bosskey == 'tokens':
+            max_tokens = max(max_tokens, self.settings.ganon_bosskey_tokens)
         tokens = [50, 40, 30, 20, 10]
         for t in tokens:
             if f'{t} Gold Skulltula Reward' not in self.settings.disabled_locations:
@@ -188,6 +191,49 @@ class World(object):
         # Additional Ruto's Letter become Bottle, so we may have to collect two.
         self.max_progressions['Rutos Letter'] = 2
 
+        # Disable goal hints if the hint distro does not require them.
+        # WOTH locations are always searched.
+        self.enable_goal_hints = self.hint_dist_user['distribution']['goal']['fixed'] != 0 or self.hint_dist_user['distribution']['goal']['weight'] != 0
+
+        # Initialize default goals for win condition
+        self.goal_categories = OrderedDict()
+        if self.hint_dist_user['use_default_goals']:
+            self.set_goals()
+
+        # import goals from hint plando
+        if 'custom_goals' in self.hint_dist_user:
+            for category in self.hint_dist_user['custom_goals']:
+                if category['category'] in self.goal_categories:
+                    cat = self.goal_categories[category['category']]
+                else:
+                    cat = GoalCategory(category['category'], category['priority'], minimum_goals=category['minimum_goals'])
+                for goal in category['goals']:
+                    cat.add_goal(Goal(self, goal['name'], goal['hint_text'], goal['color'], items=list({'name': i['name'], 'quantity': i['quantity'], 'minimum': i['minimum'], 'hintable': i['hintable']} for i in goal['items'])))
+                if 'count_override' in category:
+                    cat.goal_count = category['count_override']
+                else:
+                    cat.goal_count = len(cat.goals)
+                if 'lock_entrances' in category:
+                    cat.lock_entrances = list(category['lock_entrances'])
+                self.goal_categories[cat.name] = cat
+        
+        # Sort goal hint categories by priority
+        # For most settings this will be Bridge, GBK
+        self.goal_categories = OrderedDict(sorted(self.goal_categories.items(), key=lambda kv: kv[1].priority))
+
+        # initialize category check for first rounds of goal hints
+        self.hinted_categories = []
+
+        # Quick item lookup for All Goals Reachable setting
+        self.goal_items = []
+        for cat_name, category in self.goal_categories.items():
+            for goal in category.goals:
+                for item in goal.items:
+                    self.goal_items.append(item['name'])
+        
+        # Separate goal categories into locked and unlocked for search optimization
+        self.locked_goal_categories = dict(filter(lambda category: category[1].lock_entrances, self.goal_categories.items()))
+        self.unlocked_goal_categories = dict(filter(lambda category: not category[1].lock_entrances, self.goal_categories.items()))
 
     def copy(self):
         new_world = World(self.id, self.settings, False)
@@ -495,6 +541,213 @@ class World(object):
             loc = prize_locs.pop()
             self.push_item(loc, item)
 
+    def set_goals(self):
+        # Default goals are divided into 3 primary categories:
+        # Bridge, Ganon's Boss Key, and Trials
+        # The Triforce Hunt goal is mutually exclusive with
+        # these categories given the vastly different playstyle.
+        # 
+        # Goal priorities determine where hintable locations are placed.
+        # For example, an item required for both trials and bridge would
+        # be hinted only for bridge. This accomplishes two objectives:
+        #   1) Locations are not double counted for different stages
+        #      of the game
+        #   2) Later category location lists are not diluted by early
+        #      to mid game locations
+        # 
+        # Entrance locks set restrictions on all goals in a category to
+        # ensure unreachable goals are not hintable. This is only used
+        # for the Rainbow Bridge to filter out goals hard-locked by
+        # Inside Ganon's Castle access.
+        #
+        # Minimum goals for a category tell the randomizer if the
+        # category meta-goal is satisfied by starting items. This
+        # is straightforward for dungeon reward goals where X rewards
+        # is the same as the minimum goals. For Triforce Hunt, Trials,
+        # and Skull conditions, there is only one goal in the category
+        # requesting X copies within the goal, so minimum goals has to
+        # be 1 for these.
+        b = GoalCategory('rainbow_bridge', 10, lock_entrances=['Ganons Castle Grounds -> Ganons Castle Lobby'])
+        gbk = GoalCategory('ganon_bosskey', 20)
+        trials = GoalCategory('trials', 30, minimum_goals=1)
+        th = GoalCategory('triforce_hunt', 30, goal_count=round(self.settings.triforce_goal_per_world / 10), minimum_goals=1)
+        trial_goal = Goal(self, 'the Tower', 'path to the Tower', 'White', items=[], create_empty=True)
+
+        if self.settings.triforce_hunt and self.settings.triforce_goal_per_world > 0:
+            triforce_count = int((TriforceCounts[self.settings.item_pool_value] * self.settings.triforce_goal_per_world).to_integral_value(rounding=ROUND_HALF_UP))
+            # "Hintable" value of False means the goal items themselves cannot
+            # be hinted directly. This is used for Triforce Hunt and Skull
+            # conditions to restrict hints to useful items instead of the win
+            # condition. Dungeon rewards do not need this restriction as they are
+            # already unhintable at a lower level.
+            #
+            # This restriction does NOT apply to Light Arrows or Ganon's Castle Boss
+            # Key, which makes these items directly hintable in their respective goals
+            # assuming they do not get hinted by another hint type (always, woth with
+            # an earlier order in the hint distro, etc).
+            th.add_goal(Goal(self, 'gold', 'path of gold', 'Yellow', items=[{'name': 'Triforce Piece', 'quantity': triforce_count, 'minimum': self.settings.triforce_goal_per_world, 'hintable': False}]))
+            self.goal_categories[th.name] = th
+        # Category goals are defined for each possible setting for each category.
+        # Bridge can be Stones, Medallions, Dungeons, Skulls, or Vanilla.
+        # Ganon's Boss Key can be Stones, Medallions, Dungeons, Skulls, LACS or
+        # one of the keysanity variants.
+        # Trials is one goal that is only on if at least one trial is on in the world.
+        # If there are no win conditions beyond Kill Ganon (open bridge, GBK removed,
+        # no trials), a fallback "path of the hero" clone of WOTH is created. Path
+        # wording is used to distinguish the hint type even though the hintable location
+        # set is identical to WOTH.
+        if not self.settings.triforce_hunt:
+            # Bridge goals will always be defined as they have the most immediate priority
+            if self.settings.bridge != 'open':
+                # "Replace" hint text dictionaries are used to reference the
+                # dungeon boss holding the specified reward. Only boss names/paths
+                # are defined for this feature, and it is not extendable via plando.
+                # Goal hint text colors are based on the dungeon reward, not the boss.
+                if ((self.settings.bridge_stones > 0 and self.settings.bridge == 'stones') or (self.settings.bridge_rewards > 0 and self.settings.bridge == 'dungeons')):
+                    b.add_goal(Goal(self, 'Kokiri Emerald', { 'replace': 'Kokiri Emerald' }, 'Light Blue', items=[{'name': 'Kokiri Emerald', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                    b.add_goal(Goal(self, 'Goron Ruby', { 'replace': 'Goron Ruby' }, 'Light Blue', items=[{'name': 'Goron Ruby', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                    b.add_goal(Goal(self, 'Zora Sapphire', { 'replace': 'Zora Sapphire' }, 'Light Blue', items=[{'name': 'Zora Sapphire', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                    b.minimum_goals = self.settings.bridge_stones if self.settings.bridge == 'stones' else self.settings.bridge_rewards
+                if (self.settings.bridge_medallions > 0 and self.settings.bridge == 'medallions') or (self.settings.bridge_rewards > 0 and self.settings.bridge == 'dungeons'):
+                    b.add_goal(Goal(self, 'Forest Medallion', { 'replace': 'Forest Medallion' }, 'Green', items=[{'name': 'Forest Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                    b.add_goal(Goal(self, 'Fire Medallion', { 'replace': 'Fire Medallion' }, 'Red', items=[{'name': 'Fire Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                    b.add_goal(Goal(self, 'Water Medallion', { 'replace': 'Water Medallion' }, 'Blue', items=[{'name': 'Water Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                    b.add_goal(Goal(self, 'Shadow Medallion', { 'replace': 'Shadow Medallion' }, 'Pink', items=[{'name': 'Shadow Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                    b.add_goal(Goal(self, 'Spirit Medallion', { 'replace': 'Spirit Medallion' }, 'Yellow', items=[{'name': 'Spirit Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                    b.add_goal(Goal(self, 'Light Medallion', { 'replace': 'Light Medallion' }, 'Light Blue', items=[{'name': 'Light Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                    b.minimum_goals = self.settings.bridge_medallions if self.settings.bridge == 'medallions' else self.settings.bridge_rewards
+                if self.settings.bridge == 'vanilla':
+                    b.add_goal(Goal(self, 'Shadow Medallion', { 'replace': 'Shadow Medallion' }, 'Pink', items=[{'name': 'Shadow Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                    b.add_goal(Goal(self, 'Spirit Medallion', { 'replace': 'Spirit Medallion' }, 'Yellow', items=[{'name': 'Spirit Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                    min_goals = 2
+                    # With plentiful item pool, multiple copies of Light Arrows are available,
+                    # but both are not guaranteed reachable. Setting a goal quantity of the
+                    # item pool value with a minimum quantity of 1 attempts to hint all items
+                    # required to get all copies of Light Arrows, but will fall back to just
+                    # one copy if the other is unreachable.
+                    # 
+                    # Similar criteria is used for Ganon's Boss Key in plentiful keysanity. 
+                    if not 'Light Arrows' in self.item_added_hint_types['always']:
+                        if self.settings.item_pool_value == 'plentiful':
+                            arrows = 2
+                        else:
+                            arrows = 1
+                        b.add_goal(Goal(self, 'Evil\'s Bane', 'path to Evil\'s Bane', 'Light Blue', items=[{'name': 'Light Arrows', 'quantity': arrows, 'minimum': 1, 'hintable': True}]))
+                        min_goals += 1
+                    b.minimum_goals = min_goals
+                # Goal count within a category is currently unused. Testing is in progress
+                # to potentially use this for weighting certain goals for hint selection.
+                b.goal_count = len(b.goals)
+                if (self.settings.bridge_tokens > 0
+                    and self.settings.bridge == 'tokens'
+                    and (self.settings.shuffle_ganon_bosskey != 'tokens'
+                            or self.settings.bridge_tokens >= self.settings.ganon_bosskey_tokens)):
+                    b.add_goal(Goal(self, 'Skulls', 'path of Skulls', 'Light Blue', items=[{'name': 'Gold Skulltula Token', 'quantity': 100, 'minimum': self.settings.bridge_tokens, 'hintable': False}]))
+                    b.goal_count = round(self.settings.bridge_tokens / 10)
+                    b.minimum_goals = 1
+                self.goal_categories[b.name] = b
+
+            # If the Ganon's Boss Key condition is the same or similar conditions
+            # as Bridge, do not create the goals if Bridge goals already cover
+            # GBK goals. For example, 3 dungeon GBK would not have its own goals
+            # if it is 4 medallion bridge.
+            #
+            # Even if created, there is no guarantee GBK goals will find new
+            # locations to hint. If duplicate goals are defined for Bridge and
+            # all of these goals are accessible without Ganon's Castle access,
+            # the GBK category is redundant and not used for hint selection.
+            if ((self.settings.ganon_bosskey_stones > 0
+                    and self.settings.shuffle_ganon_bosskey == 'stones'
+                    and (self.settings.ganon_bosskey_stones > self.settings.bridge_stones or self.settings.bridge != 'stones'))
+                or (self.settings.ganon_bosskey_rewards > 0
+                    and self.settings.shuffle_ganon_bosskey == 'dungeons'
+                    and ((self.settings.ganon_bosskey_rewards > self.settings.bridge_medallions and self.settings.bridge == 'medallions')
+                            or (self.settings.ganon_bosskey_rewards > self.settings.bridge_stones and self.settings.bridge == 'stones')
+                            or (self.settings.ganon_bosskey_rewards > self.settings.bridge_rewards and self.settings.bridge == 'dungeons')
+                            or (self.settings.ganon_bosskey_rewards > 2 and self.settings.bridge == 'vanilla')))):
+                gbk.add_goal(Goal(self, 'Kokiri Emerald', { 'replace': 'Kokiri Emerald' }, 'Yellow', items=[{'name': 'Kokiri Emerald', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                gbk.add_goal(Goal(self, 'Goron Ruby', { 'replace': 'Goron Ruby' }, 'Yellow', items=[{'name': 'Goron Ruby', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                gbk.add_goal(Goal(self, 'Zora Sapphire', { 'replace': 'Zora Sapphire' }, 'Yellow', items=[{'name': 'Zora Sapphire', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                gbk.minimum_goals = self.settings.ganon_bosskey_stones if self.settings.shuffle_ganon_bosskey == 'stones' else self.settings.ganon_bosskey_rewards
+            if ((self.settings.ganon_bosskey_medallions > 0
+                    and self.settings.shuffle_ganon_bosskey == 'medallions'
+                    and (self.settings.ganon_bosskey_medallions > self.settings.bridge_medallions or self.settings.bridge != 'medallions')
+                    and (self.settings.ganon_bosskey_medallions > 2 or self.settings.bridge != 'vanilla'))
+                or (self.settings.ganon_bosskey_rewards > 0
+                    and self.settings.shuffle_ganon_bosskey == 'dungeons'
+                    and ((self.settings.ganon_bosskey_rewards > self.settings.bridge_medallions and self.settings.bridge == 'medallions')
+                            or (self.settings.ganon_bosskey_rewards > self.settings.bridge_stones and self.settings.bridge == 'stones')
+                            or (self.settings.ganon_bosskey_rewards > self.settings.bridge_rewards and self.settings.bridge == 'dungeons')
+                            or (self.settings.ganon_bosskey_rewards > 2 and self.settings.bridge == 'vanilla')))):
+                gbk.add_goal(Goal(self, 'Forest Medallion', { 'replace': 'Forest Medallion' }, 'Green', items=[{'name': 'Forest Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                gbk.add_goal(Goal(self, 'Fire Medallion', { 'replace': 'Fire Medallion' }, 'Red', items=[{'name': 'Fire Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                gbk.add_goal(Goal(self, 'Water Medallion', { 'replace': 'Water Medallion' }, 'Blue', items=[{'name': 'Water Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                gbk.add_goal(Goal(self, 'Shadow Medallion', { 'replace': 'Shadow Medallion' }, 'Pink', items=[{'name': 'Shadow Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                gbk.add_goal(Goal(self, 'Spirit Medallion', { 'replace': 'Spirit Medallion' }, 'Yellow', items=[{'name': 'Spirit Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                gbk.add_goal(Goal(self, 'Light Medallion', { 'replace': 'Light Medallion' }, 'Light Blue', items=[{'name': 'Light Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                gbk.minimum_goals = self.settings.ganon_bosskey_medallions if self.settings.shuffle_ganon_bosskey == 'medallions' else self.settings.ganon_bosskey_rewards
+            if self.settings.shuffle_ganon_bosskey == 'on_lacs':
+                gbk.add_goal(Goal(self, 'Shadow Medallion', { 'replace': 'Shadow Medallion' }, 'Pink', items=[{'name': 'Shadow Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                gbk.add_goal(Goal(self, 'Spirit Medallion', { 'replace': 'Spirit Medallion' }, 'Yellow', items=[{'name': 'Spirit Medallion', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                gbk.minimum_goals = 2
+            gbk.goal_count = len(gbk.goals)
+            if (self.settings.ganon_bosskey_tokens > 0
+                and self.settings.shuffle_ganon_bosskey == 'tokens'
+                and (self.settings.bridge != 'tokens'
+                        or self.settings.bridge_tokens < self.settings.ganon_bosskey_tokens)):
+                gbk.add_goal(Goal(self, 'Skulls', 'path of Skulls', 'Light Blue', items=[{'name': 'Gold Skulltula Token', 'quantity': 100, 'minimum': self.settings.ganon_bosskey_tokens, 'hintable': False}]))
+                gbk.goal_count = round(self.settings.ganon_bosskey_tokens / 10)
+                gbk.minimum_goals = 1
+            
+            # Ganon's Boss Key shuffled directly in the world will always
+            # generate a category/goal pair, though locations are not
+            # guaranteed if the higher priority Bridge category contains
+            # all required locations for GBK
+            if self.settings.shuffle_ganon_bosskey in ['dungeon', 'overworld', 'any_dungeon', 'keysanity']:
+                # Make priority even with trials as the goal is no longer centered around dungeon completion or collectibles
+                gbk.priority = 30
+                gbk.goal_count = 1
+                if self.settings.item_pool_value == 'plentiful':
+                    keys = 2
+                else:
+                    keys = 1
+                gbk.add_goal(Goal(self, 'the Key', 'path to the Key', 'Light Blue', items=[{'name': 'Boss Key (Ganons Castle)', 'quantity': keys, 'minimum': 1, 'hintable': True}]))
+                gbk.minimum_goals = 1
+            if gbk.goals:
+                self.goal_categories[gbk.name] = gbk
+
+            # To avoid too many goals in the hint selection phase,
+            # trials are reduced to one goal with six items to obtain.
+            if self.skipped_trials['Forest'] == False:
+                trial_goal.items.append({'name': 'Forest Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                trials.goal_count += 1
+            if self.skipped_trials['Fire'] == False:
+                trial_goal.items.append({'name': 'Fire Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                trials.goal_count += 1
+            if self.skipped_trials['Water'] == False:
+                trial_goal.items.append({'name': 'Water Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                trials.goal_count += 1
+            if self.skipped_trials['Shadow'] == False:
+                trial_goal.items.append({'name': 'Shadow Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                trials.goal_count += 1
+            if self.skipped_trials['Spirit'] == False:
+                trial_goal.items.append({'name': 'Spirit Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                trials.goal_count += 1
+            if self.skipped_trials['Light'] == False:
+                trial_goal.items.append({'name': 'Light Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                trials.goal_count += 1
+
+            # Trials category is finalized and saved only if at least one trial is on
+            if self.settings.trials > 0:
+                trials.add_goal(trial_goal)
+                self.goal_categories[trials.name] = trials
+
+            if self.settings.bridge == 'open' and (self.settings.shuffle_ganon_bosskey == 'remove' or self.settings.shuffle_ganon_bosskey == 'vanilla') and self.settings.trials == 0:
+                g = GoalCategory('ganon', 30, goal_count=1)
+                # Equivalent to WOTH, but added in case WOTH hints are disabled in favor of goal hints
+                g.add_goal(Goal(self, 'the hero', 'path of the hero', 'White', items=[{'name': 'Triforce', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+                g.minimum_goals = 1
+                self.goal_categories[g.name] = g
 
     def get_region(self, regionname):
         if isinstance(regionname, Region):

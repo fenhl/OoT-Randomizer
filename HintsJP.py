@@ -127,17 +127,16 @@ def has_eng(text):
         return False
     return re.search(r'[a-z]+', text) is not None
     
-def loctextJ(text):
+def loctextJ(text, mode = 0):
     location_text_J = None
     if not (has_eng(text)):
-        location_text_J = text.replace('City','Bity')
         location_text_J = text.replace('C','')
-        location_text_J = text.replace('Bity','City')
-        count = location_text_J.rfind('は')
-        list_loc = list(location_text_J)
-        if (len(location_text_J) - count) < 3:
-            list_loc[count] = ""
-            location_text_J = "".join(list_loc)
+        if mode == 1:
+            count = location_text_J.rfind('は')
+            list_loc = list(location_text_J)
+            if (len(location_text_J) - count) < 3:
+                list_loc[count] = ""
+                location_text_J = "".join(list_loc)
     elif has_eng(text) or has_eng(location_text_J):
         for region, (opt, clear, type) in HT.items():
             if ((clear == text) is True and not(has_eng(clear))):
@@ -146,7 +145,7 @@ def loctextJ(text):
             if ((text in opt) is True and (opt == text) is False and not (has_eng(opt[opt.find(text)]))):
                 if len(opt[opt.find(text)]) == 1:
                     location_text_J = opt.replace('C','')
-                    if (int(len(location_text_J)) - int(location_text_J.find("は"))) < 3 and int(location_text_J.find("は")) is not 0:
+                    if (int(len(location_text_J)) - int(location_text_J.find("は"))) < 3 and int(location_text_J.find("は")) != 0:
                         count = location_text_J.rfind('は')
                         list_loc = list(location_text_J)
                         list_loc[count] = ""
@@ -170,13 +169,13 @@ def loctextJ(text):
                 if ((replace in text) is True):
                     location_text_J = replace
                     break
-                if (((region2 in text) is True ) and prior is "Low"):
+                if (((region2 in text) is True ) and prior == "Low"):
                     location_text_J = replace
                     break
-                if (((region2 in text) is True ) and prior is "Middle"):
+                if (((region2 in text) is True ) and prior == "Middle"):
                     location_text_J = replace
                     break
-                if (((region2 in text) is True ) and prior is "High"):
+                if (((region2 in text) is True ) and prior == "High"):
                     location_text_J = replace
                     break
             if location_text_J is None:
@@ -415,11 +414,111 @@ def get_woth_hint(spoiler, world, checked):
         location_text = get_hint_area(location)
     location_text_J = loctextJ(location_text)  
 
-    if world.settings.triforce_hunt:
-        return (GossipText('<C%sCは&金への道' % location_text_J, ['Light Blue']), location)
-    else:
-        return (GossipText('<C%sCは&勇者への道' % location_text_J, ['Light Blue']), location)
+    return (GossipText('<C%sCは&勇者への道' % location_text_J, ['Light Blue']), location)
 
+def get_checked_areas(world, checked):
+    def get_area_from_name(check):
+        try:
+            location = world.get_location(check)
+        except Exception as e:
+            return check
+        return get_hint_area(location)
+
+    return set(get_area_from_name(check) for check in checked)
+
+def get_goal_category(spoiler, world, goal_categories):
+    cat_sizes = []
+    cat_names = []
+    zero_weights = True
+    goal_category = None
+    for cat_name, category in goal_categories.items():
+        # Only add weights if the category has goals with hintable items
+        if world.id in spoiler.goal_locations and cat_name in spoiler.goal_locations[world.id]:
+            # Build lists for weighted choice
+            if category.weight > 0:
+                zero_weights = False
+            cat_sizes.append(category.weight)
+            cat_names.append(category.name)
+            # Depends on category order to choose next in the priority list
+            # Each category is guaranteed a hint first round, then weighted based on goal count
+            if not goal_category and category.name not in world.hinted_categories:
+                goal_category = category
+                world.hinted_categories.append(category.name)
+
+    # random choice if each category has at least one hint
+    if not goal_category and len(cat_names) > 0:
+        if zero_weights:
+            goal_category = goal_categories[random.choice(cat_names)]
+        else:
+            goal_category = goal_categories[random.choices(cat_names, weights=cat_sizes)[0]]
+
+    return goal_category
+
+def get_goal_hint(spoiler, world, checked):
+    goal_category = get_goal_category(spoiler, world, world.goal_categories)
+
+    # check if no goals were generated (and thus no categories available)
+    if not goal_category:
+        return None
+
+    goals = goal_category.goals
+    goal_locations = []
+
+    # Choose random goal and check if any locations are already hinted.
+    # If all locations for a goal are hinted, remove the goal from the list and try again.
+    # If all locations for all goals are hinted, try remaining goal categories
+    # If all locations for all goal categories are hinted, return no hint.
+    while not goal_locations:
+        if not goals:
+            del world.goal_categories[goal_category.name]
+            goal_category = get_goal_category(spoiler, world, world.goal_categories)
+            if not goal_category:
+                return None
+            else:
+                goals = goal_category.goals
+
+        weights = []
+        zero_weights = True
+        for goal in goals:
+            if goal.weight > 0:
+                zero_weights = False
+            weights.append(goal.weight)
+
+        if zero_weights:
+            goal = random.choice(goals)
+        else:
+            goal = random.choices(goals, weights=weights)[0]
+
+        goal_locations = list(filter(lambda location:
+            location[0].name not in checked
+            and location[0].name not in world.hint_exclusions
+            and location[0].name not in world.hint_type_overrides['goal']
+            and location[0].item.name not in world.item_hint_type_overrides['goal'],
+            goal.required_locations))
+
+        if not goal_locations:
+            goals.remove(goal)
+
+    # Goal weight to zero mitigates double hinting this goal
+    # Once all goals in a category are 0, selection is true random
+    goal.weight = 0
+    location_tuple = random.choice(goal_locations)
+    location = location_tuple[0]
+    world_ids = location_tuple[3]
+    world_id = random.choice(world_ids)
+    checked.add(location.name)
+
+    if location.parent_region.dungeon:
+        location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints).text
+    else:
+        location_text = get_hint_area(location)
+    location_text_J = loctextJ(location_text)
+    if world_id == world.id:
+        goal_text = goal.hint_text
+    else:
+        goal_text = spoiler.goal_categories[world_id][goal_category.name].get_goal(goal.name).hint_text
+
+    return (GossipText('C%sCは&%s。' % (location_text_J, goal_text), [goal.color, 'Light Blue']), location)
 
 def get_barren_hint(spoiler, world, checked):
     if not hasattr(world, 'get_barren_hint_prev'):
@@ -470,7 +569,7 @@ def get_barren_hint(spoiler, world, checked):
     checked.add(area)
     area_J = loctextJ(area)  
 
-    return (GossipText("<C%sCに&行くことはおろかな選択だ" % area_J, ['Pink']), None)
+    return (GossipText("<C%sC&行くことはおろかな選択だ" % area_J, ['Pink']), None)
 
 
 def is_not_checked(location, checked):
@@ -501,11 +600,11 @@ def get_good_item_hint(spoiler, world, checked):
         else:
             location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints)
         location_text_J = loctextJ(location_text)  
-        return (GossipText('<C%sCは&C%sCを&つかさどる' % (location_text_J, item_text), ['Green', 'Red']), location)
+        return (GossipText('<C%sC&C%sCを&つかさどる' % (location_text_J, item_text), ['Green', 'Red']), location)
     else:
         location_text = get_hint_area(location)
         location_text_J = loctextJ(location_text)  
-        return (GossipText('<C%sCは&C%sCで&見つけられる' % (item_text, location_text_J), ['Red', 'Green']), location)
+        return (GossipText('<C%sCは&C%sC&見つけられる' % (item_text, location_text_J), ['Red', 'Green']), location)
 
 
 def get_specific_item_hint(spoiler, world, checked):
@@ -549,16 +648,16 @@ def get_specific_item_hint(spoiler, world, checked):
             location_text = getHint(location.parent_region.dungeon.name, world.settings.clearer_hints)
         location_text_J = loctextJ(location_text)  
         if world.hint_dist_user.get('vague_named_items', False):
-            return (GossipText('<C%sCは&勇者への道' % (location_text_J), ['Green']), location)
+            return (GossipText('<C%sC&勇者への道' % (location_text_J), ['Green']), location)
         else:
-            return (GossipText('<C%sCは&C%sCを&つかさどる' % (location_text_J, item_text), ['Green', 'Red']), location)
+            return (GossipText('<C%sC&C%sCを&つかさどる' % (location_text_J, item_text), ['Green', 'Red']), location)
     else:
         location_text = get_hint_area(location)
         location_text_J = loctextJ(location_text)  
         if world.hint_dist_user.get('vague_named_items', False):
-            return (GossipText('<C%sCは&勇者への道' % (location_text_J), ['Green']), location)
+            return (GossipText('<C%sC&勇者への道' % (location_text_J), ['Green']), location)
         else:
-            return (GossipText('<C%sCは&C%sCで&見つけられる' % (item_text, location_text_J), ['Red', 'Green']), location)
+            return (GossipText('<C%sCは&C%sC&見つけられる' % (item_text, location_text_J), ['Red', 'Green']), location)
 
 
 def get_random_location_hint(spoiler, world, checked):
@@ -585,11 +684,11 @@ def get_random_location_hint(spoiler, world, checked):
         else:
             location_text = getHint(dungeon.name, world.settings.clearer_hints)
         location_text_J = loctextJ(location_text)  
-        return (GossipText('<C%sCは&C%sCを&つかさどる' % (location_text_J, item_text), ['Green', 'Red']), location)
+        return (GossipText('<C%sC&C%sCを&つかさどる' % (location_text_J, item_text), ['Green', 'Red']), location)
     else:
         location_text = get_hint_area(location)
         location_text_J = loctextJ(location_text)  
-        return (GossipText('<C%sCは&C%sCで&見つけられる' % (item_text, location_text_J), ['Red', 'Green']), location)
+        return (GossipText('<C%sCは&C%sC&見つけられる' % (item_text, location_text_J), ['Red', 'Green']), location)
 
 
 def get_specific_hint(spoiler, world, checked, type):
@@ -689,6 +788,7 @@ hint_func = {
     'trial':      lambda spoiler, world, checked: None,
     'always':     lambda spoiler, world, checked: None,
     'woth':             get_woth_hint,
+    'goal':             get_goal_hint,
     'barren':           get_barren_hint,
     'item':             get_good_item_hint,
     'sometimes':        get_sometimes_hint,
@@ -705,6 +805,7 @@ hint_dist_keys = {
     'trial',
     'always',
     'woth',
+    'goal',
     'barren',
     'item',
     'song',
@@ -780,8 +881,6 @@ def buildGossipHints(spoiler, worlds):
 
 # builds out general hints based on location and whether an item is required or not
 def buildWorldGossipHints(spoiler, world, checkedLocations=None):
-    # rebuild hint exclusion list
-    hintExclusions(world, clear_cache=True)
 
     world.barren_dungeon = 0
     world.woth_dungeon = 0

@@ -35,6 +35,7 @@ from Plandomizer import Distribution
 from Search import Search, RewindableSearch
 from EntranceShuffle import set_entrances
 from LocationList import set_drop_location_names
+from Goals import update_goal_items, maybe_set_light_arrows, replace_goal_names
 
 
 class dummy_window():
@@ -122,6 +123,8 @@ def resolve_settings(settings, window=dummy_window()):
 def generate(settings, window=dummy_window()):
     worlds = build_world_graphs(settings, window=window)
     place_items(settings, worlds, window=window)
+    if worlds[0].enable_goal_hints:
+        replace_goal_names(worlds)
     return make_spoiler(settings, worlds, window=window)
 
 
@@ -191,7 +194,7 @@ def make_spoiler(settings, worlds, window=dummy_window()):
     if settings.create_spoiler or settings.hints != 'none':
         window.update_status('Calculating Hint Data')
         logger.info('Calculating hint data.')
-        update_required_items(spoiler)
+        update_goal_items(spoiler)
         if settings.language_selection == 'english':
             buildGossipHints(spoiler, worlds)
         elif settings.language_selection == 'japanese':
@@ -552,64 +555,11 @@ def copy_worlds(worlds):
     return worlds
 
 
-def maybe_set_light_arrows(location):
-    if not location.item.world.light_arrow_location and location.item and location.item.name == 'Light Arrows':
-        location.item.world.light_arrow_location = location
-        logging.getLogger('').debug(f'Light Arrows [{location.item.world.id}] set to [{location.name}]')
-
-
 def find_light_arrows(spoiler):
     search = Search([world.state for world in spoiler.worlds])
     for location in search.iter_reachable_locations(search.progression_locations()):
         search.collect(location.item)
         maybe_set_light_arrows(location)
-
-
-def update_required_items(spoiler):
-    worlds = spoiler.worlds
-
-    # get list of all of the progressive items that can appear in hints
-    # all_locations: all progressive items. have to collect from these
-    # item_locations: only the ones that should appear as "required"/WotH
-    all_locations = [location for world in worlds for location in world.get_filled_locations()]
-    # Set to test inclusion against
-    item_locations = {location for location in all_locations if location.item.majoritem and not location.locked and location.item.name != 'Triforce Piece'}
-
-    # if the playthrough was generated, filter the list of locations to the
-    # locations in the playthrough. The required locations is a subset of these
-    # locations. Can't use the locations directly since they are location to the
-    # copied spoiler world, so must compare via name and world id
-    if spoiler.playthrough:
-        translate = lambda loc: worlds[loc.world.id].get_location(loc.name)
-        spoiler_locations = set(map(translate, itertools.chain.from_iterable(spoiler.playthrough.values())))
-        item_locations &= spoiler_locations
-        # Skip even the checks
-        _maybe_set_light_arrows = lambda _: None
-    else:
-        _maybe_set_light_arrows = maybe_set_light_arrows
-
-    required_locations = []
-
-    search = Search([world.state for world in worlds])
-
-    for location in search.iter_reachable_locations(all_locations):
-        # Try to remove items one at a time and see if the game is still beatable
-        if location in item_locations:
-            old_item = location.item
-            location.item = None
-            # copies state! This is very important as we're in the middle of a search
-            # already, but beneficially, has search it can start from
-            if not search.can_beat_game():
-                required_locations.append(location)
-            location.item = old_item
-            _maybe_set_light_arrows(location)
-        search.state_list[location.item.world.id].collect(location.item)
-
-    # Filter the required location to only include location in the world
-    required_locations_dict = {}
-    for world in worlds:
-        required_locations_dict[world.id] = list(filter(lambda location: location.world.id == world.id, required_locations))
-    spoiler.required_locations = required_locations_dict
 
 
 def create_playthrough(spoiler):
@@ -654,6 +604,8 @@ def create_playthrough(spoiler):
             search.state_list[location.item.world.id].collect(location.item)
             maybe_set_light_arrows(location)
     logger.info('Collected %d spheres', len(collection_spheres))
+    spoiler.full_playthrough = dict((location.name, i + 1) for i, sphere in enumerate(collection_spheres) for location in sphere)
+    spoiler.max_sphere = len(collection_spheres)
 
     # Reduce each sphere in reverse order, by checking if the game is beatable
     # when we remove the item. We do this to make sure that progressive items
