@@ -1204,13 +1204,13 @@ def buildBridgeReqsString(world):
     else:
         item_req_string = getHint('bridge_' + world.settings.bridge, world.settings.clearer_hints).text
         if world.settings.bridge == 'medallions':
-            item_req_string = str(world.settings.bridge_medallions).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + ' ' + item_req_string
+            item_req_string = str(world.settings.bridge_medallions).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
         elif world.settings.bridge == 'stones':
-            item_req_string = str(world.settings.bridge_stones).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + ' ' + item_req_string
+            item_req_string = str(world.settings.bridge_stones).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
         elif world.settings.bridge == 'dungeons':
-            item_req_string = str(world.settings.bridge_rewards).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + ' ' + item_req_string
+            item_req_string = str(world.settings.bridge_rewards).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
         elif world.settings.bridge == 'tokens':
-            item_req_string = str(world.settings.bridge_tokens).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + ' ' + item_req_string
+            item_req_string = str(world.settings.bridge_tokens).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
         if '#' not in item_req_string:
             item_req_string = 'C%sC' % item_req_string
         string += "賢者たちは勇者が&%sを&集めるのを待っている。" % item_req_string
@@ -1225,26 +1225,26 @@ def buildGanonBossKeyString(world):
         if world.settings.shuffle_ganon_bosskey == 'on_lacs':
             item_req_string = getHint('lacs_' + world.settings.lacs_condition, world.settings.clearer_hints).text
             if world.settings.lacs_condition == 'medallions':
-                item_req_string = str(world.settings.lacs_medallions).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + '　' + item_req_string
+                item_req_string = str(world.settings.lacs_medallions).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
             elif world.settings.lacs_condition == 'stones':
-                item_req_string = str(world.settings.lacs_stones).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + '　' + item_req_string
+                item_req_string = str(world.settings.lacs_stones).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
             elif world.settings.lacs_condition == 'dungeons':
-                item_req_string = str(world.settings.lacs_rewards).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + '　' + item_req_string
+                item_req_string = str(world.settings.lacs_rewards).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
             elif world.settings.lacs_condition == 'tokens':
-                item_req_string = str(world.settings.lacs_tokens).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + '　' + item_req_string
+                item_req_string = str(world.settings.lacs_tokens).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
             if 'C' not in item_req_string:
                 item_req_string = 'C%sC' % item_req_string
             bk_location_string = "%s&することで開かれる" % item_req_string
         elif world.settings.shuffle_ganon_bosskey in ['stones', 'medallions', 'dungeons', 'tokens']:
             item_req_string = getHint('ganonBK_' + world.settings.shuffle_ganon_bosskey, world.settings.clearer_hints).text
             if world.settings.shuffle_ganon_bosskey == 'medallions':
-                item_req_string = str(world.settings.ganon_bosskey_medallions).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + '　' + item_req_string
+                item_req_string = str(world.settings.ganon_bosskey_medallions).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
             elif world.settings.shuffle_ganon_bosskey == 'stones':
-                item_req_string = str(world.settings.ganon_bosskey_stones).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + '　' + item_req_string
+                item_req_string = str(world.settings.ganon_bosskey_stones).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
             elif world.settings.shuffle_ganon_bosskey == 'dungeons':
-                item_req_string = str(world.settings.ganon_bosskey_rewards).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + '　' + item_req_string
+                item_req_string = str(world.settings.ganon_bosskey_rewards).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
             elif world.settings.shuffle_ganon_bosskey == 'tokens':
-                item_req_string = str(world.settings.ganon_bosskey_tokens).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + '　' + item_req_string
+                item_req_string = str(world.settings.ganon_bosskey_tokens).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + item_req_string
             if 'C' not in item_req_string:
                 item_req_string = 'C%sC' % item_req_string
             bk_location_string = "%s&することで開かれる" % item_req_string
