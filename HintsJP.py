@@ -45,8 +45,11 @@ class GossipStone():
 
 
 class GossipText():
-    def __init__(self, text, colors=None, prefix=""):
+    def __init__(self, text, colors=None, prefix="", mode = 0):
         text = prefix + text
+        if mode == 1:
+            count = text.rfind('C')
+            text = text[:count + 1]
         self.text = text
         self.colors = colors
 
@@ -337,7 +340,7 @@ def colorText(gossip_text):
     while 'C' in text:
         splitText = text.split('C', 2)
         if len(colors) > 0:
-            color = colors.pop()
+            color = colors.pop(0)
 
         for prefix in hintPrefixes:
             if splitText[1].startswith(prefix):
@@ -798,7 +801,7 @@ def get_entrance_hint(spoiler, world, checked):
     if 'C' not in region_text:
         region_text = 'C%sC' % region_text
 
-    return (GossipText('<%s&%s' % (entrance_text, region_text), ['Light Blue', 'Green']), None)
+    return (GossipText('<%s&%s' % (entrance_text, region_text), ['Light Blue', 'Green'], '', 1), None)
 
    
 def get_junk_hint(spoiler, world, checked):
