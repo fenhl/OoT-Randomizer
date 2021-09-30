@@ -18,7 +18,7 @@ from World import World
 from Spoiler import Spoiler
 from Rom import Rom
 from Patches import patch_rom
-from PatchesJP import patch_rom_jp
+#from PatchesJP import patch_rom_jp
 from Cosmetics import patch_cosmetics
 from DungeonList import create_dungeons
 from Fill import distribute_items_restrictive, ShuffleError
@@ -239,7 +239,8 @@ def patch_and_output(settings, window, spoiler, rom):
             if settings.language_selection == 'english':
                 patch_rom(spoiler, world, rom)
             elif settings.language_selection == 'japanese':
-                patch_rom_jp(spoiler, world, rom)
+                #patch_rom_jp(spoiler, world, rom)
+                patch_rom(spoiler, world, rom, 'jap')
             cosmetics_log = patch_cosmetics(settings, rom)
             rom.update_header()
 
@@ -279,7 +280,8 @@ def patch_and_output(settings, window, spoiler, rom):
         if settings.language_selection == 'english':
             patch_rom(spoiler, worlds[settings.player_num - 1], rom)
         elif settings.language_selection == 'japanese':
-            patch_rom_jp(spoiler, worlds[settings.player_num - 1], rom)
+            #patch_rom_jp(spoiler, worlds[settings.player_num - 1], rom)
+            patch_rom(spoiler, worlds[settings.player_num - 1], rom, 'jap')
         cosmetics_log = patch_cosmetics(settings, rom)
         window.update_progress(65)
 

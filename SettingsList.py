@@ -1834,7 +1834,7 @@ setting_infos = [
                          Enabling this will change the language of the rom.
                          Warning: Cannot use the PAL rom.
                          ''',
-        shared         = False,
+        shared         = True,
         default        = 'english',
         choices        = {
             'english':   'English',

@@ -1,7 +1,7 @@
 import os
 import random
 import logging
-TEXT_START = 0x8EB000
+TEXT_START_JP = 0x8EB000
 ENG_TEXT_SIZE_LIMIT = 0x39000
 JPN_TEXT_SIZE_LIMIT = 0x3A150
 
@@ -539,11 +539,12 @@ SHOP_MESSAGES = {
     0x8063: "<５０ルピー&:2#\x02かう&やめとく#\x00>",
     0x80BD: "<#\x01売り切れ#\x00>*O",
 }
-def jp_start(rom):
+def jp_start(rom, mode = 0):
     NULLTEXT = bytes([0x00] * JPN_TEXT_SIZE_LIMIT)
-    rom.write_bytes(TEXT_START,NULLTEXT)
+    rom.write_bytes(TEXT_START_JP,NULLTEXT)
     NULLTABLE = bytes([0x00] * JPN_TABLE_SIZE)
-    rom.write_bytes(EXTENDED_TABLE_START,NULLTABLE)
+    if mode == 1:
+        rom.write_bytes(EXTENDED_TABLE_START,NULLTABLE)
     lines = open('textJP.py',encoding='utf-8').readlines()
     NewLines = []
     increments = 1
@@ -716,7 +717,7 @@ def reproduce_messages_jp(messages):
         new.write("mes_sorted = sorted(new_jp.items(), key=lambda x:x[0])")
     
 
-def write_messages(rom, shuffle = False, shuffle_group = None):
+def write_messages(rom, shuffle = False, shuffle_group = None, mode = 0):
     from temporal import new_jp, destinate_ids
     index = 0
     offset = 0
@@ -740,7 +741,8 @@ def write_messages(rom, shuffle = False, shuffle_group = None):
                 opts = int_to_bytes(0,1)
                 entry = id_bytes + opts + bytes([0x00, 0x08]) + offset_bytes
                 entry_offset = EXTENDED_TABLE_START + 8 * index
-                rom.write_bytes(entry_offset, entry)
+                if mode == 1:
+                    rom.write_bytes(entry_offset, entry)
                 way = 1
                 idd += 1
                 index += 1
@@ -753,7 +755,8 @@ def write_messages(rom, shuffle = False, shuffle_group = None):
             opts = int_to_bytes(int(0 if opt is None else opt),1)
             entry = id_bytes + opts + bytes([0x00, 0x08]) + offset_bytes
             entry_offset = EXTENDED_TABLE_START + 8 * index
-            rom.write_bytes(entry_offset, entry)
+            if mode == 1:
+                rom.write_bytes(entry_offset, entry)
 
             if (int(offset / 2)* 2 == offset):
                 t = int(len(text) / 4)
@@ -761,7 +764,7 @@ def write_messages(rom, shuffle = False, shuffle_group = None):
             else:
                 t = int(1 + len(text) / 4)
                 text_entry = text_to_bytes(text,t) + bytes([0x00])
-            text_offset = TEXT_START + offset
+            text_offset = TEXT_START_JP + offset
             if way == 1:
                 text_entry = bytes([0x81, 0x70]) + text_entry
                 text_offset = text_offset - 2
@@ -775,15 +778,17 @@ def write_messages(rom, shuffle = False, shuffle_group = None):
     entry_offset = EXTENDED_TABLE_START + 8 * index
     if 8 * (index + 1) > EXTENDED_TABLE_SIZE:
         raise(TypeError("Message ID table is too large: 0x" + "{:x}".format(8 * (index + 1)) + " written / 0x" + "{:x}".format(EXTENDED_TABLE_SIZE) + " allowed."))
-    rom.write_bytes(entry_offset,entry)
+    if mode == 1:
+        rom.write_bytes(entry_offset,entry)
     text_entry = bytes([0x81, 0x70])
-    text_offset = TEXT_START + offset
+    text_offset = TEXT_START_JP + offset
     if offset > text_size_limit:
         raise(TypeError("Message Text table is too large: 0x" + "{:x}".format(offset) + " written / 0x" + "{:x}".format(JPN_TEXT_SIZE_LIMIT) + " allowed."))
     rom.write_bytes(text_offset, text_entry)
     index += 1
     entry_offset = EXTENDED_TABLE_START + 8 * index
-    rom.write_bytes(entry_offset, [0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+    if mode == 1:
+        rom.write_bytes(entry_offset, [0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
 
 # shuffles the messages in the game, making sure to keep various message types in their own group
 def shuffle_messages_jp(messages, except_hints=True, always_allow_skip=True):

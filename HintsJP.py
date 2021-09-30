@@ -1245,7 +1245,7 @@ def buildBridgeReqsString(world):
             item_req_string = str(world.settings.bridge_rewards).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + 'つの' +item_req_string
         elif world.settings.bridge == 'tokens':
             item_req_string = str(world.settings.bridge_tokens).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})) + '個の' +item_req_string
-        if '#' not in item_req_string:
+        if 'C' not in item_req_string:
             item_req_string = 'C%sC' % item_req_string
         string += "賢者たちは勇者が&%sを&集めるのを待っている。" % item_req_string
     return str(GossipText(string, ['Green'], prefix=''))
