@@ -1856,7 +1856,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
     if world.settings.world_count > 1:
        tycoon_message = make_player_message(tycoon_message)
     update_message_by_id(messages, 0x00F8, tycoon_message, 0x23)
-    tycoon_message = "<<~~\x57##\x03大金持ちのサイフ##\x00を　手に入れた！&&##\x06９９９ルピー##\x00まで　持てるゾ！"
+    tycoon_message = "<<~~\x57##\x03大金持ちのサイフ##\x00を入手！&&##\x06９９９ルピー##\x00まで　持てるゾ！"
     update_message_jp(messages_jp, 0x00F8, tycoon_message, 0x23, 2)
 
     write_shop_items(rom, shop_item_file.start + 0x1DEC, shop_items)
