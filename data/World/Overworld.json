@@ -1104,6 +1104,7 @@
     },
     {
         "region_name": "Kak Impas House Near Cow",
+        "scene": "Kak Impas House",
         "locations": {
             "Kak Impas House Cow": "can_play(Eponas_Song)"
         }
@@ -1153,7 +1154,7 @@
     },
     {
         "region_name": "Kak Potion Shop Front",
-        "scene": "Kak Potion Shop Front",
+        "scene": "Kak Potion Shop",
         "locations": {
             "Kak Potion Shop Item 1": "is_adult",
             "Kak Potion Shop Item 2": "is_adult",
@@ -1171,7 +1172,7 @@
     },
     {
         "region_name": "Kak Potion Shop Back",
-        "scene": "Kak Potion Shop Back",
+        "scene": "Kak Potion Shop",
         "exits": {
             "Kak Backyard": "is_adult",
             "Kak Potion Shop Front": "True"

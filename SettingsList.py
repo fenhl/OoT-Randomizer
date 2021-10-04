@@ -10,11 +10,14 @@ from Colors import get_tunic_color_options, get_navi_color_options, get_sword_tr
     get_bombchu_trail_color_options, get_boomerang_trail_color_options, get_gauntlet_color_options, \
     get_magic_color_options, get_heart_color_options, get_shield_frame_color_options, get_a_button_color_options,\
     get_b_button_color_options, get_c_button_color_options, get_start_button_color_options
-from Hints import HintDistList, HintDistTips
+from Hints import HintDistList, HintDistTips, gossipLocations
+from Item import item_table
 from Location import LocationIterator
+from LocationList import location_table
 import Sounds as sfx
 import StartingItems
 from Utils import data_path
+from ItemList import item_table
 
 # holds the info for a single setting
 class Setting_Info():
@@ -632,6 +635,8 @@ logic_tricks = {
         'tooltip' : '''\
                     You can beat the quicksand by backwalking across it
                     in a specific way.
+                    Note that jumping to the carpet merchant as child
+                    typically requires a fairly precise jump slash.
                     '''},
     'Colossus Hill GS with Hookshot': {
         'name'    : 'logic_colossus_gs',
@@ -3682,7 +3687,14 @@ setting_infos = [
             "hide_when_disabled" : True,
         },
     ),
-    Setting_Info('item_hints',    list, None, None, True, {}),
+    Setting_Info(
+        name           = 'item_hints',
+        type           =  list,
+        gui_type       = None,
+        gui_text       = None,
+        shared         = True,
+        choices        = [i for i in item_table if item_table[i][0] == 'Item']
+    ),
     Setting_Info('hint_dist_user',    dict, None, None, True, {}),
     Combobox(
         name           = 'text_shuffle',

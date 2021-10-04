@@ -1250,7 +1250,7 @@ hintTable = {
     'Ice Cavern':                                               ("a frozen maze", "Ice Cavern", 'dungeonName'),
     'Bottom of the Well':                                       ("a shadow's prison", "Bottom of the Well", 'dungeonName'),
     'Gerudo Training Ground':                                   ("the test of thieves", "Gerudo Training Ground", 'dungeonName'),
-    'Ganons Castle':                                            ("a conquered citadel", "Inside Ganon's Castle", 'dungeonName'),
+    'Ganons Castle':                                            ("a conquered citadel", "inside Ganon's Castle", 'dungeonName'),
     
     'Queen Gohma':                                              ("One inside an #ancient tree#...", "One in the #Deku Tree#...", 'boss'),
     'King Dodongo':                                             ("One within an #immense cavern#...", "One in #Dodongo's Cavern#...", 'boss'),

@@ -88,7 +88,7 @@ dungeon_table = [
     },
     {
         'name': 'Ganons Castle',
-        'hint': 'Ganon\'s Castle',
+        'hint': 'inside Ganon\'s Castle',
         'boss_key':     1, 
         'small_key':    2,
         'small_key_mq': 3,
