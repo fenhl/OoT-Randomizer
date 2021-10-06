@@ -370,7 +370,7 @@ REGION_NAMES = {
     "兵士詰所":                       [['Market Guard House'], '\x04'],
     "お面屋":                         [['Market Mask Shop'], '\x04'],
     "ボウリング場":                   [['Market Bombchu Bowling'], '\x04'],
-    "クスリ屋":                       [['Market Potion Shop', 'Kak Potion Shop Front', 'Kak Potion Shop Back'], '\x04'],
+    "クスリ屋":                       [['Market Potion Shop', 'Kak Potion Shop'], '\x04'],
     "くじ屋":                         [['Market Treasure Chest Game'], '\x04'],
     "ボムチュウ屋":                   [['Market Bombchu Shop'], '\x04'],
     "ミドリの民家":                   [['Market Man in Green House'], '\x04'],
@@ -789,6 +789,7 @@ def write_messages(rom, shuffle = False, shuffle_group = None, mode = 0):
     entry_offset = EXTENDED_TABLE_START + 8 * index
     if mode == 1:
         rom.write_bytes(entry_offset, [0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+        os.remove("temporal.py")
 
 # shuffles the messages in the game, making sure to keep various message types in their own group
 def shuffle_messages_jp(messages, except_hints=True, always_allow_skip=True):
@@ -877,4 +878,3 @@ def update_warp_song_text_jp(messages, world):
         new_msg = f"<#{color}{destination}へワープ！#\x00>&:2#{color}はい&いいえ#\x00"
         update_message_jp(messages, id, new_msg)
  
-# os.remove("temporal.py")

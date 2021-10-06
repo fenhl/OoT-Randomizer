@@ -1814,7 +1814,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
                     compass_message_jp = "~~\x75<<%sの&&##\x01コンパス##\x00を入手！" % (dungeon_name_jp)
                 else:
                     compass_message = "\x13\x75\x08You found the \x05\x41Compass\x05\x40\x01for %s\x05\x40!\x01It holds the %s!\x09" % (dungeon_name, dungeon_reward)
-                    compass_message_jp = "~~\x75<<%sの&&#\x01コンパス##\x00を入手！&&%sがあるようだ！" % (dungeon_name_jp, dungeon_reward_jp)
+                    compass_message_jp = "~~\x75<<%sの&&##\x01コンパス##\x00を入手！&&%sがあるようだ！" % (dungeon_name_jp, dungeon_reward_jp)
                 update_message_by_id(messages, compass_id, compass_message)
                 update_message_jp(messages_jp, compass_id_jp, compass_message_jp, mode = 2)
                 if world.settings.mq_dungeons_random or world.settings.mq_dungeons != 0 and world.settings.mq_dungeons != 12:
@@ -2216,6 +2216,17 @@ def create_fake_name(name):
             return create_fake_name(name)
     return new_name
 
+def create_fake_name_jp(name):
+    vowels = 'aeiou'
+    list_name = list(name)
+    vowel_indexes = [i for i,c in enumerate(list_name) if c in vowels]
+    for i in random.sample(vowel_indexes, min(2, len(vowel_indexes))):
+        c = list_name[i]
+        list_name[i] = random.choice([v for v in vowels if v != c])
+
+    # keeping the game E...
+    new_name = ''.join(list_name)
+    return new_name
 
 def place_shop_items(rom, world, shop_items, messages, messages_jp, locations, init_shop_id=False):
     if init_shop_id:
