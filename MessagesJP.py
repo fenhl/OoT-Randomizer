@@ -269,8 +269,8 @@ ITEM_MESSAGES = {
     0x9099: "<<~~\x1B##\x01あきビン##\x00を入手！&&なにかとべんり！",
     0x009A: "<<~~\x21##\x01ふしぎなタマゴ##\x00を入手！",
     0x00A4: "<<~~\x3B##\x02コキリの剣##\x00を入手した！",
-    0x00A7: "<<~~\x01##\x01デクの実##\x00を##\x06３０コ##\x00まで&持てるようになった！",
-    0x00A8: "<<~~\x01##\x01デクの実##\x00を##\x06４０コ##\x00まで&持てるようになった！",
+    0x00A7: "<<~~\x01##\x01デクの実##\x00を##\x06３０コ##\x00まで&&持てるようになった！",
+    0x00A8: "<<~~\x01##\x01デクの実##\x00を##\x06４０コ##\x00まで&&持てるようになった！",
     0x00AD: "<<~~\x05##\x01ディンの炎##\x00を入手！",
     0x00AE: "<<~~\x0D##\x02フロルの風##\x00を入手！",
     0x00AF: "<<~~\x13##\x03ネールの愛##\x00を入手！",
@@ -451,7 +451,7 @@ MISC_MESSAGES = {
     0x1015: ("<<リンクよ…&&今、ここで　お前の勇気を&&ためさせてほしい。", 0x03),
     0x101C: ("<<ボクに　ソレ　ゆずれよ。>>&&:2##\x02はい&&いやだ##\x00", 0x00),
     0x1060: ("<<なんだ、オマエ！？", 0x00),
-    0x109A: ("", 0x03),
+    0x109A: ("<<…なんだっけ", 0x03),
     0x207E: ("<<この##\x01スーパーコッコ##\x00　３羽を&&普通のコッコの中に　投げこむだ。^^<<ぜんぶ　見つけたら　ぼうやの勝ち！&&##\x01イイもの##\x00　やるだーよ。^^<<１０ルピーもらうけど、やる？>>&&:2##\x02はい&&いいえ##\x00", 0x00),
     0x207F: ("<<この##\x01スーパーコッコ##\x00　３羽を&&普通のコッコの中に　投げこむだ。^^<<ぜんぶ　見つけたら　ぼうやの勝ち！&&##\x01イイもの##\x00　やるだーよ。^^<<１０ルピーもらうけど、やる？>>&&:2##\x02はい&&いいえ##\x00", 0x00),
     0x2084: ("<<それで　ぜんぶ　だーよ！&&こっちへ　おいで。{{", 0x00),
@@ -716,43 +716,81 @@ def reproduce_messages_jp(messages):
         new.write("new_jp = {**RAWTEXT_JP,**MESTEXT}\n")
         new.write("mes_sorted = sorted(new_jp.items(), key=lambda x:x[0])")
     
+def reformed(text, new_tag):
+    if r"\x81\x9e" or r"\x81\xcb" in text:
+        text = text[:-24]
+    else:
+        text = text[:-16]
+    if ("k" in new_tag) is True:
+        text = text + r"\x86\xc8\x81\x70"
+    if ("e" in new_tag) is True:
+        text = text + r"\x81\x9f\x81\x70"
+    if ("f" in new_tag) is True:
+        text = text + r"\x81\x9e\x00\x30\x81\x70"
+    if ("" == new_tag) is True:
+        text = text + r"\x81\x70"
+    return text
 
 def write_messages(rom, shuffle = False, shuffle_group = None, mode = 0):
-    from temporal import new_jp, destinate_ids
+    from temporal import new_jp, destinate_ids, MESTEXT, RAWTEXT_JP
     index = 0
     offset = 0
-    tems = 0
     idd = 0
-    way = 0
     dif = 0
+    d_text = None
+    d_id = None
+    opts = int_to_bytes(0,1)
+    tex = None
     text_size_limit = JPN_TEXT_SIZE_LIMIT
     with open("temporal.py", "r+")as red:
         for id, (text, opt, tag, ending) in new_jp.items():
-            id_bytes = int_to_bytes(id, 2)
             for idr, offs in destinate_ids:
                 if idr == id:
                     if (offs - offset) < 0:
-                        raise(TypeError("Message Text table is too large: 0x" + "{:x}".format(id) + ", " + "{:x}".format((offset - offs))))
+                        raise(TypeError("Message Text table is too large: 0x" + "{:x}".format(id) + ", " + "{:x}".format((offset - offs))))                    
+                    dif = (33280 + idd)
+                    id_bytes = int_to_bytes(dif, 2)
+                    offset_bytes = int_to_bytes(offset, 3)
+                    opts = int_to_bytes(0,1)
+                    entry = id_bytes + opts + bytes([0x00, 0x08]) + offset_bytes
+                    entry_offset = EXTENDED_TABLE_START + 8 * index
+                    if mode == 1:
+                        rom.write_bytes(entry_offset, entry)
+                    text_entry = bytes([0x81, 0x70])
                     offset = offs
-            if (offset - tems) > 0:
-                dif = (33280 + idd)
-                id_bytes = int_to_bytes(dif, 2)
-                offset_bytes = int_to_bytes(tems, 3)
-                opts = int_to_bytes(0,1)
-                entry = id_bytes + opts + bytes([0x00, 0x08]) + offset_bytes
-                entry_offset = EXTENDED_TABLE_START + 8 * index
-                if mode == 1:
-                    rom.write_bytes(entry_offset, entry)
-                way = 1
-                idd += 1
-                index += 1
-            id_bytes = int_to_bytes(id, 2)
-            if shuffle is True:
+                    text_offset = TEXT_START_JP + offset - 2
+                    rom.write_bytes(text_offset, text_entry)
+                    idd += 1
+                    index += 1
+                    break
+            opts = int_to_bytes(int(0 if opt is None else opt),1)
+            if shuffle is not False:
+                id_bytes = int_to_bytes(id, 2)
                 for (origin, replace) in shuffle_group:
                     if (origin == id)is True:
-                        text = replace
+                        id_bytes = int_to_bytes(replace, 2)
+                        try:
+                            gin = MESTEXT[replace]
+                        except KeyError:
+                            gin = RAWTEXT_JP[replace]
+                        tex = gin[2]
+                        opt = gin[1]
+                        opts = int_to_bytes(int(0 if opt is None else opt),1)
+                        if not 'g' in tag:
+                            if 'g' in tex:
+                                tex = get_destination(replace,2)
+                            if tex != tag:
+                                text = reformed(text,tex)
+                        elif 'g' in tag:
+                            tag = get_destination(id,2)
+                            if 'g' in tex:
+                                tex = get_destination(replace,2)
+                            if tex != tag:
+                                text = reformed(text,tex)
+                        break
+            else:
+                id_bytes = int_to_bytes(id, 2)
             offset_bytes = int_to_bytes(offset, 3)
-            opts = int_to_bytes(int(0 if opt is None else opt),1)
             entry = id_bytes + opts + bytes([0x00, 0x08]) + offset_bytes
             entry_offset = EXTENDED_TABLE_START + 8 * index
             if mode == 1:
@@ -765,13 +803,8 @@ def write_messages(rom, shuffle = False, shuffle_group = None, mode = 0):
                 t = int(1 + len(text) / 4)
                 text_entry = text_to_bytes(text,t) + bytes([0x00])
             text_offset = TEXT_START_JP + offset
-            if way == 1:
-                text_entry = bytes([0x81, 0x70]) + text_entry
-                text_offset = text_offset - 2
             rom.write_bytes(text_offset, text_entry)
-            way = 0
             offset += t
-            tems = offset
             index += 1
             
     entry = bytes([0xFF, 0xFD, 0x00, 0x00, 0x08]) + int_to_bytes(offset, 3)
@@ -790,7 +823,26 @@ def write_messages(rom, shuffle = False, shuffle_group = None, mode = 0):
     if mode == 1:
         rom.write_bytes(entry_offset, [0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
         os.remove("temporal.py")
-
+def get_destination(id, mode=0):
+    from temporal import new_jp, destinate_ids, MESTEXT, RAWTEXT_JP
+    try:
+        taget = MESTEXT[id]
+    except KeyError:
+        taget = RAWTEXT_JP[id]
+    id_to = int(taget[0][-16:-8].replace("\\x",""), base=16)
+    if "g" in taget[2]:
+        return get_destination(id_to, mode)
+    else:
+        if mode == 0:
+            return taget[0]
+        elif mode == 1:
+            return taget[1]
+        elif mode == 2:
+            return taget[2]
+        elif mode == 3:
+            return taget[2]
+        elif mode == 4:
+            return id_to
 # shuffles the messages in the game, making sure to keep various message types in their own group
 def shuffle_messages_jp(messages, except_hints=True, always_allow_skip=True):
 
@@ -808,29 +860,49 @@ def shuffle_messages_jp(messages, except_hints=True, always_allow_skip=True):
         hint_ids = (
             GOSSIP_STONE_MESSAGES + TEMPLE_HINTS_MESSAGES + LIGHT_ARROW_HINT +
             list(KEYSANITY_MESSAGES.keys()) + list(SHOP_MESSAGES.keys()) +
-            [0x10A0, 0x10A1, 0x10A2, 0x10CA, 0x10CB, 0x10CC, 0x10CD, 0x10CE, 0x10CF, 0x10DC, 0x10DD, 0x5036, 0x70F5, 0xFFFC, 0xFFFD, 0xFFFF, 0x088D, 0x088E, 0x088F, 0x0890, 0x0891, 0x0892] # Chicken count and poe count respectively
+            [0x10A0, 0x10A1, 0x10A2, 0x10CA, 0x10CB, 0x10CC, 0x10CD, 0x10CE, 0x10CF, 0x10DC, 0x10DD, 0x5036, 0x70F5, 0x088D, 0x088E, 0x088F, 0x0890, 0x0891, 0x0892] # Chicken count and poe count respectively
         )
         shuffle_exempt = [
-            0x208D,         # "One more lap!" for Cow in House race.
+            0x208D, 0xFFFC, 0xFFFD, 0xFFFF,          # "One more lap!" for Cow in House race.
         ]
         is_hint = (except_hints and str(id) in str(hint_ids))
         is_error_message = (str(id) == str(ERROR_MESSAGE))
         is_shuffle_exempt = (str(id) in str(shuffle_exempt))
         return (is_hint or is_error_message or is_shuffle_exempt)
+    def is_destinate(id):
+        destination_ids = (
+            [0x1003, 0x1009, 0x100b, 0x100d, 0x100f, 0x1010, 0x1016, 0x1019, 0x1030, 0x1032, 0x1034, 0x1048, 0x1050, 0x1054, 0x1056, 0x1059, 0x105c, 0x105e, 0x1061, 0x1068, 0x106f, 0x1071, 0x10a3, 0x10a9, 0x10ad, 0x10b8, 0x10c1, 0x10c5, 0x10c8, 0x10c9, 0x10d0, 0x10d1, 0x10d2, 0x10d3, 0x10d6, 0x10d8, 0x2003, 0x200b, 0x202b, 0x2031, 0x2036, 0x2040, 0x2042, 0x2046, 0x2052, 0x2065, 0x2066, 0x3015, 0x3017, 0x3019, 0x301b, 0x3022, 0x3025, 0x302a, 0x302c, 0x3033, 0x3038, 0x3042, 0x304b, 0x304f, 0x3055, 0x305c, 0x4009, 0x400b, 0x4013, 0x4015, 0x401c, 0x4027, 0x5010, 0x5011, 0x5014, 0x5019, 0x5029, 0x503f, 0x5044, 0x504b, 0x5058, 0x505a, 0x505c, 0x505e, 0x5061, 0x5067, 0x507a, 0x508c, 0x6018, 0x601a, 0x6023, 0x6024, 0x6026, 0x6062, 0x6065, 0x606b, 0x606e, 0x607a, 0x607b, 0x607e, 0x7017, 0x7019, 0x701c, 0x701e, 0x7020, 0x7022, 0x7024, 0x7028, 0x7051, 0x7072]
+        )
+        is_destin = (str(id) == str(destination_ids))
+        return (is_destin)
     with open("temporal.py","r+") as dec:
         from temporal import new_jp
         for id, (text, opt, tag, ending) in new_jp.items():
-            if (((("g" in tag)or("k" in tag)or("e" in tag)or("f" in tag))is True) or (("" == text)is True) and not is_exempt(id)):
-                have_gen_I.append(text)
+            if "g" in tag :
+                d_tag = get_destination(id, 2)
+                if (((("k" in d_tag)or("e" in d_tag)or("f" in d_tag))is True) or (("" == d_tag)is True) and not is_exempt(id) and not is_destinate(id)):
+                    have_gen_I.append(id)
+                    have_gen_O.append(id)
+                if(((("o" in d_tag) is True))and not is_exempt(id) and not is_destinate(id)):
+                    have_ocarina_I.append(id)
+                    have_ocarina_O.append(id)
+                if(((("2" in d_tag) is True))and not is_exempt(id) and not is_destinate(id)):
+                    have_two_I.append(id)
+                    have_two_O.append(id)
+                if(((("3" in d_tag) is True))and not is_exempt(id) and not is_destinate(id)):
+                    have_three_I.append(id)
+                    have_three_O.append(id)
+            if (((("k" in tag)or("e" in tag)or("f" in tag))is True) or (("" == tag)is True) and not is_exempt(id) and not is_destinate(id)):
+                have_gen_I.append(id)
                 have_gen_O.append(id)
-            if(((("o" in tag) is True))and not is_exempt(id)):
-                have_ocarina_I.append(text)
+            if(((("o" in tag) is True))and not is_exempt(id) and not is_destinate(id)):
+                have_ocarina_I.append(id)
                 have_ocarina_O.append(id)
-            if(((("2" in tag) is True))and not is_exempt(id)):
-                have_two_I.append(text)
+            if(((("2" in tag) is True))and not is_exempt(id) and not is_destinate(id)):
+                have_two_I.append(id)
                 have_two_O.append(id)
-            if(((("3" in tag) is True))and not is_exempt(id)):
-                have_three_I.append(text)
+            if(((("3" in tag) is True))and not is_exempt(id) and not is_destinate(id)):
+                have_three_I.append(id)
                 have_three_O.append(id)
 
     random.shuffle(have_gen_I)
