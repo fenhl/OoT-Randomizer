@@ -560,7 +560,7 @@ typedef struct
   uint16_t        checksum;                 /* 0x1352 */
   int32_t         file_index;               /* 0x1354 */
   char            unk_0F_[0x0004];          /* 0x1358 */
-  int32_t         interface_flag;           /* 0x135C */
+  int32_t         game_mode;                /* 0x135C */
   uint32_t        scene_setup_index;        /* 0x1360 */
   int32_t         void_flag;                /* 0x1364 */
   z64_xyzf_t      void_pos;                 /* 0x1368 */
