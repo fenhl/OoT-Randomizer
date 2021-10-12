@@ -430,7 +430,8 @@ REGION_NAMES = {
     "スタルチュラ穴":                [['HF Near Kak Grotto', 'HC Storms Grotto'], '\x04'],
     "盾の出る墓穴":                  [['Graveyard Shield Grave'], '\x04'],
     "リーデッド墓穴":                [['Graveyard Heart Piece Grave'], '\x04'],
-    "牛のいる穴":                    [['DMT Cow Grotto', 'HF Cow Grotto'], '\x04'],
+    "牛のいる穴":                    [['DMT Cow Grotto'], '\x04'],
+    "クモと牛のいる穴":                 [['HF Cow Grotto'], '\x04'],
 }
 
 MISC_MESSAGES = {
