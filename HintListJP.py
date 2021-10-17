@@ -1362,15 +1362,15 @@ goalTable = {
 
 # This specifies which hints will never appear due to either having known or known useless contents or due to the locations not existing.
 def hintExclusions(world, clear_cache=False):
-    if not clear_cache and hintExclusions.exclusions is not None:
-        return hintExclusions.exclusions
+    if not clear_cache and world.id in hintExclusions.exclusions:
+         return hintExclusions.exclusions[world.id]
 
-    hintExclusions.exclusions = []
-    hintExclusions.exclusions.extend(world.settings.disabled_locations)
+    hintExclusions.exclusions[world.id] = []
+    hintExclusions.exclusions[world.id].extend(world.settings.disabled_locations)
 
     for location in world.get_locations():
         if location.locked:
-            hintExclusions.exclusions.append(location.name)
+            hintExclusions.exclusions[world.id].append(location.name)
 
     world_location_names = [
         location.name for location in world.get_locations()]
@@ -1387,10 +1387,15 @@ def hintExclusions(world, clear_cache=False):
                  'exclude']):
             location_hints.append(hint)
     for hint in location_hints:
-        if hint.name not in world_location_names and hint.name not in hintExclusions.exclusions:
-            hintExclusions.exclusions.append(hint.name)
+        if hint.name not in world_location_names and hint.name not in hintExclusions.exclusions[world.id]:
+            hintExclusions.exclusions[world.id].append(hint.name)
 
-    return hintExclusions.exclusions
+    return hintExclusions.exclusions[world.id]
+
+
+ hintExclusions.exclusions = {}
+
+
 
 def nameIsLocation(name, hint_type, world):
     if isinstance(hint_type, (list, tuple)):
@@ -1401,4 +1406,5 @@ def nameIsLocation(name, hint_type, world):
         return True
     return False
 
-hintExclusions.exclusions = None
+def clearHintExclusionCache():
+     hintExclusions.exclusions.clear()
