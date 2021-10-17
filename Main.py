@@ -26,6 +26,8 @@ from Item import Item
 from ItemPool import generate_itempool
 from Hints import buildGossipHints
 from HintsJP import buildGossipHints as JPGossip
+from HintList import clearHintExclusionCache
+from HintListJP import clearHintExclusionCache as clearHintExclusionCacheJP
 from Utils import default_output_path, is_bundled, subprocess_args, data_path
 from version import __version__
 from N64Patch import create_patch_file, apply_patch_file
@@ -36,7 +38,7 @@ from Search import Search, RewindableSearch
 from EntranceShuffle import set_entrances
 from LocationList import set_drop_location_names
 from Goals import update_goal_items, maybe_set_light_arrows, replace_goal_names
-
+from version import __version__
 
 class dummy_window():
     def __init__(self):
@@ -48,6 +50,10 @@ class dummy_window():
 
 
 def main(settings, window=dummy_window(), max_attempts=10):
+    if settings.language_selection == "english":
+         clearHintExclusionCache()
+    elif settings.language_selection == "japanese":
+         clearHintExclusionCacheJP()
     logger = logging.getLogger('')
     start = time.process_time()
 
