@@ -248,7 +248,10 @@ def CreateJSON(path, web_version=False):
     
     for d in HintDistFiles():
         dist = read_json(d)
-        if dist['distribution']['goal']['weight'] != 0 or dist['distribution']['goal']['fixed'] != 0:
+        if ('distribution' in dist and
+           'goal' in dist['distribution'] and
+           (dist['distribution']['goal']['fixed'] != 0 or
+                dist['distribution']['goal']['weight'] != 0)):
             settingOutputJson['distroArray'].append(dist['name'])
 
     with open(path, 'w') as f:

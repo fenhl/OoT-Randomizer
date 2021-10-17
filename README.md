@@ -102,86 +102,101 @@ do that.
 
 #### New Features
 
-* New setting `Reachable Locations` replaces `All Locations Reachable` and adds a new option "All Goals" which ensures that all goal items for Ganon's Boss Key and the Rainbow Bridge are reachable, regardless of how many are required by the setting.
-  * For example, if the Rainbow Bridge requires 4 medallions, all 6 medallions will be guaranteed reachable.
-* New separate setting `LACS Condition` to select what goal items are required for the Light Arrows Cutscene.
-* New option `Misc. Hints` controls whether the Temple of Time altar and Ganondorf give hints, defaulting on to preserve behavior. Hell Mode disables this setting.
-* New `Rainbow Bridge` option `Random` that will choose one of the other options at random (besides Skulltula Tokens), and require the maximum of that goal (if applicable).
-* New `goal` hint type for use in custom hint distributions. 
-  * Default goals are included for the rainbow bridge, Ganon's Castle Boss Key, and trials settings.
-  * Hints read as "They say that Kokiri Forest is on the path to Twinrova.", where the medallion or stone reward from defeating Twinrova can be used for the bridge or Ganon's Castle Boss Key. Twinrova is not necessarily required depending on other settings. For example, with 2 medallions for the bridge, all medallions accessible without entering Ganon's Castle, and Spirit Medallion on Twinrova, the hint only points to one possible path to building the rainbow bridge.
+* **Objective Settings**
+  * New setting `Reachable Locations` replaces `All Locations Reachable` and adds a new option "All Goals" which ensures that all goal items for Ganon's Boss Key and the Rainbow Bridge are reachable, regardless of how many are required by the setting.
+    * For example, if the Rainbow Bridge requires 4 medallions, all 6 medallions will be guaranteed reachable.
+  * New setting `LACS Condition` to select what goal items are required for the Light Arrows Cutscene, separate from whether Ganon's Boss Key is placed there. (Additional settings are added to control how many.)
+  * `Ganon's Boss Key` now allows you to set it to the Light Arrow Cutscene (and use `LACS Condition` to set its objective) or for it to be directly awarded when meeting a configurable target number of Spiritual Stones, Medallions, Dungeons completed, or Gold Skulltula Tokens. (Additional settings are added to control how many.)
+  * New `Rainbow Bridge` option `Random` that will choose one of the other options at random (besides Skulltula Tokens), and require the maximum of that goal (if applicable).
+
+* **Hints**
+  * New option `Misc. Hints` controls whether the Temple of Time altar and Ganondorf give hints, defaulting on to preserve behavior. Hell Mode disables this setting.
+  * New `goal` hint type for use in custom hint distributions. 
+    * Default goals are included for the Rainbow Bridge, Ganon's Castle Boss Key, and Ganon's Trials settings.
+    * Hints read as "They say that Kokiri Forest is on the path to Twinrova.", where the medallion or stone reward from defeating Twinrova can be used for the bridge or Ganon's Castle Boss Key. Twinrova is not necessarily required depending on other settings. For example, with 2 medallions for the bridge, all medallions accessible without entering Ganon's Castle, and Spirit Medallion on Twinrova, the hint only points to one possible path to building the rainbow bridge.
+  * Hint distributions can now filter areas from being hinted as foolish, via putting the area names in `remove_locations`.
+  * Various other hint distribution changes for named-item hints, including a new `vague_named_items` option for `hint_dist_user` that will name the location but not the item.
+  * The dungeon name is now provided when hinting keys.
+  * Allow special characters (such as the é in Dampé) to appear in in-game hints.
+  * Certain Unicode characters and control characters like 'Ⓐ' and '⯅' can now be used in hint texts to refer to the corresponding in-game symbols.
+
+* **Plandomizer**
+  * New `#MajorItem` item category for Plandomizer allows placing a random major item.
+  * New `#Vanilla` item category for Plandomizer allows placing the item normally at the location.
+  * New Plandomizer support for defining custom item groups.
+  * New Plandomizer support for defining custom song note patterns (rhythm is still random).
+  * Allow Plandomizer to override otherwise randomized settings.
+
+* **Tricks**
+  * Added `King Zora Skip` - Adult Link can make a precise jump to climb atop the fence next to King Zora from the audience chamber.
+  * Removed `Forest Temple MQ Twisted Hallway Switch with Hookshot` - This was determined to be a clip and therefore not allowed in glitchless rulesets.
+
+* **Misc.**
+  * Allow Giant's Knife as a starting item.
+  * Added a file `data/custom_music_exclusion.txt` where one can specify which music files shouldn't be shuffled in with random custom music.
+  * Ruto now knows what kind of medallion or stone she gets in Jabu Jabu.
+  * Randomized songs' note patterns are now included in the spoiler log.
 
 #### Bug Fixes
 
-* Fixed a bug where importing from a settings string might not choose the correct hint distribution depending on platform or number of custom hint distributions in the Hints folder.
-* `Skip Child Zelda` in Multiworld (with Song Shuffle: Anywhere) now correctly provides items to the right player.
-* `Skip Child Zelda` in Multiworld (with Song Shuffle: Anywhere and Triforce Hunt) now avoids starting having already won (by preventing Impa from giving out Triforce Pieces at all if there are fewer players than Triforce Pieces needed to win).
-* Smarter replacement of required warp songs when warp songs are shuffled. 
-* Disable Sandstorm transitions in certain cases in Entrance Randomizer. In particular, this prevents Sandstorm transitions from triggering strobe effects due to a bug.
-* Adjust the weather system to fix the fog glitch.
-* Remove the Door of Time collision while the door is opening.
-* Fix Entrance Randomizer hint area validation to work with shuffled warp songs.
-* Fix Entrance Randomizer dungeon entrance hints.
-* Plandomizer
+* **Gameplay**
+  * Adjust the weather system to fix the fog glitch.
+  * Disable Sandstorm transitions in certain cases in Entrance Randomizer. In particular, this prevents Sandstorm transitions from triggering strobe effects due to a bug.
+  * Remove the Door of Time collision while the door is opening.
+  * Cache chest sizes and colors in the actor to reduce some latency with Chest Size Matches Contents.
+
+* **Entrance Randomizer**
+  * Smarter replacement of required warp songs when warp songs are shuffled. 
+  * Fix hint area validation to work with shuffled warp songs.
+  * Fix dungeon entrance hints.
+
+* **Plandomizer**
   * Correctly consider plando'ed prices in logic, and limit set prices to a range of -32768 to 999.
   * Fix duplicating placed shop items.
   * Properly randomize starting age and time of day when plando sets it to random.
-* Fix some potential failures for placing junk.
-* Fix disabled song locations getting a general junk item instead of a junk song.
-* Prevent areas hinted as barren from having a location hint.
-* Fix trying to place hints when we've run out of stones.
-* Show the actual result settings in the spoiler instead of originally chosen settings (in case some settings like Closed Forest were modified). The settings string remains the original so the seed can be easily reproduced.
-* Fix some spoiler entries for visible ice traps.
-* Fix error thrown on some operating systems for capitalized file extensions .N64/.Z64.
-* Cache chest sizes and colors in the actor to reduce some latency with Chest Size Matches Contents.
+
+* **Hints**
+  * Prevent areas hinted as barren from having a location hint.
+  * Fix trying to place hints when we've run out of stones.
+
+* **Misc. Seed Generation**
+  * Fixed a bug where importing from a settings string might not choose the correct hint distribution depending on platform or number of custom hint distributions in the Hints folder.
+  * `Skip Child Zelda` in Multiworld (with Song Shuffle: Anywhere) now correctly provides items to the right player.
+  * `Skip Child Zelda` in Multiworld (with Song Shuffle: Anywhere and Triforce Hunt) now avoids starting having already won (by preventing Impa from giving out Triforce Pieces at all if there are fewer players than Triforce Pieces needed to win).
+  * Fix some potential failures for placing junk.
+  * Fix disabled song locations getting a general junk item instead of a junk song.
+  * Fix some spoiler entries for visible ice traps.
+  * Fix error thrown on some operating systems for capitalized file extensions .N64/.Z64.
+<!-- * Show the actual result settings in the spoiler instead of originally chosen settings (in case some settings like Closed Forest were modified). The settings string remains the original so the seed can be easily reproduced. -->
+
 
 #### Other Changes
 
-* Ganon's Boss Key is now awarded when meeting the goal (if not set to LACS).
-* Ruto now knows what kind of medallion or stone she gets in Jabu Jabu.
 * Added Nayru's Love back to the minimal item pool on high damage settings.
-* Allow special characters (such as the é in Dampé) to appear in in-game hints.
 * Allow settings with a 'Random' option to be different per-world. (This does not permit settings randomized only by Randomize Main Rules to be different per-world.)
-* Randomized songs' note patterns are included in the spoiler log.
-* Hint distribution changes for named-item hints, including a new `vague_named_items` option for `hint_dist_user` that will name the location but not the item.
-* Hint distributions can now filter areas from being hinted as foolish, via putting the area names in `remove_locations`.
-* Improved support for certain Unicode characters and control characters in hint texts.
-* Provide the dungeon name when hinting keys.
 * Updated sometimes hints.
 * Renamed some regions, locations, items, etc to make vanilla names. This will make Plandomizer files incompatible between versions.
   * Gerudo Training **Grounds** -> Gerudo Training **Ground**
   * Gerudo Fortress -> Thieves' Hideout (when referring to the interior areas or the carpenter rescue quest)
   * Graveyard Composers' Grave -> Royal Family's Tomb
-* New `#MajorItem` item category for Plandomizer allows placing a random major item.
-* New `#Vanilla` item category for Plandomizer allows placing the item normally at the location.
-* New Plandomizer support for defining custom item groups.
-* New Plandomizer support for defining custom song note patterns (rhythm is still random).
-* Allow Plandomizer to override otherwise randomized settings.
-* Allow Giant's Knife as a starting item.
 * Giant's Knife and Biggoron's Sword are considered useless in glitchless logic but not in glitched.
+* Entrance Randomizer: Prelude of Light and Serenade of Water are considered useless in ER if the only ER option enabled is Random Spawns (which already cannot be placed in certain areas where any items are necessary to escape).
 * Entrance Randomizer: Allow Kakariko Potion Shop and Impa's House to have their entrances appear in different areas if all hints are off.
 * Entrance Randomizer: When warp songs are shuffled, the confirmation text now shows the actual destination.
-* Text Shuffle: Expanded the "Shuffled except Hints and Keys" to include some shop and scrub text, and renamed "Shuffled except Important Text".
-* Custom Music: Added a file `custom_music_exclusion` to specify which music files shouldn't be shuffled in with random custom music.
+* Text Shuffle: Expanded the "Shuffled except Hints and Keys" to include some shop and scrub text, and renamed it to "Shuffled except Important Text".
 * Hid the trick list on the GUI when it's disabled.
 * Changed internal names for the broken swords.
 * Added validation of settings for plandomizer before attempting generation.
 * Removed size check for the decompressor.
 * Updated presets.
+* Updated logic.
+* Added internal tracking of what items were where in vanilla OoT.
 * Added ability to provide settings through stdin (useful for shell scripting).
 * Added a commandline flag to use a preset by name. This still allows supplying additional settings, e.g. to control cosmetics and ROM output.
-* Added internal tracking of what items were where in vanilla OoT.
 * Added settings validation for unittests.
 * Added unittests for settings presets.
-* Logic updates.
 * Use HTTPS for the version check to github.
 
-#### Trick Changes
-
-* New Tricks
-  * `King Zora Skip` - Adult Link can make a precise jump to climb atop the fence next to King Zora from the audience chamber.
-* Removed Tricks
-  * `Forest Temple MQ Twisted Hallway Switch with Hookshot` - Removed as this was determined to be a clip and therefore not allowed in glitchless rulesets.
 
 ### 6.0
 

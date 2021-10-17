@@ -300,7 +300,7 @@ class WorldDistribution(object):
                         self.major_group.append('Triforce Piece')
                     major_tokens = ((self.distribution.settings.shuffle_ganon_bosskey == 'on_lacs' and
                             self.distribution.settings.lacs_condition == 'tokens') or 
-                            self.distribution.shuffle_ganon_bosskey == 'tokens' or self.distribution.settings.bridge == 'tokens')
+                            self.distribution.settings.shuffle_ganon_bosskey == 'tokens' or self.distribution.settings.bridge == 'tokens')
                     if self.distribution.settings.tokensanity == 'all' and major_tokens:
                         self.major_group.append('Gold Skulltula Token')
                     if self.distribution.settings.shuffle_smallkeys == 'keysanity':

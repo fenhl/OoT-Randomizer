@@ -29,7 +29,6 @@ from HintsJP import buildGossipHints as JPGossip
 from HintList import clearHintExclusionCache
 from HintListJP import clearHintExclusionCache as clearHintExclusionCacheJP
 from Utils import default_output_path, is_bundled, subprocess_args, data_path
-from version import __version__
 from N64Patch import create_patch_file, apply_patch_file
 from SettingsList import setting_infos, logic_tricks
 from Rules import set_rules, set_shop_rules
@@ -39,6 +38,7 @@ from EntranceShuffle import set_entrances
 from LocationList import set_drop_location_names
 from Goals import update_goal_items, maybe_set_light_arrows, replace_goal_names
 from version import __version__
+
 
 class dummy_window():
     def __init__(self):
