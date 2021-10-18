@@ -162,7 +162,7 @@ do that.
 * **Misc. Seed Generation**
   * Fixed a bug where importing from a settings string might not choose the correct hint distribution depending on platform or number of custom hint distributions in the Hints folder.
   * `Skip Child Zelda` in Multiworld (with Song Shuffle: Anywhere) now correctly provides items to the right player.
-  * `Skip Child Zelda` in Multiworld (with Song Shuffle: Anywhere and Triforce Hunt) now avoids starting having already won (by preventing Impa from giving out Triforce Pieces at all if there are fewer players than Triforce Pieces needed to win).
+  * `Skip Child Zelda` in Triforce Hunt (with Song Shuffle: Anywhere) now avoids starting having already won (by preventing Impa from giving out Triforce Pieces at all if there are more players than Triforce Pieces needed to win).
   * Fix some potential failures for placing junk.
   * Fix disabled song locations getting a general junk item instead of a junk song.
   * Fix some spoiler entries for visible ice traps.
