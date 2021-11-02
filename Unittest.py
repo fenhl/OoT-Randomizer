@@ -453,8 +453,11 @@ class TestValidSpoilers(unittest.TestCase):
         # Everybody reached the win condition in the playthrough
         if spoiler['settings'].get('triforce_hunt', False) or spoiler['randomized_settings'].get('triforce_hunt', False):
             item_pool = self.normalize_worlds_dict(spoiler['item_pool'])
+            # playthrough assumes each player gets exactly the goal
+            req = spoiler['settings'].get('triforce_goal_per_world', None) or spoiler['randomized_settings'].get('triforce_goal_per_world', None)
             self.assertEqual(
-                {p: item_pool[p]['Triforce Piece'] for p in items},
+                {p: req or item_pool[p]['Triforce Piece']
+                    for p in items},
                 {p: c['Triforce Piece'] for p, c in items.items()},
                 'Playthrough missing some (or having extra) Triforce Pieces')
         else:

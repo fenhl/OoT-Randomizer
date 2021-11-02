@@ -288,95 +288,15 @@ KEYSANITY_MESSAGES = {
     0x00A9: "\x13\x77\x08You found a \x05\x41Small Key\x05\x40\x01for the \x05\x45Shadow Temple\x05\x40!\x09",
 }
 
-#   Styled Name                    Entrance Names       Text Color
-REGION_NAMES = {
-    # Dungeons
-    "the Deku Tree":                  [['Deku Tree Lobby'], '\42'],
-    "Dodongo's Cavern":               [['Dodongos Cavern Beginning'], '\41'],
-    "Jabu Jabu's Belly":              [['Jabu Jabus Belly Beginning'], '\43'],
-    "the Forest Temple":              [['Forest Temple Lobby'], '\42'],
-    "the Fire Temple":                [['Fire Temple Lower'], '\41'],
-    "the Water Temple":               [['Water Temple Lobby'], '\43'],
-    "the Spirit Temple":              [['Spirit Temple Lobby'], '\46'],
-    "the Shadow Temple":              [['Shadow Temple Entryway'], '\45'],
-    "the Bottom of the Well":         [['Bottom of the Well'], '\45'],
-    "the Ice Cavern":                 [['Ice Cavern Beginning'], '\44'],
-    "Gerudo Training Ground":         [['Gerudo Training Ground Lobby'], '\46'],
-
-    # Indoors
-    "Mido's House":                   [['KF Midos House'], '\44'],
-    "Saria's House":                  [['KF Sarias House'], '\44'],
-    "House of Twins":                 [['KF House of Twins'], '\44'],
-    "Know It All House":              [['KF Know It All House'], '\44'],
-    "the Kokiri Shop":                [['KF Kokiri Shop'], '\44'],
-    "the Lakeside Laboratory":        [['LH Lab'], '\44'],
-    "the Fishing Pond":               [['LH Fishing Hole'], '\44'],
-    "the Carpenter's Tent":           [['GV Carpenter Tent'], '\44'],
-    "the Guard House":                [['Market Guard House'], '\44'],
-    "the Mask Shop":                  [['Market Mask Shop'], '\44'],
-    "the Bombchu Bowling Alley":      [['Market Bombchu Bowling'], '\44'],
-    "the Potion Shop":                [['Market Potion Shop', 'Kak Potion Shop Front', 'Kak Potion Shop Back'], '\44'],
-    "the Treasure Chest Game":        [['Market Treasure Chest Game'], '\44'],
-    "the Bombchu Shop":               [['Market Bombchu Shop'], '\44'],
-    "a Back Alley House":             [['Market Man in Green House'], '\44'],
-    "the Carpenter's House":          [['Kak Carpenter Boss House'], '\44'],
-    "the House of Skulltula":         [['Kak House of Skulltula'], '\44'],
-    "Impa's House":                   [['Kak Impas House', 'Kak Impas House Back'], '\44'],
-    "the Oddity Shop":                [['Kak Odd Medicine Building'], '\44'],
-    "Damp\x96's House":               [['Graveyard Dampes House'], '\44'],
-    "the Goron Shop":                 [['GC Shop'], '\44'],
-    "the Zora Shop":                  [['ZD Shop'], '\44'],
-    "Talon's House":                  [['LLR Talons House'], '\44'],
-    "Lon Lon Stable":                 [['LLR Stables'], '\44'],
-    "Lon Lon Tower":                  [['LLR Tower'], '\44'],
-    "the Bazaar":                     [['Market Bazaar', 'Kak Bazaar'], '\44'],
-    "the Shooting Gallery":           [['Market Shooting Gallery', 'Kak Shooting Gallery'], '\44'],
-    "a Great Fairy Fountain":         [['Colossus Great Fairy Fountain', 'HC Great Fairy Fountain', 'OGC Great Fairy Fountain', 'DMC Great Fairy Fountain', 'DMT Great Fairy Fountain', 'ZF Great Fairy Fountain'], '\44'],
-    "\x0F's House":                   [['KF Links House'], '\44'],
-    "the Temple of Time":             [['Temple of Time'], '\44'],
-    "the Windmill":                   [['Kak Windmill'], '\44'],
-
-    # Overworld
-    "Kokiri Forest":                 [['Kokiri Forest'], '\41'],
-    "the Lost Woods Bridge":         [['LW Bridge From Forest', 'LW Bridge'], '\42'],
-    "the Lost Woods":                [['Lost Woods', 'LW Beyond Mido', 'LW Forest Exit'], '\42'],
-    "Goron City":                    [['GC Woods Warp', 'GC Darunias Chamber', 'Goron City'], '\41'],
-    "Zora's River":                  [['Zora River', 'ZR Behind Waterfall', 'ZR Front'], '\43'],
-    "the Sacred Forest Meadow":      [['SFM Entryway'], '\41'],
-    "Hyrule Field":                  [['Hyrule Field'], '\44'],
-    "Lake Hylia":                    [['Lake Hylia'], '\43'],
-    "Gerudo Valley":                 [['Gerudo Valley', 'GV Fortress Side'], '\46'],
-    "the Market Entrance":           [['Market Entrance'], '\44'],
-    "Kakariko Village":              [['Kakariko Village', 'Kak Behind Gate', 'Kak Impas Ledge'], '\45'],
-    "Lon Lon Ranch":                 [['Lon Lon Ranch'], '\46'],
-    "Zora's Domain":                 [['Zoras Domain', 'ZD Behind King Zora'], '\43'],
-    "Gerudo Fortress":               [['Gerudo Fortress', 'GF Outside Gate'], '\41'],
-    "the Haunted Wasteland":         [['Wasteland Near Fortress', 'Wasteland Near Colossus'], '\46'],
-    "the Desert Colossus":           [['Desert Colossus'], '\44'],
-    "the Market":                    [['Market'], '\44'],
-    "the Castle Grounds":            [['Castle Grounds'], '\44'],
-    "the Temple of Time Entrance":   [['ToT Entrance'], '\44'],
-    "the Graveyard":                 [['Graveyard'], '\45'],
-    "Death Mountain Trail":          [['Death Mountain', 'Death Mountain Summit'], '\41'],
-    "Death Mountain Crater":         [['DMC Lower Local', 'DMC Lower Nearby', 'DMC Upper Local', 'DMC Upper Nearby'], '\41'],
-    "Zora's Fountain":               [['Zoras Fountain'], '\43'],
-
-    # Grottos
-    "the Royal Family's Tomb":       [['Graveyard Royal Familys Tomb'], '\44'],
-    "Damp\x96's Grave":              [['Graveyard Dampes Grave'], '\44'],
-    "the Wolfos Grotto":             [['SFM Wolfos Grotto'], '\44'],
-    "the ReDead Grotto":             [['Kak Redead Grotto'], '\44'],
-    "a Deku Scrub Grotto":           [['GV Storms Grotto', 'Colossus Grotto', 'LLR Grotto', 'SFM Storms Grotto', 'HF Inside Fence Grotto', 'GC Grotto', 'DMC Hammer Grotto', 'LW Scrubs Grotto', 'LH Grotto', 'ZR Storms Grotto'], '\44'],
-    "the Tektite Grotto":            [['HF Tektite Grotto'], '\44'],
-    "the Deku Theater":              [['Deku Theater'], '\44'],
-    "a Generic Grotto":              [['KF Storms Grotto', 'HF Near Market Grotto', 'HF Southeast Grotto', 'ZR Open Grotto', 'DMC Upper Grotto', 'Kak Open Grotto', 'DMT Storms Grotto', 'LW Near Shortcuts Grotto', 'HF Open Grotto'], '\44'],
-    "a Fairy Fountain":              [['SFM Fairy Grotto', 'HF Fairy Grotto', 'ZD Storms Grotto', 'GF Storms Grotto', 'ZR Fairy Grotto'], '\44'],
-    "the Octorok Grotto":            [['GV Octorok Grotto'], '\44'],
-    "a Skulltula Grotto":            [['HF Near Kak Grotto', 'HC Storms Grotto'], '\44'],
-    "the Shield Grave":              [['Graveyard Shield Grave'], '\44'],
-    "the ReDead Grave":              [['Graveyard Heart Piece Grave'], '\44'],
-    "the Cow Grotto":                [['DMT Cow Grotto'], '\44'],
-    "the Spider Cow Grotto":         [['HF Cow Grotto'], '\44'],
+COLOR_MAP = {
+    'White':      '\x40',
+    'Red':        '\x41',
+    'Green':      '\x42',
+    'Blue':       '\x43',
+    'Light Blue': '\x44',
+    'Pink':       '\x45',
+    'Yellow':     '\x46',
+    'Black':      '\x47',
 }
 
 MISC_MESSAGES = {
@@ -1071,22 +991,17 @@ def update_warp_song_text(messages, world):
     }
 
     for id, entr in msg_list.items():
-        destination_raw = world.get_entrance(entr).connected_region.name
+        destination = world.get_entrance(entr).connected_region
 
-        # Format the region name
-        destination, color = None, None
-        for formatted_region, info in REGION_NAMES.items():
-            raw_region_list, region_color = info
-            if destination_raw in raw_region_list:
-                destination = formatted_region
-                color = region_color
-                break
+        if destination.pretty_name:
+            destination_name = destination.pretty_name
+        elif destination.hint:
+            destination_name = destination.hint
+        elif destination.dungeon:
+            destination_name = destination.dungeon.hint
+        else:
+            destination_name = destination.name
+        color = COLOR_MAP[destination.font_color or 'White']
 
-        # Check if region name isn't found
-        if destination is None:
-            logging.error("MISSING REGION NAME: " + destination_raw)
-            destination = destination_raw
-            color = "\40"
-
-        new_msg = f"\x08\x05{color}Warp to {destination}?\x05\40\x09\x01\x01\x1b\x05{color}OK\x01No\x05\40"
+        new_msg = f"\x08\x05{color}Warp to {destination_name}?\x05\40\x09\x01\x01\x1b\x05{color}OK\x01No\x05\40"
         update_message_by_id(messages, id, new_msg)

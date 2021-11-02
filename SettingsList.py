@@ -4884,7 +4884,8 @@ def build_close_match(name, value_type, source_list=None):
         source = [x.name for x in setting_infos]
     elif value_type == 'choice':
         source = source_list
-    close_match = difflib.get_close_matches(name, source, 1)
+    # Ensure name and source are type string to prevent errors
+    close_match = difflib.get_close_matches(str(name), map(str, source), 1)
     if len(close_match) > 0:
         return "Did you mean %r?" % (close_match[0])
     return "" # No matches

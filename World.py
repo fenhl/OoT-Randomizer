@@ -387,6 +387,10 @@ class World(object):
         for region in region_json:
             new_region = Region(region['region_name'])
             new_region.world = self
+            if 'pretty_name' in region:
+                new_region.pretty_name = region['pretty_name']
+            if 'font_color' in region:
+                new_region.font_color = region['font_color']
             if 'scene' in region:
                 new_region.scene = region['scene']
             if 'hint' in region:

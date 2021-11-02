@@ -13,7 +13,7 @@ import itertools
 
 from HintList import getHint, getHintGroup, Hint, hintExclusions
 from Item import MakeEventItem
-from Messages import update_message_by_id
+from Messages import COLOR_MAP, update_message_by_id
 from Search import Search
 from StartingItems import everything
 from TextBox import line_wrap
@@ -270,17 +270,6 @@ def getSimpleHintNoPrefix(item):
 
 
 def colorText(gossip_text):
-    colorMap = {
-        'White':      '\x40',
-        'Red':        '\x41',
-        'Green':      '\x42',
-        'Blue':       '\x43',
-        'Light Blue': '\x44',
-        'Pink':       '\x45',
-        'Yellow':     '\x46',
-        'Black':      '\x47',
-    }
-
     text = gossip_text.text
     colors = list(gossip_text.colors) if gossip_text.colors is not None else []
     color = 'White'
@@ -296,7 +285,7 @@ def colorText(gossip_text):
                 splitText[1] = splitText[1][len(prefix):]
                 break
 
-        splitText[1] = '\x05' + colorMap[color] + splitText[1] + '\x05\x40'
+        splitText[1] = '\x05' + COLOR_MAP[color] + splitText[1] + '\x05\x40'
         text = ''.join(splitText)
 
     return text

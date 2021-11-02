@@ -156,6 +156,7 @@ do that.
   * Properly randomize starting age and time of day when plando sets it to random.
 
 * **Hints**
+  * Make hints in Triforce Hunt function based on the required number of Triforce Pieces and not the total number (improves Way of the Hero hints as well as compatibility with Guaranteed Reachable Locations set to Required Only).
   * Prevent areas hinted as barren from having a location hint.
   * Fix trying to place hints when we've run out of stones.
 
