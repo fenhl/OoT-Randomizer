@@ -121,7 +121,7 @@ do that.
   * Certain Unicode characters and control characters like 'Ⓐ' and '⯅' can now be used in hint texts to refer to the corresponding in-game symbols.
 
 * **Plandomizer**
-  * New `#MajorItem` item category for Plandomizer allows placing a random major item.
+  * New `#MajorItem` item category for Plandomizer allows placing a random major item. This won't include songs unless Song Shuffle is Anywhere.
   * New `#Vanilla` item category for Plandomizer allows placing the item normally at the location.
   * New Plandomizer support for defining custom item groups.
   * New Plandomizer support for defining custom song note patterns (rhythm is still random).

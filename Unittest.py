@@ -419,7 +419,7 @@ class TestValidSpoilers(unittest.TestCase):
         # No disabled locations
         disables = set(spoiler['settings'].get('disabled_locations', []))
         self.assertEqual(
-            expected_none,
+            {p: set() for p in locations},  # keys might differ bt locations/items
             {p: disables & c for p, c in locations.items()},
             'Disabled locations deemed required')
         # No more than one of any 'once' item

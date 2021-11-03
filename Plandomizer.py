@@ -295,6 +295,9 @@ class WorldDistribution(object):
             if pattern == '#MajorItem':
                 if not self.major_group: # If necessary to compute major_group, do so only once
                     self.major_group = [item for item in group if item in self.base_pool]
+                    # Songs included by default, remove them if songs not set to anywhere
+                    if self.distribution.settings.shuffle_song_items != "any":
+                        self.major_group = [x for x in self.major_group if x not in item_groups['Song']]
                     # Special handling for things not included in base_pool
                     if self.distribution.settings.triforce_hunt:
                         self.major_group.append('Triforce Piece')
