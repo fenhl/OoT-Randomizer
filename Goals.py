@@ -130,11 +130,17 @@ def replace_goal_names(worlds):
                 if isinstance(goal.hint_text, dict):
                     for boss in bosses:
                         if boss.item.name == goal.hint_text['replace']:
-                            flavorText, clearText, color = goalTable[boss.name]
-                            if world.settings.clearer_hints:
-                                goal.hint_text = clearText
-                            else:
-                                goal.hint_text = flavorText
+                            flavorText, clearText, flavorTextJP, clearTextJP, color = goalTable[boss.name]
+                            if world.settings.language_selection == "english":
+                                if world.settings.clearer_hints:
+                                    goal.hint_text = clearText
+                                else:
+                                    goal.hint_text = flavorText
+                            elif world.settings.language_selection == "japanese":
+                                if world.settings.clearer_hints:
+                                    goal.hint_text = clearTextJP
+                                else:
+                                    goal.hint_text = flavorTextJP
                             goal.color = color
                             break
 

@@ -25,9 +25,7 @@ from Fill import distribute_items_restrictive, ShuffleError
 from Item import Item
 from ItemPool import generate_itempool
 from Hints import buildGossipHints
-from HintsJP import buildGossipHints as JPGossip
 from HintList import clearHintExclusionCache
-from HintListJP import clearHintExclusionCache as clearHintExclusionCacheJP
 from Utils import default_output_path, is_bundled, subprocess_args, data_path
 from N64Patch import create_patch_file, apply_patch_file
 from SettingsList import setting_infos, logic_tricks
@@ -50,10 +48,7 @@ class dummy_window():
 
 
 def main(settings, window=dummy_window(), max_attempts=10):
-    if settings.language_selection == "english":
-         clearHintExclusionCache()
-    elif settings.language_selection == "japanese":
-         clearHintExclusionCacheJP()
+    clearHintExclusionCache()
     logger = logging.getLogger('')
     start = time.process_time()
 
@@ -200,10 +195,7 @@ def make_spoiler(settings, worlds, window=dummy_window()):
         window.update_status('Calculating Hint Data')
         logger.info('Calculating hint data.')
         update_goal_items(spoiler)
-        if settings.language_selection == 'english':
-            buildGossipHints(spoiler, worlds)
-        elif settings.language_selection == 'japanese':
-            JPGossip(spoiler, worlds)
+        buildGossipHints(spoiler, worlds)
         window.update_progress(55)
     elif settings.misc_hints:
         # Ganon may still provide the Light Arrows hint

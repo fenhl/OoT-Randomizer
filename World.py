@@ -387,6 +387,10 @@ class World(object):
         for region in region_json:
             new_region = Region(region['region_name'])
             new_region.world = self
+            if 'name_jp' in region:
+                new_region.name_JP = region['name_jp']
+            if 'pretty_name_jp' in region:
+                new_region.pretty_name_JP = region['pretty_name_jp']
             if 'pretty_name' in region:
                 new_region.pretty_name = region['pretty_name']
             if 'font_color' in region:
@@ -395,6 +399,8 @@ class World(object):
                 new_region.scene = region['scene']
             if 'hint' in region:
                 new_region.hint = region['hint']
+            if 'hint_jp' in region:
+                new_region.hint_JP = region['hint_jp']
             if 'dungeon' in region:
                 new_region.dungeon = region['dungeon']
             if 'time_passes' in region:

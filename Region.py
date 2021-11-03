@@ -28,6 +28,7 @@ class Region(object):
 
     def __init__(self, name, type=RegionType.Overworld):
         self.name = name
+        self.name_JP = None
         self.type = type
         self.entrances = []
         self.exits = []
@@ -35,24 +36,29 @@ class Region(object):
         self.dungeon = None
         self.world = None
         self.hint = None
+        self.hint_JP = None
         self.price = None
         self.world = None
         self.time_passes = False
         self.provides_time = TimeOfDay.NONE
         self.scene = None
         self.pretty_name = None
+        self.pretty_name_JP = None
         self.font_color = None
 
 
     def copy(self, new_world):
         new_region = Region(self.name, self.type)
+        new_region.name_JP = self.name_JP
         new_region.world = new_world
         new_region.price = self.price
         new_region.hint = self.hint
+        new_region.hint_JP = self.hint_JP
         new_region.time_passes = self.time_passes
         new_region.provides_time = self.provides_time
         new_region.scene = self.scene
         new_region.pretty_name = self.pretty_name
+        new_region.pretty_name_JP = self.pretty_name_JP
         new_region.font_color = self.font_color
 
         if self.dungeon:
