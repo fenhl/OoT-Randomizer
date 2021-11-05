@@ -164,7 +164,7 @@ logic_tricks = {
                     going through the Kakariko Village Gate as child
                     when coming from the Mountain Trail side.
                     '''},
-    'Child Deadhand without Kokiri Sword': {
+    'Child Dead Hand without Kokiri Sword': {
         'name'    : 'logic_child_deadhand',
         'tags'    : ("Bottom of the Well",),
         'tooltip' : '''\
