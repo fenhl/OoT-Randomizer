@@ -1709,7 +1709,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
             item = read_rom_item(rom, i)
             item['chest_type'] = 0
             write_rom_item(rom, i, item)
-    if world.settings.bridge == 'tokens' or world.settings.lacs_condition == 'tokens':
+    if world.settings.bridge == 'tokens' or world.settings.lacs_condition == 'tokens' or world.settings.shuffle_ganon_bosskey == 'tokens':
         item = read_rom_item(rom, 0x5B)
         item['chest_type'] = 0
         write_rom_item(rom, 0x5B, item)
