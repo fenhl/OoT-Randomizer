@@ -384,7 +384,7 @@ def charlen(text, leng=0, mode=0):
     return i
     
 def linewrapJP(text, mode=0, allign="left"):
-    LINE = 16
+    LINE = 15
     instant = 0
     if "~" in text:
         LINE = 12
