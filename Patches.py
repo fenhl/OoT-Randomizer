@@ -1709,7 +1709,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
             item = read_rom_item(rom, i)
             item['chest_type'] = 0
             write_rom_item(rom, i, item)
-    if world.settings.bridge == 'tokens' or world.settings.lacs_condition == 'tokens' or world.settings.shuffle_ganon_bosskey == 'tokens':
+    if world.settings.bridge == 'tokens' or world.settings.lacs_condition == 'tokens':
         item = read_rom_item(rom, 0x5B)
         item['chest_type'] = 0
         write_rom_item(rom, 0x5B, item)
@@ -2221,16 +2221,31 @@ def create_fake_name(name):
         if cuss in new_name_az:
             return create_fake_name(name)
     return new_name
+def h2k(char):
+    return ''.join([chr(n+96) if (12352 < n and n < 12439) or n==12445 or n==12446 else chr(n) for n in [ord(c) for c in char]])
+
+def k2h(char):
+    return ''.join([chr(n-96) if (12448 < n and n < 12535) or n==12541 or n==12542 else chr(n) for n in [ord(c) for c in char]])
 
 def create_fake_name_jp(name):
-    vowels = 'aeiou'
     list_name = list(name)
-    vowel_indexes = [i for i,c in enumerate(list_name) if c in vowels]
-    for i in random.sample(vowel_indexes, min(2, len(vowel_indexes))):
-        c = list_name[i]
-        list_name[i] = random.choice([v for v in vowels if v != c])
-
-    # keeping the game E...
+    index = len(name)
+    n = 0
+    z = 0
+    while n <= index / 5:
+        k = random.randrange(index)
+        if z + 1 == k or z - 1 == k:
+            pass
+        else:
+            p = re.compile('[ぁ-らりるれろわをん]+')
+            q = re.compile('[\ァ-ラリルレロワヲン]+')
+            if p.fullmatch(list_name[k]):
+                list_name[k] = h2k(list_name[k])
+                n += 1
+            elif q.fullmatch(list_name[k]):
+                list_name[k] = k2h(list_name[k])
+                n += 1
+            z = k
     new_name = ''.join(list_name)
     return new_name
 
@@ -2286,12 +2301,7 @@ def place_shop_items(rom, world, shop_items, messages, messages_jp, locations, i
                 split_item_name = item_display.name.split('(')
                 split_item_name[1] = '(' + split_item_name[1]
 
-                if location.item.name == 'Ice Trap':
-                    split_item_name[0] = create_fake_name(split_item_name[0])
-                    
-                if dungeon_item_name == 'Ice Trap':
-                    dungeon_item_name = create_fake_name_jp(dungeon_item_name)
-                    
+                
                 iname = None
                 for name, (textOptionsen, clearTexten, textOptions, clearText, type) in HT.items():
                     if (name == dungeon_item_name) is True:
@@ -2302,6 +2312,9 @@ def place_shop_items(rom, world, shop_items, messages, messages_jp, locations, i
                         break    
                 if iname is None:
                     raise(TypeError("d%s" % dungeon_item_name))
+                if location.item.name == 'Ice Trap':
+                    split_item_name[0] = create_fake_name(split_item_name[0])
+                    iname = create_fake_name_jp(iname)
                     
                 if world.settings.world_count > 1:
                     description_text = '\x08\x05\x41%s  %d Rupees\x01%s\x01\x05\x42Player %d\x05\x40\x01Special deal! ONE LEFT!\x09\x0A\x02' % (split_item_name[0], location.price, split_item_name[1], location.item.world.id + 1)
@@ -2316,9 +2329,6 @@ def place_shop_items(rom, world, shop_items, messages, messages_jp, locations, i
             else:
                 shop_item_name = getSimpleHintNoPrefix(item_display)
                 shop_item_name_jp = item_display.name
-                if location.item.name == 'Ice Trap':
-                    shop_item_name = create_fake_name(shop_item_name)
-                    shop_item_name_jp = create_fake_name(shop_item_name_jp)
 
                 iname = None
                 for name, (textOptionsen, clearTexten, textOptions, clearText, type) in HT.items():
@@ -2330,7 +2340,9 @@ def place_shop_items(rom, world, shop_items, messages, messages_jp, locations, i
                         break
                 if iname is None:
                     raise(TypeError("i%s" % shop_item_name_jp))
-                    
+                if location.item.name == 'Ice Trap':
+                    shop_item_name = create_fake_name(shop_item_name)
+                    iname = create_fake_name_jp(iname)
                 if world.settings.world_count > 1:
                     description_text = '\x08\x05\x41%s  %d Rupees\x01\x05\x42Player %d\x05\x40\x01Special deal! ONE LEFT!\x09\x0A\x02' % (shop_item_name, location.price, location.item.world.id + 1)
                     price_jp = str(location.price).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)}))

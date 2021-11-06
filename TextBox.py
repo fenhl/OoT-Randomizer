@@ -384,7 +384,7 @@ def charlen(text, leng=0, mode=0):
     return i
     
 def linewrapJP(text, mode=0, allign="left"):
-    LINE = 15
+    LINE = 16
     instant = 0
     if "~" in text:
         LINE = 12
@@ -410,7 +410,7 @@ def linewrapJP(text, mode=0, allign="left"):
             elif "&" in splitbox[n-1] and (":2" or ":3" or ":O" )not in splitbox[n-1]:
                 splitline = splitbox[n-1].split("&")
                 while i <= splitbox[n-1].count("&") + 1:
-                    if charlen(splitline[i-1]) <= LINE:
+                    if charlen(splitline[i-1])-2 <= LINE:
                         if i % 3 == 0:
                             if "~" not in text:
                                 if allign == "left":
@@ -469,7 +469,8 @@ def linewrapJP(text, mode=0, allign="left"):
                                         splitline[i-1] = shift + splitline[i-1] + "&"
                             elif "~" in text:
                                 splitline[i-1] = splitline[i-1] + "&"
-                    elif charlen(splitline[i-1]) > LINE:
+                    elif charlen(splitline[i-1])-2 > LINE:
+                        k = 0
                         j = charlen(splitline[i-1],LINE)
                         p = 0
                         while LINE * (p - 1) <= charlen(splitline[i-1]):
@@ -538,7 +539,7 @@ def linewrapJP(text, mode=0, allign="left"):
                     i += 1
                 splitbox[n-1] = "".join(splitline)
             elif "&" not in splitbox[n-1] and (":2" or ":3" or ":O" )not in splitbox[n-1]:
-                if charlen(splitbox[n-1]) <= LINE:
+                if charlen(splitbox[n-1])-2 <= LINE:
                     if "~" not in text:
                         if allign == "left":
                             if "T+" in splitbox[n-1]:
@@ -567,7 +568,7 @@ def linewrapJP(text, mode=0, allign="left"):
                                 splitbox[n-1] = shift + splitbox[n-1] + "^<"
                     elif "~" in text:
                         splitbox[n-1] = splitbox[n-1] + "^<"
-                elif charlen(splitbox[n-1]) > LINE:
+                elif charlen(splitbox[n-1])-2 > LINE:
                     j = charlen(splitbox[n-1],LINE)
                     p = 0
                     k = 0
@@ -663,7 +664,7 @@ def linewrapJP(text, mode=0, allign="left"):
                 splitline = splitbox[n-1].split("&&")
                 while i <= splitbox[n-1].count("&&") + 1:
                     print(splitline[i-1])
-                    if charlen(splitline[i-1],mode = 1) <= LINE:
+                    if charlen(splitline[i-1],mode = 1)-2 <= LINE:
                         if i % 3 == 0:
                             if "~" not in text:
                                 if allign == "left":
@@ -722,7 +723,7 @@ def linewrapJP(text, mode=0, allign="left"):
                                         splitline[i-1] = shift + splitline[i-1] + "&&"
                             elif "~" in text:
                                 splitline[i-1] = splitline[i-1] + "&&"
-                    elif charlen(splitline[i-1],mode = 1) > LINE:
+                    elif charlen(splitline[i-1],mode = 1)-2 > LINE:
                         j = charlen(splitline[i-1],LINE,mode = 1)
                         p = 0
                         while LINE * (p - 1) <= charlen(splitline[i-1],mode = 1):
@@ -791,7 +792,7 @@ def linewrapJP(text, mode=0, allign="left"):
                     i += 1
                 splitbox[n-1] = "".join(splitline)
             elif "&&" not in splitbox[n-1] and (":2" or ":3" or ":O") not in splitbox[n-1]:
-                if charlen(splitbox[n-1],mode = 1) <= LINE:
+                if charlen(splitbox[n-1],mode = 1)-2 <= LINE:
                     if "~" not in text:
                         if allign == "left":
                             if "T+" in splitbox[n-1]:
@@ -820,7 +821,7 @@ def linewrapJP(text, mode=0, allign="left"):
                                 splitbox[n-1] = shift + splitbox[n-1] + "^^<<"
                     elif "~" in text:
                         splitbox[n-1] = splitbox[n-1] + "^^<<"
-                elif charlen(splitbox[n-1],mode = 1) > LINE:
+                elif charlen(splitbox[n-1],mode = 1)-2 > LINE:
                     j = charlen(splitbox[n-1],LINE,mode = 1)
                     p = 0
                     k = 0
