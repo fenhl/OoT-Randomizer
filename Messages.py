@@ -1170,17 +1170,17 @@ def add_message(messages, text, id=0, opts=0x00):
     messages[-1].index = len(messages) - 1
 
 messages = []
-def update_message_jp(messages, id, text, opts=None, mode = 0, allign = "left"):
+def update_message_jp(messages, id, text, opts=None, mode = 0, align = "left"):
     if mode == 0:
-        text = linewrapJP(text, 0, allign)
+        text = linewrapJP(text, 0, align)
         text = text + "|"
         jptext = (JPencode(text))
     if mode == 1:
-        text = linewrapJP(text, 0, allign)
+        text = linewrapJP(text, 0, align)
         text = text + "|"
         jptext = (JPencode(text, 1))
     if mode == 2:
-        text = linewrapJP(text, 1, allign)
+        text = linewrapJP(text, 1, align)
         text = text + "||"
         jptext = (JPencode(text, 2))
     with open("temporal.py",'a') as new:
@@ -1389,7 +1389,7 @@ def update_item_messages(messages, world):
             else:
                 update_message_by_id(messages, id, text, 0x23)
 
-        for id, (text, textJP, opt, allign) in MISC_MESSAGES.items():
+        for id, (text, textJP, opt, align) in MISC_MESSAGES.items():
             if text is None:
                 pass
             else:
@@ -1397,18 +1397,18 @@ def update_item_messages(messages, world):
                 
     elif world.settings.language_selection == "japanese":
         ntext = "<$痛いッピ！勘弁ッピ！{"
-        update_message_jp(messages, 0x101A, ntext, 0x00, 1, allign = "center")
+        update_message_jp(messages, 0x101A, ntext, 0x00, 1, align = "center")
         for id, (text, textJP) in new_item_messages.items():
-            update_message_jp(messages, id, textJP, 0x23, 2, allign = "left")
+            update_message_jp(messages, id, textJP, 0x23, 2, align = "left")
             
         for id, text in shop_mes.items():
-            update_message_jp(messages, id, text, 0x03, allign = "left")
+            update_message_jp(messages, id, text, 0x03, align = "left")
             
-        for id, (text, textJP, opt, allign) in MISC_MESSAGES.items():
-            update_message_jp(messages, id, textJP, opt, 2, allign = allign)
+        for id, (text, textJP, opt, align) in MISC_MESSAGES.items():
+            update_message_jp(messages, id, textJP, opt, 2, align = align)
             
         for id, (text, opt) in NAVI_MESSAGES.items():
-            update_message_jp(messages, id, text, opt, allign = "center")
+            update_message_jp(messages, id, text, opt, align = "center")
             
         for id in MASK_MESSAGES:
             select = random.randrange(3)
@@ -1418,7 +1418,7 @@ def update_item_messages(messages, world):
                 text = "<うわぁ！！"
             elif select == 2:
                 text = "<！！"
-            update_message_jp(messages, id, text, 0x00, allign = "center")
+            update_message_jp(messages, id, text, 0x00, align = "center")
     
 # run all keysanity related patching to add messages for dungeon specific items
 def add_item_messages(messages, shop_items, world):
@@ -1499,6 +1499,10 @@ def reproduce_messages_jp(messages):
         new.write("mes_sorted = sorted(new_jp.items(), key=lambda x:x[0])")
     
 def reformed(text, new_tag):
+    p = 0
+    if text.endswith(r"\x00\x00"):
+        text = text[:-8]
+        p = 1
     if r"\x81\x9e" or r"\x81\xcb" in text:
         text = text[:-24]
     else:
@@ -1511,6 +1515,8 @@ def reformed(text, new_tag):
         text = text + r"\x81\x9e\x00\x30\x81\x70"
     if ("" == new_tag) is True:
         text = text + r"\x81\x70"
+    if p == 1:
+        text = text + r"\x00\x00"
     return text
 
 def write_messages(rom, shuffle = False, shuffle_group = None, mode = 0):
@@ -1791,4 +1797,4 @@ def update_warp_song_text(messages, world):
             color = COLOR_MAP[destination.font_color or 'White']
 
             new_msg = f"<#{color}{destination_name}へワープ！#\x00>&:2#{color}はい&いいえ#\x00"
-            update_message_jp(messages, id, new_msg, allign = "left")
+            update_message_jp(messages, id, new_msg, align = "left")

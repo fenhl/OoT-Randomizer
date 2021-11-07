@@ -308,7 +308,7 @@ def writeGossipStoneHints(spoiler, world, messages):
             update_message_by_id(messages, id, str(gossip_text), 0x23)
     elif world.settings.language_selection == "japanese":
         for id, gossip_text in spoiler.hints[world.id].items():
-            update_message_jp(messages, id, str(gossip_text), 0x23, allign="center")
+            update_message_jp(messages, id, str(gossip_text), 0x23, align="center")
 
 
 def filterTrailingSpace(text):
@@ -1395,7 +1395,7 @@ def buildAltarHints(world, messages, include_rewards=True, include_wincons=True)
         update_message_by_id(messages, 0x707A, get_raw_text(child_text, world.settings.language_selection), 0x20)
     elif world.settings.language_selection == "japanese":
         child_text += '{'
-        update_message_jp(messages, 0x707A, get_raw_text(child_text, world.settings.language_selection), 0x20, allign = "center")
+        update_message_jp(messages, 0x707A, get_raw_text(child_text, world.settings.language_selection), 0x20, align = "center")
 
     # text that appears at altar as an adult.
     adult_text = ""
@@ -1433,7 +1433,7 @@ def buildAltarHints(world, messages, include_rewards=True, include_wincons=True)
         update_message_by_id(messages, 0x7057, get_raw_text(adult_text, world.settings.language_selection), 0x20)
     elif world.settings.language_selection == "japanese":
         adult_text += '{'
-        update_message_jp(messages, 0x7057, get_raw_text(adult_text, world.settings.language_selection), 0x20, allign = "center")
+        update_message_jp(messages, 0x7057, get_raw_text(adult_text, world.settings.language_selection), 0x20, align = "center")
 
 
 # pulls text string from hintlist for reward after sending the location to hintlist.
@@ -1578,7 +1578,7 @@ def buildGanonText(world, messages):
     if world.settings.language_selection == "english":
         update_message_by_id(messages, 0x70CB, text)
     elif world.settings.language_selection == "japanese":
-        update_message_jp(messages, 0x70CB, text, allign = "center")
+        update_message_jp(messages, 0x70CB, text, align = "center")
     p_id = ""
     # light arrow hint or validation chest item
     if world.distribution.get_starting_item('Light Arrows') > 0:
@@ -1635,7 +1635,7 @@ def buildGanonText(world, messages):
         update_message_by_id(messages, 0x70CC, text)
     elif world.settings.language_selection == "japanese":
         text += '&#\x06矢#\x00無しでは不可能！'
-        update_message_jp(messages, 0x70CC, text, allign = "center")
+        update_message_jp(messages, 0x70CC, text, align = "center")
 
 
 def get_raw_text(string, lang):

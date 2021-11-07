@@ -1301,23 +1301,23 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
     new_message = "\x08Hey, young man. What's happening \x01today? If you have a \x05\x41Poe\x05\x40, I will \x01buy it.\x04\x1AIf you earn \x05\x41%d points\x05\x40, you'll\x01be a happy man! Heh heh.\x04\x08Your card now has \x05\x45\x1E\x01 \x05\x40points.\x01Come back again!\x01Heh heh heh!\x02" % poe_points
     update_message_by_id(messages, 0x70F5, new_message)
     new_message = "<…ああ　ニイさん。&今日は　なんだい？？&#\x01ポウ#\x00があるなら　買ってやるよ。^<#\x01%sポイント#\x00たまると&幸せになれるぞ！^<今&#\x05@H\x01#\x00あるからね。&またよろしく。　イーッヒッヒ！" % poe_points_jp
-    update_message_jp(messages_jp, 0x70F5, new_message, allign = "center")
+    update_message_jp(messages_jp, 0x70F5, new_message, align = "center")
     if world.settings.big_poe_count != 10:
         new_message = "\x1AOh, you brought a Poe today!\x04\x1AHmmmm!\x04\x1AVery interesting!\x01This is a \x05\x41Big Poe\x05\x40!\x04\x1AI'll buy it for \x05\x4150 Rupees\x05\x40.\x04On top of that, I'll put \x05\x41100\x01points \x05\x40on your card.\x04\x1AIf you earn \x05\x41%d points\x05\x40, you'll\x01be a happy man! Heh heh." % poe_points
         update_message_by_id(messages, 0x70f7, new_message)
         new_message = "<今日は　ポウを&つかまえてきたんだね？^<オオ～ッ！&こいつは#\x01ビッグポウ#\x00じゃないか！^<#\x01５０ルピー#\x00で　買い取ろう。^お店のクーポン&#\x01１００ポイント#\x00もつけとくよ。^<#\x01%sポイント#\x00たまると&幸せになれる　クーポンだ！&ヒッヒッヒ！" % poe_points_jp
-        update_message_jp(messages_jp, 0x70f7, new_message, allign = "center")
+        update_message_jp(messages_jp, 0x70f7, new_message, align = "center")
         new_message = "\x1AWait a minute! WOW!\x04\x1AYou have earned \x05\x41%d points\x05\x40!\x04\x1AYoung man, you are a genuine\x01\x05\x41Ghost Hunter\x05\x40!\x04\x1AIs that what you expected me to\x01say? Heh heh heh!\x04\x1ABecause of you, I have extra\x01inventory of \x05\x41Big Poes\x05\x40, so this will\x01be the last time I can buy a \x01ghost.\x04\x1AYou're thinking about what I \x01promised would happen when you\x01earned %d points. Heh heh.\x04\x1ADon't worry, I didn't forget.\x01Just take this." % (poe_points, poe_points)
         update_message_by_id(messages, 0x70f8, new_message)
         new_message = "<オオオオオ～ッ！！^<ついに　#\x01%sポイント#\x00&集めたか！！^<ニイさんこそ&本物の　#\x01ゴーストハンター#\x00^<とでも　言うと　思ったか？&イーッヒッヒッヒ。^<ニイさんの　おかげで&#\x01ビッグポウ#\x00が　余っちゃったよ…&買い取るのも　これで　最後だ。^<約束のことか？　心配すんな、&コレでも　持っていきな。" % poe_points_jp
-        update_message_jp(messages_jp, 0x70f8, new_message, allign = "center")
+        update_message_jp(messages_jp, 0x70f8, new_message, align = "center")
 
     # Update Child Anju's dialogue
     new_message = "\x08What should I do!?\x01My \x05\x41Cuccos\x05\x40 have all flown away!\x04You, little boy, please!\x01Please gather at least \x05\x41%d Cuccos\x05\x40\x01for me.\x02" % world.settings.chicken_count
     update_message_by_id(messages, 0x5036, new_message)
     chick = str(world.settings.chicken_count).translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)}))
     new_message = "<どうしましょ！&#\x01コッコ#\x00が&とんでいっちゃった！^<ぼうや、お願い。&#\x01%s羽#\x00でいいから&つれてきて！" % chick
-    update_message_jp(messages_jp, 0x5036, new_message, allign = "center")
+    update_message_jp(messages_jp, 0x5036, new_message, align = "center")
 
     # Update "Princess Ruto got the Spiritual Stone!" text before the midboss in Jabu
     reward_text = {'Kokiri Emerald':   "\x05\x42Kokiri Emerald\x05\x40",
@@ -1343,7 +1343,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
                    'Light Medallion':  "#\x04光のメダル#\x00"
     }
     new_message = "]<ルト姫が%sを入手！>&+S\x02…って、+S\x00　なんで　ルト姫なの？" % reward_text_jp[world.get_location('Barinade').item.name]
-    update_message_jp(messages_jp, 0x4050, new_message, allign = "left")
+    update_message_jp(messages_jp, 0x4050, new_message, align = "left")
 
     # use faster jabu elevator
     if not world.dungeon_mq['Jabu Jabus Belly'] and world.settings.shuffle_scrubs == 'off':
@@ -1355,7 +1355,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
         rom.write_byte(rom.sym('CHAIN_HBA_REWARDS'), 1)
         # Update the first horseback archery text to make it clear both rewards are available from the start
         update_message_by_id(messages, 0x6040, "Hey newcomer, you have a fine \x01horse!\x04I don't know where you stole \x01it from, but...\x04OK, how about challenging this \x01\x05\x41horseback archery\x05\x40?\x04Once the horse starts galloping,\x01shoot the targets with your\x01arrows. \x04Let's see how many points you \x01can score. You get 20 arrows.\x04If you can score \x05\x411,000 points\x05\x40, I will \x01give you something good! And even \x01more if you score \x05\x411,500 points\x05\x40!\x0B\x02")
-        update_message_jp(messages_jp, 0x6040, "<よぉ、新入り！&いい馬に　乗ってるじゃないか！^<どうだい、#\x01やぶさめ#\x00に&挑戦してみないか？^<行きと帰りで　何ポイントとれるか。&使える矢は　２０本だ。^<#\x01１０００ポイント#\x00　獲れれば&イイものを　やろう。^<そして　#\x01１５００ポイント#\x00　獲れれば&もっとイイものを　やろう！{", allign = "center")
+        update_message_jp(messages_jp, 0x6040, "<よぉ、新入り！&いい馬に　乗ってるじゃないか！^<どうだい、#\x01やぶさめ#\x00に&挑戦してみないか？^<行きと帰りで　何ポイントとれるか。&使える矢は　２０本だ。^<#\x01１０００ポイント#\x00　獲れれば&イイものを　やろう。^<そして　#\x01１５００ポイント#\x00　獲れれば&もっとイイものを　やろう！{", align = "center")
 
 
     # Sets hooks for gossip stone changes
@@ -1480,10 +1480,10 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
     # add a cheaper bombchu pack to the bombchu shop
     # describe
     update_message_by_id(messages, 0x80FE, '\x08\x05\x41Bombchu   (5 pieces)   60 Rupees\x01\x05\x40This looks like a toy mouse, but\x01it\'s actually a self-propelled time\x01bomb!\x09\x0A', 0x03)
-    update_message_jp(messages_jp, 0x80FE, '<#\x01ボムチュウ（５コ）　６０ルピー&#\x00自分で走る　新型バクダン。>*O', 0x03, allign = "left")
+    update_message_jp(messages_jp, 0x80FE, '<#\x01ボムチュウ（５コ）　６０ルピー&#\x00自分で走る　新型バクダン。>*O', 0x03, align = "left")
     # purchase
     update_message_by_id(messages, 0x80FF, '\x08Bombchu    5 Pieces    60 Rupees\x01\x01\x1B\x05\x42Buy\x01Don\'t buy\x05\x40\x09', 0x03)
-    update_message_jp(messages_jp, 0x80FF, '<ボムチュウ（５コ）　６０ルピー&:2#\x02かう&やめとく#\x00>', 0x03, allign = "left")
+    update_message_jp(messages_jp, 0x80FF, '<ボムチュウ（５コ）　６０ルピー&:2#\x02かう&やめとく#\x00>', 0x03, align = "left")
     rbl_bombchu = shop_items[0x0018]
     rbl_bombchu.price = 60
     rbl_bombchu.pieces = 5
@@ -1497,8 +1497,8 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
     shop_items[0x001C].price = 99
     update_message_by_id(messages, shop_items[0x001C].description_message, "\x08\x05\x41Bombchu  (10 pieces)  99 Rupees\x01\x05\x40This looks like a toy mouse, but\x01it's actually a self-propelled time\x01bomb!\x09\x0A")
     update_message_by_id(messages, shop_items[0x001C].purchase_message, "\x08Bombchu  10 pieces   99 Rupees\x09\x01\x01\x1B\x05\x42Buy\x01Don't buy\x05\x40")
-    update_message_jp(messages_jp, 0x80BC, "<#\x01ボムチュウ（１０コ）９９ルピー#\x00&自分で走る　新型バクダン。>*O", 0x03, allign = "left")
-    update_message_jp(messages_jp, 0x808C, "<ボムチュウ（１０コ）９９ルピー&:2#\x02かう&やめとく#\x00>", 0x03, allign = "left")
+    update_message_jp(messages_jp, 0x80BC, "<#\x01ボムチュウ（１０コ）９９ルピー#\x00&自分で走る　新型バクダン。>*O", 0x03, align = "left")
+    update_message_jp(messages_jp, 0x808C, "<ボムチュウ（１０コ）９９ルピー&:2#\x02かう&やめとく#\x00>", 0x03, align = "left")
 
     shuffle_messages.shop_item_messages = []
 
@@ -1671,9 +1671,9 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
             update_message_by_id(messages, 0x4069, "You don't have enough money.\x01I can't sell it to you.\x01Chomp chomp...\x02")
             update_message_by_id(messages, 0x406C, "We hope you like it!\x01Chomp chomp chomp.\x02")
         elif langdef == 1:
-            update_message_jp(messages_jp, 0x405E, "ポリ…ポリ…ポリ…&<#\x01アイテム#\x00…　あるよ…&どうだい？^<#\x01<６０ルピー#\x00なら　いいぜ！　ケケ！&:2#\x02かう&やめとく#\x00>", allign = "left")
-            update_message_jp(messages_jp, 0x4069, "<お金がないなら　売れねぇな。>&ポリ…ポリ…", allign = "center")
-            update_message_jp(messages_jp, 0x406C, "<まいどあり！>&ポリ…ポリ…ポリ…", allign = "center")
+            update_message_jp(messages_jp, 0x405E, "ポリ…ポリ…ポリ…&<#\x01アイテム#\x00…　あるよ…&どうだい？^<#\x01<６０ルピー#\x00なら　いいぜ！　ケケ！&:2#\x02かう&やめとく#\x00>", align = "left")
+            update_message_jp(messages_jp, 0x4069, "<お金がないなら　売れねぇな。>&ポリ…ポリ…", align = "center")
+            update_message_jp(messages_jp, 0x406C, "<まいどあり！>&ポリ…ポリ…ポリ…", align = "center")
         # Change first magic bean to cost 60 (is used as the price for the one time item when beans are shuffled)
         rom.write_byte(0xE209FD, 0x3C)
 
@@ -1684,8 +1684,8 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
             update_message_by_id(messages, 0x6077, "\x06\x41Well Come!\x04I am selling stuff, strange and \x01rare, from all over the world to \x01everybody.\x01Today's special is...\x04A mysterious item! \x01Intriguing! \x01I won't tell you what it is until \x01I see the money....\x04How about \x05\x41200 Rupees\x05\x40?\x01\x01\x1B\x05\x42Buy\x01Don't buy\x05\x40\x02")
             update_message_by_id(messages, 0x6078, "Thank you very much!\x04The mark that will lead you to\x01the Spirit Temple is the \x05\x41flag on\x01the left \x05\x40outside the shop.\x01Be seeing you!\x02")
         elif langdef == 1:
-            update_message_jp(messages_jp, 0x6077, "<+T\x1Bイ～ラッシャ～イ！！^<今回ノ　商品ハ…&オ金モラウマデ　ヒミツデ～ス！^<#\x01２００るぴぃ#\x00デ～ス。　買ウ？&:2#\x02かう&やめとく#\x00>", allign = "left")
-            update_message_jp(messages_jp, 0x6078, "<マイドアリ～！！&気ガ変ワッタラ　マタ　来テネ～。", allign = "center")
+            update_message_jp(messages_jp, 0x6077, "<+T\x1Bイ～ラッシャ～イ！！^<今回ノ　商品ハ…&オ金モラウマデ　ヒミツデ～ス！^<#\x01２００るぴぃ#\x00デ～ス。　買ウ？&:2#\x02かう&やめとく#\x00>", align = "left")
+            update_message_jp(messages_jp, 0x6078, "<マイドアリ～！！&気ガ変ワッタラ　マタ　来テネ～。", align = "center")
         rom.write_byte(rom.sym('SHUFFLE_MEDIGORON'), 0x01)
         # Update medigoron messages to better fit the fact that he sells a randomized item
         if langdef == 0:
@@ -1693,9 +1693,9 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
             update_message_by_id(messages, 0x304D, "How do you like it?\x02")
             update_message_by_id(messages, 0x304F, "How about buying this cool item for \x01200 Rupees?\x01\x1B\x05\x42Buy\x01Don't buy\x05\x40\x02")
         elif langdef == 1:
-            update_message_jp(messages_jp, 0x304C, "<スッゴイもの　もってるゴロ。&ためしに…}\x30\x4F", allign = "center")
-            update_message_jp(messages_jp, 0x304D, "<どう…ゴロ？", allign = "center")
-            update_message_jp(messages_jp, 0x304F, "<２００ルピーで、買う？&:2#\x02かう&やめとく#\x00>", allign = "left")
+            update_message_jp(messages_jp, 0x304C, "<スッゴイもの　もってるゴロ。&ためしに…}\x30\x4F", align = "center")
+            update_message_jp(messages_jp, 0x304D, "<どう…ゴロ？", align = "center")
+            update_message_jp(messages_jp, 0x304F, "<２００ルピーで、買う？&:2#\x02かう&やめとく#\x00>", align = "left")
         
     if world.settings.shuffle_smallkeys == 'remove' or world.settings.shuffle_bosskeys == 'remove' or world.settings.shuffle_ganon_bosskey == 'remove':
         locked_doors = get_locked_doors(rom, world)
@@ -1807,7 +1807,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
 
                 if world.settings.mq_dungeons_random or world.settings.mq_dungeons != 0 and world.settings.mq_dungeons != 12:
                     update_message_by_id(messages, map_id, map_message)
-                    update_message_jp(messages_jp, map_id_jp, map_message_jp, mode = 2, allign = "left")
+                    update_message_jp(messages_jp, map_id_jp, map_message_jp, mode = 2, align = "left")
             else:
                 dungeon_name, boss_name, compass_id, map_id = dungeon_list[dungeon]
                 dungeon_name_jp, boss_name_jp, compass_id_jp, map_id_jp = dungeon_list_jp[dungeon]
@@ -1820,7 +1820,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
                     compass_message = "\x13\x75\x08You found the \x05\x41Compass\x05\x40\x01for %s\x05\x40!\x01It holds the %s!\x09" % (dungeon_name, dungeon_reward)
                     compass_message_jp = "~~\x75<<%sの&&##\x01コンパス##\x00を入手！&&%sがあるようだ！" % (dungeon_name_jp, dungeon_reward_jp)
                 update_message_by_id(messages, compass_id, compass_message)
-                update_message_jp(messages_jp, compass_id_jp, compass_message_jp, mode = 2, allign = "left")
+                update_message_jp(messages_jp, compass_id_jp, compass_message_jp, mode = 2, align = "left")
                 if world.settings.mq_dungeons_random or world.settings.mq_dungeons != 0 and world.settings.mq_dungeons != 12:
                     if world.settings.world_count > 1:
                         map_message = "\x13\x76\x08\x05\x42\x0F\x05\x40 found the \x05\x41Dungeon Map\x05\x40\x01for %s\x05\x40!\x09" % (dungeon_name)
@@ -1830,7 +1830,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
                         map_message_jp = "~~\x76<<%sの&&##\x01地図##\x00を入手！&&%s向きに巻かれている！" % (dungeon_name_jp, "##\x01裏##\x00" if world.dungeon_mq[dungeon] else "##\x01表##\x00")
 
                     update_message_by_id(messages, map_id, map_message)
-                    update_message_jp(messages_jp, map_id_jp, map_message_jp, mode = 2, allign = "left")
+                    update_message_jp(messages_jp, map_id_jp, map_message_jp, mode = 2, align = "left")
 
 
     # Set hints on the altar inside ToT
@@ -1863,7 +1863,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
        tycoon_message = make_player_message(tycoon_message)
     update_message_by_id(messages, 0x00F8, tycoon_message, 0x23)
     tycoon_message = "<<~~\x57##\x03大金持ちのサイフ##\x00を入手！&&##\x06９９９ルピー##\x00まで　持てるゾ！"
-    update_message_jp(messages_jp, 0x00F8, tycoon_message, 0x23, 2, allign = "left")
+    update_message_jp(messages_jp, 0x00F8, tycoon_message, 0x23, 2, align = "left")
 
     write_shop_items(rom, shop_item_file.start + 0x1DEC, shop_items)
 
@@ -1891,9 +1891,9 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom, lang = 'eng'):
         write_messages(rom, shuffle = False, mode = langdef)
         
     # If Warp Song ER is on, update text boxes
-    if world.settings.warp_songs:
-        update_warp_song_text(messages, world)
     if langdef == 0:
+        if world.settings.warp_songs:
+            update_warp_song_text(messages, world)
         repack_messages(rom, messages, permutation)
     # output a text dump, for testing...
     #with open('keysanity_' + str(world.settings.seed) + '_dump.txt', 'w', encoding='utf-16') as f:
@@ -2356,8 +2356,8 @@ def place_shop_items(rom, world, shop_items, messages, messages_jp, locations, i
 
             update_message_by_id(messages, shop_item.description_message, description_text, 0x03)
             update_message_by_id(messages, shop_item.purchase_message, purchase_text, 0x03)
-            update_message_jp(messages_jp, shop_item.description_message, description_text_jp, 0x03, allign = "left")
-            update_message_jp(messages_jp, shop_item.purchase_message, purchase_text_jp, 0x03, allign = "left")
+            update_message_jp(messages_jp, shop_item.description_message, description_text_jp, 0x03, align = "left")
+            update_message_jp(messages_jp, shop_item.purchase_message, purchase_text_jp, 0x03, align = "left")
 
             place_shop_items.shop_id += 1
 
