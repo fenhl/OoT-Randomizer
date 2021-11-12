@@ -353,7 +353,7 @@ ITEM_MESSAGES = {
     0x00C5:    ("\x08\x13\x73You got a \x05\x41Piece of Heart\x05\x40!\x01You've completed another Heart\x01Container!", "<<~~\x73##\x01ハートの欠片##\x00を入手！&&かけら４コで器が完成！！"),
     0x00C6:    ("\x08\x13\x72You got a \x05\x41Heart Container\x05\x40!\x01Your maximum life energy is \x01increased by one heart.", "<<~~\x72##\x01ハートの器##\x00を入手！&&ライフの上限１ＵＰ！"),
     0x00C7:    ("\x08\x13\x74You got the \x05\x41Boss Key\x05\x40!\x01Now you can get inside the \x01chamber where the Boss lurks.", "<<~~\x74##\x01ボスキー##\x00を入手！&&ダンジョンのボスの部屋へ&&入れるようになった！"),
-    0x9002:    ("\x08You are a \x05\x43FOOL\x05\x40!", "<<Ｙｏｕ　ａｒｅ　ａ　##\x03ＦＯＯＬ！##\x00"),
+    0x9002:    ("\x08You are a \x05\x43FOOL\x05\x40!", "<<Ｙｏｕ　ａｒｅ　ａ　##\x03ＦＯＯＬ##\x00！"),
     0x00CC:    ("\x08You got a \x05\x43Blue Rupee\x05\x40!\x01That's \x05\x43five Rupees\x05\x40!", "<<##\x03青ルピー##\x00を入手！&&##\x03５ルピー##\x00だ。"),
     0x00CD:    ("\x08\x13\x53You got the \x05\x43Silver Scale\x05\x40!\x01You can dive deeper than you\x01could before.", "<<~~\x53##\x03銀のウロコ##\x00を入手！"),
     0x00CE:    ("\x08\x13\x54You got the \x05\x43Golden Scale\x05\x40!\x01Now you can dive much\x01deeper than you could before!", "<<~~\x54##\x03金のウロコ##\x00を入手！"),
