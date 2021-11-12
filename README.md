@@ -8,6 +8,7 @@ This is a randomizer for _The Legend of Zelda: Ocarina of Time_ for the Nintendo
   * [Settings](#settings)
   * [Known Issues](#known-issues)
 * [Changelog](#changelog)
+  * [6.1](#61)
   * [6.0](#60)
   * [5.2](#52)
   * [5.1](#51)
@@ -100,6 +101,8 @@ do that.
 
 ### Dev
 
+### 6.1
+
 #### New Features
 
 * **Objective Settings**
@@ -176,7 +179,7 @@ do that.
 * Added Nayru's Love back to the minimal item pool on high damage settings.
 * Allow settings with a 'Random' option to be different per-world. (This does not permit settings randomized only by Randomize Main Rules to be different per-world.)
 * Updated sometimes hints.
-* Renamed some regions, locations, items, etc to make vanilla names. This will make Plandomizer files incompatible between versions.
+* Renamed some regions, locations, items, etc to match vanilla names. This will make Plandomizer files incompatible between versions.
   * Gerudo Training **Grounds** -> Gerudo Training **Ground**
   * Gerudo Fortress -> Thieves' Hideout (when referring to the interior areas or the carpenter rescue quest)
   * Graveyard Composers' Grave -> Royal Family's Tomb
