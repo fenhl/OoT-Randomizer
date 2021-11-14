@@ -1794,7 +1794,7 @@ def update_warp_song_text(messages, world):
             else:
                 destination_name = destination.name
                 destination_name = destination_name.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)}))
-            color = COLOR_MAP[destination.font_color or 'White']
+            color = COLOR_MAP_JP[destination.font_color or 'White']
 
             new_msg = f"<#{color}{destination_name}へワープ！#\x00>&:2#{color}はい&いいえ#\x00"
             update_message_jp(messages, id, new_msg, align = "left")
