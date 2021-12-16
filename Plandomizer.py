@@ -306,6 +306,11 @@ class WorldDistribution(object):
                             self.distribution.settings.shuffle_ganon_bosskey == 'tokens' or self.distribution.settings.bridge == 'tokens')
                     if self.distribution.settings.tokensanity == 'all' and major_tokens:
                         self.major_group.append('Gold Skulltula Token')
+                    major_hearts = ((self.distribution.settings.shuffle_ganon_bosskey == 'on_lacs' and
+                            self.distribution.settings.lacs_condition == 'hearts') or
+                            self.distribution.settings.shuffle_ganon_bosskey == 'hearts' or self.distribution.settings.bridge == 'hearts')
+                    if major_hearts:
+                        self.major_group += ['Heart Container', 'Piece of Heart', 'Piece of Heart (Treasure Chest Game)']
                     if self.distribution.settings.shuffle_smallkeys == 'keysanity':
                         keys = [name for (name, data) in item_table.items() if data[0] == 'SmallKey' and name != 'Small Key']
                         self.major_group.extend(keys)
