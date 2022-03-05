@@ -2798,6 +2798,57 @@ setting_infos = [
         },
         shared         = True,
     ),
+    Combobox(
+        name = 'shuffle_freestanding_items',
+        gui_text = 'Rupee & Heart Shuffle',
+        default = 'off',
+        choices = {
+            'off': 'Off',
+            'all': 'All',
+            'overworld' : 'Overworld Only',
+            'dungeons' : 'Dungeons Only'
+        },
+        gui_tooltip    = '''\
+            Shuffles freestanding rupees and recovery hearts, also shuffles:
+                Shadow Temple Spinning Pot Drop
+                All Goron Pot faces
+
+            Off: No freestanding rupees/recovery hearts are shuffled.
+            All: All Visible freestanding rupees/recovery hearts are shuffled.
+            Overworld Only: Freestanding rupees/recovery hearts in the overworld are shuffled.
+            Dungeons Only: Freestanding rupees/recovery hearts in dungeons are shuffled.
+        ''',
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+        shared         = True,
+    ),
+    Combobox(
+        name = 'shuffle_pots_crates',
+        gui_text = 'Pot & Crate Shuffle',
+        default = 'off',
+        choices = {
+            'off': 'Off',
+            'all': 'All',
+            'overworld' : 'Overworld Only',
+            'dungeons' : 'Dungeons Only'
+        },
+        gui_tooltip    = '''\
+            Shuffles pots, flying pots, and large/small crates into the location pool.
+
+            Off: Not shuffled.
+            All: All pots/flying pots/crates are shuffled.
+            Overworld Only: Only overworld pots/flying pots/crates are shuffled.
+            Dungeons Only: Only dungeon pots/flying pots/crates are shuffled.
+
+            Note: Only pots/crates which normally drop an item are shuffled. Empty pots/crates are not included.
+        ''',
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+        shared         = True,
+    ),
+    
     Checkbutton(
         name           = 'shuffle_cows',
         gui_text       = 'Shuffle Cows',
@@ -2813,12 +2864,39 @@ setting_infos = [
         },
     ),
     Checkbutton(
+        name           = 'shuffle_beehives',
+        gui_text       = 'Shuffle Beehives',
+        gui_tooltip    = '''\
+            Enabling this will let beehives drop items.
+        ''',
+        default        = False,
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    ),
+    Checkbutton(
         name           = 'shuffle_beans',
         gui_text       = 'Shuffle Magic Beans',
         gui_tooltip    = '''\
             Enabling this adds a pack of 10 beans to the item pool
             and changes the Magic Bean Salesman to sell a random
             item once at the price of 60 Rupees.
+        ''',
+        default        = False,
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    ),
+    Checkbutton(
+        name           = 'plant_beans',
+        gui_text       = 'Plant Magic Beans',
+        gui_tooltip    = '''\
+            Enabling this plants all 10 magic beans in soft soil
+            causing the bean plants to be available as adult. You
+            will start with 0 magic beans in your inventory and
+            not be able to buy beans from the Magic Bean Salesman.
         ''',
         default        = False,
         shared         = True,
@@ -2885,6 +2963,8 @@ setting_infos = [
             'randomize_key': 'randomize_settings',
         },
     ),
+    
+
     Checkbutton(
         name           = 'shuffle_dungeon_entrances',
         gui_text       = 'Shuffle Dungeon Entrances',

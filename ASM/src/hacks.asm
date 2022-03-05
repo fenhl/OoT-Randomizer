@@ -218,6 +218,338 @@ Gameplay_InitSkybox:
 .orga 0xE2F093 :: .byte 0x34 ; Market Bombchu Bowling Bomb Bag
 .orga 0xEC9CE7 :: .byte 0x7A ; Deku Theater Mask of Truth
 
+; en_item00_update() hacks - 0x80012938
+; Hack to keep collectibles alive if we are overriding them
+;.orga 0xA888BC; in Memory 0x8001295C
+;    jal Item00_KeepAlive
+;    nop
+;    nop
+;    LH V0, 0x014A (S0)
+
+; Runs when player collides w/ Collectible (inside en_item00_update()) start of switch case at 0x80012CA4
+
+; Override Item_Give(RUPEE_GREEN)
+; Replaces:
+;OR	A0, S1, R0
+;JAL	0x8006FDCC
+;addiu	a1, r0, 0x0084
+.orga 0xA88C0C ; In memory: 80012CAC
+	j item_give_hook
+	or A2, S0, R0
+
+; Override Item_Give(RUPEE_BLUE)
+; Replaces:
+;OR	A0, S1, R0
+;JAL	0x8006FDCC
+;addiu	a1, r0, 0x0084
+.orga 0xA88C20 ; In memory: 80012CC0)
+	j item_give_hook
+	or A2, S0, R0
+
+; Override Item_Give(RUPEE_RED)
+; Replaces:
+;OR	A0, S1, R0
+;JAL	0x8006FDCC
+;addiu	a1, r0, 0x0084
+.orga 0xA88C34 ; In memory: 80012CD4)
+	j item_give_hook
+	or A2, S0, R0
+
+; Override Item_Give(RUPEE_PURPLE)
+; Replaces:
+;OR	A0, S1, R0
+;JAL	0x8006FDCC
+;addiu	a1, r0, 0x0084
+.orga 0xA88C48 ; In memory: 80012CE8)
+	j item_give_hook
+	or A2, S0, R0
+
+; Override Stick Collectible
+.orga 0xA88C70 ; In memory: 0x80012D10
+    j   item_give_hook
+    or  A2, S0, R0
+    
+
+; Override Nut Collectible
+.orga 0xA88C7C ; In memory: 0x80012D1C
+    j   item_give_hook
+    or  A2, S0, R0
+    
+
+; Override Item_Give(ITEM_HEART)
+; Replaces:
+;or	A0, S1, R0
+;JAL	0x8006FDCC
+;ADDIU	A1, R0, 0x0083
+.orga 0xA88C88 ; In memory: 0x80012D28
+    j	item_give_hook
+    or	A2, S0, R0 ;pass actor pointer to function
+
+
+; Override Bombs Collectible
+.orga 0xA88CB0 ; In memory 0x80012D50
+    j	item_give_hook
+    or      A2, S0, R0
+
+; Override Arrows Single Collectible
+.orga 0xA88CC4 ; In memory 0x80012D64
+    j	item_give_hook
+    or      A2, S0, R0
+    
+
+
+; Override Arrows Small Collectible
+.orga 0xA88CD8 ; In memory 0x80012D78
+    j	item_give_hook
+    or      A2, S0, R0
+
+; Override Arrows Medium Collectible
+.orga 0xA88CEC ; In memory  0x80012D8C
+    j	item_give_hook
+    or      A2, S0, R0
+    
+
+
+; Override Arrows Large Collectible
+.orga 0xA88D00 ; In memory  0x80012DA0
+    j	item_give_hook
+    or      A2, S0, R0
+    
+
+; Override Seeds Collectible (as adult: 0x80012D78 and calls item_give, as child: 0x80012DB4 and uses getitemid)
+.orga 0xA88D14 ; In memory: 0x80012DB4
+    j		item_give_hook
+    or      A2, S0, R0
+
+; Override Magic Large Collectible
+.orga 0xA88D44 ; In memory: 0x80012DE4
+    j		item_give_hook
+    or      A2, S0, R0
+
+; Override Magic Small Collectible
+.orga 0xA88D50 ; In memory: 0x80012DF0
+    j		item_give_hook
+    or      A2, S0, R0
+
+; Hack save slot table offsets to only use 2 saves
+; save slot table is stored at B71E60 in ROM
+.orga 0xB71E60
+.halfword 0x0020 ; slot 1
+.halfword 0x1470 ; slot 2
+.halfword 0x0000 ;remove slot 3
+.halfword 0x28C0 ; slot 1 backup
+.halfword 0x3D10 ; slot 2 backup
+.halfword 0x0000 ; remove slot 3 backup
+
+; Hack Write_Save function to store additional collectible flags
+.orga 0xB065F4 ; In memory: 0x80090694
+    jal Save_Write_Hook
+.orga 0xB06668 ; In memory: 0x80090708
+    jal Save_Write_Hook
+
+; Hack Open_Save function to retrieve additional collectible flags
+; At the start of the Sram_OpenSave function, SramContext address is stored in A0 and also on the stack at 0x20(SP)
+; Overwrite the memcpy function at 0x800902E8
+; jal   0x80057030
+; addu  A1, T9, A3
+.orga 0xB06248 ;In memory: 0x800902E8
+jal open_save_hook
+nop
+
+; Hack Init_Save function to zero the additional collectible flags
+; Overwrite the SsSram_Read_Write call at 0x80090D84
+.orga 0xB06CE4 ; In Memory: 0x80090D84
+jal Save_Init_Write_Hook
+
+; Verify And Load all saves function to only check slots 1 and 2.
+; Overwrite the loop calculation at 0x80090974
+; slti at, s4, 0x0003
+.orga  0xB068D4 ; In memory: 0x80090974  
+slti at, s4, 0x0002
+
+;Hack to EnItem00_Init to store if it was dropped by a pot
+;replaces
+;ANDI t9, v0, 0x00FF
+;SH  T9, 0x001c(S0)
+.orga 0xA87AF0; In memory 0x80011B90
+jal  item00_init_hook
+nop
+
+;Hack EnItem00_Init when it checks the scene flags to prevent killing the actor if its being overridden.
+;replaces
+;jal 0x80020EB4
+;.orga 0x0A87B10; In Memory 0x80011BB0
+;jal Item00_KillActorIfFlagIsSet
+.headersize(0x80011B98 - 0xA87AF8)
+.orga 0xA87AF8; In Memory 0x80011B98
+jal Item00_KillActorIfFlagIsSet
+or a0, s0, r0
+bnez v0, 0x800121A4
+lw RA, 0x001c(sp)
+b 0x80011Bc0
+nop
+nop
+nop
+nop
+.headersize(0)
+
+;Hack Item_DropCollectible to call custom function to determine what item should be dropped based on our override.
+;overriding call at 0x8001376C to function 0x80013530
+;replaces
+;jal 0x80013530
+;sh T1, 0x0046(sp)
+.orga 0xA896CC; in memory 0x8001376C
+jal get_override_drop_id_hook
+sh T1, 0x0046(sp)
+
+;Hack Item_DropCollectible2 to call custom function to determine what item should be dropped based on our override.
+;replaces
+;jal 0x80013530
+;sh T1, 0x0042(sp)
+.orga 0xA898F8; in memory 0x80013998
+jal get_override_drop_id_hook
+sh T1, 0x0042(sp)
+
+;Hack Item_DropCollectibleRandom to call custom drop override function (mostly just for chus in logic)
+.orga 0xA89D4C;
+jal get_override_drop_id_hook
+
+;Hack Item_DropCollectible to add a flag that this was a dropped collectible (vs spawned) and extended flag
+;replaces or t4, t3, t1
+;sw t4, 0x0024(sp)
+.orga 0xA89708; in memory 0x800137A8
+jal drop_collectible_hook
+or t4, t3, t1
+
+;Hack Item_DropCollectible2 to add dropped collectible flag and extended flag
+;replaces or t4, t3, t1
+;sw t4, 0x0024(sp)
+.orga 0xA89934; in memory 0x800139D4
+jal drop_collectible2_hook
+or t4, t3, t1
+
+;Hack ObjKibako2_SpawnCollectible (Large crates) to call our overridden spawn function
+;
+.orga 0xEC8264
+j ObjKibako2_SpawnCollectible_Hack
+nop
+
+;Hack ObjKibako2_Init (Large Crates) to not delete our extended flag
+.orga 0xEC832C
+or T8, T7, R0
+
+;Hack ObjMure3 Function that spawns the rupee circle (6 green + 1 red in the center)
+;replaces
+;or a1, s6, r0
+;addiu a2, r0, 0x4000
+.orga 0xED0AEC
+jal obj_mure3_hack
+nop
+;Hack the red rupee part
+;replaces 
+;lwc1 f8, 0x002c(s2)
+;addiu a2, r0, 0x4002
+.orga 0xED0B48
+jal obj_mure3_redrupee_hack
+lwc1 f8, 0x002c(s2)
+
+;Hack bg_haka_tubo (shadow spinning pots) to drop flagged collectibles
+;replaces
+;or a0, s6, r0
+;addiu a1, sp, 0x005c
+.orga 0xD30FDC
+jal bg_haka_tubo_hack
+or a0, s6, r0
+
+;Hack bg_spot18_basket (goron city spinning pot), bomb drops
+;the actor pointer starts in s0, gets deleted so s0 can be used for the loop variable.
+;Need to use a different loop variable and need to move the branch point up to make a little room for the hack
+;replaces
+;or s0, r0, r0 ;outside the loop
+;or a0, s4, r0 ;outside the loop
+;or a1, s3, r0 ;inside the loop
+.orga 0xE47C08
+or s7, r0, r0 ;use s7 as our loop variable
+bg_spot18_basket_bombs_loopstart:
+jal bg_spot18_basket_bombs_hack
+or a0, s4, r0
+.skip 4
+ori a2, a2, 0x0004
+.skip 4
+sll t6, s7, 1
+.skip 16
+addiu s7, s7, 0x0001
+bnel s7, s1, bg_spot18_basket_bombs_loopstart ;move the branch point up a little bit
+
+;Hack bg_spot18_basket (Goron city spinning pot), 3 green rupee drops
+;the actor pointer starts in s0, gets deleted so s0 can be used for the loop variable.
+;Need to use a different loop variable and need to move the branch point up to make a little room for the hack
+;replaces
+;or so, r0, r0
+;addiu s3, sp, 0x0044
+;addiu s1, r0, 0x0003
+.orga 0xE47C5C
+or s7, r0, r0 ;use s7 as our loop variable
+bg_spot18_basket_rupees_loopstart: ;our new loop branch target
+jal bg_spot18_basket_rupees_hack
+.skip 16
+nop ;replaces or a2, r0, r0 because our hack will set a2 correctly.
+.skip 4
+sll t9, s7, 1
+.skip 16
+addiu s7, s7, 0x0001
+bnel s7, s1, bg_spot18_basket_rupees_loopstart
+
+;Hack bg_spot18_basket (Goron city spinning pot), rupee drops with heart piece
+;Replaces 
+;or a0, s4, r0
+;or a1, s3, r0
+.orga 0xE47D6C
+jal bg_spot18_basket_drop_heartpiece_rupees
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+lw ra, 0x0034(sp)
+.skip 4
+nop
+
+
+;Hack obj_comb (beehives) to drop flagged collectibles. Get rid of the random 50% drop
+;replaces
+;sh a2, 0x001e(sp) <- keep
+;jal 0xb00cdccc    <- keep
+;sw a3, 0x0020(sp) <- keep
+;lui at, 0x3F00   
+;mtc at, f4
+;lh a2, 0x001e(sp)
+;lw a3, 0x0020(sp)
+;c.lt.s f0, f4
+;nop
+;bc1f 0xb0ec7490
+;nop
+;addiu a2, r0, 0xffff
+.orga 0xec746c
+j obj_comb_hook
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+
 ; Runs when storing an incoming item to the player instance
 ; Replaces:
 ;   sb      a2, 0x0424 (a3)
@@ -352,6 +684,28 @@ Gameplay_InitSkybox:
 ; Freestanding models
 ;==================================================================================================
 
+
+;Replaces:
+;   who knows ; Draw Rupee Function
+.headersize(0x80013004 - 0xA88F64)
+.orga 0xA88F64 ; In memory: 0x80013004
+    jal     rupee_draw_hook
+.headersize(0)    
+
+;Replaces:
+;   	LH	V0, 0x014a(A2)
+;	ADDIU	AT, R0, 0xFFFF
+.headersize(0x8001303C - 0xA88F9C)
+.orga 0xA88F9C ; In memory: 0x8001303C
+;    or    A0, A2, R0
+     jal     recovery_heart_draw_hook
+     nop
+after_recovery_heart_hook:
+    .skip 0x6C
+end_of_recovery_draw:
+ .headersize(0)
+
+
 ; Replaces:
 ;   jal     0x80013498 ; Piece of Heart draw function
 .orga 0xA88F78 ; In memory: 0x80013018
@@ -360,7 +714,7 @@ Gameplay_InitSkybox:
 ; Replaces:
 ;   jal     0x80013498 ; Collectable draw function
 .orga 0xA89048 ; In memory: 0x800130E8
-    jal     small_key_draw
+    jal     collectible_draw_other
 
 ; Replaces:
 ;   addiu   sp, sp, -0x48
@@ -1125,20 +1479,6 @@ skip_GS_BGS_text:
     nop
     nop
 
-; Replaces: lbu     t7, 0x0002(a1)
-;           addiu   v1, zero, 0x00FF
-;           addu    t8, v0, t7
-;           lbu     t9, 0x0074(t8)
-;           beq     v1, t9, 0x80013640
-.orga 0xA89518
-    sw      ra, 0(sp)
-    jal     bomb_drop_convert
-    nop
-    lw      ra, 0(sp)
-    beqz    v1, @drop_nothing
-
-.orga 0xA895A0
-@drop_nothing:
 
 ;==================================================================================================
 ; Override Collectible 05 to be a Bombchus (5) drop instead of the unused Arrow (1) drop
