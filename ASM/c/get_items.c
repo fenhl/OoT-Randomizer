@@ -586,26 +586,26 @@ void Item00_KeepAlive(EnItem00* item00)
 	}
 }
 
+//Check ammo counts for bombs/chus and drop correspondingly. 
 int16_t drop_bombs_or_chus(int16_t dropId)
 {
-	int8_t bomb_count = z64_file.ammo[ITEM_BOMB];
-	int8_t chu_count = z64_file.ammo[8];
-	if(bomb_count > 15)
+	//Get our ammo counts
+	int8_t bomb_count = z64_file.ammo[SLOT_BOMB];
+	int8_t chu_count = z64_file.ammo[SLOT_BOMBCHU];
+	if(bomb_count > 15 && chu_count > 15)
 	{
-		if(chu_count > 15)
-		{
-			if(z64_Rand_ZeroOne() < .5)
-				return dropId;
-			return ITEM00_ARROWS_SINGLE;
-		}
+		//We have more than 15 of both so randomly drop one
+		if(z64_Rand_ZeroOne() < .5)
+			return dropId;
+		return ITEM00_ARROWS_SINGLE;
 	}
-	if(bomb_count < chu_count)
+	if(bomb_count < chu_count) //bomb count < chu count so drop bombs
 	{
 		return dropId;
 	}
 	else
 	{
-		return ITEM00_ARROWS_SINGLE;
+		return ITEM00_ARROWS_SINGLE; //drop chus (ARROWS_SINGLE is the dropId we use)
 	}
 }
 
@@ -647,18 +647,19 @@ int16_t get_override_drop_id(int16_t dropId, uint16_t params)
 	{
 		if(BOMBCHUS_IN_LOGIC)
 		{
-			if((z64_file.items[ITEM_BOMB] != 0xFF) && (z64_file.items[ITEM_BOMBCHU] != 0xFF)) //we have bombs and chus
+			if((z64_file.items[SLOT_BOMB] == ITEM_BOMB) && (z64_file.items[SLOT_BOMBCHU] == ITEM_BOMBCHU)) //we have bombs and chus
 			{
-				dropId = drop_bombs_or_chus(dropId);	
+				return drop_bombs_or_chus(dropId);	
 			}
-			else if(z64_file.items[ITEM_BOMB] != 0xFF) //only have bombs
+			else if(z64_file.items[SLOT_BOMB] == ITEM_BOMB) //only have bombs
 			{
 				//don't do anything because this is already the right drop ID
-				dropId = dropId;
+				return dropId;
 			}
-			else if(z64_file.items[ITEM_BOMBCHU] != 0xFF) //only have chus
+			else if(z64_file.items[SLOT_BOMBCHU] == ITEM_BOMBCHU) //only have chus
 			{
-				dropId = ITEM00_ARROWS_SINGLE; //override drop ID to use the one for chus
+				return ITEM00_ARROWS_SINGLE; //override drop ID to use the one for chus
+
 			}
 			else
 			{
