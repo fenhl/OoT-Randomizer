@@ -1636,7 +1636,7 @@ skip_GS_BGS_text:
 .word 0xF3000000, 0x073FF200 ; load 1024 texels to tmem, 512b per line (8 words)
 
 .orga 0x18B69A0 ; hack settile (top)
-.word 0xF5480800, 0x00098100 ; texel size G_IM_SIZ_8b, 256b per line (4 words)
+.word 0xF5480800, 0x00098250 ; texel size G_IM_SIZ_8b, 256b per line (4 words)
 
 .orga 0x18B69D0 ; loadTLUT
 .word 0xF0000000, 0x073FF000 ; 256 color palette
@@ -1645,7 +1645,7 @@ skip_GS_BGS_text:
 .word 0xF3000000, 0x073FF200
 
 .orga 0x18B6A48 ; hack settile (side)
-.word 0xF5480800, 0x00098100
+.word 0xF5480800, 0x00098250
 
 ;==================================================================================================
 ; Draw Small Crate Textures
