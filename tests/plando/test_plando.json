@@ -1,8 +1,8 @@
 {
     "entrances": {
-        "Adult Spawn -> Temple of Time" : {"region": "Death Mountain", "from":"Kak Behind Gate"}
+        "Child Spawn -> KF Links House" : {"region": "Market Guard House", "from":"Market Entrance"}
     },
     "locations": {
-        "Spirit Temple Before Child Climb Small Wooden Crate 1" : "Boss Key (Spirit Temple)"
+        "Market Guard House Crate Rupee" : "Slingshot"
     }
 }
