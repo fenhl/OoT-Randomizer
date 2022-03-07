@@ -27,5 +27,6 @@
 #define TEXTURE_ID_CRATE_PALETTE_SKULL 19
 
 uint8_t* get_texture(uint16_t textureID);
+void init_textures();
 
 #endif

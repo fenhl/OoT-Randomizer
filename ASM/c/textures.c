@@ -34,9 +34,16 @@ texture_t texture_table[LEN_TEXTURE_TABLE] =
 
 uint8_t* get_texture(uint16_t textureID)
 {
-    if(texture_table[textureID].file.buf == NULL)
-    {
-        file_init(&texture_table[textureID].file);
-    }
     return texture_table[textureID].file.buf;
+}
+
+void init_textures()
+{
+    for(int i = 0; i < LEN_TEXTURE_TABLE; i++)
+    {
+        if(texture_table[i].file.vrom_start != 0x00000000)
+        {
+            file_init(&texture_table[i].file);
+        }
+    }
 }
