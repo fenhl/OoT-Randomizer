@@ -30,6 +30,8 @@
 "shuffle_grotto_entrances": true,
 "shuffle_dungeon_entrances": true,
 "shuffle_overworld_entrances": false,
+"mix_entrance_pools": "off",
+"decouple_entrances": false,
 "owl_drops": false,
 "warp_songs": false,
 "spawn_positions": false,

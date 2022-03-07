@@ -515,8 +515,7 @@ export class GUIGlobal {
 
         this.globalEmitter.emit({ name: "local_version_checked", version: res });
 
-        let branch = res.includes("Release") ? "release" : "Dev";
-        var remoteFile = await this.http.get("https://raw.githubusercontent.com/TestRunnerSRL/OoT-Randomizer/" + branch + "/version.py", { responseType: "text" }).toPromise();
+        var remoteFile = await this.http.get("https://raw.githubusercontent.com/Roman971/OoT-Randomizer/Dev-R/version.py", { responseType: "text" }).toPromise();
 
         let remoteVersion = remoteFile.substr(remoteFile.indexOf("'") + 1);
         remoteVersion = remoteVersion.substr(0, remoteVersion.indexOf("'"));
@@ -548,18 +547,18 @@ export class GUIGlobal {
     if (newVersion.startsWith("dev") && newVersion.includes("_"))
       newVersion = newVersion.split("_")[1];
 
-    let oldSplit = oldVersion.replace('v', '').replace(' ', '.').split('.');
-    let newSplit = newVersion.replace('v', '').replace(' ', '.').split('.');
+    let oldSplit = oldVersion.replace('R-', '').replace('v', '').replace(' ', '.').split('.');
+    let newSplit = newVersion.replace('R-', '').replace(' ', '.').split('.');
 
     //Version is not newer if the new version doesn't satisfy the format
-    if (newSplit.length < 3)
+    if (newSplit.length < 4)
       return false;
 
     //Version is newer if the old version doesn't satisfy the format
-    if (oldSplit.length < 3)
+    if (oldSplit.length < 4)
       return true;
 
-    //Compare major.minor.revision
+    //Compare major.minor.revision.r
     if (Number(newSplit[0]) > Number(oldSplit[0])) {
       return true;
     }
@@ -570,6 +569,11 @@ export class GUIGlobal {
       else if (Number(newSplit[1]) == Number(oldSplit[1])) {
         if (Number(newSplit[2]) > Number(oldSplit[2])) {
           return true;
+        }
+        else if (Number(newSplit[2]) == Number(oldSplit[2])) {
+          if (Number(newSplit[3]) > Number(oldSplit[3])) {
+            return true;
+          }
         }
       }
     }

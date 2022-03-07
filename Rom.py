@@ -55,7 +55,7 @@ class Rom(BigStream):
         self.original = self.copy()
 
         # Add version number to header.
-        self.write_bytes(0x35, get_version_bytes(__version__))
+        self.write_bytes(0x35, get_version_bytes(__version__)[:3])
         self.force_patch.extend([0x35, 0x36, 0x37])
 
 
@@ -131,7 +131,7 @@ class Rom(BigStream):
         self.changed_dma = {}
         self.force_patch = []
         self.last_address = None
-        self.write_bytes(0x35, get_version_bytes(__version__))
+        self.write_bytes(0x35, get_version_bytes(__version__)[:3])
         self.force_patch.extend([0x35, 0x36, 0x37])
 
 

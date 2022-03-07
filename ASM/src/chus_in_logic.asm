@@ -44,7 +44,7 @@ logic_chus__bowling_lady_2:
 @@return:
     jr      ra
     nop
-    
+
 @@logic_chus_false:
     lw      t3, lo(0x8011A670)(t3)
     andi    t4, t3, 0x18
@@ -78,3 +78,17 @@ logic_chus__shopkeeper:
 @@return:
     jr      ra
     nop
+
+; Override the segment offset to use to draw bombchu drops (Collectible 05)
+; a1 = drop icon segment offset to use for this collectible
+chu_drop_draw:
+    lw      v1, 0x0038(sp)
+    lh      v1, 0x001C(v1)      ; actor variable (collectible id)
+    li      t0, 0x0005
+    bne     v1, t0, @@return    ; if not a bombchu drop, return
+    nop
+    li      a1, 0x0403FD80      ; else, override the icon segment offset with bombchu drop icon
+
+@@return:
+    jr      ra
+    lui     at, 0x00FF          ; displaced code

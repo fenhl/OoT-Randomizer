@@ -143,8 +143,8 @@
           ]
         },
         {
-          "name": "open_section",
-          "text": "Open",
+          "name": "various_section",
+          "text": "Various",
           "row_span": [6,6,9],
           "settings": [
             "open_forest",
@@ -158,6 +158,10 @@
             "bridge_stones",
             "bridge_rewards",
             "bridge_tokens",
+            "triforce_hunt",
+            "triforce_goal_per_world",
+            "bombchus_in_logic",
+            "one_item_per_dungeon",
             "trials_random",
             "trials"
           ]
@@ -172,13 +176,11 @@
             "shuffle_grotto_entrances",
             "shuffle_dungeon_entrances",
             "shuffle_overworld_entrances",
+            "mix_entrance_pools",
+            "decouple_entrances",
             "owl_drops",
             "warp_songs",
             "spawn_positions",
-            "triforce_hunt",
-            "triforce_goal_per_world",
-            "bombchus_in_logic",
-            "one_item_per_dungeon",
             "mq_dungeons_random",
             "mq_dungeons"
           ]
@@ -393,7 +395,8 @@
             "zora_color",
             "silver_gauntlets_color",
             "golden_gauntlets_color",
-            "mirror_shield_frame_color"
+            "mirror_shield_frame_color",
+            "extra_equip_colors"
           ]
         },
         {

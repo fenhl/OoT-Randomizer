@@ -296,6 +296,7 @@ typedef enum
   Z64_SLOT_BOTTLE_4,
   Z64_SLOT_ADULT_TRADE,
   Z64_SLOT_CHILD_TRADE,
+  Z64_SLOT_NONE = 0xFF
 } z64_slot_t;
 
 typedef enum
@@ -1333,33 +1334,6 @@ typedef enum {
     /* 0x18 */ ITEM00_TUNIC_GORON,
     /* 0x19 */ ITEM00_BOMBS_SPECIAL
 } Item00Type;
-typedef enum {
-    /* 0x00 */ SLOT_STICK,
-    /* 0x01 */ SLOT_NUT,
-    /* 0x02 */ SLOT_BOMB,
-    /* 0x03 */ SLOT_BOW,
-    /* 0x04 */ SLOT_ARROW_FIRE,
-    /* 0x05 */ SLOT_DINS_FIRE,
-    /* 0x06 */ SLOT_SLINGSHOT,
-    /* 0x07 */ SLOT_OCARINA,
-    /* 0x08 */ SLOT_BOMBCHU,
-    /* 0x09 */ SLOT_HOOKSHOT,
-    /* 0x0A */ SLOT_ARROW_ICE,
-    /* 0x0B */ SLOT_FARORES_WIND,
-    /* 0x0C */ SLOT_BOOMERANG,
-    /* 0x0D */ SLOT_LENS,
-    /* 0x0E */ SLOT_BEAN,
-    /* 0x0F */ SLOT_HAMMER,
-    /* 0x10 */ SLOT_ARROW_LIGHT,
-    /* 0x11 */ SLOT_NAYRUS_LOVE,
-    /* 0x12 */ SLOT_BOTTLE_1,
-    /* 0x13 */ SLOT_BOTTLE_2,
-    /* 0x14 */ SLOT_BOTTLE_3,
-    /* 0x15 */ SLOT_BOTTLE_4,
-    /* 0x16 */ SLOT_TRADE_ADULT,
-    /* 0x17 */ SLOT_TRADE_CHILD,
-    /* 0xFF */ SLOT_NONE = 0xFF
-} InventorySlot;
 
 typedef enum {
     /* 0x00 */ ITEM_STICK,
@@ -1615,6 +1589,7 @@ typedef struct EnGSwitch
 #define z64_Item_DropCollectible_addr           0x80013678
 #define z64_Item_DropCollectible2_addr          0x800138B0
 #define z64_Gfx_DrawDListOpa_addr               0x80028048
+#define z64_Rand_ZeroOne_func_addr              0x800CDCCC
 
 /* rom addresses */
 #define z64_icon_item_static_vaddr              0x007BD000
@@ -1678,6 +1653,7 @@ typedef void* (*z64_memcopy_proc)(void* dest, void* src, uint32_t size);
 typedef void (*z64_bzero_proc)(void* __s, uint32_t __n);
 typedef EnItem00* (*z64_Item_DropCollectible_proc)(z64_game_t* globalCtx, z64_xyzf_t* spawnPos, int16_t params);
 typedef void (*z64_Gfx_DrawDListOpa_proc)(z64_game_t *game, z64_gfx_t *dlist);
+typedef float (*z64_Rand_ZeroOne_proc)();
 
 /* data */
 #define z64_file_mq             (*(OSMesgQueue*)      z64_file_mq_addr)
@@ -1746,4 +1722,5 @@ typedef void (*z64_Gfx_DrawDListOpa_proc)(z64_game_t *game, z64_gfx_t *dlist);
 #define z64_Item_DropCollectible ((z64_Item_DropCollectible_proc)z64_Item_DropCollectible_addr)
 #define z64_Item_DropCollectible2 ((z64_Item_DropCollectible_proc)z64_Item_DropCollectible2_addr)
 #define z64_Gfx_DrawDListOpa ((z64_Gfx_DrawDListOpa_proc)z64_Gfx_DrawDListOpa_addr)
+#define z64_Rand_ZeroOne ((z64_Rand_ZeroOne_proc)z64_Rand_ZeroOne_func_addr)
 #endif

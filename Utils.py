@@ -85,12 +85,12 @@ def close_console():
             pass
 
 def get_version_bytes(a):
-    version_bytes = [0x00, 0x00, 0x00]
+    version_bytes = [0x00, 0x00, 0x00, 0x00]
     if not a:
-        return version_bytes;
-    sa = a.replace('v', '').replace(' ', '.').split('.')
+        return version_bytes
+    sa = a.replace('R-', '').replace('v', '').replace(' ', '.').split('.')
 
-    for i in range(0,3):
+    for i in range(0, min(len(sa), 4)):
         try:
             version_byte = int(sa[i])
         except ValueError:
@@ -111,7 +111,7 @@ def compare_version(a, b):
     sa = get_version_bytes(a)
     sb = get_version_bytes(b)
 
-    for i in range(0,3):
+    for i in range(0, 4):
         if sa[i] > sb[i]:
             return 1
         if sa[i] < sb[i]:
@@ -124,7 +124,7 @@ class VersionError(Exception):
 def check_version(checked_version):
     if compare_version(checked_version, __version__) < 0:
         try:
-            with urllib.request.urlopen('https://raw.githubusercontent.com/TestRunnerSRL/OoT-Randomizer/Dev/version.py') as versionurl:
+            with urllib.request.urlopen('https://raw.githubusercontent.com/Roman971/OoT-Randomizer/Dev-R/version.py') as versionurl:
                 version = versionurl.read()
                 version = re.search(".__version__ = '(.+)'", str(version)).group(1)
 

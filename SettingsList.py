@@ -1978,10 +1978,10 @@ setting_infos = [
         default        = False,
         disable        = {
             True : {
-                'sections' : ['open_section', 'shuffle_section', 'shuffle_dungeon_section'],
+                'sections' : ['various_section', 'shuffle_section', 'shuffle_dungeon_section'],
                 'settings': ['starting_age', 'shuffle_interior_entrances', 'shuffle_grotto_entrances', 'shuffle_dungeon_entrances',
-                             'shuffle_overworld_entrances', 'owl_drops', 'warp_songs', 'spawn_positions',
-                             'triforce_hunt', 'triforce_goal_per_world', 'bombchus_in_logic', 'one_item_per_dungeon'],
+                             'shuffle_overworld_entrances', 'mix_entrance_pools', 'decouple_entrances',
+                             'owl_drops', 'warp_songs', 'spawn_positions'],
             }
         },
         shared         = True,
@@ -2309,7 +2309,8 @@ setting_infos = [
             'glitchless': {'settings' : ['tricks_list_msg']},
             'glitched'  : {'settings' : ['allowed_tricks', 'shuffle_interior_entrances', 'shuffle_grotto_entrances',
                                          'shuffle_dungeon_entrances', 'shuffle_overworld_entrances', 'owl_drops',
-                                         'warp_songs', 'spawn_positions', 'mq_dungeons_random', 'mq_dungeons', 'dungeon_shortcuts']},
+                                         'warp_songs', 'spawn_positions', 'mq_dungeons_random', 'mq_dungeons', 'dungeon_shortcuts',
+                                         'mix_entrance_pools', 'decouple_entrances']},
             'none'      : {'settings' : ['allowed_tricks', 'logic_no_night_tokens_without_suns_song', 'reachable_locations']},
         },
         shared         = True,
@@ -2345,19 +2346,21 @@ setting_infos = [
         name           = 'bombchus_in_logic',
         gui_text       = 'Bombchus Are Considered in Logic',
         gui_tooltip    = '''\
-            Bombchus are properly considered in logic.
+            Bombchus are properly considered in logic and
+            the game is changed to account for this fact.
 
             The first Bombchu pack will always be 20.
             Subsequent packs will be 5 or 10 based on
             how many you have.
 
-            Bombchus can be purchased for 60/99/180
-            rupees once they have been found.
+            Bombchus are no longer tied to the Bomb Bag.
+            Once Bombchus have been found, they can be 
+            purchased for 60/99/180 rupees and Bombchu
+            drops can be collected around the world.
 
             Bombchu Bowling opens with Bombchus.
-            Bombchus are available at Kokiri Shop
-            and the Bazaar. Bombchu refills cannot
-            be bought until Bombchus have been obtained.
+            Additional Bombchu refills are available at 
+            the Kokiri Shop and the Bazaar.
         ''',
         default        = False,
         shared         = True,
@@ -2989,11 +2992,59 @@ setting_infos = [
             Some entrances are kept unshuffled to avoid issues:
             - Hyrule Castle Courtyard and Garden entrances
             - Both Market Back Alley entrances
-            - Gerudo Valley to Lake Hylia
+            - Gerudo Valley to Lake Hylia (unless entrances are decoupled)
 
             Just like when shuffling interior entrances, shuffling overworld 
             entrances disables trade timers and trade items never revert, 
             even when dying or loading a save.
+        ''',
+        default        = False,
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    ),
+    Combobox(
+        name           = 'mix_entrance_pools',
+        gui_text       = 'Mix Entrance Pools',
+        default        = 'off',
+        choices        = {
+            'off':       'Off',
+            'indoor':    'Indoor Entrances',
+            'all':       'All Entrances',
+        },
+        gui_tooltip    = '''\
+            Shuffle entrances into a mixed pool instead of separate ones.
+
+            'Indoor Entrances':
+            Mixes "Indoor" entrance pools, which correspond to entrances
+            of type Dungeon, Grotto, or Interior. Overworld entrances
+            are kept in their own separate pool if randomized.
+
+            'All Entrances':
+            Mixes all entrance pools, including both "Indoor" and
+            Overworld entrances.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+            'distribution':  [
+                ('off', 2),
+                ('indoor', 1),
+                ('all', 1),
+            ],
+        },
+    ),
+    Checkbutton(
+        name           = 'decouple_entrances',
+        gui_text       = 'Decouple Entrances',
+        gui_tooltip    = '''\
+            Decouple entrances when shuffling them.
+            This means you are no longer guaranteed to end up back where you
+            came from when you go back through an entrance.
+
+            This also adds the one-way entrance from Gerudo Valley to Lake Hylia
+            in the pool of overworld entrances when they are shuffled.
         ''',
         default        = False,
         shared         = True,
@@ -4857,7 +4908,24 @@ setting_infos = [
                 ('Completely Random', 1),
             ]
         }
+    ),
+    Checkbutton(
+        name           = 'extra_equip_colors',
+        gui_text       = 'Randomize Extra Colors (Experimental)',
+        shared         = False,
+        cosmetic       = True,
+        gui_tooltip    = '''\
+            Randomize many other equipment and item colors.
 
+            More colors may be added to this setting in the future.
+        ''',
+        default        = False,
+        gui_params     = {
+            'randomize_key': 'randomize_all_cosmetics',
+            'distribution': [
+                (True, 1),
+            ]
+        }
     ),
     Setting_Info(
         name           = 'heart_color',

@@ -27,19 +27,21 @@ def set_all_entrances_data(world):
             return_entrance.type = type
             forward_entrance.bind_two_way(return_entrance)
             if type == 'Grotto':
-                return_entrance.data['index'] = 0x7FFF
+                return_entrance.data['index'] = 0x2000 + return_entrance.data['grotto_id']
 
 
 def assume_entrance_pool(entrance_pool):
     assumed_pool = []
     for entrance in entrance_pool:
         assumed_forward = entrance.assume_reachable()
-        if entrance.reverse != None:
+        if entrance.reverse != None and not entrance.world.settings.decouple_entrances:
             assumed_return = entrance.reverse.assume_reachable()
-            if (entrance.type in ('Dungeon', 'Grotto', 'Grave') and entrance.reverse.name != 'Spirit Temple Lobby -> Desert Colossus From Spirit Lobby') or \
-               (entrance.type == 'Interior' and entrance.world.shuffle_special_interior_entrances):
-                # In most cases, Dungeon, Grotto/Grave and Simple Interior exits shouldn't be assumed able to give access to their parent region
-                assumed_return.set_rule(lambda state, **kwargs: False)
+            world = entrance.world
+            if not ((world.settings.mix_entrance_pools != 'off') and (world.settings.shuffle_overworld_entrances or world.shuffle_special_interior_entrances)):
+                if (entrance.type in ('Dungeon', 'Grotto', 'Grave') and entrance.reverse.name != 'Spirit Temple Lobby -> Desert Colossus From Spirit Lobby') or \
+                   (entrance.type == 'Interior' and world.shuffle_special_interior_entrances):
+                    # In most cases, Dungeon, Grotto/Grave and Simple Interior exits shouldn't be assumed able to give access to their parent region
+                    assumed_return.set_rule(lambda state, **kwargs: False)
             assumed_forward.bind_two_way(assumed_return)
         assumed_pool.append(assumed_forward)
     return assumed_pool
@@ -185,71 +187,71 @@ entrance_shuffle_table = [
                         ('Kak Potion Shop Back -> Kak Backyard',                            { 'index': 0x04FF })),
 
     ('Grotto',          ('Desert Colossus -> Colossus Grotto',                              { 'grotto_id': 0x00, 'entrance': 0x05BC, 'content': 0xFD, 'scene': 0x5C }),
-                        ('Colossus Grotto -> Desert Colossus',                              { 'grotto_id': 0x00 })),
+                        ('Colossus Grotto -> Desert Colossus',                              { 'grotto_id': 0x00, 'entrance': 0x0123, 'room': 0x00, 'angle': 0xA71C, 'pos': (0x427A0800, 0xC2000000, 0xC4A20666) })),
     ('Grotto',          ('Lake Hylia -> LH Grotto',                                         { 'grotto_id': 0x01, 'entrance': 0x05A4, 'content': 0xEF, 'scene': 0x57 }),
-                        ('LH Grotto -> Lake Hylia',                                         { 'grotto_id': 0x01 })),
+                        ('LH Grotto -> Lake Hylia',                                         { 'grotto_id': 0x01, 'entrance': 0x0102, 'room': 0x00, 'angle': 0x0000, 'pos': (0xC53DF56A, 0xC4812000, 0x45BE05F2) })),
     ('Grotto',          ('Zora River -> ZR Storms Grotto',                                  { 'grotto_id': 0x02, 'entrance': 0x05BC, 'content': 0xEB, 'scene': 0x54 }),
-                        ('ZR Storms Grotto -> Zora River',                                  { 'grotto_id': 0x02 })),
+                        ('ZR Storms Grotto -> Zora River',                                  { 'grotto_id': 0x02, 'entrance': 0x00EA, 'room': 0x00, 'angle': 0x0000, 'pos': (0xC4CBC1B4, 0x42C80000, 0xC3041ABE) })),
     ('Grotto',          ('Zora River -> ZR Fairy Grotto',                                   { 'grotto_id': 0x03, 'entrance': 0x036D, 'content': 0xE6, 'scene': 0x54 }),
-                        ('ZR Fairy Grotto -> Zora River',                                   { 'grotto_id': 0x03 })),
+                        ('ZR Fairy Grotto -> Zora River',                                   { 'grotto_id': 0x03, 'entrance': 0x00EA, 'room': 0x00, 'angle': 0xE000, 'pos': (0x4427A070, 0x440E8000, 0xC3B4ED3B) })),
     ('Grotto',          ('Zora River -> ZR Open Grotto',                                    { 'grotto_id': 0x04, 'entrance': 0x003F, 'content': 0x29, 'scene': 0x54 }),
-                        ('ZR Open Grotto -> Zora River',                                    { 'grotto_id': 0x04 })),
+                        ('ZR Open Grotto -> Zora River',                                    { 'grotto_id': 0x04, 'entrance': 0x00EA, 'room': 0x00, 'angle': 0x8000, 'pos': (0x43B52520, 0x440E8000, 0x4309A14F) })),
     ('Grotto',          ('DMC Lower Nearby -> DMC Hammer Grotto',                           { 'grotto_id': 0x05, 'entrance': 0x05A4, 'content': 0xF9, 'scene': 0x61 }),
-                        ('DMC Hammer Grotto -> DMC Lower Local',                            { 'grotto_id': 0x05 })),
+                        ('DMC Hammer Grotto -> DMC Lower Local',                            { 'grotto_id': 0x05, 'entrance': 0x0246, 'room': 0x01, 'angle': 0x31C7, 'pos': (0xC4D290C0, 0x44348000, 0xC3ED5557) })),
     ('Grotto',          ('DMC Upper Nearby -> DMC Upper Grotto',                            { 'grotto_id': 0x06, 'entrance': 0x003F, 'content': 0x7A, 'scene': 0x61 }),
-                        ('DMC Upper Grotto -> DMC Upper Local',                             { 'grotto_id': 0x06 })),
+                        ('DMC Upper Grotto -> DMC Upper Local',                             { 'grotto_id': 0x06, 'entrance': 0x0147, 'room': 0x01, 'angle': 0x238E, 'pos': (0x420F3401, 0x449E2000, 0x44DCD549) })),
     ('Grotto',          ('GC Grotto Platform -> GC Grotto',                                 { 'grotto_id': 0x07, 'entrance': 0x05A4, 'content': 0xFB, 'scene': 0x62 }),
-                        ('GC Grotto -> GC Grotto Platform',                                 { 'grotto_id': 0x07 })),
+                        ('GC Grotto -> GC Grotto Platform',                                 { 'grotto_id': 0x07, 'entrance': 0x014D, 'room': 0x03, 'angle': 0x0000, 'pos': (0x448A1754, 0x44110000, 0xC493CCFD) })),
     ('Grotto',          ('Death Mountain -> DMT Storms Grotto',                             { 'grotto_id': 0x08, 'entrance': 0x003F, 'content': 0x57, 'scene': 0x60 }),
-                        ('DMT Storms Grotto -> Death Mountain',                             { 'grotto_id': 0x08 })),
+                        ('DMT Storms Grotto -> Death Mountain',                             { 'grotto_id': 0x08, 'entrance': 0x01B9, 'room': 0x00, 'angle': 0x8000, 'pos': (0xC3C1CAC1, 0x44AD4000, 0xC497A1BA) })),
     ('Grotto',          ('Death Mountain Summit -> DMT Cow Grotto',                         { 'grotto_id': 0x09, 'entrance': 0x05FC, 'content': 0xF8, 'scene': 0x60 }),
-                        ('DMT Cow Grotto -> Death Mountain Summit',                         { 'grotto_id': 0x09 })),
+                        ('DMT Cow Grotto -> Death Mountain Summit',                         { 'grotto_id': 0x09, 'entrance': 0x01B9, 'room': 0x00, 'angle': 0x8000, 'pos': (0xC42CC164, 0x44F34000, 0xC38CFC0C) })),
     ('Grotto',          ('Kak Backyard -> Kak Open Grotto',                                 { 'grotto_id': 0x0A, 'entrance': 0x003F, 'content': 0x28, 'scene': 0x52 }),
-                        ('Kak Open Grotto -> Kak Backyard',                                 { 'grotto_id': 0x0A })),
+                        ('Kak Open Grotto -> Kak Backyard',                                 { 'grotto_id': 0x0A, 'entrance': 0x00DB, 'room': 0x00, 'angle': 0x0000, 'pos': (0x4455CF3B, 0x42A00000, 0xC37D1871) })),
     ('Grotto',          ('Kakariko Village -> Kak Redead Grotto',                           { 'grotto_id': 0x0B, 'entrance': 0x05A0, 'content': 0xE7, 'scene': 0x52 }),
-                        ('Kak Redead Grotto -> Kakariko Village',                           { 'grotto_id': 0x0B })),
+                        ('Kak Redead Grotto -> Kakariko Village',                           { 'grotto_id': 0x0B, 'entrance': 0x00DB, 'room': 0x00, 'angle': 0x0000, 'pos': (0xC3C8EFCE, 0x00000000, 0x43C96551) })),
     ('Grotto',          ('Hyrule Castle Grounds -> HC Storms Grotto',                       { 'grotto_id': 0x0C, 'entrance': 0x05B8, 'content': 0xF6, 'scene': 0x5F }),
-                        ('HC Storms Grotto -> Castle Grounds',                              { 'grotto_id': 0x0C })),
+                        ('HC Storms Grotto -> Castle Grounds',                              { 'grotto_id': 0x0C, 'entrance': 0x0138, 'room': 0x00, 'angle': 0x9555, 'pos': (0x447C4104, 0x44C46000, 0x4455E211) })),
     ('Grotto',          ('Hyrule Field -> HF Tektite Grotto',                               { 'grotto_id': 0x0D, 'entrance': 0x05C0, 'content': 0xE1, 'scene': 0x51 }),
-                        ('HF Tektite Grotto -> Hyrule Field',                               { 'grotto_id': 0x0D })),
+                        ('HF Tektite Grotto -> Hyrule Field',                               { 'grotto_id': 0x0D, 'entrance': 0x01F9, 'room': 0x00, 'angle': 0x1555, 'pos': (0xC59AACA0, 0xC3960000, 0x45315966) })),
     ('Grotto',          ('Hyrule Field -> HF Near Kak Grotto',                              { 'grotto_id': 0x0E, 'entrance': 0x0598, 'content': 0xE5, 'scene': 0x51 }),
-                        ('HF Near Kak Grotto -> Hyrule Field',                              { 'grotto_id': 0x0E })),
+                        ('HF Near Kak Grotto -> Hyrule Field',                              { 'grotto_id': 0x0E, 'entrance': 0x01F9, 'room': 0x00, 'angle': 0xC000, 'pos': (0x4500299B, 0x41A00000, 0xC32065BD) })),
     ('Grotto',          ('Hyrule Field -> HF Fairy Grotto',                                 { 'grotto_id': 0x0F, 'entrance': 0x036D, 'content': 0xFF, 'scene': 0x51 }),
-                        ('HF Fairy Grotto -> Hyrule Field',                                 { 'grotto_id': 0x0F })),
+                        ('HF Fairy Grotto -> Hyrule Field',                                 { 'grotto_id': 0x0F, 'entrance': 0x01F9, 'room': 0x00, 'angle': 0x0000, 'pos': (0xC58B2544, 0xC3960000, 0xC3D5186B) })),
     ('Grotto',          ('Hyrule Field -> HF Near Market Grotto',                           { 'grotto_id': 0x10, 'entrance': 0x003F, 'content': 0x00, 'scene': 0x51 }),
-                        ('HF Near Market Grotto -> Hyrule Field',                           { 'grotto_id': 0x10 })),
+                        ('HF Near Market Grotto -> Hyrule Field',                           { 'grotto_id': 0x10, 'entrance': 0x01F9, 'room': 0x00, 'angle': 0xE000, 'pos': (0xC4B2B1F3, 0x00000000, 0x444C719D) })),
     ('Grotto',          ('Hyrule Field -> HF Cow Grotto',                                   { 'grotto_id': 0x11, 'entrance': 0x05A8, 'content': 0xE4, 'scene': 0x51 }),
-                        ('HF Cow Grotto -> Hyrule Field',                                   { 'grotto_id': 0x11 })),
+                        ('HF Cow Grotto -> Hyrule Field',                                   { 'grotto_id': 0x11, 'entrance': 0x01F9, 'room': 0x00, 'angle': 0x0000, 'pos': (0xC5F61086, 0xC3960000, 0x45D84A7E) })),
     ('Grotto',          ('Hyrule Field -> HF Inside Fence Grotto',                          { 'grotto_id': 0x12, 'entrance': 0x059C, 'content': 0xE6, 'scene': 0x51 }),
-                        ('HF Inside Fence Grotto -> Hyrule Field',                          { 'grotto_id': 0x12 })),
+                        ('HF Inside Fence Grotto -> Hyrule Field',                          { 'grotto_id': 0x12, 'entrance': 0x01F9, 'room': 0x00, 'angle': 0xEAAB, 'pos': (0xC59BE902, 0xC42F0000, 0x4657F479) })),
     ('Grotto',          ('Hyrule Field -> HF Open Grotto',                                  { 'grotto_id': 0x13, 'entrance': 0x003F, 'content': 0x03, 'scene': 0x51 }),
-                        ('HF Open Grotto -> Hyrule Field',                                  { 'grotto_id': 0x13 })),
+                        ('HF Open Grotto -> Hyrule Field',                                  { 'grotto_id': 0x13, 'entrance': 0x01F9, 'room': 0x00, 'angle': 0x8000, 'pos': (0xC57B69B1, 0xC42F0000, 0x46588DF2) })),
     ('Grotto',          ('Hyrule Field -> HF Southeast Grotto',                             { 'grotto_id': 0x14, 'entrance': 0x003F, 'content': 0x22, 'scene': 0x51 }),
-                        ('HF Southeast Grotto -> Hyrule Field',                             { 'grotto_id': 0x14 })),
+                        ('HF Southeast Grotto -> Hyrule Field',                             { 'grotto_id': 0x14, 'entrance': 0x01F9, 'room': 0x00, 'angle': 0x9555, 'pos': (0xC384A807, 0xC3FA0000, 0x4640DCC8) })),
     ('Grotto',          ('Lon Lon Ranch -> LLR Grotto',                                     { 'grotto_id': 0x15, 'entrance': 0x05A4, 'content': 0xFC, 'scene': 0x63 }),
-                        ('LLR Grotto -> Lon Lon Ranch',                                     { 'grotto_id': 0x15 })),
+                        ('LLR Grotto -> Lon Lon Ranch',                                     { 'grotto_id': 0x15, 'entrance': 0x0157, 'room': 0x00, 'angle': 0xAAAB, 'pos': (0x44E0FD92, 0x00000000, 0x44BB9A4C) })),
     ('Grotto',          ('SFM Entryway -> SFM Wolfos Grotto',                               { 'grotto_id': 0x16, 'entrance': 0x05B4, 'content': 0xED, 'scene': 0x56 }),
-                        ('SFM Wolfos Grotto -> SFM Entryway',                               { 'grotto_id': 0x16 })),
+                        ('SFM Wolfos Grotto -> SFM Entryway',                               { 'grotto_id': 0x16, 'entrance': 0x00FC, 'room': 0x00, 'angle': 0x8000, 'pos': (0xC33DDC64, 0x00000000, 0x44ED42CE) })),
     ('Grotto',          ('Sacred Forest Meadow -> SFM Storms Grotto',                       { 'grotto_id': 0x17, 'entrance': 0x05BC, 'content': 0xEE, 'scene': 0x56 }),
-                        ('SFM Storms Grotto -> Sacred Forest Meadow',                       { 'grotto_id': 0x17 })),
+                        ('SFM Storms Grotto -> Sacred Forest Meadow',                       { 'grotto_id': 0x17, 'entrance': 0x00FC, 'room': 0x00, 'angle': 0xAAAB, 'pos': (0x439D6D22, 0x43F00000, 0xC50FC63A) })),
     ('Grotto',          ('Sacred Forest Meadow -> SFM Fairy Grotto',                        { 'grotto_id': 0x18, 'entrance': 0x036D, 'content': 0xFF, 'scene': 0x56 }),
-                        ('SFM Fairy Grotto -> Sacred Forest Meadow',                        { 'grotto_id': 0x18 })),
+                        ('SFM Fairy Grotto -> Sacred Forest Meadow',                        { 'grotto_id': 0x18, 'entrance': 0x00FC, 'room': 0x00, 'angle': 0x0000, 'pos': (0x425C22D1, 0x00000000, 0x434E9835) })),
     ('Grotto',          ('LW Beyond Mido -> LW Scrubs Grotto',                              { 'grotto_id': 0x19, 'entrance': 0x05B0, 'content': 0xF5, 'scene': 0x5B }),
-                        ('LW Scrubs Grotto -> LW Beyond Mido',                              { 'grotto_id': 0x19 })),
+                        ('LW Scrubs Grotto -> LW Beyond Mido',                              { 'grotto_id': 0x19, 'entrance': 0x01A9, 'room': 0x08, 'angle': 0x2000, 'pos': (0x44293FA2, 0x00000000, 0xC51DE32B) })),
     ('Grotto',          ('Lost Woods -> LW Near Shortcuts Grotto',                          { 'grotto_id': 0x1A, 'entrance': 0x003F, 'content': 0x14, 'scene': 0x5B }),
-                        ('LW Near Shortcuts Grotto -> Lost Woods',                          { 'grotto_id': 0x1A })),
+                        ('LW Near Shortcuts Grotto -> Lost Woods',                          { 'grotto_id': 0x1A, 'entrance': 0x011E, 'room': 0x02, 'angle': 0xE000, 'pos': (0x4464B055, 0x00000000, 0xC464DB7D) })),
     ('Grotto',          ('Kokiri Forest -> KF Storms Grotto',                               { 'grotto_id': 0x1B, 'entrance': 0x003F, 'content': 0x2C, 'scene': 0x55 }),
-                        ('KF Storms Grotto -> Kokiri Forest',                               { 'grotto_id': 0x1B })),
+                        ('KF Storms Grotto -> Kokiri Forest',                               { 'grotto_id': 0x1B, 'entrance': 0x0286, 'room': 0x00, 'angle': 0x4000, 'pos': (0xC3FD8856, 0x43BE0000, 0xC4988DA8) })),
     ('Grotto',          ('Zoras Domain -> ZD Storms Grotto',                                { 'grotto_id': 0x1C, 'entrance': 0x036D, 'content': 0xFF, 'scene': 0x58 }),
-                        ('ZD Storms Grotto -> Zoras Domain',                                { 'grotto_id': 0x1C })),
+                        ('ZD Storms Grotto -> Zoras Domain',                                { 'grotto_id': 0x1C, 'entrance': 0x0108, 'room': 0x01, 'angle': 0xD555, 'pos': (0xC455EB8D, 0x41600000, 0xC3ED3602) })),
     ('Grotto',          ('Gerudo Fortress -> GF Storms Grotto',                             { 'grotto_id': 0x1D, 'entrance': 0x036D, 'content': 0xFF, 'scene': 0x5D }),
-                        ('GF Storms Grotto -> Gerudo Fortress',                             { 'grotto_id': 0x1D })),
+                        ('GF Storms Grotto -> Gerudo Fortress',                             { 'grotto_id': 0x1D, 'entrance': 0x0129, 'room': 0x00, 'angle': 0x4000, 'pos': (0x43BE42C0, 0x43A68000, 0xC4C317B1) })),
     ('Grotto',          ('GV Fortress Side -> GV Storms Grotto',                            { 'grotto_id': 0x1E, 'entrance': 0x05BC, 'content': 0xF0, 'scene': 0x5A }),
-                        ('GV Storms Grotto -> GV Fortress Side',                            { 'grotto_id': 0x1E })),
+                        ('GV Storms Grotto -> GV Fortress Side',                            { 'grotto_id': 0x1E, 'entrance': 0x022D, 'room': 0x00, 'angle': 0x9555, 'pos': (0xC4A5CAD2, 0x41700000, 0xC475FF9B) })),
     ('Grotto',          ('GV Grotto Ledge -> GV Octorok Grotto',                            { 'grotto_id': 0x1F, 'entrance': 0x05AC, 'content': 0xF2, 'scene': 0x5A }),
-                        ('GV Octorok Grotto -> GV Grotto Ledge',                            { 'grotto_id': 0x1F })),
+                        ('GV Octorok Grotto -> GV Grotto Ledge',                            { 'grotto_id': 0x1F, 'entrance': 0x0117, 'room': 0x00, 'angle': 0x8000, 'pos': (0x4391C1A4, 0xC40AC000, 0x44B8CC9B) })),
     ('Grotto',          ('LW Beyond Mido -> Deku Theater',                                  { 'grotto_id': 0x20, 'entrance': 0x05C4, 'content': 0xF3, 'scene': 0x5B }),
-                        ('Deku Theater -> LW Beyond Mido',                                  { 'grotto_id': 0x20 })),
+                        ('Deku Theater -> LW Beyond Mido',                                  { 'grotto_id': 0x20, 'entrance': 0x01A9, 'room': 0x06, 'angle': 0x4000, 'pos': (0x42AA8FDA, 0xC1A00000, 0xC4C82D49) })),
 
     ('Grave',           ('Graveyard -> Graveyard Shield Grave',                             { 'index': 0x004B }),
                         ('Graveyard Shield Grave -> Graveyard',                             { 'index': 0x035D })),
@@ -312,6 +314,8 @@ entrance_shuffle_table = [
                         ('Zoras Domain -> ZR Behind Waterfall',                             { 'index': 0x019D })),
     ('Overworld',       ('ZD Behind King Zora -> Zoras Fountain',                           { 'index': 0x0225 }),
                         ('Zoras Fountain -> ZD Behind King Zora',                           { 'index': 0x01A1 })),
+
+    ('Overworld',       ('GV Lower Stream -> Lake Hylia',                                   { 'index': 0x0219 })),
 
     ('OwlDrop',         ('LH Owl Flight -> Hyrule Field',                                   { 'index': 0x027E, 'addresses': [0xAC9F26] })),
     ('OwlDrop',         ('DMT Owl Flight -> Kak Impas Rooftop',                             { 'index': 0x0554, 'addresses': [0xAC9EF2] })),
@@ -403,24 +407,43 @@ def shuffle_random_entrances(worlds):
             # not really a closed forest anymore, so specifically remove Deku Tree from closed forest.
             if worlds[0].settings.open_forest == 'closed':
                 entrance_pools['Dungeon'].remove(world.get_entrance('KF Outside Deku Tree -> Deku Tree Lobby'))
+            if worlds[0].settings.decouple_entrances:
+                entrance_pools['DungeonReverse'] = [entrance.reverse for entrance in entrance_pools['Dungeon']]
 
         if worlds[0].shuffle_interior_entrances:
             entrance_pools['Interior'] = world.get_shufflable_entrances(type='Interior', only_primary=True)
             if worlds[0].shuffle_special_interior_entrances:
                 entrance_pools['Interior'] += world.get_shufflable_entrances(type='SpecialInterior', only_primary=True)
+            if worlds[0].settings.decouple_entrances:
+                entrance_pools['InteriorReverse'] = [entrance.reverse for entrance in entrance_pools['Interior']]
 
         if worlds[0].settings.shuffle_grotto_entrances:
             entrance_pools['GrottoGrave'] = world.get_shufflable_entrances(type='Grotto', only_primary=True)
             entrance_pools['GrottoGrave'] += world.get_shufflable_entrances(type='Grave', only_primary=True)
+            if worlds[0].settings.decouple_entrances:
+                entrance_pools['GrottoGraveReverse'] = [entrance.reverse for entrance in entrance_pools['GrottoGrave']]
 
         if worlds[0].settings.shuffle_overworld_entrances:
-            entrance_pools['Overworld'] = world.get_shufflable_entrances(type='Overworld')
+            exclude_overworld_reverse = (worlds[0].settings.mix_entrance_pools == 'all') and not worlds[0].settings.decouple_entrances
+            entrance_pools['Overworld'] = world.get_shufflable_entrances(type='Overworld', only_primary=exclude_overworld_reverse)
+            if not worlds[0].settings.decouple_entrances:
+                entrance_pools['Overworld'].remove(world.get_entrance('GV Lower Stream -> Lake Hylia'))
 
         # Set shuffled entrances as such
         for entrance in list(chain.from_iterable(one_way_entrance_pools.values())) + list(chain.from_iterable(entrance_pools.values())):
             entrance.shuffled = True
             if entrance.reverse:
                 entrance.reverse.shuffled = True
+
+        # Combine all entrance pools into one when mixing entrance pools
+        if worlds[0].settings.mix_entrance_pools == 'all':
+            entrance_pools = {'Mixed': list(chain.from_iterable(entrance_pools.values()))}
+        elif worlds[0].settings.mix_entrance_pools == 'indoor':
+            if worlds[0].settings.shuffle_overworld_entrances:
+                ow_entrance_pool = entrance_pools['Overworld']
+            entrance_pools = {'Mixed': list(filter(lambda entrance: entrance.type != 'Overworld', chain.from_iterable(entrance_pools.values())))}
+            if worlds[0].settings.shuffle_overworld_entrances:
+                entrance_pools['Overworld'] = ow_entrance_pool
 
         # Build target entrance pools and set the assumption for entrances being reachable
         one_way_target_entrance_pools = {}
@@ -696,7 +719,7 @@ def check_entrances_compatibility(entrance, target, rollbacks=()):
         raise EntranceShuffleError('Self scene connections are forbidden')
 
     # One way entrances shouldn't lead to the same scene as other already chosen one way entrances
-    if entrance.type in ['OwlDrop', 'Spawn', 'WarpSong'] and \
+    if entrance.type in ('OwlDrop', 'Spawn', 'WarpSong') and \
        any([rollback[0].connected_region.get_scene() == target.connected_region.get_scene() for rollback in rollbacks]):
         raise EntranceShuffleError('Another %s already leads to %s' % (entrance.type, target.connected_region.get_scene()))
 
@@ -704,25 +727,26 @@ def check_entrances_compatibility(entrance, target, rollbacks=()):
 # Validate the provided worlds' structures, raising an error if it's not valid based on our criterias
 def validate_world(world, worlds, entrance_placed, locations_to_ensure_reachable, itempool):
 
-    # For various reasons, we don't want the player to end up through certain entrances as the wrong age
-    # This means we need to hard check that none of the relevant entrances are ever reachable as that age
-    # This is mostly relevant when shuffling special interiors (such as windmill or kak potion shop)
-    # Warp Songs and Overworld Spawns can also end up inside certain indoors so those need to be handled as well
-    CHILD_FORBIDDEN = ['OGC Great Fairy Fountain -> Castle Grounds', 'GV Carpenter Tent -> GV Fortress Side']
-    ADULT_FORBIDDEN = ['HC Great Fairy Fountain -> Castle Grounds', 'HC Storms Grotto -> Castle Grounds']
+    if not world.settings.decouple_entrances:
+        # Unless entrances are decoupled, we don't want the player to end up through certain entrances as the wrong age
+        # This means we need to hard check that none of the relevant entrances are ever reachable as that age
+        # This is mostly relevant when mixing entrance pools or shuffling special interiors (such as windmill or kak potion shop)
+        # Warp Songs and Overworld Spawns can also end up inside certain indoors so those need to be handled as well
+        CHILD_FORBIDDEN = ['OGC Great Fairy Fountain -> Castle Grounds', 'GV Carpenter Tent -> GV Fortress Side']
+        ADULT_FORBIDDEN = ['HC Great Fairy Fountain -> Castle Grounds', 'HC Storms Grotto -> Castle Grounds']
 
-    for entrance in world.get_shufflable_entrances():
-        if entrance.shuffled:
-            if entrance.replaces:
-                if entrance.replaces.name in CHILD_FORBIDDEN and not entrance_unreachable_as(entrance, 'child', already_checked=[entrance.replaces.reverse]):
-                    raise EntranceShuffleError('%s is replaced by an entrance with a potential child access' % entrance.replaces.name)
-                elif entrance.replaces.name in ADULT_FORBIDDEN and not entrance_unreachable_as(entrance, 'adult', already_checked=[entrance.replaces.reverse]):
-                    raise EntranceShuffleError('%s is replaced by an entrance with a potential adult access' % entrance.replaces.name)
-        else:
-            if entrance.name in CHILD_FORBIDDEN and not entrance_unreachable_as(entrance, 'child', already_checked=[entrance.reverse]):
-                raise EntranceShuffleError('%s is potentially accessible as child' % entrance.name)
-            elif entrance.name in ADULT_FORBIDDEN and not entrance_unreachable_as(entrance, 'adult', already_checked=[entrance.reverse]):
-                raise EntranceShuffleError('%s is potentially accessible as adult' % entrance.name)
+        for entrance in world.get_shufflable_entrances():
+            if entrance.shuffled:
+                if entrance.replaces:
+                    if entrance.replaces.name in CHILD_FORBIDDEN and not entrance_unreachable_as(entrance, 'child', already_checked=[entrance.replaces.reverse]):
+                        raise EntranceShuffleError('%s is replaced by an entrance with a potential child access' % entrance.replaces.name)
+                    elif entrance.replaces.name in ADULT_FORBIDDEN and not entrance_unreachable_as(entrance, 'adult', already_checked=[entrance.replaces.reverse]):
+                        raise EntranceShuffleError('%s is replaced by an entrance with a potential adult access' % entrance.replaces.name)
+            else:
+                if entrance.name in CHILD_FORBIDDEN and not entrance_unreachable_as(entrance, 'child', already_checked=[entrance.reverse]):
+                    raise EntranceShuffleError('%s is potentially accessible as child' % entrance.name)
+                elif entrance.name in ADULT_FORBIDDEN and not entrance_unreachable_as(entrance, 'adult', already_checked=[entrance.reverse]):
+                    raise EntranceShuffleError('%s is potentially accessible as adult' % entrance.name)
 
     if locations_to_ensure_reachable:
         max_search = Search.max_explore([w.state for w in worlds], itempool)
@@ -736,13 +760,7 @@ def validate_world(world, worlds, entrance_placed, locations_to_ensure_reachable
 
     if world.shuffle_interior_entrances and (world.settings.misc_hints or world.settings.hints != 'none') and \
        (entrance_placed == None or entrance_placed.type in ['Interior', 'SpecialInterior']):
-        # Ensure Kak Potion Shop entrances are in the same hint area so there is no ambiguity as to which entrance is used for hints
-        potion_front_entrance = get_entrance_replacing(world.get_region('Kak Potion Shop Front'), 'Kakariko Village -> Kak Potion Shop Front')
-        potion_back_entrance = get_entrance_replacing(world.get_region('Kak Potion Shop Back'), 'Kak Backyard -> Kak Potion Shop Back')
-        if potion_front_entrance is not None and potion_back_entrance is not None and not same_hint_area(potion_front_entrance, potion_back_entrance):
-            raise EntranceShuffleError('Kak Potion Shop entrances are not in the same hint area')
-
-        # When cows are shuffled, ensure the same thing for Impa's House, since the cow is reachable from both sides
+        # When cows are shuffled, ensure both Impa's House entrances are in the same hint area because the cow is reachable from both sides
         if world.settings.shuffle_cows:
             impas_front_entrance = get_entrance_replacing(world.get_region('Kak Impas House'), 'Kakariko Village -> Kak Impas House')
             impas_back_entrance = get_entrance_replacing(world.get_region('Kak Impas House Back'), 'Kak Impas Ledge -> Kak Impas House Back')
@@ -840,7 +858,7 @@ def get_entrance_replacing(region, entrance_name):
 def change_connections(entrance, target_entrance):
     entrance.connect(target_entrance.disconnect())
     entrance.replaces = target_entrance.replaces
-    if entrance.reverse:
+    if entrance.reverse and not entrance.world.settings.decouple_entrances:
         target_entrance.replaces.reverse.connect(entrance.reverse.assumed.disconnect())
         target_entrance.replaces.reverse.replaces = entrance.reverse
 
@@ -849,7 +867,7 @@ def change_connections(entrance, target_entrance):
 def restore_connections(entrance, target_entrance):
     target_entrance.connect(entrance.disconnect())
     entrance.replaces = None
-    if entrance.reverse:
+    if entrance.reverse and not entrance.world.settings.decouple_entrances:
         entrance.reverse.assumed.connect(target_entrance.replaces.reverse.disconnect())
         target_entrance.replaces.reverse.replaces = None
 
@@ -858,7 +876,7 @@ def restore_connections(entrance, target_entrance):
 def confirm_replacement(entrance, target_entrance):
     delete_target_entrance(target_entrance)
     logging.getLogger('').debug('Connected %s To %s [World %d]', entrance, entrance.connected_region, entrance.world.id)
-    if entrance.reverse:
+    if entrance.reverse and not entrance.world.settings.decouple_entrances:
         replaced_reverse = target_entrance.replaces.reverse
         delete_target_entrance(entrance.reverse.assumed)
         logging.getLogger('').debug('Connected %s To %s [World %d]', replaced_reverse, replaced_reverse.connected_region, replaced_reverse.world.id)

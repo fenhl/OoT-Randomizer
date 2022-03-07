@@ -1793,6 +1793,12 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
                 load_table_pointer = rom.sym('GROTTO_LOAD_TABLE') + 4 * entrance.data['grotto_id']
                 rom.write_int16(load_table_pointer, entrance.data['entrance'])
                 rom.write_byte(load_table_pointer + 2, entrance.data['content'])
+            else:
+                return_table_pointer = rom.sym('GROTTO_RETURN_TABLE') + 32 * entrance.data['grotto_id']
+                rom.write_int16(return_table_pointer, entrance.data['entrance'])
+                rom.write_byte(return_table_pointer + 2, entrance.data['room'])
+                rom.write_int16(return_table_pointer + 4, entrance.data['angle'])
+                rom.write_int32s(return_table_pointer + 8, entrance.data['pos'])
 
         # Update grotto actors based on their new entrance
         set_grotto_shuffle_data(rom, world)
@@ -1960,6 +1966,23 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
     rom.write_int16(0xE2ADB6, 0x7057)
     buildAltarHints(world, messages, include_rewards=world.settings.misc_hints and not world.settings.enhance_map_compass, include_wincons=world.settings.misc_hints)
 
+    if world.settings.tokensanity == 'off':
+        # Change the GS token pickup message to fade out after 2 seconds (40 frames)
+        update_message_by_id(messages, 0x00B4, bytearray(get_message_by_id(messages, 0x00B4).raw_text, encoding='utf-8')[:-1] + b'\x0E\x28')
+        # Prevent the GS token actor from freezing the player and waiting for the textbox to be closed 
+        rom.write_int32s(0xEC68C0, [0x00000000, 0x00000000])
+        rom.write_int32s(0xEC69B0, [0x00000000, 0x00000000])
+        rom.write_int32(0xEC6A10, 0x34020002) # li v0, 2
+
+    # Set Dungeon Reward Actor in Jabu Jabu to be accurate
+    # Vanilla and MQ Jabu Jabu addresses are the same for this object and actor
+    jabu_stone_object = world.get_location('Barinade').item.special['object_id']
+    rom.write_int16(0x277D068, jabu_stone_object)
+    rom.write_int16(0x277D168, jabu_stone_object)
+    jabu_stone_type = world.get_location('Barinade').item.special['actor_type']
+    rom.write_byte(0x277D0BB, jabu_stone_type)
+    rom.write_byte(0x277D19B, jabu_stone_type)
+
     # Set Dungeon Reward actors in Jabu Jabu to be accurate
     jabu_actor_type = world.get_location('Barinade').item.special['actor_type']
     set_jabu_stone_actors(rom, jabu_actor_type)
@@ -2055,9 +2078,12 @@ item_row_fields = [
 
 
 def read_rom_item(rom, item_id):
+    logger = logging.getLogger('')
     addr = rom.sym('item_table') + (item_id * item_row_struct.size)
     row_bytes = rom.read_bytes(addr, item_row_struct.size)
     row = item_row_struct.unpack(row_bytes)
+    logger.info(item_row_struct.size)
+    logger.info(row)
     return { item_row_fields[i]: row[i] for i in range(len(item_row_fields)) }
 
 def write_rom_item(rom, item_id, item):
