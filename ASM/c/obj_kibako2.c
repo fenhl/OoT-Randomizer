@@ -60,9 +60,9 @@ void ObjKibako2_Draw(z64_actor_t *actor, z64_game_t *game)
         }
         else if (row->chest_type == SILVER_CHEST)
         {
-            palette = get_texture(TEXTURE_ID_CRATE_PALETTE_SILVER);
-            top_texture = get_texture(TEXTURE_ID_CRATE_TOP_GOLD);
-            side_texture = get_texture(TEXTURE_ID_CRATE_SIDE_GOLD);
+            palette = get_texture(TEXTURE_ID_CRATE_PALETTE_KEY);
+            top_texture = get_texture(TEXTURE_ID_CRATE_TOP_KEY);
+            side_texture = get_texture(TEXTURE_ID_CRATE_SIDE_KEY);
         }
         else if (row->chest_type == GOLD_CHEST)
         {
