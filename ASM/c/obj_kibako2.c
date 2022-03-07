@@ -1,5 +1,5 @@
 #include "obj_kibako2.h"
-
+#include "textures.h"
 #define CRATE_DLIST (z64_gfx_t *)0x06000960
 
 extern bool POTCRATE_TEXTURES_MATCH_CONTENTS;
@@ -22,22 +22,6 @@ void ObjKibako2_SpawnCollectible_Hack(ObjKibako2 *this, z64_game_t *globalCtx)
     }
 }
 
-extern uint64_t CRATE_TOP_TEXTURE_DEFAULT;
-extern uint64_t CRATE_TOP_TEXTURE_GOLD;
-extern uint64_t CRATE_TOP_TEXTURE_WEB;
-extern uint64_t CRATE_TOP_TEXTURE_BOSSKEY;
-
-extern uint64_t CRATE_SIDE_TEXTURE_DEFAULT;
-extern uint64_t CRATE_SIDE_TEXTURE_GOLD;
-extern uint64_t CRATE_SIDE_TEXTURE_WEB;
-extern uint64_t CRATE_SIDE_TEXTURE_BOSSKEY;
-
-extern uint64_t CRATE_PALETTE_DEFAULT;
-extern uint64_t CRATE_PALETTE_GOLD;
-extern uint64_t CRATE_PALETTE_SILVER;
-extern uint64_t CRATE_PALETTE_WEB;
-extern uint64_t CRATE_PALETTE_BOSSKEY;
-
 override_t get_crate_override(z64_actor_t *actor, z64_game_t *game)
 {
     // make a dummy EnItem00 with enough info to get the override
@@ -58,9 +42,9 @@ override_t get_crate_override(z64_actor_t *actor, z64_game_t *game)
 void ObjKibako2_Draw(z64_actor_t *actor, z64_game_t *game)
 {
     // get original palette and textures
-    uint64_t *palette = &CRATE_PALETTE_DEFAULT;
-    uint64_t *top_texture = &CRATE_TOP_TEXTURE_DEFAULT;
-    uint64_t *side_texture = &CRATE_SIDE_TEXTURE_DEFAULT;
+    uint64_t *palette = get_texture(TEXTURE_ID_CRATE_PALETTE_DEFAULT);
+    uint64_t *top_texture = get_texture(TEXTURE_ID_CRATE_TOP_DEFAULT);
+    uint64_t *side_texture = get_texture(TEXTURE_ID_CRATE_SIDE_DEFAULT);
 
     // get override palette and textures
     override_t crate_override = get_crate_override(actor, game);
@@ -70,27 +54,27 @@ void ObjKibako2_Draw(z64_actor_t *actor, z64_game_t *game)
         item_row_t *row = get_item_row(item_id);
         if (row->chest_type == GILDED_CHEST)
         {
-            palette = &CRATE_PALETTE_GOLD;
-            top_texture = &CRATE_TOP_TEXTURE_GOLD;
-            side_texture = &CRATE_SIDE_TEXTURE_GOLD;
+            palette = get_texture(TEXTURE_ID_CRATE_PALETTE_GOLD);
+            top_texture = get_texture(TEXTURE_ID_CRATE_TOP_GOLD);
+            side_texture = get_texture(TEXTURE_ID_CRATE_SIDE_GOLD);
         }
         else if (row->chest_type == SILVER_CHEST)
         {
-            palette = &CRATE_PALETTE_SILVER;
-            top_texture = &CRATE_TOP_TEXTURE_GOLD;
-            side_texture = &CRATE_SIDE_TEXTURE_GOLD;
+            palette = get_texture(TEXTURE_ID_CRATE_PALETTE_SILVER);
+            top_texture = get_texture(TEXTURE_ID_CRATE_TOP_GOLD);
+            side_texture = get_texture(TEXTURE_ID_CRATE_SIDE_GOLD);
         }
         else if (row->chest_type == GOLD_CHEST)
         {
-            palette = &CRATE_PALETTE_BOSSKEY;
-            top_texture = &CRATE_TOP_TEXTURE_BOSSKEY;
-            side_texture = &CRATE_SIDE_TEXTURE_BOSSKEY;
+            palette = get_texture(TEXTURE_ID_CRATE_PALETTE_BOSSKEY);
+            top_texture = get_texture(TEXTURE_ID_CRATE_TOP_BOSSKEY);
+            side_texture = get_texture(TEXTURE_ID_CRATE_SIDE_BOSSKEY);
         }
         else if (row->chest_type == SKULL_CHEST_SMALL || row->chest_type == SKULL_CHEST_BIG)
         {
-            palette = &CRATE_PALETTE_WEB;
-            top_texture = &CRATE_TOP_TEXTURE_WEB;
-            side_texture = &CRATE_SIDE_TEXTURE_WEB;
+            palette = get_texture(TEXTURE_ID_CRATE_PALETTE_SKULL);
+            top_texture = get_texture(TEXTURE_ID_CRATE_TOP_SKULL);
+            side_texture = get_texture(TEXTURE_ID_CRATE_SIDE_SKULL);
         }
     }
 

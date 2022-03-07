@@ -80,6 +80,46 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
     # Add it to the extended object table
     add_to_extended_object_table(rom, 0x194, dd_obj_file)
 
+    # Add new textures to files
+    texture_table_start = rom.sym('texture_table')
+    textures = [
+        (1, 'texture_pot_gold'),
+        (2, 'texture_pot_key'),
+        (3, 'texture_pot_bosskey'),
+        (4, 'texture_pot_skull'),
+        (5, 'texture_crate_top_default'),
+        (6, 'texture_crate_top_gold'),
+        (8, 'texture_crate_top_bosskey'),
+        (9, 'texture_crate_top_skull'),
+        (10, 'texture_crate_side_default'),
+        (11, 'texture_crate_side_gold'),
+        (13, 'texture_crate_side_bosskey'),
+        (14, 'texture_crate_side_skull'),
+        (15, 'texture_crate_palette_default'),
+        (16, 'texture_crate_palette_gold'),
+        (17, 'texture_crate_palette_key'),
+        (18, 'texture_crate_palette_bosskey'),
+        (19, 'texture_crate_palette_skull'),
+
+    ]
+    for texture in textures:
+        texture_id, texture_path = texture
+        texture_file = File({'Name':texture_path})
+        texture_file.copy(rom)
+        with open(data_path(texture_path + '.bin'), 'rb') as stream:
+            obj_data = stream.read()
+            rom.write_bytes(texture_file.start, obj_data)
+            texture_file.end = texture_file.start + len(obj_data)
+        update_dmadata(rom, texture_file)
+
+        #update the texture table with the rom addresses of the texture files
+        entry_addr = texture_table_start + (texture_id * texture_struct.size)
+        entry = read_rom_texture(rom, texture_id )
+        entry['file_vrom_start'] = texture_file.start
+        entry['file_size'] = texture_file.end - texture_file.start
+        write_rom_texture(rom, texture_id, entry)
+    
+
     # Apply chest texture diffs to vanilla wooden chest texture for Chest Texture Matches Content setting
     # new texture, vanilla texture, num bytes
     textures = [(rom.sym('SILVER_CHEST_FRONT_TEXTURE'), 0xFEC798, 4096),
@@ -2011,14 +2051,10 @@ item_row_fields = [
 
 
 def read_rom_item(rom, item_id):
-    logger = logging.getLogger('')
     addr = rom.sym('item_table') + (item_id * item_row_struct.size)
     row_bytes = rom.read_bytes(addr, item_row_struct.size)
     row = item_row_struct.unpack(row_bytes)
-    logger.info(item_row_struct.size)
-    logger.info(row)
     return { item_row_fields[i]: row[i] for i in range(len(item_row_fields)) }
-
 
 def write_rom_item(rom, item_id, item):
     addr = rom.sym('item_table') + (item_id * item_row_struct.size)
@@ -2026,7 +2062,29 @@ def write_rom_item(rom, item_id, item):
     row_bytes = item_row_struct.pack(*row)
     rom.write_bytes(addr, row_bytes)
 
+texture_struct = struct.Struct('>HBxxxxxII') # Match item_row_t in item_table.h
+texture_fields = [
+    'texture_id', 'file_buf', 'file_vrom_start', 'file_size',
+    ]
 
+def read_rom_texture(rom, texture_id):
+    addr = rom.sym('texture_table') + (texture_id * texture_struct.size)
+    row_bytes = rom.read_bytes(addr, texture_struct.size)
+    row = texture_struct.unpack(row_bytes)
+    logger = logging.getLogger('')
+    logger.info(texture_struct.size)
+    logger.info(row)
+    return { texture_fields[i]: row[i] for i in range(len(texture_fields)) }
+
+def write_rom_texture(rom, texture_id, texture):
+    addr = rom.sym('texture_table') + (texture_id * texture_struct.size)
+    row = [texture[f] for f in texture_fields]
+    row_bytes = texture_struct.pack(*row)
+    
+    logger = logging.getLogger('')
+    logger.info(texture_struct.size)
+    logger.info(texture)
+    rom.write_bytes(addr, row_bytes)
 
 def get_override_table(world):
     logger = logging.getLogger('')

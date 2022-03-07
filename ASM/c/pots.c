@@ -1,6 +1,7 @@
 #include "pots.h"
 #include "n64.h"
 #include "gfx.h"
+#include "textures.h"
 
 #define DUNGEON_POT_SIDE_TEXTURE (uint64_t *)0x050108A0
 #define DUNGEON_POT_DLIST (z64_gfx_t *)0x05017870
@@ -10,10 +11,6 @@
 
 extern bool POTCRATE_TEXTURES_MATCH_CONTENTS;
 
-extern uint64_t GILDED_POT_SIDE_TEXTURE;
-extern uint64_t KEY_POT_SIDE_TEXTURE;
-extern uint64_t GOLD_POT_SIDE_TEXTURE;
-extern uint64_t SKULL_POT_SIDE_TEXTURE;
 
 override_t get_pot_override(z64_actor_t *actor, z64_game_t *game)
 {
@@ -73,19 +70,19 @@ void draw_pot(z64_actor_t *actor, z64_game_t *game, override_t override)
         item_row_t *row = get_item_row(item_id);
         if (row->chest_type == GILDED_CHEST)
         {
-            side_texture = &GILDED_POT_SIDE_TEXTURE;
+            side_texture = get_texture(TEXTURE_ID_POT_GOLD);
         }
         else if (row->chest_type == SILVER_CHEST)
         {
-            side_texture = &KEY_POT_SIDE_TEXTURE;
+            side_texture = get_texture(TEXTURE_ID_POT_KEY);
         }
         else if (row->chest_type == GOLD_CHEST)
         {
-            side_texture = &GOLD_POT_SIDE_TEXTURE;
+            side_texture = get_texture(TEXTURE_ID_POT_BOSSKEY);
         }
         else if (row->chest_type == SKULL_CHEST_SMALL || row->chest_type == SKULL_CHEST_BIG)
         {
-            side_texture = &SKULL_POT_SIDE_TEXTURE;
+            side_texture = get_texture(TEXTURE_ID_POT_SKULL);
         }
     }
 
