@@ -81,32 +81,34 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
     add_to_extended_object_table(rom, 0x194, dd_obj_file)
 
     # Add new textures to files
-    texture_table_start = rom.sym('texture_table')
+    texture_table_start = rom.sym('texture_table') #Get the address of the texture table
+
+    #texture list. See textures.h for texture IDs
     textures = [
-        (1, 'texture_pot_gold'),
-        (2, 'texture_pot_key'),
-        (3, 'texture_pot_bosskey'),
-        (4, 'texture_pot_skull'),
-        (5, 'texture_crate_top_default'),
-        (6, 'texture_crate_top_gold'),
-        (8, 'texture_crate_top_bosskey'),
-        (9, 'texture_crate_top_skull'),
-        (10, 'texture_crate_side_default'),
-        (11, 'texture_crate_side_gold'),
-        (13, 'texture_crate_side_bosskey'),
-        (14, 'texture_crate_side_skull'),
-        (15, 'texture_crate_palette_default'),
-        (16, 'texture_crate_palette_gold'),
-        (17, 'texture_crate_palette_key'),
-        (18, 'texture_crate_palette_bosskey'),
-        (19, 'texture_crate_palette_skull'),
+        (1, 'texture_pot_gold', 'textures/pot/texture_pot_gold.bin'),
+        (2, 'texture_pot_key', 'textures/pot/texture_pot_key.bin'),
+        (3, 'texture_pot_bosskey', 'textures/pot/texture_pot_bosskey.bin'),
+        (4, 'texture_pot_skull', 'textures/pot/texture_pot_skull.bin'),
+        (5, 'texture_crate_top_default', 'textures/crate/texture_crate_top_default.bin'),
+        (6, 'texture_crate_top_gold', 'textures/crate/texture_crate_top_gold.bin'),
+        (8, 'texture_crate_top_bosskey', 'textures/crate/texture_crate_top_bosskey.bin'),
+        (9, 'texture_crate_top_skull', 'textures/crate/texture_crate_top_skull.bin'),
+        (10, 'texture_crate_side_default', 'textures/crate/texture_crate_side_default.bin'),
+        (11, 'texture_crate_side_gold', 'textures/crate/texture_crate_side_gold.bin'),
+        (13, 'texture_crate_side_bosskey', 'textures/crate/texture_crate_side_bosskey.bin'),
+        (14, 'texture_crate_side_skull', 'textures/crate/texture_crate_side_skull.bin'),
+        (15, 'texture_crate_palette_default', 'textures/crate/texture_crate_palette_default.bin'),
+        (16, 'texture_crate_palette_gold', 'textures/crate/texture_crate_palette_gold.bin'),
+        (17, 'texture_crate_palette_key', 'textures/crate/texture_crate_palette_key.bin'),
+        (18, 'texture_crate_palette_bosskey', 'textures/crate/texture_crate_palette_bosskey.bin'),
+        (19, 'texture_crate_palette_skull', 'textures/crate/texture_crate_palette_skull.bin'),
 
     ]
     for texture in textures:
-        texture_id, texture_path = texture
-        texture_file = File({'Name':texture_path})
+        texture_id, texture_name, texture_path = texture
+        texture_file = File({'Name':texture_name})
         texture_file.copy(rom)
-        with open(data_path(texture_path + '.bin'), 'rb') as stream:
+        with open(data_path(texture_path), 'rb') as stream:
             obj_data = stream.read()
             rom.write_bytes(texture_file.start, obj_data)
             texture_file.end = texture_file.start + len(obj_data)
