@@ -51,7 +51,10 @@ void ObjKibako2_Draw(z64_actor_t *actor, z64_game_t *game)
     if (POTCRATE_TEXTURES_MATCH_CONTENTS && crate_override.key.all != 0)
     {
         uint16_t item_id = resolve_upgrades(crate_override.value.item_id);
-        item_row_t *row = get_item_row(item_id);
+        item_row_t *row = get_item_row(crate_override.value.looks_like_item_id);
+        if (row == NULL) {
+            row = get_item_row(crate_override.value.item_id);
+        }
         if (row->chest_type == GILDED_CHEST)
         {
             palette = get_texture(TEXTURE_ID_CRATE_PALETTE_GOLD);

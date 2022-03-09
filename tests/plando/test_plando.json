@@ -1,15 +1,8 @@
 {
     "entrances": {
-        "Child Spawn -> KF Links House" : {"region": "Market Guard House", "from":"Market Entrance"},
-        "Adult Spawn -> Temple of Time" : {"region": "Death Mountain", "from":"Kak Behind Gate"}
+        "Child Spawn -> KF Links House" : {"region": "Market Guard House", "from":"Market Entrance"}
     },
     "locations": {
-        "Market Guard House Crate Rupee" : "Small Key (Water Temple)",
-        "Market Guard House Child Pot 1" : "Triforce Piece",
-        "Market Night Crate Green Rupee 1" : "Boss Key (Water Temple)",
-        "Market Night Crate Green Rupee 2" : "Triforce Piece",
-        "Market Night Crate Green Rupee 3" : "Small Key (Water Temple)",
-        "Market Night Crate Red Rupee" : "Gold Skulltula Token",
-        "Market Guard House Child Pot 2" : "Gold Skulltula Token"
+
     }
 }
