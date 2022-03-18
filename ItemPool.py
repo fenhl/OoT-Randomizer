@@ -342,6 +342,10 @@ def get_pool_core(world):
                 item = 'Bombchus'
             shuffle_item = location.name != 'Wasteland Bombchu Salesman' or world.settings.shuffle_medigoron_carpet_salesman
 
+        # Silver Rupees
+        elif location.type == 'Silver Rupee':
+            shuffle_item = world.settings.shuffle_silver_rupees
+
         # Cows
         elif location.vanilla_item == 'Milk':
             if world.settings.shuffle_cows:

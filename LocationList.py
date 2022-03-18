@@ -26,7 +26,7 @@ def shop_address(shop_id, shelf_id):
 #       ZR      Zora's River
 
 # The order of this table is reflected in the spoiler's list of locations (except Hints aren't included).
-# Within a section, the order of types is: gifts/freestanding/chests, Deku Scrubs, Cows, Gold Skulltulas, Shops.
+# Within a section, the order of types is: gifts/freestanding/chests, Deku Scrubs, Silver Rupees, Cows, Gold Skulltulas, Shops.
 
 # Scrubs are on the overworld, while GrottoScrub is a special handler for Grottos
 # Grottos scrubs are the same scene and actor, so we use a unique grotto ID for the scene
@@ -717,6 +717,11 @@ location_table = OrderedDict([
     ("Ice Cavern Compass Chest",                                     ("Chest",        0x09,  0x01, None,                        'Compass (Ice Cavern)',                  ("Ice Cavern", "Vanilla",))),
     ("Ice Cavern Freestanding PoH",                                  ("Collectable",  0x09,  0x01, None,                        'Piece of Heart',                        ("Ice Cavern", "Vanilla",))),
     ("Ice Cavern Iron Boots Chest",                                  ("Chest",        0x09,  0x02, None,                        'Iron Boots',                            ("Ice Cavern", "Vanilla",))),
+    ("Ice Cavern Spinning Scythe Silver Rupee 1",                    ("Silver Rupee", 0x09,  None, None,    'Silver Rupee (Ice Cavern Spinning Scythe)',                 ("Ice Cavern", "Vanilla", "Silver Rupee"))),
+    ("Ice Cavern Spinning Scythe Silver Rupee 2",                    ("Silver Rupee", 0x09,  None, None,    'Silver Rupee (Ice Cavern Spinning Scythe)',                 ("Ice Cavern", "Vanilla", "Silver Rupee"))),
+    ("Ice Cavern Spinning Scythe Silver Rupee 3",                    ("Silver Rupee", 0x09,  None, None,    'Silver Rupee (Ice Cavern Spinning Scythe)',                 ("Ice Cavern", "Vanilla", "Silver Rupee"))),
+    ("Ice Cavern Spinning Scythe Silver Rupee 4",                    ("Silver Rupee", 0x09,  None, None,    'Silver Rupee (Ice Cavern Spinning Scythe)',                 ("Ice Cavern", "Vanilla", "Silver Rupee"))),
+    ("Ice Cavern Spinning Scythe Silver Rupee 5",                    ("Silver Rupee", 0x09,  None, None,    'Silver Rupee (Ice Cavern Spinning Scythe)',                 ("Ice Cavern", "Vanilla", "Silver Rupee"))),
     ("Ice Cavern GS Spinning Scythe Room",                           ("GS Token",     0x09,  0x02, None,                        'Gold Skulltula Token',                  ("Ice Cavern", "Vanilla", "Skulltulas",))),
     ("Ice Cavern GS Heart Piece Room",                               ("GS Token",     0x09,  0x04, None,                        'Gold Skulltula Token',                  ("Ice Cavern", "Vanilla", "Skulltulas",))),
     ("Ice Cavern GS Push Block Room",                                ("GS Token",     0x09,  0x01, None,                        'Gold Skulltula Token',                  ("Ice Cavern", "Vanilla", "Skulltulas",))),
