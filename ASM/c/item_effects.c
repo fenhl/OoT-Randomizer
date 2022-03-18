@@ -16,9 +16,26 @@ void full_heal(z64_file_t *save, int16_t arg1, int16_t arg2) {
     save->refill_hearts = 20 * 0x10;
 }
 
+// mask, max
+uint32_t silver_rupee_data[2][0x20][2] = {
+    {
+        [0x17] = {0x03800000, 5}, // Dodongos Cavern Staircase
+        [0x14] = {0x00700000, 5}, // Ice Cavern Spinning Scythe
+    },
+    {},
+};
+
 void give_silver_rupee(z64_file_t *save, int16_t arg1, int16_t arg2) {
-    //TODO check if the max for this set has been reached to avoid overflow
-    save->scene_flags[arg1].unk_00_ += (1 << arg2);
+    uint32_t mask = silver_rupee_data[arg1 - 0x49][arg2][0];
+    uint32_t max = silver_rupee_data[arg1 - 0x49][arg2][1];
+    if (((save->scene_flags[arg1].unk_00_ & mask) >> arg2) < max) {
+        save->scene_flags[arg1].unk_00_ += (1 << arg2);
+        if (((save->scene_flags[arg1].unk_00_ & mask) >> arg2) == max) {
+            //TODO set flag depending on args
+            //TODO make sure silver rupee for current scene is handled correctly
+            save->scene_flags[0x09].swch |= 0x00800000;
+        }
+    }
 }
 
 void give_triforce_piece(z64_file_t *save, int16_t arg1, int16_t arg2) {

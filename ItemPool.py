@@ -941,7 +941,9 @@ def get_pool_core(world):
 
     silver_rupee_locations = [location for location in world.get_locations() if location.type == 'Silver Rupee']
     if world.settings.shuffle_silver_rupees:
-        pool.extend(location.vanilla_item for location in silver_rupee_locations)
+        for location in silver_rupee_locations:
+            pool.append(location.vanilla_item)
+            location.disabled = DisableType.PENDING #TODO allow items placed on silver rupee locations to be collected
     else:
         for location in silver_rupee_locations:
             placed_items[location.name] = location.vanilla_item

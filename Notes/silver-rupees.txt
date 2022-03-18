@@ -35,3 +35,5 @@ Shadow: Shadow Temple (vanilla: 5 + 5 + 5 -> 9 bits, MQ: 5 + 9 + 5 + 10 -> 14 bi
 GTG: Gerudo Training Ground (vanilla: 5 + 5 + 5 -> 9 bits, MQ: 5 + 6 + 3 -> 8 bits)
 Spirit: Spirit Temple (vanilla: 5 + 5 + 5 -> 9 bits, MQ: 5 + 5 -> 6 bits)
 Ganon: inside Ganon's Castle (vanilla: 5 + 5 + 5 + 5 -> 12 bits, MQ: 5 + 5 + 5 -> 9 bits)
+
+The exact masks for each rupee set are defined in silver_rupee_data in item_effects.c
