@@ -939,6 +939,13 @@ def get_pool_core(world):
             placed_items[location.name] = location.vanilla_item
             location.disabled = DisableType.DISABLED
 
+    silver_rupee_locations = [location for location in world.get_locations() if location.type == 'Silver Rupee']
+    if world.settings.shuffle_silver_rupees:
+        pool.extend(location.vanilla_item for location in silver_rupee_locations)
+    else:
+        for location in silver_rupee_locations:
+            placed_items[location.name] = location.vanilla_item
+
     if world.dungeon_mq['Deku Tree']:
         skulltula_locations_final = skulltula_locations + [
             'Deku Tree MQ GS Lobby',

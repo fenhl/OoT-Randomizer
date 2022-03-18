@@ -2310,7 +2310,7 @@ setting_infos = [
             'glitched'  : {'settings' : ['allowed_tricks', 'shuffle_interior_entrances', 'shuffle_grotto_entrances',
                                          'shuffle_dungeon_entrances', 'shuffle_overworld_entrances', 'owl_drops',
                                          'warp_songs', 'spawn_positions', 'mq_dungeons_random', 'mq_dungeons', 'dungeon_shortcuts',
-                                         'mix_entrance_pools', 'decouple_entrances']},
+                                         'mix_entrance_pools', 'decouple_entrances', 'shuffle_silver_rupees']},
             'none'      : {'settings' : ['allowed_tricks', 'logic_no_night_tokens_without_suns_song', 'reachable_locations']},
         },
         shared         = True,
@@ -2848,7 +2848,30 @@ setting_infos = [
         },
         shared         = True,
     ),
-    
+    Checkbutton(
+        name           = 'shuffle_silver_rupees',
+        gui_text       = 'Shuffle Silver Rupees',
+        gui_tooltip    = '''\
+            Enabling this shuffles the Silver Rupees into to the item pool.
+
+            Silver Rupees are grouped into sets of 5 (except for some
+            Master Quest dungeons, which have sets of other amounts), each
+            of which permanently unlocks something in a dungeon once all
+            the rupees in that set are collected. Hints will only tell you
+            the dungeon a Silver Rupee corresponds to, but upon collecting
+            it, you will be told the exact room.
+
+            The vanilla locations of Silver Rupees hold shuffled items.
+        ''',
+        default        = False,
+        disable        = {
+            True : {'settings': ['mq_dungeons_random', 'mq_dungeons']},
+        },
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    ),
     Checkbutton(
         name           = 'shuffle_cows',
         gui_text       = 'Shuffle Cows',

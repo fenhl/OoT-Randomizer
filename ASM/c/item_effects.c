@@ -16,6 +16,11 @@ void full_heal(z64_file_t *save, int16_t arg1, int16_t arg2) {
     save->refill_hearts = 20 * 0x10;
 }
 
+void give_silver_rupee(z64_file_t *save, int16_t arg1, int16_t arg2) {
+    //TODO check if the max for this set has been reached to avoid overflow
+    save->scene_flags[arg1].unk_00_ += (1 << arg2);
+}
+
 void give_triforce_piece(z64_file_t *save, int16_t arg1, int16_t arg2) {
     save->scene_flags[0x48].unk_00_ += 1; //Unused word in scene x48.
     set_triforce_render();

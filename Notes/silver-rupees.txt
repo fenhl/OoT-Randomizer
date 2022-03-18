@@ -1,0 +1,37 @@
+The freestanding silver rupees collected are stored in the unused word of the permanent scene flags for scenes 0x28–0x2b:
+
+scene flags     rupee set (vanilla)               / rupee set (mq)
+ 0x28 f800_0000                                     Dodongos Cavern MQ Staircase
+      07c0_0000 Ice Cavern Spinning Scythe
+      003e_0000 Ice Cavern Push Block
+      0001_f000 Bottom of the Well Basement
+ 0x29 f800_0000 Shadow Temple Scythe Shortcut     / Shadow Temple MQ Scythe Shortcut
+      07fc_0000                                     Shadow Temple MQ Invisible Blades
+      0003_e000 Shadow Temple Huge Pit            / Shadow Temple MQ Huge Pit
+      0000_1ff8 Shadow Temple Invisible Spikes    / Shadow Temple MQ Invisible Spikes
+ 0x2a f800_0000 Gerudo Training Ground Boulders   / Gerudo Training Ground MQ Icicles
+      07e0_0000 Gerudo Training Ground Lava       / Gerudo Training Ground MQ Lava
+      001f_0000 Gerudo Training Ground Water      / Gerudo Training Ground MQ Water
+      0000_f800 Spirit Temple Child Early Torches
+      0000_07c0 Spirit Temple Boulders            / Spirit Temple MQ Lobby and Lower Adult
+      0000_003e Spirit Temple Sun Block           / Spirit Temple MQ Adult Climb
+ 0x2b f800_0000 Ganons Castle Spirit Trial
+      07c0_0000 Ganons Castle Light Trial
+      003e_0000 Ganons Castle Fire Trial          / Ganons Castle MQ Fire Trial
+      0001_f000                                     Ganons Castle MQ Shadow Trial
+      0000_0f80                                     Ganons Castle MQ Water Trial
+      0000_007c Ganons Castle Forest Trial
+
+The numbers of silver rupees collected for each door are stored in the unused word of the permanent scene flags for scenes 0x49 and 0x4a:
+
+scene fedcba9876543210fedcba9876543210
+ 0x49       [D][Ice ][W][   Shadow   ]
+ 0x4a   [  GTG  ][Spirit ][  Ganon   ]
+
+D: Dodongo's Cavern (MQ: 5 -> 3 bits)
+Ice: Ice Cavern (vanilla: 5 + 5 -> 6 bits)
+W: Bottom of the Well (vanilla: 5 -> 3 bits)
+Shadow: Shadow Temple (vanilla: 5 + 5 + 5 -> 9 bits, MQ: 5 + 9 + 5 + 10 -> 14 bits)
+GTG: Gerudo Training Ground (vanilla: 5 + 5 + 5 -> 9 bits, MQ: 5 + 6 + 3 -> 8 bits)
+Spirit: Spirit Temple (vanilla: 5 + 5 + 5 -> 9 bits, MQ: 5 + 5 -> 6 bits)
+Ganon: inside Ganon's Castle (vanilla: 5 + 5 + 5 + 5 -> 12 bits, MQ: 5 + 5 + 5 -> 9 bits)
