@@ -4,6 +4,7 @@ from collections import OrderedDict
 from decimal import Decimal, ROUND_HALF_UP
 
 from Item import ItemFactory, ItemInfo
+from Location import DisableType
 from Utils import random_choices
 
 
@@ -345,6 +346,8 @@ def get_pool_core(world):
         # Silver Rupees
         elif location.type == 'Silver Rupee':
             shuffle_item = world.settings.shuffle_silver_rupees
+            if world.settings.shuffle_silver_rupees:
+                location.disabled = DisableType.PENDING #TODO allow items placed on silver rupee locations to be collected
 
         # Cows
         elif location.vanilla_item == 'Milk':
