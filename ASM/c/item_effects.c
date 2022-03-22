@@ -16,21 +16,44 @@ void full_heal(z64_file_t *save, int16_t arg1, int16_t arg2) {
     save->refill_hearts = 20 * 0x10;
 }
 
-// mask, max
-uint32_t silver_rupee_data[2][0x20][2] = {
+typedef struct {
+    uint32_t mask;
+    uint8_t  dungeon_idx;
+    uint32_t max_vanilla;
+    uint32_t max_mq;
+} silver_rupee_data_t;
+
+silver_rupee_data_t silver_rupee_data[2][0x20] = {
     {
-        [0x17] = {0x03800000, 5}, // Dodongos Cavern Staircase
-        [0x14] = {0x00700000, 5}, // Ice Cavern Spinning Scythe
+        [0x17] = {0x03800000,  1,  5, -1}, // Dodongos Cavern Staircase
+        [0x14] = {0x00700000,  9,  5, -1}, // Ice Cavern Spinning Scythe
+        [0x11] = {0x000e0000,  9,  5, -1}, // Ice Cavern Push Block
+        [0x0e] = {0x0001c000,  8,  5, -1}, // Bottom of the Well Basement
+        [0x0b] = {0x00003800,  7,  5,  5}, // Shadow Temple Scythe Shortcut
+        [0x07] = {0x00000780,  7, -1,  9}, // Shadow Temple Invisible Blades
+        [0x04] = {0x00000070,  7,  5,  5}, // Shadow Temple Huge Pit
+        [0x00] = {0x0000000f,  7,  5, 10}, // Shadow Temple Invisible Spikes
     },
-    {},
+    {
+        [0x1b] = {0x38000000, 11,  5,  5}, // Gerudo Training Ground Slopes
+        [0x18] = {0x07000000, 11,  5,  6}, // Gerudo Training Ground Lava
+        [0x15] = {0x00e00000, 11,  5,  3}, // Gerudo Training Ground Water
+        [0x12] = {0x001c0000,  6,  5, -1}, // Spirit Temple Child Early Torches
+        [0x0f] = {0x00038000,  6,  5,  5}, // Spirit Temple Adult Boulders/Lobby and Lower Adult
+        [0x0c] = {0x00007000,  6,  5,  5}, // Spirit Temple Sun Block/Adult Climb
+        [0x09] = {0x00000e00, 13,  5,  5}, // Ganons Castle Spirit/Shadow Trial
+        [0x06] = {0x000001c0, 13,  5,  5}, // Ganons Castle Light/Water Trial
+        [0x03] = {0x00000038, 13,  5,  5}, // Ganons Castle Fire Trial
+        [0x00] = {0x00000007, 13,  5, -1}, // Ganons Castle Forest Trial
+    },
 };
 
 void give_silver_rupee(z64_file_t *save, int16_t arg1, int16_t arg2) {
-    uint32_t mask = silver_rupee_data[arg1 - 0x49][arg2][0];
-    uint32_t max = silver_rupee_data[arg1 - 0x49][arg2][1];
-    if (((save->scene_flags[arg1].unk_00_ & mask) >> arg2) < max) {
+    silver_rupee_data_t data = silver_rupee_data[arg1 - 0x49][arg2];
+    uint32_t max = CFG_DUNGEON_IS_MQ[data.dungeon_idx] ? data.max_mq : data.max_vanilla;
+    if (((save->scene_flags[arg1].unk_00_ & data.mask) >> arg2) < max) {
         save->scene_flags[arg1].unk_00_ += (1 << arg2);
-        if (((save->scene_flags[arg1].unk_00_ & mask) >> arg2) == max) {
+        if (((save->scene_flags[arg1].unk_00_ & data.mask) >> arg2) == max) {
             //TODO set flag depending on args
             //TODO make sure silver rupee for current scene is handled correctly
             save->scene_flags[0x09].swch |= 0x00800000;

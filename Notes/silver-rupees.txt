@@ -16,7 +16,7 @@ scene|flags    |shared item name                 |rupee set (vanilla)           
  0x2a|07e0_0000|Gerudo Training Ground Lava      |Gerudo Training Ground Lava      |Gerudo Training Ground MQ Lava
  0x2a|001f_0000|Gerudo Training Ground Water     |Gerudo Training Ground Water     |Gerudo Training Ground MQ Water
  0x2a|0000_f800|Spirit Temple Child Early Torches|Spirit Temple Child Early Torches|
- 0x2a|0000_07c0|*                                |Spirit Temple Boulders           |Spirit Temple MQ Lobby and Lower Adult
+ 0x2a|0000_07c0|*                                |Spirit Temple Adult Boulders     |Spirit Temple MQ Lobby and Lower Adult
  0x2a|0000_003e|*                                |Spirit Temple Sun Block          |Spirit Temple MQ Adult Climb
 -----|---------|---------------------------------|---------------------------------|--------------------------------------
  0x2b|f800_0000|Ganons Castle Spirit Trial       |Ganons Castle Spirit Trial       |
