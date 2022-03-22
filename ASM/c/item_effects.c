@@ -52,12 +52,23 @@ void give_silver_rupee(z64_file_t *save, int16_t arg1, int16_t arg2) {
     silver_rupee_data_t data = silver_rupee_data[arg1 - 0x49][arg2];
     uint32_t max = CFG_DUNGEON_IS_MQ[data.dungeon_idx] ? data.max_mq : data.max_vanilla;
     if (((save->scene_flags[arg1].unk_00_ & data.mask) >> arg2) < max) {
-        save->scene_flags[arg1].unk_00_ += (1 << arg2);
+        save->scene_flags[arg1].unk_00_ += 1 << arg2;
         if (((save->scene_flags[arg1].unk_00_ & data.mask) >> arg2) == max) {
             //TODO set flag depending on args
             //TODO make sure silver rupee for current scene is handled correctly
             save->scene_flags[0x09].swch |= 0x00800000;
         }
+    }
+}
+
+void give_silver_rupee_pouch(z64_file_t *save, int16_t arg1, int16_t arg2) {
+    silver_rupee_data_t data = silver_rupee_data[arg1 - 0x49][arg2];
+    uint32_t max = CFG_DUNGEON_IS_MQ[data.dungeon_idx] ? data.max_mq : data.max_vanilla;
+    if (((save->scene_flags[arg1].unk_00_ & data.mask) >> arg2) < max) {
+        save->scene_flags[arg1].unk_00_ |= max << arg2;
+        //TODO set flag depending on args
+        //TODO make sure silver rupee pouch for current scene is handled correctly
+        save->scene_flags[0x09].swch |= 0x00800000;
     }
 }
 
