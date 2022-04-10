@@ -27,7 +27,7 @@ override_t get_pot_override(z64_actor_t *actor, z64_game_t *game)
     dummy.collectibleFlag = (actor->variable & 0x7E00) >> 9;
     dummy.actor.actor_id = 0x15;
     dummy.actor.dropFlag = 1;
-
+    dummy.actor.variable = pot_item;
     if (!should_override_collectible(&dummy))
     {
         return (override_t){0};
@@ -42,6 +42,7 @@ override_t get_flying_pot_override(z64_actor_t *actor, z64_game_t *game)
     dummy.collectibleFlag = (actor->variable & 0x3F);
     dummy.actor.actor_id = 0x15;
     dummy.actor.dropFlag = 1;
+    dummy.actor.variable = 0;
     if (!should_override_collectible(&dummy))
     {
         return (override_t){0};

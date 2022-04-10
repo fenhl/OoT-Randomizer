@@ -34,7 +34,7 @@ override_t get_crate_override(z64_actor_t *actor, z64_game_t *game)
     dummy.collectibleFlag = (this->collectibleFlag & 0x3F) | (this->collectibleFlag & 0x00C0);
     dummy.actor.actor_id = 0x15;
     dummy.actor.dropFlag = 1;
-
+    dummy.actor.variable = 0;
     if (!should_override_collectible(&dummy))
     {
         return (override_t){0};

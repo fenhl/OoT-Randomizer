@@ -21,6 +21,7 @@ override_t get_smallcrate_override(z64_actor_t *actor, z64_game_t *game)
     dummy.collectibleFlag = (actor->variable & 0x3F00) >> 8;
     dummy.actor.actor_id = 0x15;
     dummy.actor.dropFlag = 1;
+    dummy.actor.variable = item;
 
     if (!should_override_collectible(&dummy))
     {

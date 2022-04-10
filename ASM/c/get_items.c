@@ -523,6 +523,7 @@ int16_t get_override_drop_id(int16_t dropId, uint16_t params) {
     dummy.actor.actor_id = 0x15;
     dummy.actor.dropFlag = 1;
     dummy.actor.dropFlag |= (params & 0x00C0) >> 5;
+    dummy.actor.variable = dropId;
     if (should_override_collectible(&dummy) &&
         (dropId != ITEM00_HEART_PIECE) &&
         (dropId != ITEM00_SMALL_KEY) &&
