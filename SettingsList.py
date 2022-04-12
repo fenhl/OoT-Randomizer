@@ -3001,6 +3001,12 @@ setting_infos = [
         gui_text       = 'Shuffle Beehives',
         gui_tooltip    = '''\
             Enabling this will let beehives drop items.
+            There are 32 Beehives located in:
+                Generic Grottos (x2 per grotto)
+                2 Scrub Grottos (x1 per grotto)
+                3 Scrub Grottos (x1 per grotto)
+                DMT Cow Grotto (x1)
+                Zora's Domain (x3 child only)
         ''',
         default        = False,
         shared         = True,
