@@ -1948,19 +1948,14 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
 
     write_shop_items(rom, shop_item_file.start + 0x1DEC, shop_items)
 
-    permutation = None
-
     # text shuffle
-    if world.settings.text_shuffle == 'except_hints':
-        permutation = shuffle_messages(messages, except_hints=True)
-    elif world.settings.text_shuffle == 'complete':
-        permutation = shuffle_messages(messages, except_hints=False)
+    world.text_permutation = shuffle_messages(world, messages, world.settings.text_shuffle)
 
     # If Warp Song ER is on, update text boxes
     if world.settings.warp_songs:
         update_warp_song_text(messages, world)
 
-    repack_messages(rom, messages, permutation)
+    repack_messages(rom, messages, world.text_permutation)
 
     # output a text dump, for testing...
     #with open('keysanity_' + str(world.settings.seed) + '_dump.txt', 'w', encoding='utf-16') as f:

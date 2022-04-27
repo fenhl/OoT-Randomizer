@@ -40,6 +40,7 @@ per_world_keys = (
     ':goal_locations',
     ':barren_regions',
     'gossip_stones',
+    'text_boxes',
 )
 
 
@@ -248,6 +249,7 @@ class WorldDistribution(object):
             'goal_locations': None,
             'barren_regions': None,
             'gossip_stones': {name: [GossipRecord(rec) for rec in record] if is_pattern(name) else GossipRecord(record) for (name, record) in src_dict.get('gossip_stones', {}).items()},
+            'text_boxes': {int(slot): message for (slot, message) in src_dict.get('text_boxes', {}).items()},
         }
 
         if update_all:
@@ -280,6 +282,7 @@ class WorldDistribution(object):
             ':goal_locations': self.goal_locations,
             ':barren_regions': self.barren_regions,
             'gossip_stones': SortedDict({name: [rec.to_json() for rec in record] if is_pattern(name) else record.to_json() for (name, record) in self.gossip_stones.items()}),
+            'text_boxes': {str(slot): self.text_boxes[slot] for slot in sorted(self.text_boxes)},
         }
 
 
@@ -385,6 +388,13 @@ class WorldDistribution(object):
             if record.notes is not None:
                 dist_notes[name] = record.notes
         return dist_notes
+
+
+    def configure_text_boxes(self):
+        dist_permutation = {}
+        for (slot, message) in self.text_boxes.items():
+            dist_permutation[int(slot)] = message
+        return dist_permutation
 
 
     # Add randomized_settings defined in distribution to world's randomized settings list
@@ -1213,6 +1223,8 @@ class Distribution(object):
             world_dist.trials = {trial: TrialRecord({ 'active': not world.skipped_trials[trial] }) for trial in world.skipped_trials}
             if hasattr(world, 'song_notes'):
                 world_dist.songs = {song: SongRecord({ 'notes': str(world.song_notes[song]) }) for song in world.song_notes}
+            if world.text_permutation is not None:
+                world_dist.text_boxes = {slot: message for slot, message in enumerate(world.text_permutation)}
             world_dist.entrances = {ent.name: EntranceRecord.from_entrance(ent) for ent in spoiler.entrances[world.id]}
             world_dist.locations = {loc: LocationRecord.from_item(item) for (loc, item) in spoiler.locations[world.id].items()}
             world_dist.woth_locations = {loc.name: LocationRecord.from_item(loc.item) for loc in spoiler.required_locations[world.id]}

@@ -956,49 +956,55 @@ def repack_messages(rom, messages, permutation=None, always_allow_skip=True, spe
     rom.write_bytes(entry_offset, [0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
 
 # shuffles the messages in the game, making sure to keep various message types in their own group
-def shuffle_messages(messages, except_hints=True, always_allow_skip=True):
+def shuffle_messages(world, messages, mode):
+    permutation = list(range(len(messages)))
+    fixed_messages = world.distribution.configure_text_boxes()
+    for slot, message in fixed_messages.items():
+        permutation[slot] = message
 
-    permutation = [i for i, _ in enumerate(messages)]
+    if mode != 'none':
+        slots_to_fill = [i for i in range(len(messages)) if i not in fixed_messages]
+        available_messages = [i for i in range(len(messages)) if i not in fixed_messages.values()]
 
-    def is_exempt(m):
-        hint_ids = (
-            GOSSIP_STONE_MESSAGES + TEMPLE_HINTS_MESSAGES + LIGHT_ARROW_HINT +
-            list(KEYSANITY_MESSAGES.keys()) + shuffle_messages.shop_item_messages +
-            shuffle_messages.scrubs_message_ids +
-            [0x5036, 0x70F5] # Chicken count and poe count respectively
-        )
-        shuffle_exempt = [
-            0x208D,         # "One more lap!" for Cow in House race.
-        ]
-        is_hint = (except_hints and m.id in hint_ids)
-        is_error_message = (m.id == ERROR_MESSAGE)
-        is_shuffle_exempt = (m.id in shuffle_exempt)
-        return (is_hint or is_error_message or m.is_id_message() or is_shuffle_exempt)
+        def is_exempt(m):
+            hint_ids = (
+                GOSSIP_STONE_MESSAGES + TEMPLE_HINTS_MESSAGES + LIGHT_ARROW_HINT +
+                list(KEYSANITY_MESSAGES.keys()) + shuffle_messages.shop_item_messages +
+                shuffle_messages.scrubs_message_ids +
+                [0x5036, 0x70F5] # Chicken count and poe count respectively
+            )
+            shuffle_exempt = [
+                0x208D,         # "One more lap!" for Cow in House race.
+            ]
+            is_hint = (mode == 'except_hints' and m.id in hint_ids)
+            is_error_message = (m.id == ERROR_MESSAGE)
+            is_shuffle_exempt = (m.id in shuffle_exempt)
+            return (is_hint or is_error_message or m.is_id_message() or is_shuffle_exempt)
 
-    have_goto         = list( filter(lambda m: not is_exempt(m) and m.has_goto,         messages) )
-    have_keep_open    = list( filter(lambda m: not is_exempt(m) and m.has_keep_open,    messages) )
-    have_event        = list( filter(lambda m: not is_exempt(m) and m.has_event,        messages) )
-    have_fade         = list( filter(lambda m: not is_exempt(m) and m.has_fade,         messages) )
-    have_ocarina      = list( filter(lambda m: not is_exempt(m) and m.has_ocarina,      messages) )
-    have_two_choice   = list( filter(lambda m: not is_exempt(m) and m.has_two_choice,   messages) )
-    have_three_choice = list( filter(lambda m: not is_exempt(m) and m.has_three_choice, messages) )
-    basic_messages    = list( filter(lambda m: not is_exempt(m) and m.is_basic(),       messages) )
+        have_goto         = list( filter(lambda m: not is_exempt(m) and m.has_goto,         messages) )
+        have_keep_open    = list( filter(lambda m: not is_exempt(m) and m.has_keep_open,    messages) )
+        have_event        = list( filter(lambda m: not is_exempt(m) and m.has_event,        messages) )
+        have_fade         = list( filter(lambda m: not is_exempt(m) and m.has_fade,         messages) )
+        have_ocarina      = list( filter(lambda m: not is_exempt(m) and m.has_ocarina,      messages) )
+        have_two_choice   = list( filter(lambda m: not is_exempt(m) and m.has_two_choice,   messages) )
+        have_three_choice = list( filter(lambda m: not is_exempt(m) and m.has_three_choice, messages) )
+        basic_messages    = list( filter(lambda m: not is_exempt(m) and m.is_basic(),       messages) )
 
 
-    def shuffle_group(group):
-        group_permutation = [i for i, _ in enumerate(group)]
-        random.shuffle(group_permutation)
+        def shuffle_group(group):
+            group_slots = [m.index for m in group if m.index in slots_to_fill]
+            group_messages = [m.index for m in group if m.index in available_messages]
+            random.shuffle(group_messages)
+            for slot, message in zip(group_slots, group_messages):
+                permutation[slot] = message
 
-        for index_from, index_to in enumerate(group_permutation):
-            permutation[group[index_to].index] = group[index_from].index
-
-    # need to use 'list' to force 'map' to actually run through
-    list( map( shuffle_group, [
-        have_goto + have_keep_open + have_event + have_fade + basic_messages,
-        have_ocarina,
-        have_two_choice,
-        have_three_choice,
-    ]))
+        # need to use 'list' to force 'map' to actually run through
+        list( map( shuffle_group, [
+            have_goto + have_keep_open + have_event + have_fade + basic_messages,
+            have_ocarina,
+            have_two_choice,
+            have_three_choice,
+        ]))
 
     return permutation
 

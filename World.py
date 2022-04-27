@@ -40,6 +40,7 @@ class World(object):
         self.triforce_count = 0
         self.total_starting_triforce_count = 0
         self.bingosync_url = None
+        self.text_permutation = None
 
         self.parser = Rule_AST_Transformer(self)
         self.event_items = set()
@@ -266,6 +267,7 @@ class World(object):
         new_world.triforce_goal = self.triforce_goal
         new_world.triforce_count = self.triforce_count
         new_world.total_starting_triforce_count = self.total_starting_triforce_count
+        new_world.text_permutation = self.text_permutation
         new_world.maximum_wallets = self.maximum_wallets
         new_world.distribution = self.distribution
 
