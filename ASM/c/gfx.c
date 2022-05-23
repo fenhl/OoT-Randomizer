@@ -73,6 +73,11 @@ sprite_t key_rupee_clock_sprite = {
     G_IM_FMT_IA, G_IM_SIZ_8b, 1
 };
 
+sprite_t counter_digit_sprite = {
+    NULL, 8, 16, 10,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
+
 sprite_t item_digit_sprite = {
     NULL, 8, 8, 10,
     G_IM_FMT_IA, G_IM_SIZ_8b, 1
@@ -159,6 +164,7 @@ void gfx_init() {
     triforce_sprite.buf = TRIFORCE_ICON_TEXTURE;
     song_note_sprite.buf = icon_item_static.buf + 0x00088040;
     key_rupee_clock_sprite.buf = parameter_static.buf + 0x00001E00;
+    counter_digit_sprite.buf = parameter_static.buf + 0x00003040;
     item_digit_sprite.buf = parameter_static.buf + 0x000035C0;
     linkhead_skull_sprite.buf = icon_item_dungeon_static.buf + 0x00001980;
     heart_sprite.buf = parameter_static.buf;
