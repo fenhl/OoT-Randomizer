@@ -4245,6 +4245,9 @@ setting_infos = [
             Boss keys will remain in their fancy chest, while small key will be in a
             smaller version of the fancy chest.
         ''',
+        disable    = {
+            'off' : {'settings' : ['bombchus_gilded_chest_appearance'] }
+        },
         shared         = True,
     ),
     Checkbutton(
@@ -4255,6 +4258,21 @@ setting_infos = [
             the Lens of Truth. Lens is not logically
             required for normally visible chests.
         ''',
+        shared         = True,
+    ),
+    Checkbutton(
+        name           = 'bombchus_gilded_chest_appearance',
+        gui_text       = 'Bombchus in Gilded Chests',
+        gui_tooltip    = '''\
+                         If enabled, bombchus will appear inside 
+                         Gilded chests instead of Wooden chests.
+
+                         Requires "Texture" to be enabled for the
+                         "Chest Appearance Matches Contents" setting.
+                         ''',
+        gui_params={
+            "hide_when_disabled": True,
+        },
         shared         = True,
     ),
     Checkbutton(
