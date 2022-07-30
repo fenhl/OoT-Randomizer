@@ -312,9 +312,9 @@
     "starting_tod":                            "default",
     "starting_age":                            "random"
   },
-    "SGL Test Settings (Week 4)": {
+    "SGL 2022 Settings": {
     "show_seed_info":                          true,
-    "user_message":                            "SGL Test Settings (Week 4)",
+    "user_message":                            "SGL 2022 Playtesting",
     "world_count":                             1,
     "create_spoiler":                          false,
     "randomize_settings":                      false,
