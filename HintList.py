@@ -535,7 +535,7 @@ hintTable = {
     'Haunted Wasteland Checks':                                    ("#deep in the wasteland# a chest and a spider hold respectively...^", None, 'dual'),
     # SGL 2022 Dual Hints
     'Dancing Darunia and Skull Kid':                               ("a #music-loving Goron and skull kid# give you...^", None, 'dual'),
-    'HF Southern Bombable Grottos':                                ("in #southern Hyrule Field#, a scrub and a buried chest lead to...^", None, 'dual'),
+    'HF Southern Bombable Grottos':                                ("in #southern Hyrule Field#, a scrub and a remote grotto lead to...^", None, 'dual'),
     'LH Child and Adult Fishing':                                  ("catching the #biggest fish# as child and as an adult reward you with...^", None, 'dual'),
     'ZD Child Checks':                                             ("within #Zora's Domain#, a diving game and a torch run lead to...^", None, 'dual'),
     'ZF Adult Checks':                                             ("within #frozen Zora's Fountain#, crossing the icebergs and diving underwater lead to...^", None, 'dual'),
