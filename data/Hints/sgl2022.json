@@ -6,7 +6,27 @@
         { "location": "Deku Theater Skull Mask", "types": ["always"] },
         { "location": "Deku Theater Mask of Truth", "types": ["always"] }
     ],
-    "remove_locations":      [],
+    "remove_locations":      [
+        {"location": "Sheik in Crater", "types": ["sometimes"]},
+        {"location": "Song from Royal Familys Tomb", "types": ["sometimes"]},
+        {"location": "Sheik in Forest", "types": ["sometimes"]},
+        {"location": "Sheik at Temple", "types": ["sometimes"]},
+        {"location": "Sheik at Colossus", "types": ["sometimes"]},
+        {"location": "LH Sun", "types": ["sometimes"]},
+        {"location": "GF HBA 1500 Points", "types": ["sometimes"]},
+        {"location": "GC Maze Left Chest", "types": ["sometimes"]},
+        {"location": "GV Chest", "types": ["sometimes"]},
+        {"location": "Graveyard Royal Familys Tomb Chest", "types": ["sometimes"]},
+        {"location": "GC Pot Freestanding PoH", "types": ["sometimes"]},
+        {"location": "LH Lab Dive", "types": ["sometimes"]},
+        {"location": "Fire Temple Megaton Hammer Chest", "types": ["sometimes"]},
+        {"location": "Water Temple Boss Key Chest", "types": ["sometimes"]},
+        {"location": "Gerudo Training Ground Maze Path Final Chest", "types": ["sometimes"]},
+        {"location": "Spirit Temple Silver Gauntlets Chest", "types": ["sometimes"]},
+        {"location": "Spirit Temple Mirror Shield Chest", "types": ["sometimes"]},
+        {"location": "Shadow Temple Freestanding Key", "types": ["sometimes"]},
+        {"location": "Ice Cavern Iron Boots Chest", "types": ["sometimes"]}
+    ],
     "add_items":             [],
     "remove_items":          [
         { "item": "Zeldas Lullaby", "types": ["woth"] }
