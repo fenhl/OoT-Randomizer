@@ -320,7 +320,7 @@
   },
     "SGL 2022 Settings": {
     "show_seed_info":                          true,
-    "user_message":                            "SGL 2022 Playtesting",
+    "user_message":                            "SGL 2022",
     "world_count":                             1,
     "create_spoiler":                          false,
     "randomize_settings":                      false,
@@ -338,7 +338,7 @@
     "one_item_per_dungeon":                    false,
     "trials_random":                           false,
     "trials":                                  0,
-    "skip_child_zelda":                        true,
+    "shuffle_child_trade":                     "skip_child_zelda",
     "no_escape_sequence":                      true,
     "no_guard_stealth":                        true,
     "no_epona_race":                           true,
@@ -405,8 +405,12 @@
       "logic_lens_bongo",
       "logic_lens_spirit"
     ],
-    "logic_earliest_adult_trade":              "prescription",
-    "logic_latest_adult_trade":                "claim_check",
+    "adult_trade_start":                       [
+      "Prescription",
+      "Eyeball Frog",
+      "Eyedrops",
+      "Claim Check"
+    ],
     "starting_equipment":                      [
       "deku_shield"
     ],
