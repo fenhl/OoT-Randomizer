@@ -184,7 +184,9 @@ logic_tricks = {
         'tags'    : ("Kakariko Village",),
         'tooltip' : '''\
                     Can be reached by side-hopping off
-                    the watchtower.
+                    the watchtower as either age, or by
+                    jumping onto the potion shop's roof
+                    from the ledge as adult.
                     '''},
     'Dodongo\'s Cavern Staircase with Bow': {
         'name'    : 'logic_dc_staircase',
@@ -1989,7 +1991,7 @@ setting_infos = [
             which have the potential to require the player to perform difficult techniques. 
             Expect a long playthrough, even with good note-taking.
 
-            The other presets are for racing and/or touranments. 
+            The other presets are for racing and/or tournaments. 
 
             After a preset is loaded, the settings can be viewed/changed in the other tabs before
             generating a seed.
@@ -2163,6 +2165,7 @@ setting_infos = [
 
                          - Logic Rules
                          - (Random) Number of MQ Dungeons
+                         - Pre-completed dungeons
                          - Rainbow Bridge/Ganon Boss Key Requirements: Gold Skulltula Tokens
                          - Variable numbers of Spiritual Stones, Medallions, or Dungeons
                          for Rainbow Bridge and Ganon's Boss Key
@@ -2629,6 +2632,9 @@ setting_infos = [
             Bombchus only count as major items if they
             are considered in logic.
 
+            Pre-completed dungeons (if any) won't have
+            a major item.
+
             This setting has potential to conflict with
             other randomizer settings. Should seeds continuously
             fail to generate, consider turning this option off.
@@ -2668,21 +2674,6 @@ setting_infos = [
         ''',
         shared         = True,
         disabled_default = 0,
-    ),
-    Checkbutton(
-        name           = 'skip_child_zelda',
-        gui_text       = 'Skip Child Zelda',
-        gui_tooltip    = '''\
-            Start having already met Zelda and obtained
-            Zelda's Letter along with the item from Impa.
-            Supersedes "Skip Child Stealth" since the whole
-            sequence is skipped. Similarly, this is
-            incompatible with Shuffle Weird Egg.
-        ''',
-        shared         = True,
-        disable = {
-            True: {'settings': ['shuffle_weird_egg']},
-        },
     ),
     Combobox(
         name           = 'dungeon_shortcuts_choice',
@@ -2992,25 +2983,40 @@ setting_infos = [
             'randomize_key': 'randomize_settings',
         },
     ),
-    Checkbutton(
-        name           = 'shuffle_weird_egg',
-        gui_text       = 'Shuffle Weird Egg',
+    Combobox(
+        name           = 'shuffle_child_trade',
+        gui_text       = 'Shuffle Child Trade Item',
+        default        = 'vanilla',
+        choices        = {
+            'vanilla':          'Vanilla Locations',
+            'shuffle':          'Shuffle Weird Egg',
+            'skip_child_zelda': 'Skip Child Zelda',
+            },
         gui_tooltip    = '''\
-            Enabling this shuffles the Weird Egg from Malon into the pool.
-
-            This will require finding the Weird Egg to talk to Zelda in
-            Hyrule Castle, which in turn locks rewards from Impa, Saria,
-            Malon, and Talon, as well as the Happy Mask sidequest.
-            The Weird Egg is also required for Zelda's Letter to open 
-            the Kakariko Gate as child which can lock some progression.
+            This changes the beginning of the child trade quest.
+            
+            'Vanilla Locations': Weird Egg is found from Malon outside
+            of Hyrule Castle and the child trade quest continues normally.
+            
+            'Shuffle Weird Egg': The Weird Egg is shuffled into the item pool
+            and Malon gives a randomized item. This will require finding the
+            Weird Egg to talk to Zelda in Hyrule Castle, which in turn locks
+            rewards from Impa, Saria, Malon, and Talon, as well as the Happy
+            Mask sidequest.
+            
+            'Skip Child Zelda': Start having already met Zelda and obtained
+            Zelda's Letter along with the item from Impa.
+            Supersedes "Skip Child Stealth" since the whole sequence is skipped.
         ''',
-        disable        = {
-            True : {'settings' : ['skip_child_zelda']}
-        },
-        shared         = True,
         gui_params     = {
             'randomize_key': 'randomize_settings',
+            'distribution':  [
+                ('vanilla', 1),
+                ('shuffle', 1),
+                ('skip_child_zelda', 1),
+            ],
         },
+        shared         = True,
     ),
     Checkbutton(
         name           = 'shuffle_gerudo_card',
@@ -3050,6 +3056,10 @@ setting_infos = [
             - Ice Cavern's Serenade of Water Location
             - Bottom of the Well's Lens of Truth Location
             - Gerudo Training Ground's Ice Arrow Location
+
+            If some dungeons are pre-completed, songs that would have
+            been located inside these dungeons are given for free along
+            with the free dungeon rewards.
 
             'Anywhere': Songs can appear in any location.
         ''',
@@ -3451,38 +3461,42 @@ setting_infos = [
             'startwith':   'Start With',
             'vanilla':     'Vanilla Locations',
             'dungeon':     'Own Dungeon',
+            'regional':    'Regional',
             'overworld':   'Overworld Only',
             'any_dungeon': 'Any Dungeon',
             'keysanity':   'Anywhere',
         },
         gui_tooltip    = '''\
             'Remove': Maps and Compasses are removed.
-            This will add a small amount of money and
-            refill items to the pool.
+            This will add a small amount of money and refill items to the pool.
 
-            'Start With': Maps and Compasses are given to
-            you from the start. This will add a small
-            amount of money and refill items to the pool.
+            'Start With': Maps and Compasses are given to you from the start.
+            This will add a small amount of money and refill items to the pool.
 
-            'Vanilla': Maps and Compasses will appear in
-            their vanilla locations.
+            'Vanilla': Maps and Compasses will appear in their vanilla locations.
 
-            'Own Dungeon': Maps and Compasses can only appear
-            in their respective dungeon.
+            'Own Dungeon': Maps and Compasses can only appear in their respective
+            dungeon.
+            
+            'Regional': Maps and Compasses can only appear in regions near the
+            original dungeon (including the dungeon itself or other dungeons in
+            the region). <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
             
             'Overworld Only': Maps and Compasses can only appear
             outside of dungeons.
 
-            'Any Dungeon': Maps and Compasses can only appear in a
-            dungeon, but not necessarily the dungeon they are for.            
+            'Any Dungeon': Maps and Compasses can only appear in a dungeon, but
+            not necessarily the dungeon they are for.            
 
-            'Anywhere': Maps and Compasses can appear
-            anywhere in the world.
+            'Anywhere': Maps and Compasses can appear anywhere in the world.
 
-            Setting 'Remove', 'Start With, 'Overworld', or 'Anywhere'
-            will add 2 more possible locations to each Dungeons.
-            This makes dungeons more profitable, especially
-            Ice Cavern, Water Temple, and Jabu Jabu's Belly.
+            Setting 'Remove', 'Start With', 'Overworld', or 'Anywhere' will add 2
+            more possible locations to each Dungeons. This makes dungeons more
+            profitable, especially Ice Cavern, Water Temple, and Jabu Jabu's Belly.
+            
+            Regardless of the selected option, maps and compasses from pre-completed
+            dungeons won't be placed outside their respective dungeons and maps and
+            compasses from other dungeons won't be placed inside pre-completed dungeons.
         ''',
         shared         = True,
         gui_params     = {
@@ -3497,46 +3511,48 @@ setting_infos = [
             'remove':      'Remove (Keysy)',
             'vanilla':     'Vanilla Locations',
             'dungeon':     'Own Dungeon',
+            'regional':    'Regional',
             'overworld':   'Overworld Only',
             'any_dungeon': 'Any Dungeon',
             'keysanity':   'Anywhere (Keysanity)',
         },
         gui_tooltip    = '''\
-            'Remove': Small Keys are removed. All locked
-            doors in dungeons will be unlocked. An easier
-            mode.
+            'Remove': Small Keys are removed. All locked doors in dungeons
+            will be unlocked. An easier mode.
 
-            'Vanilla': Small Keys will appear in their 
-            vanilla locations. You start with 3 keys in 
-            Spirit Temple MQ because the vanilla key 
-            layout is not beatable in logic. You start with
-            2 keys in Vanilla/MQ Shadow Temple with its
-            dungeon shortcut enabled to prevent softlocks.
+            'Vanilla': Small Keys will appear in their vanilla locations. You start
+            with 3 keys in Spirit Temple MQ because the vanilla key layout is
+            not beatable in logic. You start with 2 keys in Vanilla/MQ Shadow
+            Temple with its dungeon shortcut enabled to prevent softlocks.
 
-            'Own Dungeon': Small Keys can only appear in their
-            respective dungeon. If Fire Temple is not a
-            Master Quest dungeon, the door to the Boss Key
-            chest will be unlocked.
+            'Own Dungeon': Small Keys can only appear in their respective
+            dungeon. If Fire Temple is not a Master Quest dungeon, the door to
+            the Boss Key chest will be unlocked.
+            
+            'Regional': Small Keys can only appear
+            in regions near the original dungeon (including
+            the dungeon itself or other dungeons in the region).
+            <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
             
             'Overworld Only': Small Keys can only appear outside
             of dungeons. You may need to enter a dungeon multiple
             times to gain items to access the overworld locations
             with the keys required to finish a dungeon.
             
-            'Any Dungeon': Small Keys can only appear inside
-            of any dungeon, but won't necessarily be in the
-            dungeon that the key is for. A difficult mode since
-            it is more likely to need to enter a dungeon
-            multiple times.
+            'Any Dungeon': Small Keys can only appear inside of any dungeon, but
+            won't necessarily be in the dungeon that the key is for. A difficult mode
+            since it is more likely to need to enter a dungeon multiple times.
 
-            'Anywhere': Small Keys can appear
-            anywhere in the world. A difficult mode since
-            it is more likely to need to enter a dungeon
-            multiple times.
+            'Anywhere': Small Keys can appear anywhere in the world. A difficult
+            mode since it is more likely to need to enter a dungeon multiple times.
 
             Try different combination out, such as:
             'Small Keys: Dungeon' + 'Boss Keys: Anywhere'
             for a milder Keysanity experience.
+
+            Regardless of the selected option, small keys from pre-completed dungeons
+            won't be placed outside their respective dungeons and small keys from
+            other dungeons won't be placed inside pre-completed dungeons.
         ''',
         disable        = {
             'any_dungeon': {'settings': ['one_item_per_dungeon']}
@@ -3552,28 +3568,69 @@ setting_infos = [
         default        = 'vanilla',
         disabled_default = 'remove',
         choices        = {
-            'vanilla':     'Vanilla Locations',
-            'overworld':   'Overworld Only',
-            'any_dungeon': 'Any Dungeon',
-            'keysanity':   'Anywhere (Keysanity)',
+            'vanilla':     "Vanilla Locations",
+            'fortress':    "Gerudo Fortress Region",
+            'regional':    "Regional",
+            'overworld':   "Overworld Only",
+            'any_dungeon': "Any Dungeon",
+            'keysanity':   "Anywhere (Keysanity)",
         },
         gui_tooltip    = '''\
-            'Vanilla': Thieves' Hideout Keys will appear in their
+            "Vanilla": Thieves' Hideout Keys will appear in their
             vanilla location, dropping from fighting Gerudo guards
             that attack when trying to free the jailed carpenters.
             
-            'Overworld Only': Thieves' Hideout Keys can only appear
+            "Regional": Thieves' Hideout Keys can only appear in
+            Gerudo Valley, Gerudo Fortress, Thieves' Hideout, Gerudo
+            Training Ground, Haunted Wasteland, Desert Colossus, or
+            Spirit Temple.
+            
+            "Overworld Only": Thieves' Hideout Keys can only appear
             outside of dungeons.
             
-            'Any Dungeon': Thieves' Hideout Keys can only appear
+            "Any Dungeon": Thieves' Hideout Keys can only appear
             inside of dungeons.
 
-            'Anywhere': Thieves' Hideout Keys can appear anywhere
+            "Anywhere": Thieves' Hideout Keys can appear anywhere
             in the world.
         ''',
         shared         = True,
         gui_params     = {
             'randomize_key': 'randomize_settings',
+            'option_remove': ['fortress'],
+        },
+    ),
+    Combobox(
+        name           = 'key_rings_choice',
+        gui_text       = 'Key Rings Mode',
+        default        = 'off',
+        choices        = {
+            'off':       'Off',
+            'choice':    'Choose dungeons',
+            'all':       'All dungeons',
+            'random':    'Random dungeons'
+        },
+        gui_tooltip     = '''\
+            Selected dungeons will have all of their keys found 
+            at once in a ring rather than individually. 
+
+            For example, instead of shuffling 5 Forest Temple 
+            small keys into the pool, you will find a single
+            key ring which will give you all 5 keys at once.
+
+            Selecting key ring for dungeons will have no effect
+            if Small Keys are set to Remove or Vanilla.
+
+            Selecting key ring for Thieves' Hideout will have 
+            no effect if Thieves' Hideout keys are in vanilla 
+            locations or Gerudo's Fortress is set to Rescue
+            One Carpenter.
+        ''',
+        shared         = True,
+        disable={
+            'off': {'settings' : ['key_rings']},
+            'all': {'settings' : ['key_rings']},
+            'random': {'settings' : ['key_rings']},
         },
     ),
     Combobox(
@@ -3592,21 +3649,11 @@ setting_infos = [
             'Ganons Castle':          "Ganon's Castle"
         },
         default         = [],
-        gui_tooltip     = '''\
-            Selected dungeons will have all of their keys found 
-            at once in a ring rather than individually. 
-
-            For example, instead of shuffling 5 Forest Temple 
-            small keys into the pool, you will find a single
-            key ring which will give you all 5 keys at once.
-
-            Selecting key ring for dungeons will have no effect
-            if Small Keys are set to Remove or Vanilla.
-
-            Selecting key ring for Thieves' Hideout will have 
-            no effect if Thieves' Hideout keys are in vanilla 
-            locations or Gerudo's Fortress is set to Rescue
-            One Carpenter.
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+        gui_tooltip    = '''\
+            Select areas with keyring instead of multiple keys
         ''',
         shared          = True,
     ),
@@ -3618,6 +3665,7 @@ setting_infos = [
             'remove':      'Remove (Keysy)',
             'vanilla':     'Vanilla Locations',
             'dungeon':     'Own Dungeon',
+            'regional':    'Regional',
             'overworld':   'Overworld Only',
             'any_dungeon': 'Any Dungeon',
             'keysanity':   'Anywhere (Keysanity)',
@@ -3632,6 +3680,11 @@ setting_infos = [
 
             'Own Dungeon': Boss Keys can only appear in their
             respective dungeon.
+            
+            'Regional': Boss Keys can only appear in regions
+            near the original dungeon (including the dungeon
+            itself or other dungeons in the region).
+            <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
             
             'Overworld Only': Boss Keys can only appear outside
             of dungeons. You may need to enter a dungeon without
@@ -3652,6 +3705,11 @@ setting_infos = [
             Try different combination out, such as:
             'Small Keys: Dungeon' + 'Boss Keys: Anywhere'
             for a milder Keysanity experience.
+
+            Regardless of the selected option, boss keys from
+            pre-completed dungeons won't be placed outside their
+            respective dungeons and boss keys from other dungeons
+            won't be placed inside pre-completed dungeons.
         ''',
         shared         = True,
         gui_params     = {
@@ -3667,6 +3725,7 @@ setting_infos = [
             'remove':          "Remove (Keysy)",
             'vanilla':         "Vanilla Location",
             'dungeon':         "Own Dungeon",
+            'regional':        "Regional",
             'overworld':       "Overworld Only",
             'any_dungeon':     "Any Dungeon",
             'keysanity':       "Anywhere (Keysanity)",
@@ -3680,12 +3739,16 @@ setting_infos = [
         gui_tooltip    = '''\
             'Remove': Ganon's Castle Boss Key is removed
             and the boss door in Ganon's Tower starts unlocked.
-
-            'Own Dungeon': Ganon's Castle Boss Key can only appear
-            inside Ganon's Castle.
-
+            
             'Vanilla': Ganon's Castle Boss Key will appear in 
             the vanilla location.
+            
+            'Own Dungeon': Ganon's Castle Boss Key can only appear
+            inside Ganon's Castle.
+            
+            'Regional': Ganon's Castle Boss Key can only appear
+            in Hyrule Field, Lon Lon Ranch, Market, Temple of Time, Hyrule Castle,
+            (Outside) Ganon's Castle, and Inside Ganon's Castle.
             
             'Overworld Only': Ganon's Castle Boss Key can only appear
             outside of dungeons.
@@ -4047,6 +4110,93 @@ setting_infos = [
             "hide_when_disabled": True,
         },
     ),
+    Combobox(
+        name           = 'empty_dungeons_mode',
+        gui_text       = 'Pre-completed dungeons',
+        default        = 'none',
+        choices        = {
+            'none':       'Off',
+            'specific':   'Specific Dungeons',
+            'count':      'Count',
+        },
+        gui_tooltip    = '''\
+            Pre-completed dungeons are dungeons guaranteed to be barren and whose
+            dungeon rewards are given for free to the player before the beginning
+            of the game. This setting only applies to dungeons with dungeon rewards
+            (blue warps).
+
+            - 'None': No dungeon will be pre-completed. Some dungeons may still be
+            randomly rolled with no major items, but their dungeon rewards won't
+            be given for free.
+            - 'Specific Dungeons': Choose which specific dungeons will be pre-completed.
+            - 'Count': Choose how many pre-completed dungeons will be randomly chosen.
+
+            A same dungeon won't be both MQ and pre-completed unless it has been
+            explicitly specified as such or unless it is the only way to fulfill both MQ and
+            pre-completed selected settings.
+
+            Pre-completed dungeons won't contain major items even if "Dungeons Have
+            One Major Item" is on.
+
+            Regardless of "Shuffle Dungeon Items" settings, dungeon items from
+            pre-completed dungeons won't be placed outside their respective dungeons
+            and dungeon items from other dungeons won't be placed inside pre-completed
+            dungeons.
+
+            If "Shuffle Songs" is set to "Dungeon rewards", then songs that would have
+            been placed in pre-completed dungeons are given for free along with the
+            free dungeon rewards.
+        ''',
+        shared         = True,
+        disable        = {
+            '!specific': {'settings': ['empty_dungeons_specific']},
+            '!count':    {'settings': ['empty_dungeons_count']}
+        },
+        gui_params     = {
+            'distribution':  [
+                ('none', 1)
+            ],
+        },   
+    ),
+    Combobox(
+        name            = 'empty_dungeons_specific',
+        multiple_select = True,
+        gui_text        = 'Pre-completed Dungeons',
+        choices         = {
+            'Deku Tree':              "Deku Tree",
+            'Dodongos Cavern':        "Dodongo's Cavern",
+            'Jabu Jabus Belly':       "Jabu Jabu's Belly",
+            'Forest Temple':          "Forest Temple",
+            'Fire Temple':            "Fire Temple",
+            'Water Temple':           "Water Temple",
+            'Shadow Temple':          "Shadow Temple",
+            'Spirit Temple':          "Spirit Temple"
+        },
+        default         = [],
+        gui_tooltip     = '''\
+            Select the specific dungeons you would
+            like to be pre-completed.
+        ''',
+        shared          = True,
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+    ),
+    Scale(
+        name           = 'empty_dungeons_count',
+        gui_text       = "Pre-completed Dungeon Count",
+        default        = 2,
+        min            = 1,
+        max            = 8,
+        gui_tooltip    = '''\
+            Specify the number of pre-completed
+            dungeons to appear in the game.
+        ''',
+        shared         = True,
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+    ),
     Setting_Info(
         name           = 'disabled_locations',
         type           = list,
@@ -4108,44 +4258,27 @@ setting_infos = [
         choices        = {},
     ),
     Combobox(
-        name           = 'logic_earliest_adult_trade',
-        gui_text       = 'Adult Trade Sequence Earliest Item',
-        default        = 'pocket_egg',
+        name           = 'adult_trade_start',
+        multiple_select= True,
+        gui_text       = 'Adult Trade Sequence Items',
+        default        = ['Pocket Egg', 'Pocket Cucco', 'Cojiro', 'Odd Mushroom', 'Poachers Saw',
+                          'Broken Sword', 'Prescription', 'Eyeball Frog', 'Eyedrops', 'Claim Check'],
         choices        = {
-            'pocket_egg':   'Pocket Egg',
-            'pocket_cucco': 'Pocket Cucco',
-            'cojiro':       'Cojiro',
-            'odd_mushroom': 'Odd Mushroom',
-            'poachers_saw': "Poacher's Saw",
-            'broken_sword': 'Broken Sword',
-            'prescription': 'Prescription',
-            'eyeball_frog': 'Eyeball Frog',
-            'eyedrops':     'Eyedrops',
-            'claim_check':  'Claim Check',
+            'Pocket Egg':   'Pocket Egg',
+            'Pocket Cucco': 'Pocket Cucco',
+            'Cojiro':       'Cojiro',
+            'Odd Mushroom': 'Odd Mushroom',
+            #'Odd Potion':   'Odd Potion',
+            'Poachers Saw': "Poacher's Saw",
+            'Broken Sword': 'Broken Sword',
+            'Prescription': 'Prescription',
+            'Eyeball Frog': 'Eyeball Frog',
+            'Eyedrops':     'Eyedrops',
+            'Claim Check':  'Claim Check',
         },
         gui_tooltip    = '''\
-            Select the earliest item that can appear in the adult trade sequence.
-        ''',
-        shared         = True,
-    ),
-    Combobox(
-        name           = 'logic_latest_adult_trade',
-        gui_text       = 'Adult Trade Sequence Latest Item',
-        default        = 'claim_check',
-        choices        = {
-            'pocket_egg':   'Pocket Egg',
-            'pocket_cucco': 'Pocket Cucco',
-            'cojiro':       'Cojiro',
-            'odd_mushroom': 'Odd Mushroom',
-            'poachers_saw': "Poacher's Saw",
-            'broken_sword': 'Broken Sword',
-            'prescription': 'Prescription',
-            'eyeball_frog': 'Eyeball Frog',
-            'eyedrops':     'Eyedrops',
-            'claim_check':  'Claim Check',
-        },
-        gui_tooltip    = '''\
-            Select the latest item that can appear in the adult trade sequence.
+            Select the items that can appear to start the adult trade sequence.
+            If none are selected, it will function as if all are selected.
         ''',
         shared         = True,
     ),
@@ -4432,7 +4565,7 @@ setting_infos = [
 
             Playing a warp song will tell you where
             it leads. (If warp song destinations
-            are vanilla, the vanilla text is used.)
+            are vanilla, this is always enabled.)
         ''',
         shared         = True,
         default        = ['altar', 'ganondorf', 'warp_songs'],

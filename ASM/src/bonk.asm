@@ -14,7 +14,7 @@ BONK_LAST_FRAME:
     jal     0x80390B18  ; func_80838178, static location as part of player overlay
     nop
 
-    ; One Bonk KO setting enabled
+    ; Bonk damage enabled
     lw      t0, CFG_DEADLY_BONKS
     beqz    t0, @@return_bonk_frame
     nop
@@ -33,7 +33,7 @@ SET_BONK_FLAG:
     or      a0, s0, $zero
     addiu   a1, $zero, 0x00FF
 
-    ; One Bonk KO setting enabled
+    ; Bonk damage enabled
     lw      t0, CFG_DEADLY_BONKS
     beqz    t0, @@return_bonk_flag
     nop
@@ -56,7 +56,7 @@ CHECK_FOR_BONK_CANCEL:
     addiu   $at, $zero, 0x0002
     lui     t1, 0x8012
 
-    ; One Bonk KO setting enabled
+    ; Bonk damage enabled
     lw      t8, CFG_DEADLY_BONKS
     beqz    t8, @@return_bonk_check
     nop
@@ -103,12 +103,30 @@ APPLY_BONK_DAMAGE:
     
 @@normal_defense:
     sub     t4, t4, t3
+    bltz    t4, @@bonks_kill
+    nop
     sh      t4, 0x30(t8)
-    b       @@return_bonk
+    b       @@cmg_entrance_hack
     nop
 
 @@bonks_kill:
     sh      $zero, 0x30(t8)  ; Player Health
+
+@@cmg_entrance_hack:
+    lh      t3, 0x30(t8)                ; Skip scene check if player will survive the damage
+    bnez    t3, @@return_bonk
+    nop
+    la      t7, GLOBAL_CONTEXT          ; Only change flags if we're in the Treasure Box Shop
+    lh      t3, 0x00A4(t7)              ; current scene number
+    li      t4, 0x0010                  ; Treasure Box Shop scene number
+    bne     t3, t4, @@return_bonk
+    nop
+    ; Set scene temp flags to zero to re-lock doors
+    sw      $zero, 0x1D2C(t7)
+    ; Chests should be reset on scene load, but just in case
+    sw      $zero, 0x1D38(t7)
+    ; Remove any keys in the player's inventory for Treasure Box Shop
+    sb      $zero, 0x00CC(t8)
 
 @@return_bonk:
     jr      ra
@@ -116,13 +134,10 @@ APPLY_BONK_DAMAGE:
 
 
 KING_DODONGO_BONKS:
-    ; displaced code
-    lh      t2, 0x0032(s1)
-    mtc1    $zero, $f16
-
     ; One Bonk KO setting enabled
-    lw      t0, CFG_DEADLY_BONKS
-    beqz    t0, @@return_bonk_kd
+    lh      t0, CFG_BONK_DAMAGE
+    addiu   t2, $zero, 0xFFFE
+    bne     t0, t2, @@return_bonk_kd
     nop
 
     ; Set King Dodongo health to zero
@@ -132,6 +147,9 @@ KING_DODONGO_BONKS:
     sh      $zero, 0x0184(s0)       ; this->health
 
 @@return_bonk_kd:
+    ; displaced code
+    lh      t2, 0x0032(s1)
+    mtc1    $zero, $f16
     jr      ra
     nop
 

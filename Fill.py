@@ -1,8 +1,10 @@
 import random
 import logging
+from Hints import HintArea
 from State import State
 from Rules import set_shop_rules
 from Location import DisableType
+from LocationList import location_groups
 from ItemPool import remove_junk_items
 from Item import ItemFactory, ItemInfo
 from Search import Search
@@ -21,10 +23,7 @@ class FillError(ShuffleError):
 # Places all items into the world
 def distribute_items_restrictive(window, worlds, fill_locations=None):
     if worlds[0].settings.shuffle_song_items == 'song':
-        song_location_names = [
-            'Song from Royal Familys Tomb', 'Song from Impa', 'Song from Malon', 'Song from Saria',
-            'Song from Ocarina of Time', 'Song from Windmill', 'Sheik in Forest', 'Sheik at Temple',
-            'Sheik in Crater', 'Sheik in Ice Cavern', 'Sheik in Kakariko', 'Sheik at Colossus']
+        song_location_names = location_groups['Song']
     elif worlds[0].settings.shuffle_song_items == 'dungeon':
         song_location_names = [
             'Deku Tree Queen Gohma Heart', 'Dodongos Cavern King Dodongo Heart',
@@ -141,6 +140,33 @@ def distribute_items_restrictive(window, worlds, fill_locations=None):
         fill_dungeons_restrictive(window, worlds, search, fill_locations, dungeon_items, itempool + songitempool)
         search.collect_locations()
 
+
+    # If some dungeons are supposed to be empty, fill them with useless items.
+    if worlds[0].settings.empty_dungeons_mode != 'none':
+        empty_locations = [location for location in fill_locations \
+            if world.empty_dungeons[HintArea.at(location).dungeon_name].empty]
+        for location in empty_locations:
+            fill_locations.remove(location)
+            location.world.hint_type_overrides['sometimes'].append(location.name)
+            location.world.hint_type_overrides['random'].append(location.name)
+        
+        if worlds[0].settings.shuffle_mapcompass in ['any_dungeon', 'overworld', 'keysanity', 'regional']:
+            # Non-empty dungeon items are present in restitempool but yet we 
+            # don't want to place them in an empty dungeon
+            restdungeon, restother = [], []
+            for item in restitempool:
+                if item.dungeonitem:
+                    restdungeon.append(item)
+                else:
+                    restother.append(item)
+            fast_fill(window, empty_locations, restother)
+            restitempool = restdungeon + restother
+            random.shuffle(restitempool)
+        else:
+            # We don't have to worry about this if dungeon items stay in their own dungeons
+            fast_fill(window, empty_locations, restitempool)
+
+
     # places the songs into the world
     # Currently places songs only at song locations. if there's an option
     # to allow at other locations then they should be in the main pool.
@@ -240,8 +266,12 @@ def fill_dungeon_unique_item(window, worlds, search, fill_locations, itempool):
     # since the rest are already placed.
     major_items = [item for item in itempool if item.majoritem]
     minor_items = [item for item in itempool if not item.majoritem]
+  
+    if worlds[0].settings.empty_dungeons_mode != 'none':
+        dungeons = [dungeon for world in worlds for dungeon in world.dungeons if not world.empty_dungeons[dungeon.name].empty]
+    else:
+        dungeons = [dungeon for world in worlds for dungeon in world.dungeons]
 
-    dungeons = [dungeon for world in worlds for dungeon in world.dungeons]
     double_dungeons = []
     for dungeon in dungeons:
         # we will count spirit temple twice so that it gets 2 items to match vanilla
@@ -259,7 +289,15 @@ def fill_dungeon_unique_item(window, worlds, search, fill_locations, itempool):
 
     # iterate of all the dungeons in a random order, placing the item there
     for dungeon in dungeons:
-        dungeon_locations = [location for region in dungeon.regions for location in region.locations if location in fill_locations]
+        # Need to re-get dungeon regions to ensure boss rooms are considered
+        regions = []
+        for region in dungeon.world.regions:
+            try:
+                if HintArea.at(region).dungeon_name == dungeon.name:
+                    regions.append(region)
+            except:
+                pass
+        dungeon_locations = [location for region in regions for location in region.locations if location in fill_locations]
 
         # cache this list to flag afterwards
         all_dungeon_locations.extend(dungeon_locations)
@@ -363,6 +401,7 @@ def fill_restrictive(window, worlds, base_search, locations, itempool, count=-1)
     items_search = base_search.copy()
     items_search.collect_all(itempool)
     logging.getLogger('').debug(f'Placing {len(itempool)} items among {len(locations)} potential locations.')
+    itempool.sort(key=lambda item: not item.priority)
 
     # loop until there are no items or locations
     while itempool and locations:
@@ -372,7 +411,9 @@ def fill_restrictive(window, worlds, base_search, locations, itempool, count=-1)
 
         # get an item and remove it from the itempool
         item_to_place = itempool.pop()
-        if item_to_place.majoritem:
+        if item_to_place.priority:
+            l2cations = [l for l in locations if l.can_fill_fast(item_to_place)]
+        elif item_to_place.majoritem:
             l2cations = [l for l in locations if not l.minor_only]
         else:
             l2cations = locations

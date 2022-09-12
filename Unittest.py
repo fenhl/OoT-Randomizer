@@ -11,6 +11,7 @@ import re
 import unittest
 
 from EntranceShuffle import EntranceShuffleError
+from Hints import HintArea
 from Item import ItemInfo
 from ItemPool import remove_junk_items, remove_junk_ludicrous_items, ludicrous_items_base, ludicrous_items_extended, trade_items, ludicrous_exclusions
 from LocationList import location_is_viewable
@@ -28,7 +29,7 @@ logging.basicConfig(level=logging.INFO, filename=os.path.join(output_dir, 'LAST_
 never_prefix = ['Bombs', 'Arrows', 'Rupee', 'Deku Seeds', 'Map', 'Compass']
 never_suffix = ['Capacity']
 never = {
-    'Bunny Hood', 'Recovery Heart', 'Milk', 'Ice Arrows', 'Ice Trap',
+    'Bunny Hood', 'Recovery Heart', 'Milk', 'Ice Trap',
     'Double Defense', 'Biggoron Sword', 'Giants Knife',
 } | {name for name, item in ItemInfo.items.items() if item.priority
      or any(map(name.startswith, never_prefix)) or any(map(name.endswith, never_suffix))}
@@ -44,10 +45,10 @@ bottles = {name for name, item in ItemInfo.items.items() if item.special.get('bo
 junk = set(remove_junk_items)
 shop_items = {i for i, nfo in ItemInfo.items.items() if nfo.type == 'Shop'}
 ludicrous_junk = set(remove_junk_ludicrous_items)
-ludicrous_set = set(ludicrous_items_base) | set(ludicrous_items_extended) | ludicrous_junk | {i for t, i in trade_items.items()} | set(bottles) | set(ludicrous_exclusions) | set(['Bottle with Big Poe']) | shop_items
+ludicrous_set = set(ludicrous_items_base) | set(ludicrous_items_extended) | ludicrous_junk | set(trade_items) | set(bottles) | set(ludicrous_exclusions) | set(['Bottle with Big Poe']) | shop_items
 
 
-def make_settings_for_test(settings_dict, seed=None, outfilename=None):
+def make_settings_for_test(settings_dict, seed=None, outfilename=None, strict=True):
     # Some consistent settings for testability
     settings_dict.update({
         'create_patch_file': False,
@@ -60,7 +61,7 @@ def make_settings_for_test(settings_dict, seed=None, outfilename=None):
     })
     if seed and 'seed' not in settings_dict:
         settings_dict['seed'] = seed
-    return Settings(settings_dict, strict=True)
+    return Settings(settings_dict, strict=strict)
 
 
 def load_settings(settings_file, seed=None, filename=None):
@@ -441,6 +442,58 @@ class TestPlandomizer(unittest.TestCase):
         self.assertNotIn('Small Key Ring (Forest Temple)', spoiler['locations'].values())
         self.assertGreater(get_actual_pool(spoiler)['Small Key (Thieves Hideout)'], 5)
         self.assertNotIn('Small Key Ring (Thieves Hideout)', spoiler['locations'].values())
+    
+    def test_empty_dungeons(self):
+        filenames = [
+            "empty-dungeons-all-dungeon-er",
+            "empty-dungeons-all-dungeon-item-any-dungeon",
+            "empty-dungeons-all-dungeon-item-anywhere",
+            "empty-dungeons-all-dungeon-item-remove",
+            "empty-dungeons-all-mq-all",
+            "empty-dungeons-all-mq-random",
+            "empty-dungeons-all-plentiful",
+            "empty-dungeons-all-songs-dungeon",
+            "empty-dungeons-half-boss-shuffle",
+            "empty-dungeons-half-dungeon-er",
+            "empty-dungeons-half-dungeon-item-any-dungeon",
+            "empty-dungeons-half-dungeon-item-anywhere",
+            "empty-dungeons-half-dungeon-item-remove",
+            "empty-dungeons-half-mq-all",
+            "empty-dungeons-half-mq-random",
+            "empty-dungeons-half-plentiful",
+            "empty-dungeons-half-songs-dungeon"
+        ]
+        dungeons = {
+            HintArea.DEKU_TREE: "Queen Gohma",
+            HintArea.DODONGOS_CAVERN: "King Dodongo",
+            HintArea.JABU_JABUS_BELLY: "Barinade",
+            HintArea.FOREST_TEMPLE: "Phantom Ganon",
+            HintArea.FIRE_TEMPLE: "Volvagia",
+            HintArea.WATER_TEMPLE: "Morpha",
+            HintArea.SHADOW_TEMPLE: "Bongo Bongo",
+            HintArea.SPIRIT_TEMPLE: "Twinrova"
+        }
+        for filename in filenames:
+            with self.subTest(filename):
+                distribution_file, spoiler = generate_with_plandomizer(filename)
+                # Proper rewards should be given on file select
+                if spoiler['settings']['shuffle_bosses'] == 'off':
+                    for dungeon, boss in dungeons.items():
+                        if spoiler['empty_dungeons'][dungeon.dungeon_name]:
+                            self.assertIn(boss, spoiler[':skipped_locations'])
+                # Empty dungeons should be barren (except in settings where keys or tokens are major items)
+                if spoiler['settings']['shuffle_smallkeys'] not in ['dungeon', 'vanilla']:
+                    continue
+                if spoiler['settings']['shuffle_bosskeys'] not in ['dungeon', 'vanilla']:
+                    continue
+                if spoiler['settings']['bridge'] == 'tokens' or spoiler['settings']['shuffle_ganon_bosskey'] == 'tokens':
+                    continue
+                if spoiler['settings']['shuffle_ganon_bosskey'] == 'on_lacs' and spoiler['settings']['lacs_condition'] == 'tokens':
+                    continue
+                for dungeon in dungeons:
+                    if spoiler['empty_dungeons'][dungeon.dungeon_name]:
+                        self.assertIn(str(dungeon), spoiler[':barren_regions'])
+
 
 class TestHints(unittest.TestCase):
     def test_skip_zelda(self):
@@ -685,7 +738,7 @@ class TestValidSpoilers(unittest.TestCase):
                 ofile = 'preset_' + re.sub(r'[^a-zA-Z0-9_-]+', '_', name)
                 with self.subTest(name, filename=ofile):
                     settings = make_settings_for_test(
-                            settings_dict, seed='TESTTESTTEST', outfilename=ofile)
+                            settings_dict, seed='TESTTESTTEST', outfilename=ofile, strict=False)
                     main(settings)
                     spoiler = load_spoiler('%s_Spoiler.json' % settings.output_file)
                     self.verify_woth(spoiler)

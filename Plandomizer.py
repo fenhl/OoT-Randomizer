@@ -9,7 +9,7 @@ from collections import defaultdict
 
 from Fill import FillError
 from EntranceShuffle import EntranceShuffleError, change_connections, confirm_replacement, validate_world, check_entrances_compatibility
-from Hints import gossipLocations, GossipText
+from Hints import HintArea, gossipLocations, GossipText
 from Item import ItemFactory, ItemInfo, ItemIterator, IsItem
 from ItemPool import item_groups, get_junk_item, song_list
 from Location import LocationIterator, LocationFactory, IsLocation
@@ -31,6 +31,7 @@ per_world_keys = (
     'randomized_settings',
     'item_pool',
     'dungeons',
+    'empty_dungeons',
     'trials',
     'songs',
     'entrances',
@@ -83,6 +84,20 @@ class DungeonRecord(SimpleRecord({'mq': None})):
         if self.mq is None:
             return 'random'
         return 'mq' if self.mq else 'vanilla'
+
+
+class EmptyDungeonRecord(SimpleRecord({'empty': None})):
+    def __init__(self, src_dict='random'):
+        if src_dict == 'random':
+            src_dict = {'empty': None}
+        if src_dict in (True, False):
+            src_dict = {'empty': src_dict}
+        super().__init__(src_dict)
+
+
+    def to_json(self):
+        return self.empty
+
 
 
 class GossipRecord(SimpleRecord({'text': None, 'colors': None, 'hinted_locations': None, 'hinted_items': None})):
@@ -240,6 +255,7 @@ class WorldDistribution(object):
         update_dict = {
             'randomized_settings': {name: record for (name, record) in src_dict.get('randomized_settings', {}).items()},
             'dungeons': {name: DungeonRecord(record) for (name, record) in src_dict.get('dungeons', {}).items()},
+            'empty_dungeons': {name: EmptyDungeonRecord(record) for (name, record) in src_dict.get('empty_dungeons', {}).items()},
             'trials': {name: TrialRecord(record) for (name, record) in src_dict.get('trials', {}).items()},
             'songs': {name: SongRecord(record) for (name, record) in src_dict.get('songs', {}).items()},
             'item_pool': {name: ItemPoolRecord(record) for (name, record) in src_dict.get('item_pool', {}).items()},
@@ -271,6 +287,7 @@ class WorldDistribution(object):
         return {
             'randomized_settings': self.randomized_settings,
             'dungeons': {name: record.to_json() for (name, record) in self.dungeons.items()},
+            'empty_dungeons': {name: record.to_json() for (name, record) in self.empty_dungeons.items()},
             'trials': {name: record.to_json() for (name, record) in self.trials.items()},
             'songs': {name: record.to_json() for (name, record) in self.songs.items()},
             'item_pool': SortedDict({name: record.to_json() for (name, record) in self.item_pool.items()}),
@@ -364,15 +381,21 @@ class WorldDistribution(object):
         self.locations[new_location] = LocationRecord(new_item)
 
 
-    def configure_dungeons(self, world, dungeon_pool):
-        dist_num_mq = 0
+    def configure_dungeons(self, world, mq_dungeon_pool, empty_dungeon_pool):
+        dist_num_mq, dist_num_empty = 0, 0
         for (name, record) in self.dungeons.items():
             if record.mq is not None:
-                dungeon_pool.remove(name)
+                mq_dungeon_pool.remove(name)
                 if record.mq:
                     dist_num_mq += 1
                     world.dungeon_mq[name] = True
-        return dist_num_mq
+        for (name, record) in self.empty_dungeons.items():
+            if record.empty is not None:
+                empty_dungeon_pool.remove(name)
+                if record.empty:
+                    dist_num_empty += 1
+                    world.empty_dungeons[name].empty = True
+        return dist_num_mq, dist_num_empty
 
 
     def configure_trials(self, trial_pool):
@@ -476,7 +499,7 @@ class WorldDistribution(object):
             if record.type == 'set':
                 if item_name == '#Junk':
                     raise ValueError('#Junk item group cannot have a set number of items')
-                elif item_name == 'Weird Egg' and not self.distribution.settings.shuffle_weird_egg:
+                elif item_name == 'Weird Egg' and self.distribution.settings.shuffle_child_trade != 'shuffle':
                     remove_egg = True
                     continue
                 elif item_name == 'Weird Egg' and self.item_pool['Weird Egg'].count > 1:
@@ -1001,8 +1024,22 @@ class WorldDistribution(object):
             add_starting_item_with_ammo(items, 'Deku Nuts', 99)
 
         skipped_locations = ['Links Pocket']
-        if world.settings.skip_child_zelda:
+        if world.settings.shuffle_child_trade == 'skip_child_zelda':
             skipped_locations += ['HC Malon Egg', 'HC Zeldas Letter', 'Song from Impa']
+        if world.settings.empty_dungeons_mode != 'none':
+            skipped_locations_from_dungeons = []
+            if True: #TODO dungeon rewards not shuffled
+                skipped_locations_from_dungeons += location_groups['Boss']
+            if world.settings.shuffle_song_items == 'song':
+                skipped_locations_from_dungeons += location_groups['Song']
+            elif world.settings.shuffle_song_items == 'dungeon':
+                skipped_locations_from_dungeons += location_groups['BossHeart']
+            for location_name in skipped_locations_from_dungeons:
+                location = world.get_location(location_name)
+                hint_area = HintArea.at(location)
+                if hint_area.is_dungeon and world.empty_dungeons[hint_area.dungeon_name].empty:
+                    skipped_locations.append(location.name)
+                    world.item_added_hint_types['barren'].append(location.item.name)
         for iter_world in worlds:
             for location in skipped_locations:
                 loc = iter_world.get_location(location)
@@ -1081,7 +1118,7 @@ class Distribution(object):
             if 'Triforce Piece' in world.distribution.starting_items:
                 world.triforce_count += world.distribution.starting_items['Triforce Piece'].count
                 total_starting_count += world.distribution.starting_items['Triforce Piece'].count
-            if world.settings.skip_child_zelda and 'Song from Impa' in world.distribution.locations and world.distribution.locations['Song from Impa'].item == 'Triforce Piece':
+            if world.settings.shuffle_child_trade == 'skip_child_zelda' and 'Song from Impa' in world.distribution.locations and world.distribution.locations['Song from Impa'].item == 'Triforce Piece':
                 total_starting_count += 1
             total_count += world.triforce_count
 
@@ -1228,6 +1265,7 @@ class Distribution(object):
             world_dist = self.world_dists[world.id]
             world_dist.randomized_settings = {randomized_item: getattr(world.settings, randomized_item) for randomized_item in world.randomized_list}
             world_dist.dungeons = {dung: DungeonRecord({ 'mq': world.dungeon_mq[dung] }) for dung in world.dungeon_mq}
+            world_dist.empty_dungeons = {dung: EmptyDungeonRecord({ 'empty': world.empty_dungeons[dung].empty }) for dung in world.empty_dungeons}
             world_dist.trials = {trial: TrialRecord({ 'active': not world.skipped_trials[trial] }) for trial in world.skipped_trials}
             if hasattr(world, 'song_notes'):
                 world_dist.songs = {song: SongRecord({ 'notes': str(world.song_notes[song]) }) for song in world.song_notes}

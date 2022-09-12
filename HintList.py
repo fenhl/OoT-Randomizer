@@ -211,7 +211,7 @@ conditional_always = {
     'Song from Ocarina of Time':    lambda world: stones_required_by_settings(world) < 2,
     'HF Ocarina of Time Item':      lambda world: stones_required_by_settings(world) < 2,
     'Sheik in Kakariko':            lambda world: medallions_required_by_settings(world) < 5,
-    'DMT Biggoron':                 lambda world: world.settings.logic_earliest_adult_trade != 'claim_check' or world.settings.logic_latest_adult_trade != 'claim_check',
+    'DMT Biggoron':                 lambda world: 'claim_check' not in world.settings.adult_trade_start or len(world.settings.adult_trade_start) != 1,
     'Kak 30 Gold Skulltula Reward': lambda world: tokens_required_by_settings(world) < 30,
     'Kak 40 Gold Skulltula Reward': lambda world: tokens_required_by_settings(world) < 40,
     'Kak 50 Gold Skulltula Reward': lambda world: tokens_required_by_settings(world) < 50,
@@ -236,19 +236,20 @@ conditional_dual_always = {
 
 # Some sometimes, dual, and entrance hints should only be enabled under certain settings
 conditional_sometimes = {
-    # Conditionnal sometimes hints
+    # Conditional sometimes hints
     'HC Great Fairy Reward':                    lambda world: world.settings.shuffle_interior_entrances == 'off',
     'OGC Great Fairy Reward':                   lambda world: world.settings.shuffle_interior_entrances == 'off',
 
-    # Conditionnal dual hints
+    # Conditional dual hints
     'GV Pieces of Heart Ledges':                lambda world: not world.settings.shuffle_cows and world.settings.tokensanity not in ['overworld', 'all'],
+    'LH Adult Bean Destination Checks':         lambda world: world.settings.shuffle_interior_entrances == 'off',
 
-    'Fire Temple Lower Loop':                   lambda world: world.settings.tokensanity not in ['dungeon', 'all'],
-    'Water Temple River Loop Chests':           lambda world: world.settings.tokensanity not in ['dungeon', 'all'],
-    'Water Temple MQ Lower Checks':             lambda world: world.settings.tokensanity not in ['dungeon', 'all'],
-    'Spirit Temple Child Lower':                lambda world: world.settings.tokensanity not in ['dungeon', 'all'],
-    'Spirit Temple Adult Lower':                lambda world: world.settings.tokensanity not in ['dungeon', 'all'],
-    'Shadow Temple Invisible Blades Chests':    lambda world: world.settings.tokensanity not in ['dungeon', 'all'],
+    'Fire Temple Lower Loop':                   lambda world: world.settings.tokensanity not in ['dungeons', 'all'],
+    'Water Temple River Loop Chests':           lambda world: world.settings.tokensanity not in ['dungeons', 'all'],
+    'Water Temple MQ Lower Checks':             lambda world: world.settings.tokensanity not in ['dungeons', 'all'],
+    'Spirit Temple Child Lower':                lambda world: world.settings.tokensanity not in ['dungeons', 'all'],
+    'Spirit Temple Adult Lower':                lambda world: world.settings.tokensanity not in ['dungeons', 'all'],
+    'Shadow Temple Invisible Blades Chests':    lambda world: world.settings.tokensanity not in ['dungeons', 'all'],
 
     # Conditional entrance hints
     'Ganons Castle Grounds -> Ganons Castle Lobby': lambda world: (world.settings.bridge != 'open'
@@ -262,10 +263,10 @@ conditional_sometimes = {
 # & is a new line
 # @ will print the player name
 # # sets color to white (currently only used for dungeon reward hints).
-# 
+#
 # sfx IDs (see junk hints 1090 and 1174 for examples of how to use them): https://wiki.cloudmodding.com/oot/Sound_Effect_Ids
 # Some sound effects loop infinitely, like child link drinking from a bottle, so make sure you test them.
-# 
+#
 # How to use button icons in hints (see junk hint 1180 for an example):
 #   \u009F      A
 #   \u00A0      B
@@ -281,7 +282,16 @@ conditional_sometimes = {
 #   \u00AA      Joystick
 
 hintTable = {
-    'Triforce Piece':                                           (["a triumph fork", "cheese", "a gold fragment"], "a Piece of the Triforce", "item"),
+    'Kokiri Emerald':                                           (["a tree's farewell", "the Spiritual Stone of the Forest"], "the Kokiri Emerald", 'item'),
+    'Goron Ruby':                                               (["the Gorons' hidden treasure", "the Spiritual Stone of Fire"], "the Goron Ruby", 'item'),
+    'Zora Sapphire':                                            (["an engagement ring", "the Spiritual Stone of Water"], "the Zora Sapphire", 'item'),
+    'Light Medallion':                                          (["Rauru's sagely power", "a yellow disc"], "the Light Medallion", 'item'),
+    'Forest Medallion':                                         (["Saria's sagely power", "a green disc"], "the Forest Medallion", 'item'),
+    'Fire Medallion':                                           (["Darunia's sagely power", "a red disc"], "the Fire Medallion", 'item'),
+    'Water Medallion':                                          (["Ruto's sagely power", "a blue disc"], "the Water Medallion", 'item'),
+    'Shadow Medallion':                                         (["Impa's sagely power", "a purple disc"], "the Shadow Medallion", 'item'),
+    'Spirit Medallion':                                         (["Nabooru's sagely power", "an orange disc"], "the Spirit Medallion", 'item'),
+    'Triforce Piece':                                           (["a triumph fork", "cheese", "a gold fragment"], "a Piece of the Triforce", 'item'),
     'Magic Meter':                                              (["mystic training", "pixie dust", "a green rectangle"], "a Magic Meter", 'item'),
     'Double Defense':                                           (["a white outline", "damage decrease", "strengthened love"], "Double Defense", 'item'),
     'Slingshot':                                                (["a seed shooter", "a rubberband", "a child's catapult"], "a Slingshot", 'item'),
@@ -1606,6 +1616,7 @@ hintTable = {
     'bridge_hearts':                                            ("hearts", None, 'bridge'),
 
     'ganonBK_dungeon':                                          ("hidden somewhere #inside its castle#", None, 'ganonBossKey'),
+    'ganonBK_regional':                                         ("hidden somewhere #inside or nearby its castle#", None, 'ganonBossKey'),
     'ganonBK_vanilla':                                          ("kept in a big chest #inside its tower#", None, 'ganonBossKey'),
     'ganonBK_overworld':                                        ("hidden #outside of dungeons# in Hyrule", None, 'ganonBossKey'),
     'ganonBK_any_dungeon':                                      ("hidden #inside a dungeon# in Hyrule", None, 'ganonBossKey'),
@@ -1720,7 +1731,8 @@ misc_item_hint_table = {
         'default_item_text': "Ha ha ha... You'll never beat me by reflecting my lightning bolts and unleashing the arrows from {area}!",
         'custom_item_text': "Ha ha ha... You'll never find {item} from {area}!",
         'replace': {
-            "from #Ganon's Castle#": "from #my castle#",
+            "from #inside Ganon's Castle#": "from #inside my castle#",
+            "from #outside Ganon's Castle#": "from #outside my castle#",
         },
     },
 }

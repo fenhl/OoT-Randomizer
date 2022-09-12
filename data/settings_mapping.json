@@ -186,6 +186,9 @@
             "mq_dungeons_mode",
             "mq_dungeons_specific",
             "mq_dungeons_count",
+            "empty_dungeons_mode",
+            "empty_dungeons_specific",
+            "empty_dungeons_count",
             "shuffle_interior_entrances",
             "shuffle_grotto_entrances",
             "shuffle_dungeon_entrances",
@@ -211,10 +214,10 @@
             "shopsanity_prices",
             "tokensanity",
             "shuffle_scrubs",
+            "shuffle_child_trade",
             "shuffle_cows",
             "shuffle_kokiri_sword",
             "shuffle_ocarinas",
-            "shuffle_weird_egg",
             "shuffle_gerudo_card",
             "shuffle_beans",
             "shuffle_medigoron_carpet_salesman",
@@ -229,6 +232,7 @@
             "shuffle_mapcompass",
             "shuffle_smallkeys",
             "shuffle_hideoutkeys",
+            "key_rings_choice",
             "key_rings",
             "shuffle_bosskeys",
             "shuffle_ganon_bosskey",
@@ -331,7 +335,6 @@
           "text": "Timesavers",
           "row_span": [1,1,1],
           "settings": [
-            "skip_child_zelda",
             "no_escape_sequence",
             "no_guard_stealth",
             "no_epona_race",
@@ -380,8 +383,7 @@
             "item_pool_value",
             "junk_ice_traps",
             "ice_trap_appearance",
-            "logic_earliest_adult_trade",
-            "logic_latest_adult_trade"
+            "adult_trade_start"
           ]
         }
       ]
@@ -469,9 +471,10 @@
           "name": "sfx_main_section",
           "is_sfx": true,
           "col_span": 4,
-          "row_span": [1,1,1],
+          "row_span": [2,2,2],
           "settings": [
-            "randomize_all_sfx"
+            "randomize_all_sfx",
+            "disable_battle_music"
           ]
         },
         {
@@ -481,7 +484,6 @@
           "row_span": [6,6,13],
           "settings": [
             "background_music",
-            "disable_battle_music",
             "fanfares",
             "ocarina_fanfares",
             "sfx_low_hp",

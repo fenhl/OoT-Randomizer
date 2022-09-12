@@ -94,8 +94,6 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * Versions older than 3.0 of Project64 have known compatablity issues with OoTR. To avoid this either 
 [update to v3.0 and follow the rest of our PJ64 guide](https://wiki.ootrandomizer.com/index.php?title=Project64) or change to one of our other two supported emulators.
 * Executing the collection delay glitch on various NPCs may have unpredictable and undesirable consequences.
-* Saving and quitting on the very first frame after becoming an adult when you would trigger the Light Arrow cutscene can have undesired consequences. Just don't
-do that.
 * This randomizer is based on the 1.0 version of _Ocarina of Time_, so some of its specific bugs remain.
 
 ## Changelog
@@ -119,7 +117,7 @@ do that.
   * New setting `Show Seed Info on File Screen` which also allows a user-set message to be displayed.
   * New settings allow for Rainbow Bridge and Ganon's Boss Key to be obtained upon reaching a certain amount of total heart containers.
   * New setting `Easier Fire Arrow Entry` allows you to set the amount of torches that must be lit to open Shadow Temple.
-  * The pause screen info menu has been split into 3 menus, which show icons on the D-Pad indicating which direction leads to which menu. In addition, the menu now tracks the total keys you've found for a dungeon, not just how many you have remaining.
+  * The pause screen info menu has been split into 3 menus, which show icons on the D-Pad indicating which direction leads to which menu. In addition, the menu now tracks the total keys you've found for a dungeon, not just how many you have remaining. The old menu from pressing A still exists as well.
   * New setting `Invisible Chests` makes all chests in the game invisible.
   * New setting `Bonks Do Damage` will deal damage to Link when bonking, including `One Bonk KO` which will instantly kill him from bonking.
   * New hint type `Dual Hint` which allows multiple locations to be hinted in the same hint. Hint distros can also use new option `upgrade_hints` to upgrade some hints to Dual Hints.
@@ -127,13 +125,20 @@ do that.
   * New setting `Blue Fire Arrows` gives Ice Arrows the power to melt red ice and mud walls to give them more utility.
   * New Misc. Hint `Dampé's Diary` which reveals the location of a hookshot.
   * New item pool setting `Ludicrous` makes it so every check will be a major item.
-  * `Shuffle Dungeon Entrances` has new setting `Dungeons and Ganon` which puts Ganon's Castle into the pool of dungeons which can be shuffled. 
+  * `Shuffle Dungeon Entrances` has new setting `Dungeons and Ganon` which puts Ganon's Castle into the pool of dungeons which can be shuffled.
+  * New setting `Pre-Completed Dungeons` which allows some dungeons to be filled with junk and their dungeon rewards given as a starting item.
+  * New setting `Regional` for dungeon items makes it so dungeon items such as keys will be placed in the same region as their dungeon. For example, if Small Keys are set to Regional, then Small keys for Forest Temple can be found in the temple itself, Sacred Forest Meadow, Lost Woods, Kokiri Forest, or Deku Tree.
+  * `Skip Child Zelda` and `Shuffle Weird Egg` have been combined into one setting `Shuffle Child Trade Item`.
+  * The Adult earliest and latest trade item settings have been combined into a multiselect `Adult Trade Sequence Item` which allows you to choose whatever items you wish as the starting item for the adult trade quest.
 
 * **Gameplay**
   * Shortened the animation for equipping magic arrows.
   * You can now use the child trade item (Zelda's Letter, masks, etc) as child using D-Pad Right.
   * Red Ice transparency is increased when any Chest Appearance setting is enabled.
   * Zelda's text after defeating Ganon now advances automatically.
+  * Health and Magic potion models in shops will now match your health and magic colors when `Item Model Colors Match Cosmetics` is enabled.
+  * The Gerudo guard on the Wasteland side of the gate will now spawn regardless of settings.
+  * Several vanilla warp destination messages have been updated to keep consistency with our custom warp destination messages.
 
 
 #### Bug fixes
@@ -160,6 +165,8 @@ do that.
 * Many minor logic bugs have been corrected.
 * Fix a softlock when plandoing starting with less than 10 beans.
 * Fix plando negative locations (ex. "!Gold Skulltula Token") choosing Buy items for non-Buy locations.
+* Ice traps will no longer be sent to players in the Treasure Chest Game to prevent using deaths to circumvent the game.
+* Fixed dragging list items in the GUI not working when the target is empty.
 
 #### Other changes
 * Added an auto-tracker context area to memory, so auto-trackers can find certain symbols much easier.
