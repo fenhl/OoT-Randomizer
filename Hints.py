@@ -1092,12 +1092,12 @@ def buildGossipHints(spoiler, worlds):
     checkedLocations = dict()
     # Add misc. item hint locations to "checked" locations if the respective hint is reachable without the hinted item.
     for world in worlds:
-        for location in world.hinted_dungeon_reward_locations.values():
-            if 'altar' in world.settings.misc_hints and not world.settings.enhance_map_compass and can_reach_hint(worlds, world.get_location('ToT Child Altar Hint' if location.item.info.stone else 'ToT Adult Altar Hint'), location):
-                item_world = location.world
-                if item_world.id not in checkedLocations:
-                    checkedLocations[item_world.id] = set()
-                checkedLocations[item_world.id].add(location.name)
+        # for location in world.hinted_dungeon_reward_locations.values():
+        #     if 'altar' in world.settings.misc_hints and not world.settings.enhance_map_compass and can_reach_hint(worlds, world.get_location('ToT Child Altar Hint' if location.item.info.stone else 'ToT Adult Altar Hint'), location):
+        #         item_world = location.world
+        #         if item_world.id not in checkedLocations:
+        #             checkedLocations[item_world.id] = set()
+        #         checkedLocations[item_world.id].add(location.name)
         for hint_type, location in world.misc_hint_item_locations.items():
             if hint_type in world.settings.misc_hints and can_reach_hint(worlds, world.get_location(misc_item_hint_table[hint_type]['hint_location']), location):
                 item_world = location.world
