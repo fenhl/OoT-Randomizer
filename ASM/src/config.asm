@@ -7,7 +7,7 @@
 COSMETIC_CONTEXT:
 
 COSMETIC_FORMAT_VERSION:
-.word 0x1F073FD8
+.word 0x1F073FD9
 CFG_MAGIC_COLOR:
 .halfword 0x0000, 0x00C8, 0x0000
 CFG_HEART_COLOR:
@@ -64,6 +64,8 @@ CFG_RAINBOW_NAVI_PROP_INNER_ENABLED:
 .byte 0x00
 CFG_RAINBOW_NAVI_PROP_OUTER_ENABLED:
 .byte 0x00
+CFG_DPAD_DUNGEON_INFO_ENABLE:
+.byte 0x01
 CFG_SHOW_SETTING_INFO:
 .byte 0x00
 
@@ -146,6 +148,8 @@ OVERWORLD_SHUFFLED:
 .byte 0x00
 FAST_BUNNY_HOOD_ENABLED:
 .byte 0x00
+FIX_BROKEN_DROPS:
+.byte 0x00
 SPOILER_AVAILABLE:
 .byte 0x00
 PLANDOMIZER_USED:
@@ -156,7 +160,7 @@ PLANDOMIZER_USED:
 ; Any changes made here should be documented in Notes/auto-tracker-ctx.md
 AUTO_TRACKER_CONTEXT:
 AUTO_TRACKER_VERSION:
-.word 3 ; Increment this if the auto-tracker context layout changes
+.word 4 ; Increment this if the auto-tracker context layout changes
 
 CFG_DUNGEON_INFO_ENABLE:
 .word 0

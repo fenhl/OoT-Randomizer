@@ -3,10 +3,9 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChil
 import { OverlayContainer } from '@angular/cdk/overlay';
 
 import { GUIGlobal } from '../../providers/GUIGlobal';
-import { MatGridList, MatGridTile } from '@angular/material';
-import { NbTabsetComponent } from '@nebular/theme/components/tabset/tabset.component';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { NbSelectComponent } from '@nebular/theme/components/select/select.component';
-import { NbDialogService } from '@nebular/theme';
+import {NbDialogService, NbTabsetComponent} from '@nebular/theme';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { ngfModule, ngf } from "angular-file";
 
@@ -25,10 +24,12 @@ import { TextInputWindow } from './textInputWindow/textInputWindow.component';
 })
 export class GeneratorComponent implements OnInit {
 
+  selectedItem = '2';
+
   tooltipComponent = GUITooltip;
 
-  @ViewChild('refTabSet') tabSet: NbTabsetComponent;
-  @ViewChild('refTabFooter') tabSetFooter: NbTabsetComponent;
+  @ViewChild('refTabSet', { static: false }) tabSet: NbTabsetComponent;
+  @ViewChild('refTabFooter', { static: false }) tabSetFooter: NbTabsetComponent;
   activeTab: string = "";
   activeFooterTab: string = "";
   settingsLocked: boolean = false;
@@ -75,7 +76,7 @@ export class GeneratorComponent implements OnInit {
           eventSub.unsubscribe();
         }
       });
-    }  
+    }
   }
 
   generatorReady() {
@@ -301,7 +302,7 @@ export class GeneratorComponent implements OnInit {
           this.dialogService.open(DialogWindow, {
             autoFocus: true, closeOnBackdropClick: true, closeOnEsc: true, hasBackdrop: true, hasScroll: false, context: { dialogHeader: "Error", dialogMessage: "You may only generate one seed per minute to prevent spam!" }
           });
-        } 
+        }
         else if (err.hasOwnProperty('error_rom_in_plando')) {
 
           this.dialogService.open(ConfirmationWindow, {
@@ -547,7 +548,7 @@ export class GeneratorComponent implements OnInit {
               this.cd.markForCheck();
               this.cd.detectChanges();
 
-              refPresetSelect.setSelected = trimmedName;
+              refPresetSelect.selected = trimmedName;
 
               //console.log("Preset created");
             }
@@ -623,7 +624,7 @@ export class GeneratorComponent implements OnInit {
       path = "Output";
     else
       path = this.global.generator_settingsMap["output_dir"];
- 
+
     this.global.createAndOpenPath(path).then(() => {
       console.log("Output dir opened");
     }).catch(err => {
@@ -651,7 +652,7 @@ export class GeneratorComponent implements OnInit {
 
       this.dialogService.open(DialogWindow, {
         autoFocus: true, closeOnBackdropClick: true, closeOnEsc: true, hasBackdrop: true, hasScroll: false, context: { dialogHeader: "Error", dialogMessage: err }
-      });   
+      });
     });
   }
 
@@ -904,7 +905,7 @@ export class GeneratorComponent implements OnInit {
       if (setting["type"] === "SearchBox") { //Special handling for type "SearchBox"
 
         let optionsSelected = value && typeof (value) == "object" && Array.isArray(value) && value.length > 0;
-     
+
         //First build a complete list consisting of every option that hasn't been selected yet with a true value
         setting.options.forEach(optionToAdd => {
 
@@ -968,11 +969,24 @@ export class GeneratorComponent implements OnInit {
   }
 
   executeVisibilityForSetting(targetSetting: any, targetValue: boolean) {
-
-    var triggeredChange = false;
+    let triggeredChange = false;
 
     if ("controls_visibility_tab" in targetSetting) {
+      this.triggerTabVisibility(targetSetting, targetValue);
+    }
 
+    if ("controls_visibility_setting" in targetSetting) {
+      triggeredChange = this.triggerSettingVisibility(targetSetting, targetValue, triggeredChange);
+    }
+
+    if ("controls_visibility_section" in targetSetting) {
+      triggeredChange = this.triggerSectionVisibility(targetSetting, targetValue, triggeredChange);
+    }
+
+    return triggeredChange;
+  }
+
+  private triggerTabVisibility(targetSetting: any, targetValue: boolean) {
       //console.log(targetSetting, setting);
 
       targetSetting["controls_visibility_tab"].split(",").forEach(tab => {
@@ -994,8 +1008,7 @@ export class GeneratorComponent implements OnInit {
       });
     }
 
-    if ("controls_visibility_section" in targetSetting) {
-
+  private triggerSectionVisibility(targetSetting: any, targetValue: boolean, triggeredChange: boolean) {
       targetSetting["controls_visibility_section"].split(",").forEach(section => {
 
         let targetSection = null;
@@ -1039,10 +1052,11 @@ export class GeneratorComponent implements OnInit {
           });
         }
       });
+
+      return triggeredChange;
     }
 
-    if ("controls_visibility_setting" in targetSetting) {
-
+  private triggerSettingVisibility(targetSetting: any, targetValue: boolean, triggeredChange: boolean) {
       targetSetting["controls_visibility_setting"].split(",").forEach(setting => {
 
         //Ignore settings that don't exist in this specific app
@@ -1060,7 +1074,6 @@ export class GeneratorComponent implements OnInit {
 
         this.global.generator_settingsVisibilityMap[setting] = targetValue;
       });
-    }
 
     return triggeredChange;
   }
@@ -1157,7 +1170,7 @@ export class GeneratorComponent implements OnInit {
   }
 
   numberInputFocusOut(setting: object, forceAdjust: boolean) {
-   
+
     let newValue = this.global.generator_settingsMap[setting["name"]];
     let settingName = setting["name"];
 
