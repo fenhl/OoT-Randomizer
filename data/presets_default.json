@@ -323,7 +323,7 @@
     "starting_tod":                            "default",
     "starting_age":                            "random"
   },
-    "SGL 2022 Settings": {
+  "SGL 2022 Settings": {
     "show_seed_info":                          true,
     "user_message":                            "SGL 2022",
     "world_count":                             1,
@@ -375,7 +375,10 @@
     "shuffle_overworld_entrances":             false,
     "owl_drops":                               false,
     "warp_songs":                              false,
-    "spawn_positions":                         true,
+    "spawn_positions":                         [
+      "child",
+      "adult"
+    ],
     "shuffle_scrubs":                          "off",
     "shopsanity":                              "off",
     "tokensanity":                             "off",
