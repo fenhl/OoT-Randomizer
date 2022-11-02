@@ -427,7 +427,7 @@
     ],
     "ocarina_songs":                           "off",
     "correct_chest_appearances":               "both",
-    "bombchus_gilded_chest_appearance":        true,
+    "minor_items_as_major_chest":              true,
     "clearer_hints":                           true,
     "no_collectible_hearts":                   false,
     "hints":                                   "always",
