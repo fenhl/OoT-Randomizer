@@ -26,6 +26,7 @@ from version import __version__
 from ItemPool import song_list
 from SceneFlags import get_alt_list_bytes, get_collectible_flag_table, get_collectible_flag_table_bytes
 from texture_util import ci4_rgba16patch_to_ci8, rgba16_patch
+from ntype import BigStream
 
 
 def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
@@ -113,6 +114,89 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
         update_dmadata(rom, obj_file)
         # Add it to the extended object table
         add_to_extended_object_table(rom, object_id, obj_file)
+
+    # Make new model files by splitting existing ones to fit into the get item memory slot
+    zobj_splits = (
+        #('object_gi_medal', '014BB000', '014C0370', (0x5220, 0x0e18), 0x19C), # Light Medallion
+        ('object_gi_medal', '014BB000', '014C0370', (0x0cb0, 0x0e18), 0x19D), # Forest Medallion
+        ('object_gi_medal', '014BB000', '014C0370', (0x1af0, 0x0e18), 0x19E), # Fire Medallion
+        ('object_gi_medal', '014BB000', '014C0370', (0x2830, 0x0e18), 0x19F), # Water Medallion
+        #('object_gi_medal', '014BB000', '014C0370', (0x4330, 0x0e18), 0x1A0), # Shadow Medallion
+        #('object_gi_medal', '014BB000', '014C0370', (0x3610, 0x0e18), 0x1A1), # Spirit Medallion
+    )
+    for name, start, end, offsets, object_id in zobj_splits:
+        obj_file = File({
+            'Name': name,
+            'Start': start,
+            'End': end,
+        })
+        seen = {}
+        out = []
+        for offset in offsets:
+            i = offset
+            while True:
+                data = rom.read_int32(obj_file.start + i)
+                op = data >> 24;
+                i += 8
+                if op == 0xdf:
+                    size = i - offset
+                    break
+            segment = BigStream(rom.read_bytes(obj_file.start + offset, size))
+
+            def copy(addr, size):
+                seg = addr >> 24
+                if seg != 0x06:
+                    return addr
+                addr &= 0xffffff
+                seenAddr = seen.get(addr)
+                if seenAddr is not None:
+                    return seenAddr
+                newAddr = len(out) | 0x0600_0000
+                out.extend(segment.read_bytes(addr, size))
+                seen[addr] = newAddr
+                return newAddr
+
+            for i in range(0, size, 8):
+                data = rom.read_int32(i)
+                op = data >> 24
+                if op == 0x01: # Vertices
+                    count = (data >> 12) & 0xff
+                    addr = segment.read_int32(i + 4)
+                    newAddr = copy(addr, count * 0x10)
+                    segment.write_int32(i + 4, newAddr)
+                elif op == 0xfd: # Texture or palette
+                    data2 = segment.read_int32(i + 8 * 1)
+                    op2 = data2 >> 24
+                    if op2 == 0xf5: # Texture
+                        fmt = (data >> 16) & 0xff
+                        if fmt in (0x50, 0x90):
+                            bpp = 4
+                        elif fmt == 0x10:
+                            bpp = 16
+                        else:
+                            raise ValueError(f'Unknown texture format 0x{fmt:02x}')
+                        data3 = segment.read_int32(i + 8 * 6 + 4)
+                        w = (((data3 >> 12) & 0xfff) / 4) + 1
+                        h = (((data3 >>  0) & 0xfff) / 4) + 1
+                        addr = segment.read_int32(i + 4)
+                        newAddr = copy(addr, (w * h * bpp) / 8)
+                        segment.write_int32(i + 4, newAddr)
+                    elif op2 == 0xe8: # Palette
+                        addr = segment.read_int32(i + 4)
+                        newAddr = copy(addr, 32)
+                        segment.write_int32(i + 4, newAddr)
+            out.extend(segment.buffer)
+            if len(out) % 16:
+                extra_size = 16 - (len(out) % 16)
+                extra_buf = [0] * extra_size
+                out.extend(extra_buf)
+
+        split_obj_file = File({ 'Name': name })
+        split_obj_file.copy(rom)
+        rom.write_bytes(split_obj_file.start, out)
+        split_obj_file.end = split_obj_file.start + len(out)
+        update_dmadata(rom, split_obj_file)
+        add_to_extended_object_table(rom, object_id, split_obj_file)
 
     # Create the textures for pots/crates. Note: No copyrighted material can be distributed w/ the randomizer. Because of this, patch files are used to create the new textures from the original texture in ROM.
     # Apply patches for custom textures for pots and crates and add as new files in rom

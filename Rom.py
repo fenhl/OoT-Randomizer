@@ -255,7 +255,7 @@ class Rom(BigStream):
             dma_start, dma_end, dma_size = self._get_dmadata_record(cur)
 
         if cur >= (dma_data_end - 0x10):
-            raise Exception('dmadata update failed: key {0:x} not found in dmadata and dma table is full.'.format(key))
+            raise Exception(f'dmadata update failed: key {key:x} not found in dmadata and dma table is full.')
         else:
             self.write_int32s(cur, [start, end, start, 0])
             if from_file == None:

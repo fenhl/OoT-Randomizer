@@ -304,9 +304,9 @@ item_row_t item_table[] = {
     [0x0108] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0081, 0x0193, 0x76, no_upgrade, give_quest_item, 19, -1), // Goron Ruby
     [0x0109] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0082, 0x0193, 0x76, no_upgrade, give_quest_item, 20, -1), // Zora Sapphire
     [0x010A] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0040, 0x0193, 0x76, no_upgrade, give_quest_item, 5, -1), // Light Medallion
-    [0x010B] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003E, 0x0193, 0x76, no_upgrade, give_quest_item, 0, -1), // Forest Medallion
-    [0x010C] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003C, 0x0193, 0x76, no_upgrade, give_quest_item, 1, -1), // Fire Medallion
-    [0x010D] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003D, 0x0193, 0x76, no_upgrade, give_quest_item, 2, -1), // Water Medallion
+    [0x010B] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003E, 0x019D, 0x76, no_upgrade, give_quest_item, 0, -1), // Forest Medallion
+    [0x010C] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003C, 0x019E, 0x76, no_upgrade, give_quest_item, 1, -1), // Fire Medallion
+    [0x010D] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003D, 0x019F, 0x76, no_upgrade, give_quest_item, 2, -1), // Water Medallion
     [0x010E] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0041, 0x0193, 0x76, no_upgrade, give_quest_item, 4, -1), // Shadow Medallion
     [0x010F] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003F, 0x0193, 0x76, no_upgrade, give_quest_item, 3, -1), // Spirit Medallion
 };
