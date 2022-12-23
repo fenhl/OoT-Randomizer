@@ -136,7 +136,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
             i = offset
             while True:
                 data = rom.read_int32(obj_file.start + i)
-                op = data >> 24;
+                op = data >> 24
                 i += 8
                 if op == 0xdf:
                     size = i - offset
