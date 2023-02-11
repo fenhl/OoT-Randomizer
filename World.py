@@ -1152,30 +1152,31 @@ class World(object):
         # Link's Pocket and None are not real areas
         excluded_areas = [None, HintArea.ROOT]
         for location in self.get_locations():
-            location_hint = HintArea.at(location)
+            area = HintArea.at(location)
 
             # We exclude event and locked locations. This means that medallions
             # and stones are not considered here. This is not really an accurate
             # way of doing this, but it's the only way to allow dungeons to appear.
             # So barren hints do not include these dungeon rewards.
-            if location_hint in excluded_areas or \
-               location.locked or \
-               location.name in self.hint_exclusions or \
-               location.item is None or \
-               location.item.type in ('Event', 'DungeonReward'):
+            if (
+                area in excluded_areas
+                or location.locked
+                or location.name in self.hint_exclusions
+                or location.item is None
+                or location.item.type in ('Event', 'DungeonReward')
+            ):
                 continue
-
-            area = location_hint
 
             # Build the area list and their items
             if area not in areas:
                 areas[area] = {
+                    'important_locations': 0,
                     'locations': [],
                 }
             areas[area]['locations'].append(location)
 
         # Generate area list meta data
-        for area,area_info in areas.items():
+        for area, area_info in areas.items():
             # whether an area is a dungeon is calculated to prevent too many
             # dungeon barren hints since they are quite powerful. The area
             # names don't quite match the internal dungeon names so we need to
@@ -1223,7 +1224,7 @@ class World(object):
                 exclude_item_list.remove(i)
 
         for i in self.item_added_hint_types['barren']:
-            if not (i in exclude_item_list):
+            if i not in exclude_item_list:
                 exclude_item_list.append(i)
 
         # The idea here is that if an item shows up in woth, then the only way
@@ -1258,13 +1259,13 @@ class World(object):
                 duplicate_item_woth[world_id][item_name].append(location)
 
         # generate the empty area list
-        self.empty_areas = {}
+        self.important_locations = {}
 
-        for area,area_info in areas.items():
-            useless_area = True
+        for area, area_info in areas.items():
             for location in area_info['locations']:
                 world_id = location.item.world.id
                 item = location.item
+                location_is_important = False
 
                 if ((not location.item.majoritem) or (location.item.name in exclude_item_list)) and \
                     (location.item.name not in self.item_hint_type_overrides['barren']):
@@ -1277,7 +1278,7 @@ class World(object):
                     dupe_locations = duplicate_item_woth[world_id][item.name]
                     for dupe_location in dupe_locations:
                         if dupe_location.world.id == location.world.id and dupe_location.name == location.name:
-                            useless_area = False
+                            location_is_important = True
                             break
                     # Otherwise it is treated as a bottle
                     is_bottle = True
@@ -1303,14 +1304,16 @@ class World(object):
                 # If this is a required item location, then it is not useless
                 for dupe_location in dupe_locations:
                     if dupe_location.world.id == location.world.id and dupe_location.name == location.name:
-                        useless_area = False
+                        location_is_important = True
                         break
 
                 # If there are sufficient required item known, then the remaining
                 # copies of the items are useless.
                 if len(dupe_locations) < max_progressive:
-                    useless_area = False
+                    location_is_important = True
                     break
 
-            if useless_area:
-                self.empty_areas[area] = area_info
+                if location_is_important:
+                    area_info['important_locations'] += 1
+
+            self.important_locations[area] = area_info

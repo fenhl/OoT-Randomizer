@@ -639,25 +639,28 @@ def get_barren_hint(spoiler, world, checked, allChecked):
         world.get_barren_hint_prev = RegionRestriction.NONE
 
     checked_areas = get_checked_areas(world, checked)
-    areas = list(filter(lambda area:
-        area not in checked_areas
+    areas = [
+        area
+        for area, area_info in world.important_locations.items()
+        if area_info['important_locations'] == 0
+        and area not in checked_areas
         and area not in world.hint_type_overrides['barren']
-        and not (world.barren_dungeon >= world.hint_dist_user['dungeons_barren_limit'] and world.empty_areas[area]['dungeon'])
+        and not (world.barren_dungeon >= world.hint_dist_user['dungeons_barren_limit'] and area_info['dungeon'])
         and any(
             location.name not in allChecked
             and location.name not in world.hint_exclusions
             and location.name not in hintExclusions(world)
             and HintArea.at(location) == area
             for location in world.get_locations()
-        ),
-        world.empty_areas))
+        )
+    ]
 
     if not areas:
         return None
 
     # Randomly choose between overworld or dungeon
-    dungeon_areas = list(filter(lambda area: world.empty_areas[area]['dungeon'], areas))
-    overworld_areas = list(filter(lambda area: not world.empty_areas[area]['dungeon'], areas))
+    dungeon_areas = list(filter(lambda area: world.important_locations[area]['dungeon'], areas))
+    overworld_areas = list(filter(lambda area: not world.important_locations[area]['dungeon'], areas))
     if not dungeon_areas:
         # no dungeons left, default to overworld
         world.get_barren_hint_prev = RegionRestriction.OVERWORLD
@@ -682,10 +685,10 @@ def get_barren_hint(spoiler, world, checked, allChecked):
     if not areas:
         return None
 
-    area_weights = [world.empty_areas[area]['weight'] for area in areas]
+    area_weights = [world.important_locations[area]['weight'] for area in areas]
 
     area = random_choices(areas, weights=area_weights)[0]
-    if world.empty_areas[area]['dungeon']:
+    if world.important_locations[area]['dungeon']:
         world.barren_dungeon += 1
 
     checked.add(area)
