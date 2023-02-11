@@ -1052,51 +1052,41 @@ def get_junk_hint(spoiler, world, checked):
 
     return (GossipText(hint.text, prefix=''), None)
 
-def get_important_check_hint(spoiler, world, checked):
-    top_level_locations = []
-    for location in world.get_filled_locations():
-        if (HintArea.at(location).text(world.settings.clearer_hints) not in top_level_locations
-            and (HintArea.at(location).text(world.settings.clearer_hints) + ' Important Check') not in checked
-            and "pocket" not in HintArea.at(location).text(world.settings.clearer_hints)):
-            top_level_locations.append(HintArea.at(location).text(world.settings.clearer_hints))
-    hintLoc = random.choice(top_level_locations)
-    item_count = 0
-    for location in world.get_filled_locations():
-        region = HintArea.at(location).text(world.settings.clearer_hints)
-        if region == hintLoc:
-            if (location.item.majoritem
-                and not location.item.name == 'Triforce Piece'
-                and not location.item.name == 'Deliver Letter'
-                and not ((location.name == 'Song from Impa' or location.item.name == 'Zeldas Letter') and world.settings.shuffle_child_trade == 'skip_child_zelda')
-                and not(location.item.name == 'Kokiri Sword' and not world.settings.shuffle_kokiri_sword
-                or location.item.name == 'Giants Knife' and not world.settings.shuffle_medigoron_carpet_salesman
-                or location.item.name == 'Gerudo Membership Card' and not world.settings.shuffle_gerudo_card
-                or location.item.name == 'Ocarina' and not world.settings.shuffle_ocarinas
-                or 'Bean' in location.item.name and not world.settings.shuffle_beans
-                or location.item.name == 'Weird Egg' and not world.settings.shuffle_child_trade == 'shuffle')
-                or (location.item.type == 'SmallKey' and not (world.settings.shuffle_smallkeys == 'dungeon' or world.settings.shuffle_smallkeys == 'vanilla'))
-                or (location.item.type == 'HideoutSmallKey' and not world.settings.shuffle_hideoutkeys == 'vanilla')
-                or (location.item.type == 'BossKey' and not (world.settings.shuffle_bosskeys == 'dungeon' or world.settings.shuffle_bosskeys == 'vanilla'))
-                or (location.item.type == 'GanonBossKey' and not (world.settings.shuffle_ganon_bosskey == 'vanilla'
-                or world.settings.shuffle_ganon_bosskey == 'dungeon' or world.settings.shuffle_ganon_bosskey == 'on_lacs'
-                or world.settings.shuffle_ganon_bosskey == 'stones' or world.settings.shuffle_ganon_bosskey == 'medallions'
-                or world.settings.shuffle_ganon_bosskey == 'dungeons' or world.settings.shuffle_ganon_bosskey == 'tokens'))):
-                item_count = item_count + 1
+def get_important_check_hint(spoiler, world, checked, allChecked):
+    checked_areas = get_checked_areas(world, checked)
+    areas = [
+        area
+        for area in world.important_locations
+        if area not in checked_areas
+        and area not in world.hint_type_overrides['important_check']
+        and any(
+            location.name not in allChecked
+            and location.name not in world.hint_exclusions
+            and location.name not in hintExclusions(world)
+            and HintArea.at(location) == area
+            for location in world.get_locations()
+        )
+    ]
 
-    checked.add(hintLoc + ' Important Check')
+    if not areas:
+        return None
+
+    area = random_choices(areas)[0]
+    checked.add(area)
+    item_count = world.important_locations[area]['important_locations']
 
     if item_count == 0:
-        numcolor = 'Red'
-    elif item_count == 1:
         numcolor = 'Pink'
+    elif item_count == 1:
+        numcolor = 'Red'
     elif item_count == 2:
         numcolor = 'Yellow'
     elif item_count == 3:
-        numcolor = 'Light Blue'
-    else:
         numcolor = 'Green'
+    else:
+        numcolor = 'Light Blue'
 
-    return (GossipText('#%s# has #%d# major item%s.' % (hintLoc, item_count, "s" if item_count != 1 else ""), [numcolor, 'Green']), None)
+    return (GossipText('#%s# has #%d# major item%s.' % (area.text(world.settings.clearer_hints), item_count, "s" if item_count != 1 else ""), [numcolor, 'Green']), None)
 
 
 hint_func = {
@@ -1117,7 +1107,7 @@ hint_func = {
     'random':           get_random_location_hint,
     'junk':             get_junk_hint,
     'named-item':       get_specific_item_hint,
-    'important_check':  get_important_check_hint
+    'important_check':  get_important_check_hint,
 }
 
 hint_dist_keys = {
@@ -1508,7 +1498,7 @@ def buildWorldGossipHints(spoiler, world, checkedLocations=None):
                 raise Exception('Not enough valid hints to fill gossip stone locations.')
 
         allCheckedLocations = checkedLocations | checkedAlwaysLocations
-        if hint_type == 'barren':
+        if hint_type in ('barren', 'important_check'):
             hint = hint_func[hint_type](spoiler, world, checkedLocations, allCheckedLocations)
         else:
             hint = hint_func[hint_type](spoiler, world, allCheckedLocations)
