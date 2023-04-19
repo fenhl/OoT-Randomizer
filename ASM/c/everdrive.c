@@ -35,7 +35,6 @@ static uint16_t spi_cfg;
 #define ED64_DETECTION_PRESENT 1
 #define ED64_DETECTION_NOT_PRESENT 2
 uint8_t everdrive_detection_state = ED64_DETECTION_UNKNOWN;
-bool read_requested = false;
 
 // set irq bit and return previous value
 static inline int set_irqf(int irqf) {
@@ -126,10 +125,10 @@ bool everdrive_detect() {
         switch (reg_rd(REG_EDID)) {
             case 0xED640008: // EverDrive 3.0
             case 0xED640013: // EverDrive X7
-                cart_unlock();
-                everdrive_detection_state = ED64_DETECTION_PRESENT;
                 // initialize USB
                 reg_wr(REG_SYS_CFG, 0);
+                cart_unlock();
+                everdrive_detection_state = ED64_DETECTION_PRESENT;
                 break;
             default: // EverDrive without USB support or no EverDrive
                 reg_wr(REG_KEY, 0);
@@ -142,30 +141,36 @@ bool everdrive_detect() {
 }
 
 bool everdrive_read(void *buf) {
+    cart_lock_safe();
     uint32_t len = 16; // for simplicity, the protocol is designed so each packet size is the EverDrive's minimum of 16 bytes
     uint32_t usb_cfg = reg_rd(REG_USB_CFG);
     if (!(usb_cfg & USB_STA_PWR)) {
         // cannot read or write (no USB device connected?)
+        cart_unlock();
         return false;
     }
     if (usb_cfg & USB_STA_ACT) {
         // currently busy reading or writing
+        cart_unlock();
         return false;
     }
     if (usb_cfg & USB_STA_RXF) {
-        if (read_requested) {
-            // done reading
-            read_requested = false;
-            pi_read_locked((uint32_t)&REGS_PTR[REG_USB_DAT], buf, len);
-            return true;
-        } else {
-            // no data waiting
-            return false;
-        }
+        // no data waiting
+        cart_unlock();
+        return false;
     } else {
         // data waiting, start reading
         reg_wr(REG_USB_CFG, USB_CMD_RD | (512 - len));
-        read_requested = true;
-        return false;
+        uint16_t timeout = 0;
+        while (reg_rd(REG_USB_CFG) & USB_STA_ACT) {
+            // still reading
+            if (timeout++ == 8192) {
+                // timed out
+                return false; //TODO set buf to special error packet and return true?
+            }
+        }
+        pi_read_locked((uint32_t)&REGS_PTR[REG_USB_DAT], buf, len);
+        cart_unlock();
+        return true;
     }
 }
