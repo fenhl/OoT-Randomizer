@@ -1,14 +1,30 @@
+#include <stdbool.h>
 #include <mips.h>
 #include <n64.h>
 
 #include "everdrive.h"
 #include "z64.h"
 
-#define REG_EDID 0x0005
-#define REG_KEY 0x2001
+#define REG_USB_CFG 0x0001
+#define REG_EDID    0x0005
+#define REG_USB_DAT 0x0100
+#define REG_SYS_CFG 0x2000
+#define REG_KEY     0x2001
 
 #define REG_BASE 0xBF800000
 #define REGS_PTR ((volatile uint32_t *)REG_BASE)
+
+#define USB_LE_CFG 0x8000
+#define USB_LE_CTR 0x4000
+
+#define USB_CFG_RD  0x0400
+#define USB_CFG_ACT 0x0200
+
+#define USB_STA_PWR 0x1000
+#define USB_STA_RXF 0x0400
+#define USB_STA_ACT 0x0200
+
+#define USB_CMD_RD (USB_LE_CFG | USB_LE_CTR | USB_CFG_RD | USB_CFG_ACT)
 
 static int      cart_irqf;
 static uint32_t cart_lat;
@@ -19,6 +35,20 @@ static uint16_t spi_cfg;
 #define ED64_DETECTION_PRESENT 1
 #define ED64_DETECTION_NOT_PRESENT 2
 uint8_t everdrive_detection_state = ED64_DETECTION_UNKNOWN;
+bool read_requested = false;
+
+// set irq bit and return previous value
+static inline int set_irqf(int irqf) {
+  uint32_t sr;
+
+  __asm__ ("mfc0    %[sr], $12;" : [sr] "=r"(sr));
+  int old_irqf = sr & MIPS_STATUS_IE;
+
+  sr = (sr & ~MIPS_STATUS_IE) | (irqf & MIPS_STATUS_IE);
+  __asm__ ("mtc0    %[sr], $12;" :: [sr] "r"(sr));
+
+  return old_irqf;
+}
 
 static inline void __pi_wait(void) {
     while (pi_regs.status & (PI_STATUS_DMA_BUSY | PI_STATUS_IO_BUSY)) {
@@ -36,6 +66,36 @@ static inline void __pi_write_raw(uint32_t dev_addr, uint32_t value) {
     *(volatile uint32_t *)dev_addr = value;
 }
 
+static void pio_read(uint32_t dev_addr, uint32_t ram_addr, size_t size) {
+    if (size == 0) {
+        return;
+    }
+
+    uint32_t dev_s = dev_addr & ~0x3;
+    uint32_t dev_e = (dev_addr + size + 0x3) & ~0x3;
+    uint32_t dev_p = dev_s;
+
+    uint32_t ram_s = ram_addr;
+    uint32_t ram_e = ram_s + size;
+    uint32_t ram_p = ram_addr - (dev_addr - dev_s);
+
+    while (dev_p < dev_e) {
+        uint32_t w = __pi_read_raw(dev_p);
+        for (int i = 0; i < 4; i++) {
+            if (ram_p >= ram_s && ram_p < ram_e) {
+                *(uint8_t *)ram_p = w >> 24;
+            }
+            w <<= 8;
+            ram_p++;
+        }
+        dev_p += 4;
+    }
+}
+
+void pi_read_locked(uint32_t dev_addr, void *dst, size_t size) {
+    pio_read(dev_addr, (uint32_t)dst, size);
+}
+
 static inline uint32_t reg_rd(int reg) {
     return __pi_read_raw((uint32_t)&REGS_PTR[reg]);
 }
@@ -43,19 +103,6 @@ static inline uint32_t reg_rd(int reg) {
 
 static inline void reg_wr(int reg, uint32_t dat) {
     return __pi_write_raw((uint32_t)&REGS_PTR[reg], dat);
-}
-
-// set irq bit and return previous value
-static inline int set_irqf(int irqf) {
-  uint32_t sr;
-
-  __asm__ ("mfc0    %[sr], $12;" : [sr] "=r"(sr));
-  int old_irqf = sr & MIPS_STATUS_IE;
-
-  sr = (sr & ~MIPS_STATUS_IE) | (irqf & MIPS_STATUS_IE);
-  __asm__ ("mtc0    %[sr], $12;" :: [sr] "r"(sr));
-
-  return old_irqf;
 }
 
 void cart_lock_safe() {
@@ -76,14 +123,49 @@ bool everdrive_detect() {
     if (everdrive_detection_state == ED64_DETECTION_UNKNOWN) {
         cart_lock_safe();
         reg_wr(REG_KEY, 0xAA55);
-        if ((reg_rd(REG_EDID) >> 16) == 0xED64) {
-            cart_unlock();
-            everdrive_detection_state = ED64_DETECTION_PRESENT;
-        } else {
-            reg_wr(REG_KEY, 0);
-            cart_unlock();
-            everdrive_detection_state = ED64_DETECTION_NOT_PRESENT;
+        switch (reg_rd(REG_EDID)) {
+            case 0xED640008: // EverDrive 3.0
+            case 0xED640013: // EverDrive X7
+                cart_unlock();
+                everdrive_detection_state = ED64_DETECTION_PRESENT;
+                // initialize USB
+                reg_wr(REG_SYS_CFG, 0);
+                break;
+            default: // EverDrive without USB support or no EverDrive
+                reg_wr(REG_KEY, 0);
+                cart_unlock();
+                everdrive_detection_state = ED64_DETECTION_NOT_PRESENT;
+                break;
         }
     }
     return everdrive_detection_state == ED64_DETECTION_PRESENT;
+}
+
+bool everdrive_read(void *buf) {
+    uint32_t len = 16; // for simplicity, the protocol is designed so each packet size is the EverDrive's minimum of 16 bytes
+    uint32_t usb_cfg = reg_rd(REG_USB_CFG);
+    if (!(usb_cfg & USB_STA_PWR)) {
+        // cannot read or write (no USB device connected?)
+        return false;
+    }
+    if (usb_cfg & USB_STA_ACT) {
+        // currently busy reading or writing
+        return false;
+    }
+    if (usb_cfg & USB_STA_RXF) {
+        if (read_requested) {
+            // done reading
+            read_requested = false;
+            pi_read_locked((uint32_t)&REGS_PTR[REG_USB_DAT], buf, len);
+            return true;
+        } else {
+            // no data waiting
+            return false;
+        }
+    } else {
+        // data waiting, start reading
+        reg_wr(REG_USB_CFG, USB_CMD_RD | (512 - len));
+        read_requested = true;
+        return false;
+    }
 }

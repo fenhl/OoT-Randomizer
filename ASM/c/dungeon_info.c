@@ -64,6 +64,8 @@ extern uint8_t CFG_DUNGEON_INFO_SILVER_RUPEES;
 extern extended_savecontext_static_t extended_savectx;
 extern silver_rupee_data_t silver_rupee_vars[0x16][2];
 
+extern uint8_t EVERDRIVE_READ_BUF[16];
+
 void draw_background(z64_disp_buf_t *db, int bg_left, int bg_top, int bg_width, int bg_height) {
     gDPSetCombineMode(db->p++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
     gDPSetPrimColor(db->p++, 0, 0, 0x00, 0x00, 0x00, 0xD0);
@@ -427,9 +429,9 @@ void draw_dungeon_info(z64_disp_buf_t *db) {
 
         int icon_size = 16;
         int padding = 1;
-        int rows = 2;
+        int rows = 3;
         int bg_width =
-            (11 * font_sprite.tile_w) +
+            (23 * font_sprite.tile_w) +
             (2 * padding);
 
         int bg_height = (rows * icon_size) + ((rows + 1) * padding);
@@ -442,14 +444,46 @@ void draw_dungeon_info(z64_disp_buf_t *db) {
         draw_background(db, bg_left, bg_top, bg_width, bg_height);
         gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
 
-        char top_text[10] = "EverDrive";
-        text_print(top_text, left, top);
-        top += icon_size + padding;
         if (everdrive_detect()) {
-            char bottom_text[8] = "present";
-            text_print(bottom_text, left, top);
+            char top_text[16] = "EverDrive found";
+            text_print(top_text, left, top);
+            top += icon_size + padding;
+            everdrive_read(EVERDRIVE_READ_BUF);
+            char buf_line_1[24] = "OO OO OO OO OO OO OO OO";
+            for (int i = 0; i < 8; i++) {
+                uint8_t hi = EVERDRIVE_READ_BUF[i] >> 4;
+                if (hi > 9) {
+                    buf_line_1[3 * i] = 'A' + (hi - 0xA);
+                } else if (hi) {
+                    buf_line_1[3 * i] = '0' + hi;
+                }
+                uint8_t lo = EVERDRIVE_READ_BUF[i] & 0x0F;
+                if (lo > 9) {
+                    buf_line_1[3 * i + 1] = 'A' + (lo - 0xA);
+                } else if (lo) {
+                    buf_line_1[3 * i + 1] = '0' + lo;
+                }
+            }
+            text_print(buf_line_1, left, top);
+            top += icon_size + padding;
+            char buf_line_2[24] = "OO OO OO OO OO OO OO OO";
+            for (int i = 8; i < 16; i++) {
+                uint8_t hi = EVERDRIVE_READ_BUF[i] >> 4;
+                if (hi > 9) {
+                    buf_line_2[3 * i] = 'A' + (hi - 0xA);
+                } else if (hi) {
+                    buf_line_2[3 * i] = '0' + hi;
+                }
+                uint8_t lo = EVERDRIVE_READ_BUF[i] & 0x0F;
+                if (lo > 9) {
+                    buf_line_2[3 * i + 1] = 'A' + (lo - 0xA);
+                } else if (lo) {
+                    buf_line_2[3 * i + 1] = '0' + lo;
+                }
+            }
+            text_print(buf_line_2, left, top);
         } else {
-            char bottom_text[12] = "not present";
+            char bottom_text[20] = "EverDrive not found";
             text_print(bottom_text, left, top);
         }
     } else if (pad_held.dd) {
