@@ -381,7 +381,7 @@
         {
           "name": "generalcosmetics_section",
           "text": "General Cosmetics",
-          "col_span": 2,
+          "col_span": 1,
           "row_span": [2,2,2],
           "settings": [
             "default_targeting",
@@ -392,10 +392,24 @@
           ]
         },
         {
+          "name": "dpadactions_section",
+          "text": "D-Pad Actions",
+          "col_span": 2,
+          "row_span": [2,2,2],
+          "settings": [
+            "dpad_child_left",
+            "dpad_adult_left",
+            "dpad_child_down",
+            "dpad_adult_down",
+            "dpad_child_right",
+            "dpad_adult_right"
+          ]
+        },
+        {
           "name": "playermodels_section_generator",
           "text": "Player Models",
           "app_type": ["generator"],
-          "col_span": 2,
+          "col_span": 1,
           "row_span": [2,2,2],
           "settings": [
             "model_adult",
@@ -410,7 +424,7 @@
           "text": "Player Models",
           "exclude_from_electron": true,
           "app_type": ["patcher"],
-          "col_span": 2,
+          "col_span": 1,
           "row_span": [2,2,2],
           "settings": [
             "model_adult_filepicker",

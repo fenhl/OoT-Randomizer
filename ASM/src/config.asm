@@ -7,7 +7,7 @@
 COSMETIC_CONTEXT:
 
 COSMETIC_FORMAT_VERSION:
-.word 0x1F073FDA
+.word 0x1F073FDB
 CFG_MAGIC_COLOR:
 .halfword 0x0000, 0x00C8, 0x0000
 CFG_HEART_COLOR:
@@ -68,6 +68,13 @@ CFG_DPAD_DUNGEON_INFO_ENABLE:
 .byte 0x01
 GET_ITEM_SEQ_ID:
 .word 0x00
+CFG_DPAD_ACTIONS:
+.byte 0x01 ; adult D-down: DPAD_ACTION_OCARINA
+.byte 0x04 ; adult D-right: DPAD_ACTION_HOVER_BOOTS
+.byte 0x03 ; adult D-left: DPAD_ACTION_IRON_BOOTS
+.byte 0x01 ; child D-down: DPAD_ACTION_OCARINA
+.byte 0x02 ; child D-right: DPAD_ACTION_CHILD_TRADE
+.byte 0x00 ; child D-left: DPAD_ACTION_NONE
 
 
 CFG_SHOW_SETTING_INFO:
@@ -162,9 +169,6 @@ PLANDOMIZER_USED:
 .byte 0x00
 POTCRATE_TEXTURES_MATCH_CONTENTS:
 .byte 0x00
-.area 6, 0x00
-CFG_DPAD_ACTIONS:
-.endarea
 .align 4
 
 ; These configuration values are given fixed addresses to aid auto-trackers.

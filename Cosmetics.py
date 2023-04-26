@@ -14,6 +14,15 @@ from itertools import chain
 import os
 
 
+# must match dpad_action_t in dpad.h
+DPAD_ACTIONS = [
+    'DPAD_ACTION_NONE',
+    'DPAD_ACTION_OCARINA',
+    'DPAD_ACTION_CHILD_TRADE',
+    'DPAD_ACTION_IRON_BOOTS',
+    'DPAD_ACTION_HOVER_BOOTS',
+]
+
 def patch_targeting(rom, settings, log, symbols):
     # Set default targeting option to Hold
     if settings.default_targeting == 'hold':
@@ -38,6 +47,18 @@ def patch_dpad_info(rom, settings, log, symbols):
     else:
         rom.write_byte(symbols['CFG_DPAD_DUNGEON_INFO_ENABLE'], 0x00)
     log.dpad_dungeon_menu = settings.dpad_dungeon_menu
+
+
+def patch_dpad_config(rom, settings, log, symbols):
+    # configure actions bound to D-pad buttons
+    rom.write_bytes(symbols['CFG_DPAD_ACTIONS'], [
+        DPAD_ACTIONS.index(settings.dpad_adult_down),
+        DPAD_ACTIONS.index(settings.dpad_adult_right),
+        DPAD_ACTIONS.index(settings.dpad_adult_left),
+        DPAD_ACTIONS.index(settings.dpad_child_down),
+        DPAD_ACTIONS.index(settings.dpad_child_right),
+        DPAD_ACTIONS.index(settings.dpad_child_left),
+    ])
 
 
 def patch_music(rom, settings, log, symbols):
@@ -1025,6 +1046,17 @@ patch_sets[0x1F073FDA] = {
     "symbols": {
         **patch_sets[0x1F073FD9]["symbols"],
         "GET_ITEM_SEQ_ID": 0x0056,
+    }
+}
+
+# unmerged
+patch_sets[0x1F073FDB] = {
+    "patches": patch_sets[0x1F073FDA]["patches"] + [
+        patch_dpad_config,
+    ],
+    "symbols": {
+        **patch_sets[0x1F073FDA]["symbols"],
+        "CFG_DPAD_ACTIONS": 0x005A,
     }
 }
 

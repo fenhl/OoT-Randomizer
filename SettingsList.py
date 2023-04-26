@@ -5204,6 +5204,108 @@ setting_infos = [
         }
     ),
     Combobox(
+        name           = 'dpad_child_left',
+        gui_text       = 'D-Pad Left as Child',
+        shared         = False,
+        cosmetic       = True,
+        choices        = {
+            'DPAD_ACTION_NONE':        "Nothing",
+            'DPAD_ACTION_OCARINA':     "Ocarina",
+            'DPAD_ACTION_CHILD_TRADE': "Child Trade Item",
+        },
+        default        = 'DPAD_ACTION_NONE',
+        gui_tooltip    = '''\
+            Change what pressing left on the D-Pad does as child Link.
+        ''',
+        gui_params     = {
+            'no_line_break' : True,
+        },
+    ),
+    Combobox(
+        name           = 'dpad_adult_left',
+        gui_text       = 'Adult',
+        shared         = False,
+        cosmetic       = True,
+        choices        = {
+            'DPAD_ACTION_NONE':        "Nothing",
+            'DPAD_ACTION_OCARINA':     "Ocarina",
+            'DPAD_ACTION_IRON_BOOTS':  "Iron Boots",
+            'DPAD_ACTION_HOVER_BOOTS': "Hover Boots",
+        },
+        default        = 'DPAD_ACTION_IRON_BOOTS',
+        gui_tooltip    = '''\
+            Change what pressing left on the D-Pad does as adult Link.
+        ''',
+    ),
+    Combobox(
+        name           = 'dpad_child_down',
+        gui_text       = 'D-Pad Down as Child',
+        shared         = False,
+        cosmetic       = True,
+        choices        = {
+            'DPAD_ACTION_NONE':        "Nothing",
+            'DPAD_ACTION_OCARINA':     "Ocarina",
+            'DPAD_ACTION_CHILD_TRADE': "Child Trade Item",
+        },
+        default        = 'DPAD_ACTION_OCARINA',
+        gui_tooltip    = '''\
+            Change what pressing down on the D-Pad does as child Link.
+        ''',
+        gui_params     = {
+            'no_line_break' : True,
+        },
+    ),
+    Combobox(
+        name           = 'dpad_adult_down',
+        gui_text       = 'Adult',
+        shared         = False,
+        cosmetic       = True,
+        choices        = {
+            'DPAD_ACTION_NONE':        "Nothing",
+            'DPAD_ACTION_OCARINA':     "Ocarina",
+            'DPAD_ACTION_IRON_BOOTS':  "Iron Boots",
+            'DPAD_ACTION_HOVER_BOOTS': "Hover Boots",
+        },
+        default        = 'DPAD_ACTION_OCARINA',
+        gui_tooltip    = '''\
+            Change what pressing down on the D-Pad does as adult Link.
+        ''',
+    ),
+    Combobox(
+        name           = 'dpad_child_right',
+        gui_text       = 'D-Pad Right as Child',
+        shared         = False,
+        cosmetic       = True,
+        choices        = {
+            'DPAD_ACTION_NONE':        "Nothing",
+            'DPAD_ACTION_OCARINA':     "Ocarina",
+            'DPAD_ACTION_CHILD_TRADE': "Child Trade Item",
+        },
+        default        = 'DPAD_ACTION_CHILD_TRADE',
+        gui_tooltip    = '''\
+            Change what pressing right on the D-Pad does as child Link.
+        ''',
+        gui_params     = {
+            'no_line_break' : True,
+        },
+    ),
+    Combobox(
+        name           = 'dpad_adult_right',
+        gui_text       = 'Adult',
+        shared         = False,
+        cosmetic       = True,
+        choices        = {
+            'DPAD_ACTION_NONE':        "Nothing",
+            'DPAD_ACTION_OCARINA':     "Ocarina",
+            'DPAD_ACTION_IRON_BOOTS':  "Iron Boots",
+            'DPAD_ACTION_HOVER_BOOTS': "Hover Boots",
+        },
+        default        = 'DPAD_ACTION_HOVER_BOOTS',
+        gui_tooltip    = '''\
+            Change what pressing right on the D-Pad does as adult Link.
+        ''',
+    ),
+    Combobox(
         name           = 'model_adult',
         gui_text       = 'Adult Link Model',
         shared         = False,

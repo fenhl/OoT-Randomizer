@@ -4,6 +4,7 @@
 #include "dungeon_info.h"
 #include "z64.h"
 
+// must match DPAD_ACTIONS in Cosmetics.py
 typedef enum {
     DPAD_ACTION_NONE,
     DPAD_ACTION_OCARINA,
