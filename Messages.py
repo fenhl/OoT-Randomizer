@@ -535,7 +535,7 @@ def encode_text_string(text):
     return result
 
 
-def parse_control_codes(text):
+def parse_control_codes(text, language):
     if isinstance(text, list):
         bytes = text
     elif isinstance(text, bytearray):
@@ -543,21 +543,24 @@ def parse_control_codes(text):
     else:
         bytes = encode_text_string(text)
 
-    text_codes = []
-    index = 0
-    while index < len(bytes):
-        next_char = bytes[index]
-        data = 0
-        index += 1
-        if next_char in CONTROL_CODES:
-            extra_bytes = CONTROL_CODES[next_char][1]
-            if extra_bytes > 0:
-                data = bytes_to_int(bytes[index : index + extra_bytes])
-                index += extra_bytes
-        text_code = Text_Code(next_char, data)
-        text_codes.append(text_code)
-        if text_code.code == 0x02:  # message end code
-            break
+    if language == 'japanese':
+        raise NotImplementedError() #TODO
+    else:
+        text_codes = []
+        index = 0
+        while index < len(bytes):
+            next_char = bytes[index]
+            data = 0
+            index += 1
+            if next_char in CONTROL_CODES:
+                extra_bytes = CONTROL_CODES[next_char][1]
+                if extra_bytes > 0:
+                    data = bytes_to_int(bytes[index : index + extra_bytes])
+                    index += extra_bytes
+            text_code = Text_Code(next_char, data)
+            text_codes.append(text_code)
+            if text_code.code == 0x02:  # message end code
+                break
 
     return text_codes
 
@@ -666,8 +669,8 @@ class Message:
                 return False
         return True
 
-    def parse_text(self):
-        self.text_codes = parse_control_codes(self.raw_text)
+    def parse_text(self, raw_text, language):
+        self.text_codes = parse_control_codes(raw_text, language)
 
         index = 0
         for text_code in self.text_codes:
@@ -709,6 +712,12 @@ class Message:
         size = (size + 3) & -4 # align to nearest 4 bytes
 
         return size
+
+    def replace(self, find, replace, language='english'):
+        for start_idx in range(len(self.text_codes) - len(find) + 1):
+            if all(self.text_codes[start_idx + i] == c for i, c in enumerate(find)):
+                self.text_codes[start_idx:start_idx + len(find)] = parse_control_codes(replace, language)
+                break
 
     # applies whatever transformations we want to the dialogs
     def transform(self, replace_ending=False, ending=None, always_allow_skip=True, speed_up_text=True):
@@ -783,9 +792,7 @@ class Message:
         return offset
 
 
-    def __init__(self, raw_text, index, id, opts, offset, length):
-        self.raw_text = raw_text
-
+    def __init__(self, raw_text, index, id, opts, offset, length, language='english'):
         self.index = index
         self.id = id
         self.opts = opts  # Textbox type and y position
@@ -803,7 +810,7 @@ class Message:
         self.has_three_choice = False
         self.ending = None
 
-        self.parse_text()
+        self.parse_text(raw_text, language)
 
     # read a single message from rom
     @classmethod
@@ -820,7 +827,7 @@ class Message:
             table_start = PAL_ENG_TABLE_START
             offset_table_start = GERMAN_TABLE_START
             text_start = GERMAN_TEXT_START
-        elif language == 'japanese': # only supports the fffc message currently, no support for decoding MacJapanese
+        elif language == 'japanese':
             table_start = JPN_TABLE_START
             offset_table_start = None
             text_start = JPN_TEXT_START
@@ -838,17 +845,11 @@ class Message:
 
         raw_text = rom.read_bytes(text_start + offset, length)
 
-        return cls(raw_text, index, id, opts, offset, length)
+        return cls(raw_text, index, id, opts, offset, length, language)
 
     @classmethod
     def from_string(cls, text, id=0, opts=0x00):
         bytes = text + "\x02"
-        return cls(bytes, 0, id, opts, 0, len(bytes) + 1)
-
-    @classmethod
-    def from_bytearray(cls, bytearray, id=0, opts=0x00):
-        bytes = list(bytearray) + [0x02]
-
         return cls(bytes, 0, id, opts, 0, len(bytes) + 1)
 
     __str__ = __repr__ = display
@@ -879,7 +880,7 @@ def update_message_by_index(messages, index, text, opts=None):
         opts = messages[index].opts
 
     if isinstance(text, bytearray):
-        messages[index] = Message.from_bytearray(text, messages[index].id, opts)
+        raise TypeError('Constructing a message from a bytearray is no longer supported due to the ambiguity between Japanese and international encodings')
     else:
         messages[index] = Message.from_string(text, messages[index].id, opts)
     messages[index].index = index
@@ -887,7 +888,7 @@ def update_message_by_index(messages, index, text, opts=None):
 # wrapper for adding a string message to a list of messages
 def add_message(messages, text, id=0, opts=0x00):
     if isinstance(text, bytearray):
-        messages.append( Message.from_bytearray(text, id, opts) )
+        raise TypeError('Constructing a message from a bytearray is no longer supported due to the ambiguity between Japanese and international encodings')
     else:
         messages.append( Message.from_string(text, id, opts) )
     messages[-1].index = len(messages) - 1
@@ -1086,6 +1087,12 @@ def read_messages(rom, fffc_rom, language='english'):
         if not rom.pal:
             raise ValueError('French or German text must be read from the PAL rom')
         table_offset = PAL_ENG_TABLE_START
+    elif language == 'japanese':
+        if rom.pal:
+            raise ValueError('Japanese text must be read from the NTSC rom')
+        table_offset = JPN_TABLE_START
+    else:
+        raise NotImplementedError(f'Unimplemented language: {language}')
     index = 0
     messages = []
     while True:

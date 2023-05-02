@@ -272,8 +272,8 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom):
     rom.write_int32s(0x14B9CB8, [0x00000000, 0x00000000, 0x00000000, 0x00000000]) # Boss Key (Key)
     rom.write_int32s(0x14B9F20, [0x00000000, 0x00000000, 0x00000000, 0x00000000]) # Boss Key (Gem)
 
-    # Force language to be English in the event a Japanese rom was submitted
-    rom.write_byte(0x3E, 0x45)
+    # Ensure the rom language is appropriate for the setting regardless of whether an English or Japanese rom was submitted
+    rom.write_byte(0x3E, 0x4A if world.settings.language == 'japanese' else 0x45)
     rom.force_patch.append(0x3E)
 
     # Increase the instance size of Bombchus prevent the heap from becoming corrupt when
@@ -2134,13 +2134,13 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom):
     def update_scrub_text(message, text_replacement, default_price, price, item_name=None):
         scrub_strip_text = ["some ", "1 piece   ", "5 pieces   ", "30 pieces   "]
         for text in scrub_strip_text:
-            message = message.replace(text.encode(), b'')
-        message = message.replace(text_replacement[0].encode(), text_replacement[1].encode())
-        message = message.replace(b'they are', b'it is')
+            message.replace(text, '')
+        message.replace(text_replacement[0], text_replacement[1])
+        message.replace('they are', 'it is')
         if default_price != price:
-            message = message.replace(('%d Rupees' % default_price).encode(), ('%d Rupees' % price).encode())
+            message.replace(f'{default_price} Rupees', f'{price} Rupees')
         if item_name is not None:
-            message = message.replace(b'mysterious item', item_name.encode())
+            message.replace('mysterious item', item_name)
         return message
 
     single_item_scrubs = {
@@ -2165,7 +2165,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom):
         for (scrub_item, default_price, text_id, text_replacement) in business_scrubs:
             if scrub_item not in single_item_scrubs.keys():
                 continue
-            scrub_message_dict[text_id] = update_scrub_text(get_message_by_id(messages, text_id).raw_text, text_replacement, default_price, default_price)
+            scrub_message_dict[text_id] = update_scrub_text(get_message_by_id(messages, text_id), text_replacement, default_price, default_price)
     else:
         # Rebuild Business Scrub Item Table
         rom.seek_address(0xDF8684)
@@ -2177,7 +2177,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom):
             rom.write_int32(None, 0x80A74FF8)  # Can_Buy_Func
             rom.write_int32(None, 0x80A75354)  # Buy_Func
 
-            scrub_message_dict[text_id] = update_scrub_text(get_message_by_id(messages, text_id).raw_text, text_replacement, default_price, price)
+            scrub_message_dict[text_id] = update_scrub_text(get_message_by_id(messages, text_id), text_replacement, default_price, price)
 
         # update actor IDs
         set_deku_salesman_data(rom)

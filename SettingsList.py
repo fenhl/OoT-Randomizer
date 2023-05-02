@@ -1965,9 +1965,10 @@ setting_infos = [
         gui_text       = 'Language',
         default        = 'english',
         choices        = {
-            'english': 'English',
-            'french':  'Français',
-            'german':  'Deutsch',
+            'english':  'English',
+            'french':   'Français',
+            'german':   'Deutsch',
+            'japanese': '日本語',
         },
         gui_tooltip    = '''\
             Changes the language for text in the game.
@@ -2004,6 +2005,7 @@ setting_infos = [
         ''',
         disable        = {
             'english': {'settings': ['pal_rom']},
+            'japanese': {'settings': ['pal_rom']},
         },
         shared         = True,
     ),
