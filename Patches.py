@@ -14,10 +14,11 @@ from HintList import getHint
 from Hints import HintArea, writeGossipStoneHints, buildAltarHints, \
         buildGanonText, buildMiscItemHints, buildMiscLocationHints, getSimpleHintNoPrefix, getItemGenericName
 from Utils import data_path
-from Messages import read_messages, update_message_by_id, read_shop_items, update_warp_song_text, \
-        write_shop_items, remove_unused_messages, make_player_message, \
-        add_item_messages, repack_messages, shuffle_messages, \
-        get_message_by_id, Text_Code
+from Messages import read_shop_items, update_warp_song_text, \
+        write_shop_items, make_player_message, add_item_messages, shuffle_messages, get_message_by_id, Text_Code
+from NewText import BOX_BREAK, COLOR, HIGH_SCORE, \
+    Language, NewText, \
+    remove_unused_messages, repack_messages, update_message_by_id
 from OcarinaSongs import replace_songs
 from MQ import patch_files, File, update_dmadata, insert_space, add_relocations
 from SaveContext import SaveContext, Scenes, FlagType
@@ -146,8 +147,8 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
     rom.write_int32s(0x14B9CB8, [0x00000000, 0x00000000, 0x00000000, 0x00000000]) # Boss Key (Key)
     rom.write_int32s(0x14B9F20, [0x00000000, 0x00000000, 0x00000000, 0x00000000]) # Boss Key (Gem)
 
-    # Force language to be English in the event a Japanese rom was submitted
-    rom.write_byte(0x3E, 0x45)
+    # Ensure the rom language is appropriate for the setting regardless of whether an English or Japanese rom was submitted
+    rom.write_byte(0x3E, 0x4A if world.language == Language.JAPANESE else 0x45)
     rom.force_patch.append(0x3E)
 
     # Increase the instance size of Bombchus prevent the heap from becoming corrupt when
@@ -1622,25 +1623,32 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
     ])
 
     # Load Message and Shop Data
-    messages = read_messages(rom)
-    remove_unused_messages(messages)
+    english_messages = Language.ENGLISH.read_messages(rom, rom)
+    if world.language in (Language.ENGLISH, Language.JAPANESE):
+        local_messages = world.language.read_messages(rom, rom)
+    elif world.language in (Language.FRENCH, Language.GERMAN):
+        pal_rom = Rom(world.settings.pal_rom, pal=True)
+        local_messages = world.language.read_messages(pal_rom, rom)
+    else:
+        raise NotImplementedError(f'Unimplemented language: {world.language}')
+    remove_unused_messages(local_messages)
     shop_items = read_shop_items(rom, shop_item_file.start + 0x1DEC)
 
     # Set Big Poe count to get reward from buyer
     poe_points = world.settings.big_poe_count * 100
     rom.write_int16(0xEE69CE, poe_points)
     # update dialogue
-    new_message = "\x08Hey, young man. What's happening \x01today? If you have a \x05\x41Poe\x05\x40, I will \x01buy it.\x04\x1AIf you earn \x05\x41%d points\x05\x40, you'll\x01be a happy man! Heh heh.\x04\x08Your card now has \x05\x45\x1E\x01 \x05\x40points.\x01Come back again!\x01Heh heh heh!\x02" % poe_points
-    update_message_by_id(messages, 0x70F5, new_message)
+    new_message = NewText(f"Hey, young man. What's happening today? If you have a {COLOR('Red')}Poe{COLOR('White')}, I will buy it.{BOX_BREAK}If you earn {COLOR('Red')}{poe_points} points{COLOR('White')}, you'll be a happy man! Heh heh.{BOX_BREAK}Your card now has {COLOR('Pink')}{HIGH_SCORE(0x01)} {COLOR('White')}points.\nCome back again!\nHeh heh heh!")
+    update_message_by_id(local_messages, 0x70F5, new_message)
     if world.settings.big_poe_count != 10:
-        new_message = "\x1AOh, you brought a Poe today!\x04\x1AHmmmm!\x04\x1AVery interesting!\x01This is a \x05\x41Big Poe\x05\x40!\x04\x1AI'll buy it for \x05\x4150 Rupees\x05\x40.\x04On top of that, I'll put \x05\x41100\x01points \x05\x40on your card.\x04\x1AIf you earn \x05\x41%d points\x05\x40, you'll\x01be a happy man! Heh heh." % poe_points
-        update_message_by_id(messages, 0x70f7, new_message)
-        new_message = "\x1AWait a minute! WOW!\x04\x1AYou have earned \x05\x41%d points\x05\x40!\x04\x1AYoung man, you are a genuine\x01\x05\x41Ghost Hunter\x05\x40!\x04\x1AIs that what you expected me to\x01say? Heh heh heh!\x04\x1ABecause of you, I have extra\x01inventory of \x05\x41Big Poes\x05\x40, so this will\x01be the last time I can buy a \x01ghost.\x04\x1AYou're thinking about what I \x01promised would happen when you\x01earned %d points. Heh heh.\x04\x1ADon't worry, I didn't forget.\x01Just take this." % (poe_points, poe_points)
-        update_message_by_id(messages, 0x70f8, new_message)
+        new_message = NewText(f"Oh, you brought a Poe today!{BOX_BREAK}Hmmmm!{BOX_BREAK}Very interesting!\nThis is a {COLOR('Red')}Big Poe{COLOR('White')}!{BOX_BREAK}I'll buy it for {COLOR('Red')}50 Rupees{COLOR('White')}.{BOX_BREAK}On top of that, I'll put {COLOR('Red')}100 points {COLOR('White')}on your card.{BOX_BREAK}If you earn {COLOR('Red')}{poe_points} points{COLOR('White')}, you'll be a happy man! Heh heh.")
+        update_message_by_id(local_messages, 0x70f7, new_message)
+        new_message = NewText(f"Wait a minute! WOW!{BOX_BREAK}You have earned {COLOR('Red')}{poe_points} points{COLOR('White')}!{BOX_BREAK}Young man, you are a genuine {COLOR('Red')}Ghost Hunter{COLOR('White')}!{BOX_BREAK}Is that what you expected me to say? Heh heh heh!{BOX_BREAK}Because of you, I have extra inventory of {COLOR('Red')}Big Poes{COLOR('White')}, so this will be the last time I can buy a ghost.{BOX_BREAK}You're thinking about what I promised would happen when you earned {poe_points} points. Heh heh.{BOX_BREAK}Don't worry, I didn't forget.\nJust take this.")
+        update_message_by_id(local_messages, 0x70f8, new_message)
 
     # Update Child Anju's dialogue
-    new_message = "\x08What should I do!?\x01My \x05\x41Cuccos\x05\x40 have all flown away!\x04You, little boy, please!\x01Please gather at least \x05\x41%d Cuccos\x05\x40\x01for me.\x02" % world.settings.chicken_count
-    update_message_by_id(messages, 0x5036, new_message)
+    new_message = NewText(f"What should I do!?\nMy {COLOR('Red')}Cuccos{COLOR('White')} have all flown away!{BOX_BREAK}You, little boy, please!\nPlease gather at least {COLOR('Red')}{world.settings.chicken_count} Cuccos{COLOR('White')} for me.")
+    update_message_by_id(local_messages, 0x5036, new_message)
 
     # Find an item location behind the Jabu boss door by searching regions breadth-first without going back into Jabu proper
     if world.settings.logic_rules == 'glitched':
@@ -1686,19 +1694,19 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
         new_message = f"\x08Princess Ruto got \x01\x05\x43nothing\x05\x40!\x01Well, that's disappointing...\x02"
     else:
         reward_texts = {
-            'Kokiri Emerald':   "the \x05\x42Kokiri Emerald\x05\x40",
-            'Goron Ruby':       "the \x05\x41Goron Ruby\x05\x40",
-            'Zora Sapphire':    "the \x05\x43Zora Sapphire\x05\x40",
-            'Forest Medallion': "the \x05\x42Forest Medallion\x05\x40",
-            'Fire Medallion':   "the \x05\x41Fire Medallion\x05\x40",
-            'Water Medallion':  "the \x05\x43Water Medallion\x05\x40",
-            'Spirit Medallion': "the \x05\x46Spirit Medallion\x05\x40",
-            'Shadow Medallion': "the \x05\x45Shadow Medallion\x05\x40",
-            'Light Medallion':  "the \x05\x44Light Medallion\x05\x40",
+            'Kokiri Emerald':   NewText(f"the {COLOR('Green')}Kokiri Emerald{COLOR('White')}"),
+            'Goron Ruby':       NewText(f"the {COLOR('Red')}Goron Ruby{COLOR('White')}"),
+            'Zora Sapphire':    NewText(f"the {COLOR('Blue')}Zora Sapphire{COLOR('White')}"),
+            'Forest Medallion': NewText(f"the {COLOR('Green')}Forest Medallion{COLOR('White')}"),
+            'Fire Medallion':   NewText(f"the {COLOR('Red')}Fire Medallion{COLOR('White')}"),
+            'Water Medallion':  NewText(f"the {COLOR('Blue')}Water Medallion{COLOR('White')}"),
+            'Spirit Medallion': NewText(f"the {COLOR('Yellow')}Spirit Medallion{COLOR('White')}"),
+            'Shadow Medallion': NewText(f"the {COLOR('Pink')}Shadow Medallion{COLOR('White')}"),
+            'Light Medallion':  NewText(f"the {COLOR('Light Blue')}Light Medallion{COLOR('White')}"),
         }
-        reward_text = reward_texts.get(location.item.name, f'\x05\x43{reward_text}\x05\x40')
-        new_message = f"\x08Princess Ruto got \x01{reward_text}!\x01But why Princess Ruto?\x02"
-    update_message_by_id(messages, 0x4050, new_message)
+        reward_text = reward_texts.get(location.item.name, NewText(f"{COLOR('Blue')}{reward_text}{COLOR('White')}"))
+        new_message = NewText(f"Princess Ruto got\n{reward_text}!\nBut why Princess Ruto?")
+    update_message_by_id(local_messages, 0x4050, new_message)
 
     # Set Dungeon Reward Actor in Jabu Jabu to be accurate
     # Vanilla and MQ Jabu Jabu addresses are the same for this object and actor
@@ -1740,7 +1748,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
     if world.settings.hints == 'none':
         rom.write_int32(symbol, 0)
     else:
-        writeGossipStoneHints(spoiler, world, messages)
+        writeGossipStoneHints(spoiler, world, local_messages)
 
         if world.settings.hints == 'mask':
             rom.write_int32(symbol, 0)
@@ -2346,16 +2354,7 @@ def patch_rom(spoiler:Spoiler, world:World, rom:Rom):
             bfa_name_bytes = stream.read()
             rom.write_bytes(0x8a1c00, bfa_name_bytes)
 
-
     repack_messages(rom, messages, permutation)
-
-    # output a text dump, for testing...
-    #with open('keysanity_' + str(world.settings.seed) + '_dump.txt', 'w', encoding='utf-16') as f:
-    #     messages = read_messages(rom)
-    #     f.write('item_message_strings = {\n')
-    #     for m in messages:
-    #        f.write("\t0x%04X: \"%s\",\n" % (m.id, m.get_python_string()))
-    #     f.write('}\n')
 
     if world.settings.free_scarecrow:
         # Played song as adult

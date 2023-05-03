@@ -10,7 +10,7 @@ import itertools
 
 from HintList import getHint, getMulti, getHintGroup, getUpgradeHintList, hintExclusions, misc_item_hint_table, misc_location_hint_table
 from Item import Item, MakeEventItem
-from Messages import COLOR_MAP, update_message_by_id
+from NewText import COLOR, COLOR_PLACEHOLDERS, NewText, update_message_by_id
 from Region import Region
 from Search import Search
 from TextBox import line_wrap
@@ -58,7 +58,9 @@ class GossipStone():
 
 
 class GossipText():
-    def __init__(self, text, colors=None, hinted_locations=None, hinted_items=None, prefix="They say that "):
+    def __init__(self, text, colors=None, hinted_locations=None, hinted_items=None, prefix=NewText("They say that ")):
+        if not isinstance(text, NewText):
+            raise TypeError()
         text = prefix + text
         text = text[:1].upper() + text[1:]
         self.text = text
@@ -71,8 +73,16 @@ class GossipText():
         return {'text': self.text, 'colors': self.colors, 'hinted_locations': self.hinted_locations, 'hinted_items': self.hinted_items}
 
 
+    def to_text(self):
+        text = self.text
+        for placeholder, color in zip(COLOR_PLACEHOLDERS, self.colors or []):
+            text = text.replace(placeholder, COLOR(color)) #TODO adjust start of colored segment for hintPrefixes
+        return text
+
+
     def __str__(self):
-        return get_raw_text(line_wrap(colorText(self)))
+        raise NotImplementedError()
+
 
 #   Abbreviations
 #       DMC     Death Mountain Crater
@@ -89,7 +99,6 @@ class GossipText():
 #       ZD      Zora's Domain
 #       ZF      Zora's Fountain
 #       ZR      Zora's River
-
 gossipLocations = {
     0x0405: GossipStone('DMC (Bombable Wall)',              'DMC Gossip Stone'),
     0x0404: GossipStone('DMT (Biggoron)',                   'DMT Gossip Stone'),
@@ -258,7 +267,7 @@ def can_reach_hint(worlds, hint_location, location):
 
 def writeGossipStoneHints(spoiler, world, messages):
     for id, gossip_text in spoiler.hints[world.id].items():
-        update_message_by_id(messages, id, str(gossip_text), 0x23)
+        update_message_by_id(messages, id, gossip_text.to_text(), 0x23)
 
 
 def filterTrailingSpace(text):
@@ -288,28 +297,6 @@ def getSimpleHintNoPrefix(item):
 
     # no prefex
     return hint
-
-
-def colorText(gossip_text):
-    text = gossip_text.text
-    colors = list(gossip_text.colors) if gossip_text.colors is not None else []
-    color = 'White'
-
-    while '#' in text:
-        splitText = text.split('#', 2)
-        if len(colors) > 0:
-            color = colors.pop(0)
-
-        for prefix in hintPrefixes:
-            if splitText[1].startswith(prefix):
-                splitText[0] += splitText[1][:len(prefix)]
-                splitText[1] = splitText[1][len(prefix):]
-                break
-
-        splitText[1] = '\x05' + COLOR_MAP[color] + splitText[1] + '\x05\x40'
-        text = ''.join(splitText)
-
-    return text
 
 
 class HintAreaNotFound(RuntimeError):
@@ -1574,13 +1561,13 @@ def buildBossString(reward, color, world):
     item_icon = chr(Item(reward).special['item_id'])
     if reward in world.distribution.effective_starting_items and world.distribution.effective_starting_items[reward].count > 0:
         if world.settings.clearer_hints:
-            text = GossipText(f"\x08\x13{item_icon}One #@ already has#...", [color], prefix='')
+            text = GossipText(f"\x08\x13{item_icon}One #@ already has#...", [color], prefix='') #TODO this is not a gossip stone, don't use GossipText
         else:
-            text = GossipText(f"\x08\x13{item_icon}One in #@'s pocket#...", [color], prefix='')
+            text = GossipText(f"\x08\x13{item_icon}One in #@'s pocket#...", [color], prefix='') #TODO this is not a gossip stone, don't use GossipText
     else:
         location = world.hinted_dungeon_reward_locations[reward]
         location_text = HintArea.at(location).text(world.settings.clearer_hints, preposition=True)
-        text = GossipText(f"\x08\x13{item_icon}One {location_text}...", [color], prefix='')
+        text = GossipText(f"\x08\x13{item_icon}One {location_text}...", [color], prefix='') #TODO this is not a gossip stone, don't use GossipText
     return str(text) + '\x04'
 
 
@@ -1603,7 +1590,7 @@ def buildBridgeReqsString(world):
         if '#' not in item_req_string:
             item_req_string = '#%s#' % item_req_string
         string += "The awakened ones will await for the Hero to collect %s." % item_req_string
-    return str(GossipText(string, ['Green'], prefix=''))
+    return str(GossipText(string, ['Green'], prefix='')) #TODO this is not a gossip stone, don't use GossipText
 
 
 def buildGanonBossKeyString(world):
@@ -1644,7 +1631,7 @@ def buildGanonBossKeyString(world):
         else:
             bk_location_string = getHint('ganonBK_' + world.settings.shuffle_ganon_bosskey, world.settings.clearer_hints).text
         string += "And the \x05\x41evil one\x05\x40's key will be %s." % bk_location_string
-    return str(GossipText(string, ['Yellow'], prefix=''))
+    return str(GossipText(string, ['Yellow'], prefix='')) #TODO this is not a gossip stone, don't use GossipText
 
 
 # fun new lines for Ganon during the final battle
@@ -1691,7 +1678,7 @@ def buildMiscItemHints(world, messages):
             for find, replace in data.get('replace', {}).items():
                 text = text.replace(find, replace)
 
-            update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')))
+            update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix=''))) #TODO this is not a gossip stone, don't use GossipText
 
 
 def buildMiscLocationHints(world, messages):
@@ -1703,7 +1690,7 @@ def buildMiscLocationHints(world, messages):
                 item = world.misc_hint_location_items[hint_type]
                 text = data['location_text'].format(item=getHint(getItemGenericName(item), world.settings.clearer_hints).text)
 
-        update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), 0x23)
+        update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), 0x23) #TODO this is not a gossip stone, don't use GossipText
 
 
 def get_raw_text(string):

@@ -2,6 +2,7 @@
 
 import random
 from HintList import misc_item_hint_table, misc_location_hint_table
+from NewText import bytes_to_int
 from TextBox import line_wrap
 from Utils import find_last
 
@@ -322,16 +323,6 @@ for dungeon_name, max_keys in (
     KEYSANITY_MESSAGES[i] = f"\x13\x77\x08You found a \x05\x41Small Key\x05\x40\x01for {dungeon_name}!\x01You already have enough keys.\x09"
     i += 1
 
-COLOR_MAP = {
-    'White':      '\x40',
-    'Red':        '\x41',
-    'Green':      '\x42',
-    'Blue':       '\x43',
-    'Light Blue': '\x44',
-    'Pink':       '\x45',
-    'Yellow':     '\x46',
-    'Black':      '\x47',
-}
 
 MISC_MESSAGES = {
     0x507B: (bytearray(
@@ -356,16 +347,6 @@ MISC_MESSAGES = {
     0x045A: ("\x12\x68\x7AMweep\x07\x04\x5B", 0x23),
     0x045B: ("\x12\x68\x7AMweep", 0x23)
 }
-
-
-# convert byte array to an integer
-def bytes_to_int(bytes, signed=False):
-    return int.from_bytes(bytes, byteorder='big', signed=signed)
-
-
-# convert int to an array of bytes of the given width
-def int_to_bytes(num, width, signed=False):
-    return int.to_bytes(num, width, byteorder='big', signed=signed)
 
 
 def display_code_list(codes):
@@ -513,20 +494,6 @@ class Message:
             ret = ret + code.get_python_string()
         return ret
 
-    # check if this is an unused message that just contains it's own id as text
-    def is_id_message(self):
-        if self.unpadded_length != 5 or self.id == 0xFFFC:
-            return False
-        for i in range(4):
-            code = self.text_codes[i].code
-            if not (
-                    code in range(ord('0'), ord('9')+1)
-                    or code in range(ord('A'), ord('F')+1)
-                    or code in range(ord('a'), ord('f')+1)
-            ):
-                return False
-        return True
-
     def parse_text(self):
         self.text_codes = parse_control_codes(self.raw_text)
 
@@ -666,51 +633,6 @@ class Message:
 
         self.parse_text()
 
-    # read a single message from rom
-    @classmethod
-    def from_rom(cls, rom, index, eng=True):
-        if eng:
-            table_start = ENG_TABLE_START
-            text_start = ENG_TEXT_START
-        else:
-            table_start = JPN_TABLE_START
-            text_start = JPN_TEXT_START
-        entry_offset = table_start + 8 * index
-        entry = rom.read_bytes(entry_offset, 8)
-        next = rom.read_bytes(entry_offset + 8, 8)
-
-        id = bytes_to_int(entry[0:2])
-        opts = entry[2]
-        offset = bytes_to_int(entry[5:8])
-        length = bytes_to_int(next[5:8]) - offset
-
-        raw_text = rom.read_bytes(text_start + offset, length)
-
-        return cls(raw_text, index, id, opts, offset, length)
-
-    @classmethod
-    def from_string(cls, text, id=0, opts=0x00):
-        bytes = text + "\x02"
-        return cls(bytes, 0, id, opts, 0, len(bytes) + 1)
-
-    @classmethod
-    def from_bytearray(cls, bytearray, id=0, opts=0x00):
-        bytes = list(bytearray) + [0x02]
-
-        return cls(bytes, 0, id, opts, 0, len(bytes) + 1)
-
-    __str__ = __repr__ = display
-
-# wrapper for updating the text of a message, given its message id
-# if the id does not exist in the list, then it will add it
-def update_message_by_id(messages, id, text, opts=None):
-    # get the message index
-    index = next( (m.index for m in messages if m.id == id), -1)
-    # update if it was found
-    if index >= 0:
-        update_message_by_index(messages, index, text, opts)
-    else:
-        add_message(messages, text, id, opts)
 
 # Gets the message by its ID. Returns None if the index does not exist
 def get_message_by_id(messages, id):
@@ -721,28 +643,9 @@ def get_message_by_id(messages, id):
     else:
         return None
 
-# wrapper for updating the text of a message, given its index in the list
-def update_message_by_index(messages, index, text, opts=None):
-    if opts is None:
-        opts = messages[index].opts
-
-    if isinstance(text, bytearray):
-        messages[index] = Message.from_bytearray(text, messages[index].id, opts)
-    else:
-        messages[index] = Message.from_string(text, messages[index].id, opts)
-    messages[index].index = index
-
-# wrapper for adding a string message to a list of messages
-def add_message(messages, text, id=0, opts=0x00):
-    if isinstance(text, bytearray):
-        messages.append( Message.from_bytearray(text, id, opts) )
-    else:
-        messages.append( Message.from_string(text, id, opts) )
-    messages[-1].index = len(messages) - 1
 
 # holds a row in the shop item table (which contains pointers to the description and purchase messages)
 class Shop_Item():
-
     def display(self):
         meta_data = ["#" + str(self.index),
          "Item: 0x" + "{:04x}".format(self.get_item_id),
@@ -807,7 +710,7 @@ def read_shop_items(rom, shop_table_address):
     shop_items = []
 
     for index in range(0, 100):
-        shop_items.append( Shop_Item(rom, shop_table_address, index) )
+        shop_items.append(Shop_Item(rom, shop_table_address, index))
 
     return shop_items
 
@@ -828,11 +731,6 @@ def get_shop_message_id_set(shop_items):
             ids.add(shop.purchase_message)
     return ids
 
-# remove all messages that easy to tell are unused to create space in the message index table
-def remove_unused_messages(messages):
-    messages[:] = [m for m in messages if not m.is_id_message()]
-    for index, m in enumerate(messages):
-        m.index = index
 
 # takes all messages used for shop items, and moves messages from the 00xx range into the unused 80xx range
 def move_shop_item_messages(messages, shop_items):
@@ -924,50 +822,6 @@ def add_item_messages(messages, shop_items, world):
     move_shop_item_messages(messages, shop_items)
     update_item_messages(messages, world)
 
-
-# reads each of the game's messages into a list of Message objects
-def read_messages(rom):
-    table_offset = ENG_TABLE_START
-    index = 0
-    messages = []
-    while True:
-        entry = rom.read_bytes(table_offset, 8)
-        id = bytes_to_int(entry[0:2])
-
-        if id == 0xFFFD:
-            table_offset += 8
-            continue # this is only here to give an ending offset
-        if id == 0xFFFF:
-            break # this marks the end of the table
-
-        messages.append( Message.from_rom(rom, index) )
-
-        index += 1
-        table_offset += 8
-
-    # Also grab 0xFFFC entry from JP table.
-    messages.append(read_fffc_message(rom))
-    return messages
-
-# The JP text table is the only source for ID 0xFFFC, which is used by the
-# title and file select screens. Preserve this table entry and text data when
-# overwriting the JP data. The regular read_messages function only reads English
-# data.
-def read_fffc_message(rom):
-    table_offset = JPN_TABLE_START
-    index = 0
-    while True:
-        entry = rom.read_bytes(table_offset, 8)
-        id = bytes_to_int(entry[0:2])
-
-        if id == 0xFFFC:
-            message = Message.from_rom(rom, index, eng=False)
-            break
-
-        index += 1
-        table_offset += 8
-
-    return message
 
 # write the messages back
 def repack_messages(rom, messages, permutation=None, always_allow_skip=True, speed_up_text=True):

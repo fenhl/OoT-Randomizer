@@ -12,6 +12,7 @@ from Item import ItemFactory, ItemInfo, MakeEventItem
 from ItemPool import child_trade_items
 from Location import Location, LocationFactory
 from LocationList import business_scrubs, location_groups
+from NewText import Language
 from Plandomizer import InvalidFileException
 from Region import Region, TimeOfDay
 from RuleParser import Rule_AST_Transformer
@@ -49,6 +50,8 @@ class World(object):
         self.distribution = settings.distribution.world_dists[id]
 
         # rename a few attributes...
+        self.language = Language[settings.language.upper()]
+
         self.keysanity = settings.shuffle_smallkeys in ['keysanity', 'remove', 'any_dungeon', 'overworld', 'regional']
         self.check_beatable_only = settings.reachable_locations != 'all'
 
