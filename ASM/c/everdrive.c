@@ -18,13 +18,18 @@
 #define USB_LE_CTR 0x4000
 
 #define USB_CFG_RD  0x0400
+#define USB_CFG_WR  0x0000
 #define USB_CFG_ACT 0x0200
 
 #define USB_STA_PWR 0x1000
 #define USB_STA_RXF 0x0400
+#define USB_STA_TXE 0x0800
 #define USB_STA_ACT 0x0200
 
-#define USB_CMD_RD (USB_LE_CFG | USB_LE_CTR | USB_CFG_RD | USB_CFG_ACT)
+#define USB_CMD_RD      (USB_LE_CFG | USB_LE_CTR | USB_CFG_RD | USB_CFG_ACT)
+#define USB_CMD_RD_NOP  (USB_LE_CFG | USB_LE_CTR | USB_CFG_RD)
+#define USB_CMD_WR      (USB_LE_CFG | USB_LE_CTR | USB_CFG_WR | USB_CFG_ACT)
+#define USB_CMD_WR_NOP  (USB_LE_CFG | USB_LE_CTR | USB_CFG_WR)
 
 static int      cart_irqf;
 static uint32_t cart_lat;
@@ -91,8 +96,41 @@ static void pio_read(uint32_t dev_addr, uint32_t ram_addr, size_t size) {
     }
 }
 
+static void pio_write(uint32_t dev_addr, uint32_t ram_addr, size_t size)
+{
+  if (size == 0)
+    return;
+
+  uint32_t dev_s = dev_addr & ~0x3;
+  uint32_t dev_e = (dev_addr + size + 0x3) & ~0x3;
+  uint32_t dev_p = dev_s;
+
+  uint32_t ram_s = ram_addr;
+  uint32_t ram_e = ram_s + size;
+  uint32_t ram_p = ram_addr - (dev_addr - dev_s);
+
+  while (dev_p < dev_e) {
+    uint32_t w = __pi_read_raw(dev_p);
+    for (int i = 0; i < 4; i++) {
+      uint8_t b;
+      if (ram_p >= ram_s && ram_p < ram_e)
+        b = *(uint8_t *)ram_p;
+      else
+        b = w >> 24;
+      w = (w << 8) | b;
+      ram_p++;
+    }
+    __pi_write_raw(dev_p, w);
+    dev_p += 4;
+  }
+}
+
 void pi_read_locked(uint32_t dev_addr, void *dst, size_t size) {
     pio_read(dev_addr, (uint32_t)dst, size);
+}
+
+void pi_write_locked(uint32_t dev_addr, void *dst, size_t size) {
+    pio_write(dev_addr, (uint32_t)dst, size);
 }
 
 static inline uint32_t reg_rd(int reg) {
@@ -169,7 +207,44 @@ bool everdrive_read(void *buf) {
                 return false; //TODO set buf to special error packet and return true?
             }
         }
-        pi_read_locked((uint32_t)&REGS_PTR[REG_USB_DAT], buf, len);
+        reg_wr(REG_USB_CFG, USB_CMD_RD_NOP);
+        pi_read_locked((uint32_t)&REGS_PTR[REG_USB_DAT] + (512 - len), buf, len);
+        cart_unlock();
+        return true;
+    }
+}
+
+bool everdrive_write(void *buf) {
+    cart_lock_safe();
+    uint32_t len = 16; // for simplicity, the protocol is designed so each packet size is the EverDrive's minimum of 16 bytes
+    uint32_t usb_cfg = reg_rd(REG_USB_CFG);
+    if (!(usb_cfg & USB_STA_PWR)) {
+        // cannot read or write (no USB device connected?)
+        cart_unlock();
+        return false;
+    }
+    if (usb_cfg & USB_STA_ACT) {
+        // currently busy reading or writing
+        cart_unlock();
+        return false;
+    }
+    if (usb_cfg & USB_STA_TXE) {
+        // no data waiting
+        cart_unlock();
+        return false;
+    } else {
+        // data waiting, start writing
+        reg_wr(REG_USB_CFG, USB_CMD_WR_NOP);
+        pi_write_locked((uint32_t)&REGS_PTR[REG_USB_DAT] + (512 - len), buf, len);
+        reg_wr(REG_USB_CFG, USB_CMD_WR | (512 - len));
+        uint16_t timeout = 0;
+        while (reg_rd(REG_USB_CFG) & USB_STA_ACT) {
+            // still reading
+            if (timeout++ == 8192) {
+                // timed out
+                return false; //TODO set buf to special error packet and return true?
+            }
+        }
         cart_unlock();
         return true;
     }

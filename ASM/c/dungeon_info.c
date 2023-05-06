@@ -448,7 +448,9 @@ void draw_dungeon_info(z64_disp_buf_t *db) {
             char top_text[16] = "EverDrive found";
             text_print(top_text, left, top);
             top += icon_size + padding;
-            everdrive_read(EVERDRIVE_READ_BUF);
+            if(everdrive_read(EVERDRIVE_READ_BUF)) {
+                everdrive_write("OoTR\0\0\0\0\0\0\0\0\0\0\0\0");
+            }
             char buf_line_1[24] = "OO OO OO OO OO OO OO OO";
             for (int i = 0; i < 8; i++) {
                 uint8_t hi = EVERDRIVE_READ_BUF[i] >> 4;
