@@ -4,8 +4,9 @@
         "dungeon": "Forest Temple",
         "locations": {
             "Forest Temple MQ First Room Chest": "
-                is_adult or Bombs or can_use(Sticks) or Nuts or can_use(Boomerang) or
-                can_use(Dins_Fire) or Kokiri_Sword or can_use(Slingshot)",
+                can_see_chests and
+                (is_adult or Bombs or can_use(Sticks) or Nuts or can_use(Boomerang) or
+                can_use(Dins_Fire) or Kokiri_Sword or can_use(Slingshot))",
             "Forest Temple MQ GS First Hallway": "can_use(Hookshot) or can_use(Boomerang)"
         },
         "exits": {
@@ -19,9 +20,10 @@
         "dungeon": "Forest Temple",
         "locations": {
             "Forest Temple MQ Wolfos Chest": "
-                (can_play(Song_of_Time) or is_child) and
+                can_see_chests and
+                ((can_play(Song_of_Time) or is_child) and
                 (is_adult or can_use(Dins_Fire) or
-                    can_use(Sticks) or can_use(Slingshot) or Kokiri_Sword)",
+                    can_use(Sticks) or can_use(Slingshot) or Kokiri_Sword))",
             "Forest Temple MQ GS Block Push Room": "is_adult or Kokiri_Sword",
             "Fairy Pot": "has_bottle and (can_play(Song_of_Time) or is_child)"
         },
@@ -42,7 +44,7 @@
         "region_name": "Forest Temple After Block Puzzle",
         "dungeon": "Forest Temple",
         "locations": {
-            "Forest Temple MQ Boss Key Chest": "(Small_Key_Forest_Temple, 3)"
+            "Forest Temple MQ Boss Key Chest": "(Small_Key_Forest_Temple, 3) and can_see_chests"
         },
         "exits": {
             "Forest Temple Bow Region": "(Small_Key_Forest_Temple, 4)",
@@ -59,7 +61,7 @@
         "region_name": "Forest Temple Outdoor Ledge",
         "dungeon": "Forest Temple",
         "locations": {
-            "Forest Temple MQ Redead Chest": "True"
+            "Forest Temple MQ Redead Chest": "can_see_chests"
         },
         "exits": {
             "Forest Temple NW Outdoors": "True"
@@ -82,7 +84,9 @@
         "region_name": "Forest Temple NE Outdoors",
         "dungeon": "Forest Temple",
         "locations": {
-            "Forest Temple MQ Well Chest": "can_use(Bow) or can_use(Slingshot)",
+            "Forest Temple MQ Well Chest": "
+                can_see_chests and 
+                (can_use(Bow) or can_use(Slingshot))",
             "Forest Temple MQ GS Raised Island Courtyard": "
                 can_use(Hookshot) or can_use(Boomerang) or
                 (can_use(Fire_Arrows) and
@@ -99,14 +103,14 @@
                 can_use(Hookshot) and 
                 (can_use(Longshot) or can_use(Hover_Boots) or can_play(Song_of_Time) or 
                     logic_forest_vines)",
-            "Forest Temple NE Outdoors Ledge": "can_use(Longshot)"
+            "Forest Temple NE Outdoors Ledge": "can_use(Longshot) and can_see_chests"
         }
     },
     {
         "region_name": "Forest Temple Outdoors Top Ledges",
         "dungeon": "Forest Temple",
         "locations": {
-            "Forest Temple MQ Raised Island Courtyard Upper Chest": "True"
+            "Forest Temple MQ Raised Island Courtyard Upper Chest": "can_see_chests"
         },
         "exits": {
             "Forest Temple NE Outdoors": "True",
@@ -117,7 +121,7 @@
         "region_name": "Forest Temple NE Outdoors Ledge",
         "dungeon": "Forest Temple",
         "locations": {
-            "Forest Temple MQ Raised Island Courtyard Lower Chest": "True"
+            "Forest Temple MQ Raised Island Courtyard Lower Chest": "can_see_chests"
         },
         "exits": {
             "Forest Temple NE Outdoors": "True",
@@ -131,9 +135,9 @@
             "Forest Temple Jo and Beth": "can_use(Bow)"
         },
         "locations": {
-            "Forest Temple MQ Bow Chest": "True",
-            "Forest Temple MQ Map Chest": "can_use(Bow)",
-            "Forest Temple MQ Compass Chest": "can_use(Bow)"
+            "Forest Temple MQ Bow Chest": "can_see_chests",
+            "Forest Temple MQ Map Chest": "can_use(Bow) and can_see_chests",
+            "Forest Temple MQ Compass Chest": "can_use(Bow) and can_see_chests"
         },
         "exits": {
             "Forest Temple Falling Room": "
@@ -148,7 +152,7 @@
             "Forest Temple Amy and Meg": "can_use(Bow) and (Small_Key_Forest_Temple, 6)"
         },
         "locations": {
-            "Forest Temple MQ Falling Ceiling Room Chest": "True"
+            "Forest Temple MQ Falling Ceiling Room Chest": "can_see_chests"
         },
         "exits": {
             "Forest Temple NE Outdoors Ledge": "True"
@@ -158,7 +162,7 @@
         "region_name": "Forest Temple Boss Region",
         "dungeon": "Forest Temple",
         "locations": {
-            "Forest Temple MQ Basement Chest": "True",
+            "Forest Temple MQ Basement Chest": "can_see_chests",
             "Forest Temple Phantom Ganon Heart": "Boss_Key_Forest_Temple",
             "Phantom Ganon": "Boss_Key_Forest_Temple"
         }

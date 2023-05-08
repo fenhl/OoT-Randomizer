@@ -3,10 +3,10 @@
         "region_name": "Deku Tree Lobby",
         "dungeon": "Deku Tree",
         "locations": {
-            "Deku Tree MQ Map Chest": "True",
-            "Deku Tree MQ Slingshot Chest": "is_adult or can_child_attack",
-            "Deku Tree MQ Slingshot Room Back Chest": "has_fire_source_with_torch or can_use(Bow)",
-            "Deku Tree MQ Basement Chest": "has_fire_source_with_torch or can_use(Bow)",
+            "Deku Tree MQ Map Chest": "can_see_chests",
+            "Deku Tree MQ Slingshot Chest": "can_see_chests and (is_adult or can_child_attack)",
+            "Deku Tree MQ Slingshot Room Back Chest": "can_see_chests and (has_fire_source_with_torch or can_use(Bow))",
+            "Deku Tree MQ Basement Chest": "can_see_chests and (has_fire_source_with_torch or can_use(Bow))",
             "Deku Tree MQ GS Lobby": "is_adult or can_child_attack",
             "Deku Baba Sticks": "is_adult or Kokiri_Sword or Boomerang",
             "Deku Baba Nuts": "
@@ -27,7 +27,7 @@
         "region_name": "Deku Tree Compass Room",
         "dungeon": "Deku Tree",
         "locations": {
-            "Deku Tree MQ Compass Chest": "True",
+            "Deku Tree MQ Compass Chest": "can_see_chests",
             "Deku Tree MQ GS Compass Room": "
                 (can_use(Hookshot) or can_use(Boomerang)) and
                 here(has_bombchus or
@@ -42,7 +42,7 @@
         "region_name": "Deku Tree Basement Water Room Front",
         "dungeon": "Deku Tree",
         "locations": {
-            "Deku Tree MQ Before Spinning Log Chest": "True"
+            "Deku Tree MQ Before Spinning Log Chest": "can_see_chests"
         },
         "exits": {
             "Deku Tree Basement Water Room Back": "
@@ -55,7 +55,7 @@
         "region_name": "Deku Tree Basement Water Room Back",
         "dungeon": "Deku Tree",
         "locations": {
-            "Deku Tree MQ After Spinning Log Chest": "can_play(Song_of_Time)"
+            "Deku Tree MQ After Spinning Log Chest": "can_play(Song_of_Time) and can_see_chests"
         },
         "exits": {
             "Deku Tree Basement Back Room": "

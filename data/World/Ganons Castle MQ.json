@@ -39,8 +39,8 @@
             "Forest Trial Clear": "can_use(Light_Arrows) and can_play(Song_of_Time)"
         },
         "locations": {
-            "Ganons Castle MQ Forest Trial Eye Switch Chest": "Bow",
-            "Ganons Castle MQ Forest Trial Frozen Eye Switch Chest": "has_fire_source",
+            "Ganons Castle MQ Forest Trial Eye Switch Chest": "Bow and can_see_chests",
+            "Ganons Castle MQ Forest Trial Frozen Eye Switch Chest": "has_fire_source and can_see_chests",
             "Ganons Castle MQ Forest Trial Freestanding Key": "Progressive_Hookshot"
         }
     },
@@ -62,7 +62,7 @@
                 (Small_Key_Ganons_Castle, 3)"
         },
         "locations": {
-            "Ganons Castle MQ Water Trial Chest": "Blue_Fire",
+            "Ganons Castle MQ Water Trial Chest": "Blue_Fire and can_see_chests",
             "Blue Fire": "has_bottle"
         }
     },
@@ -93,22 +93,27 @@
                 has_bombchus and Fire_Arrows and Mirror_Shield"
         },
         "locations": {
-            "Ganons Castle MQ Spirit Trial First Chest": "(Bow or logic_rusted_switches) and Megaton_Hammer",
+            "Ganons Castle MQ Spirit Trial First Chest": "(Bow or logic_rusted_switches) and Megaton_Hammer and can_see_chests",
             "Ganons Castle MQ Spirit Trial Invisible Chest": "
-                (Bow or logic_rusted_switches) and Megaton_Hammer and 
-                has_bombchus and (logic_lens_castle_mq or can_use(Lens_of_Truth))",
+                can_see_chests and
+                ((Bow or logic_rusted_switches) and Megaton_Hammer and 
+                has_bombchus and (logic_lens_castle_mq or can_use(Lens_of_Truth)))",
             "Ganons Castle MQ Spirit Trial Sun Front Left Chest": "
-                Megaton_Hammer and has_bombchus and 
-                can_use(Fire_Arrows) and Mirror_Shield",
+                can_see_chests and
+                (Megaton_Hammer and has_bombchus and 
+                can_use(Fire_Arrows) and Mirror_Shield)",
             "Ganons Castle MQ Spirit Trial Sun Back Left Chest": "
-                Megaton_Hammer and has_bombchus and 
-                can_use(Fire_Arrows) and Mirror_Shield",
+                can_see_chests and
+                (Megaton_Hammer and has_bombchus and 
+                can_use(Fire_Arrows) and Mirror_Shield)",
             "Ganons Castle MQ Spirit Trial Golden Gauntlets Chest": "
-                Megaton_Hammer and has_bombchus and 
-                can_use(Fire_Arrows) and Mirror_Shield",
+                can_see_chests and
+                (Megaton_Hammer and has_bombchus and 
+                can_use(Fire_Arrows) and Mirror_Shield)",
             "Ganons Castle MQ Spirit Trial Sun Back Right Chest": "
-                Megaton_Hammer and has_bombchus and 
-                can_use(Fire_Arrows) and Mirror_Shield",
+                can_see_chests and
+                (Megaton_Hammer and has_bombchus and 
+                can_use(Fire_Arrows) and Mirror_Shield)",
             "Nut Pot": "
                 Megaton_Hammer and has_bombchus and
                 can_use(Fire_Arrows) and Mirror_Shield"
@@ -124,7 +129,7 @@
                 (Progressive_Hookshot or logic_light_trial_mq)"
         },
         "locations": {
-            "Ganons Castle MQ Light Trial Lullaby Chest": "can_play(Zeldas_Lullaby)"
+            "Ganons Castle MQ Light Trial Lullaby Chest": "can_play(Zeldas_Lullaby) and can_see_chests"
         }
     }
 ]

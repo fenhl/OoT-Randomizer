@@ -3,10 +3,10 @@
         "region_name": "Gerudo Training Ground Lobby",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground Lobby Left Chest": "can_use(Bow) or can_use(Slingshot)",
-            "Gerudo Training Ground Lobby Right Chest": "can_use(Bow) or can_use(Slingshot)",
-            "Gerudo Training Ground Stalfos Chest": "is_adult or Kokiri_Sword",
-            "Gerudo Training Ground Beamos Chest": "has_explosives and (is_adult or Kokiri_Sword)",
+            "Gerudo Training Ground Lobby Left Chest": "can_see_chests and (can_use(Bow) or can_use(Slingshot))",
+            "Gerudo Training Ground Lobby Right Chest": "can_see_chests and (can_use(Bow) or can_use(Slingshot))",
+            "Gerudo Training Ground Stalfos Chest": "can_see_chests and (is_adult or Kokiri_Sword)",
+            "Gerudo Training Ground Beamos Chest": "can_see_chests and (has_explosives and (is_adult or Kokiri_Sword))",
             "Wall Fairy": "has_bottle and can_use(Bow)" #in the Beamos room shoot the Gerudo symbol above the door to the lava room.
         },
         "exits": {
@@ -24,10 +24,10 @@
         "dungeon": "Gerudo Training Ground",
         "locations": {
             "Gerudo Training Ground Hidden Ceiling Chest": "(Small_Key_Gerudo_Training_Ground, 3) and (logic_lens_gtg or can_use(Lens_of_Truth))",
-            "Gerudo Training Ground Maze Path First Chest": "(Small_Key_Gerudo_Training_Ground, 4)",
-            "Gerudo Training Ground Maze Path Second Chest": "(Small_Key_Gerudo_Training_Ground, 6)",
-            "Gerudo Training Ground Maze Path Third Chest": "(Small_Key_Gerudo_Training_Ground, 7)",
-            "Gerudo Training Ground Maze Path Final Chest": "(Small_Key_Gerudo_Training_Ground, 9)"
+            "Gerudo Training Ground Maze Path First Chest": "(Small_Key_Gerudo_Training_Ground, 4) and can_see_chests",
+            "Gerudo Training Ground Maze Path Second Chest": "(Small_Key_Gerudo_Training_Ground, 6) and can_see_chests",
+            "Gerudo Training Ground Maze Path Third Chest": "(Small_Key_Gerudo_Training_Ground, 7) and can_see_chests",
+            "Gerudo Training Ground Maze Path Final Chest": "(Small_Key_Gerudo_Training_Ground, 9) and can_see_chests"
         },
         "exits": {
             "Gerudo Training Ground Central Maze Right": "(Small_Key_Gerudo_Training_Ground, 9)"
@@ -37,8 +37,8 @@
         "region_name": "Gerudo Training Ground Central Maze Right",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground Maze Right Central Chest": "True",
-            "Gerudo Training Ground Maze Right Side Chest": "True",
+            "Gerudo Training Ground Maze Right Central Chest": "can_see_chests",
+            "Gerudo Training Ground Maze Right Side Chest": "can_see_chests",
             "Gerudo Training Ground Freestanding Key": "True"
         },
         "exits": {
@@ -64,8 +64,8 @@
         "region_name": "Gerudo Training Ground Hammer Room",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground Hammer Room Clear Chest": "True",
-            "Gerudo Training Ground Hammer Room Switch Chest": "can_use(Megaton_Hammer)"
+            "Gerudo Training Ground Hammer Room Clear Chest": "can_see_chests",
+            "Gerudo Training Ground Hammer Room Switch Chest": "can_use(Megaton_Hammer) and can_see_chests"
         },
         "exits": {
             "Gerudo Training Ground Eye Statue Lower": "can_use(Megaton_Hammer) and Bow",
@@ -76,7 +76,7 @@
         "region_name": "Gerudo Training Ground Eye Statue Lower",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground Eye Statue Chest": "can_use(Bow)"
+            "Gerudo Training Ground Eye Statue Chest": "can_use(Bow) and can_see_chests"
         },
         "exits": {
             "Gerudo Training Ground Hammer Room": "True"
@@ -86,7 +86,7 @@
         "region_name": "Gerudo Training Ground Eye Statue Upper",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground Near Scarecrow Chest": "can_use(Bow)"
+            "Gerudo Training Ground Near Scarecrow Chest": "can_use(Bow) and can_see_chests"
         },
         "exits": {
             "Gerudo Training Ground Eye Statue Lower": "True"
@@ -96,7 +96,7 @@
         "region_name": "Gerudo Training Ground Heavy Block Room",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground Before Heavy Block Chest": "True"
+            "Gerudo Training Ground Before Heavy Block Chest": "True and can_see_chests"
         },
         "exits": {
             "Gerudo Training Ground Eye Statue Upper": "
@@ -111,10 +111,10 @@
         "region_name": "Gerudo Training Ground Like Like Room",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground Heavy Block First Chest": "True",
-            "Gerudo Training Ground Heavy Block Second Chest": "True",
-            "Gerudo Training Ground Heavy Block Third Chest": "True",
-            "Gerudo Training Ground Heavy Block Fourth Chest": "True"
+            "Gerudo Training Ground Heavy Block First Chest": "can_see_chests",
+            "Gerudo Training Ground Heavy Block Second Chest": "can_see_chests",
+            "Gerudo Training Ground Heavy Block Third Chest": "can_see_chests",
+            "Gerudo Training Ground Heavy Block Fourth Chest": "can_see_chests"
         }
     }
 ]

@@ -38,17 +38,19 @@
         "region_name": "Water Temple Dive",
         "dungeon": "Water Temple",
         "locations": {
-            "Water Temple Map Chest": "Raise_Water_Level",
+            "Water Temple Map Chest": "Raise_Water_Level and can_see_chests",
             "Water Temple Compass Chest": "
-                (can_play(Zeldas_Lullaby) or Iron_Boots) and can_use(Hookshot)",
+                (can_play(Zeldas_Lullaby) or Iron_Boots) and can_use(Hookshot) and can_see_chests",
             "Water Temple Torches Chest": "
-                (Bow or can_use(Dins_Fire) or 
+                can_see_chests and
+                ((Bow or can_use(Dins_Fire) or 
                     (Child_Water_Temple and Sticks and Kokiri_Sword and Magic_Meter)) and
-                can_play(Zeldas_Lullaby)",
+                can_play(Zeldas_Lullaby))",
             "Water Temple Central Bow Target Chest": "
-                Progressive_Strength_Upgrade and can_play(Zeldas_Lullaby) and 
+                can_see_chests and
+                (Progressive_Strength_Upgrade and can_play(Zeldas_Lullaby) and 
                 ((Bow and (logic_water_central_bow or Hover_Boots or can_use(Longshot))) or
-                    (logic_water_central_bow and Child_Water_Temple and Slingshot and at('Water Temple Middle Water Level', True)))",
+                    (logic_water_central_bow and Child_Water_Temple and Slingshot and at('Water Temple Middle Water Level', True))))",
             "Water Temple GS Behind Gate": "
                 (can_use(Hookshot) or can_use(Hover_Boots)) and 
                 has_explosives and can_play(Zeldas_Lullaby) and
@@ -104,14 +106,14 @@
         "region_name": "Water Temple Cracked Wall",
         "dungeon": "Water Temple",
         "locations": {
-            "Water Temple Cracked Wall Chest": "has_explosives"
+            "Water Temple Cracked Wall Chest": "has_explosives and can_see_chests"
         }
     },
     {
         "region_name": "Water Temple Dragon Statue",
         "dungeon": "Water Temple",
         "locations": {
-            "Water Temple Dragon Chest": "True"
+            "Water Temple Dragon Chest": "can_see_chests"
         }
     },
     {
@@ -119,8 +121,9 @@
         "dungeon": "Water Temple",
         "locations": {
             "Water Temple Central Pillar Chest": "
-                can_use(Iron_Boots) and can_use(Zora_Tunic) and can_use(Hookshot) and 
-                ((Small_Key_Water_Temple, 5) or can_use(Bow) or can_use(Dins_Fire))"
+                can_see_chests and
+                (can_use(Iron_Boots) and can_use(Zora_Tunic) and can_use(Hookshot) and 
+                ((Small_Key_Water_Temple, 5) or can_use(Bow) or can_use(Dins_Fire)))"
         },
         "exits": {
             "Water Temple Cracked Wall": "True"
@@ -143,8 +146,8 @@
         "region_name": "Water Temple Dark Link Region",
         "dungeon": "Water Temple",
         "locations": {
-            "Water Temple Longshot Chest": "True",
-            "Water Temple River Chest": "can_play(Song_of_Time) and Bow",
+            "Water Temple Longshot Chest": "can_see_chests",
+            "Water Temple River Chest": "can_play(Song_of_Time) and Bow and can_see_chests",
             "Water Temple GS River": "
                 can_play(Song_of_Time) and 
                 ((Iron_Boots and (can_use(Zora_Tunic) or logic_fewer_tunic_requirements)) or

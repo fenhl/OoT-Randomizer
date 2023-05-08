@@ -1,0 +1,27 @@
+Deku
+	Burn web with torch by standing on chest
+
+DC
+	Longshot bomb bag chest to reach platform
+
+Forest
+	courtyard island for both chest and skulltula
+
+MQ Forest
+	longshot in courtyard to reach ledge
+
+MQ Fire
+	Added note about spin attack for fairy pot by boss key chest
+	Added either hammering the switch or using pixelshot with longshot to reach the skulltula in the fire ring (scarecrow area in vanilla)
+
+Shadow
+	logic_shadow_umbrella_gs
+	Stand on chest for hookshot
+	Didn't add to shadow temple wind tunnel exit because it has a lens of truth requirement, but feel like maybe it should have this anyway since that requirement doesn't really apply to standing on the chest itself?
+
+Spirit
+	longshot to child hand is fine because that part is included in the chest requirements itself, not an exit.
+
+Ganon's
+	Shadow trial clear with longshot
+

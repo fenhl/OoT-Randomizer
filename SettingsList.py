@@ -1498,6 +1498,14 @@ logic_tricks = {
                     Removes the requirements for the Lens of Truth
                     in Spirit Temple.
                     '''},
+    'Normally Visible Chests without Lens of Truth': {
+        'name'    : 'logic_lens_invis',
+        'tags'    : ("Lens of Truth","Overworld","Deku Tree","Dodongo's Cavern","Jabu Jabu's Belly","Forest Temple","Fire Temple","Ice Cavern","Water Temple","Bottom of the Well","Shadow Temple","Gerudo Training Ground","Spirit Temple",),
+        'tooltip' : '''\
+                    Applies only when chest appearance is set to
+                    "Invisible" and removes the Lens of Truth requirements
+                    from all chests not covered by another trick.
+                    '''},
 }
 
 

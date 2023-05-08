@@ -4,11 +4,14 @@
         "dungeon": "Fire Temple",
         "locations": {
             "Fire Temple Near Boss Chest" : "
-                logic_fewer_tunic_requirements or can_use(Goron_Tunic)",
+                can_see_chests and
+                (logic_fewer_tunic_requirements or can_use(Goron_Tunic))",
             "Fire Temple Flare Dancer Chest": "
-                ((Small_Key_Fire_Temple, 8) or not keysanity) and can_use(Megaton_Hammer)",
+                can_see_chests and
+                (((Small_Key_Fire_Temple, 8) or not keysanity) and can_use(Megaton_Hammer))",
             "Fire Temple Boss Key Chest": "
-                ((Small_Key_Fire_Temple, 8) or not keysanity) and can_use(Megaton_Hammer)",
+                can_see_chests and
+                (((Small_Key_Fire_Temple, 8) or not keysanity) and can_use(Megaton_Hammer))",
             "Fire Temple Volvagia Heart": "
                 can_use(Goron_Tunic) and can_use(Megaton_Hammer) and Boss_Key_Fire_Temple and 
                 (logic_fire_boss_door_jump or Hover_Boots or
@@ -34,8 +37,8 @@
         "region_name": "Fire Temple Big Lava Room",
         "dungeon": "Fire Temple",
         "locations": {
-            "Fire Temple Big Lava Room Lower Open Door Chest": "True",
-            "Fire Temple Big Lava Room Blocked Door Chest": "is_adult and has_explosives",
+            "Fire Temple Big Lava Room Lower Open Door Chest": "can_see_chests",
+            "Fire Temple Big Lava Room Blocked Door Chest": "is_adult and has_explosives and can_see_chests",
             "Fire Temple GS Song of Time Room": "
                 is_adult and (can_play(Song_of_Time) or logic_fire_song_of_time)"
         },
@@ -51,17 +54,19 @@
         "region_name": "Fire Temple Middle",
         "dungeon": "Fire Temple",
         "locations": {
-            "Fire Temple Boulder Maze Lower Chest": "True",
-            "Fire Temple Boulder Maze Upper Chest": "(Small_Key_Fire_Temple, 6)",
-            "Fire Temple Boulder Maze Side Room Chest": "True",
+            "Fire Temple Boulder Maze Lower Chest": "can_see_chests",
+            "Fire Temple Boulder Maze Upper Chest": "(Small_Key_Fire_Temple, 6) and can_see_chests",
+            "Fire Temple Boulder Maze Side Room Chest": "can_see_chests",
             "Fire Temple Boulder Maze Shortcut Chest": "
-                (Small_Key_Fire_Temple, 6) and has_explosives",
+                (Small_Key_Fire_Temple, 6) and has_explosives and can_see_chests",
             "Fire Temple Scarecrow Chest": "
-                (Small_Key_Fire_Temple, 6) and
-                (can_use(Scarecrow) or (logic_fire_scarecrow and can_use(Longshot)))",
+                can_see_chests and
+                ((Small_Key_Fire_Temple, 6) and
+                (can_use(Scarecrow) or (logic_fire_scarecrow and can_use(Longshot))))",
             "Fire Temple Map Chest": "
-                (Small_Key_Fire_Temple, 6) or ((Small_Key_Fire_Temple, 5) and can_use(Bow))",
-            "Fire Temple Compass Chest": "(Small_Key_Fire_Temple, 7)",
+                can_see_chests and
+                ((Small_Key_Fire_Temple, 6) or ((Small_Key_Fire_Temple, 5) and can_use(Bow)))",
+            "Fire Temple Compass Chest": "(Small_Key_Fire_Temple, 7) and can_see_chests",
             "Fire Temple GS Boulder Maze": "(Small_Key_Fire_Temple, 4) and has_explosives",
             "Fire Temple GS Scarecrow Climb": "
                 (Small_Key_Fire_Temple, 6) and
@@ -82,10 +87,11 @@
         "dungeon": "Fire Temple",
         "locations": {
             "Fire Temple Highest Goron Chest": "
-                can_use(Megaton_Hammer) and 
+                can_see_chests and
+                (can_use(Megaton_Hammer) and 
                 (can_play(Song_of_Time) or (logic_rusted_switches and 
-                    (can_use(Hover_Boots) or has_explosives)))",
-            "Fire Temple Megaton Hammer Chest": "has_explosives"
+                    (can_use(Hover_Boots) or has_explosives))))",
+            "Fire Temple Megaton Hammer Chest": "has_explosives and can_see_chests"
         }
     }
 ]

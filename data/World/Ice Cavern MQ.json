@@ -19,8 +19,9 @@
         "dungeon": "Ice Cavern",
         "locations": {
             "Ice Cavern MQ Map Chest": "
-                Blue_Fire and
-                (is_adult or can_use(Sticks) or Kokiri_Sword or can_use_projectile)",
+                 can_see_chests and
+                 (and can_see_chestsBlue_Fire and
+                (is_adult or can_use(Sticks) or Kokiri_Sword or can_use_projectile))",
             "Blue Fire": "has_bottle"
         }
     },
@@ -28,8 +29,8 @@
         "region_name": "Ice Cavern Iron Boots Region",
         "dungeon": "Ice Cavern",
         "locations": {
-            "Ice Cavern MQ Iron Boots Chest": "is_adult",
-            "Sheik in Ice Cavern": "is_adult",
+            "Ice Cavern MQ Iron Boots Chest": "is_adult and can_see_chests",
+            "Sheik in Ice Cavern": "is_adult and can_see_chests",
             "Ice Cavern MQ GS Ice Block": "is_adult or can_child_attack",
             "Ice Cavern MQ GS Scarecrow": "
                 can_use(Scarecrow) or (Hover_Boots and can_use(Longshot)) or
@@ -40,7 +41,7 @@
         "region_name": "Ice Cavern Compass Room",
         "dungeon": "Ice Cavern",
         "locations": {
-            "Ice Cavern MQ Compass Chest": "True",
+            "Ice Cavern MQ Compass Chest": "can_see_chests",
             "Ice Cavern MQ Freestanding PoH": "has_explosives",
             "Ice Cavern MQ GS Red Ice": "can_play(Song_of_Time) or logic_ice_mq_red_ice_gs"
         }

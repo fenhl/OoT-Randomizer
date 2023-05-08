@@ -12,7 +12,8 @@
         "dungeon": "Bottom of the Well",
         "locations": {
             "Bottom of the Well MQ Compass Chest": "
-                Kokiri_Sword or (Sticks and logic_child_deadhand)",
+                can_see_chests and
+                (Kokiri_Sword or (Sticks and logic_child_deadhand))",
             "Bottom of the Well MQ Dead Hand Freestanding Key": "
                 has_explosives or (logic_botw_mq_dead_hand_key and Boomerang)",
             "Bottom of the Well MQ GS Basement": "can_child_attack",
@@ -30,9 +31,10 @@
         "region_name": "Bottom of the Well Middle",
         "dungeon": "Bottom of the Well",
         "locations": {
-            "Bottom of the Well MQ Map Chest": "True",
+            "Bottom of the Well MQ Map Chest": "can_see_chests",
             "Bottom of the Well MQ Lens of Truth Chest": "
-                has_explosives and (Small_Key_Bottom_of_the_Well, 2)",
+                can_see_chests and
+                (has_explosives and (Small_Key_Bottom_of_the_Well, 2))",
             "Bottom of the Well MQ East Inner Room Freestanding Key": "True",
             "Bottom of the Well MQ GS West Inner Room": "
                 can_child_attack and (logic_botw_mq_pits or has_explosives)"

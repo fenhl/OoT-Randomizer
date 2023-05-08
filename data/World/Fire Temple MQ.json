@@ -4,14 +4,16 @@
         "dungeon": "Fire Temple",
         "locations": {
             "Fire Temple MQ Map Room Side Chest": "
-                is_adult or Kokiri_Sword or Sticks or Slingshot or Bombs or can_use(Dins_Fire)",
+                can_see_chests and
+                (is_adult or Kokiri_Sword or Sticks or Slingshot or Bombs or can_use(Dins_Fire))",
             "Fire Temple MQ Near Boss Chest": "
-                (logic_fewer_tunic_requirements or can_use(Goron_Tunic)) and
+                can_see_chests and
+                ((logic_fewer_tunic_requirements or can_use(Goron_Tunic)) and
                 (((can_use(Hover_Boots) or (logic_fire_mq_near_boss and can_use(Bow))) and has_fire_source) or 
                     (can_use(Hookshot) and (can_use(Fire_Arrows) or
                         (can_use(Dins_Fire) and 
                             ((damage_multiplier != 'ohko' and damage_multiplier != 'quadruple') or
-                                can_use(Goron_Tunic) or can_use(Bow) or can_use(Longshot))))))"
+                                can_use(Goron_Tunic) or can_use(Bow) or can_use(Longshot)))))))"
         },
         "exits": {
             "DMC Fire Temple Entrance": "True",
@@ -27,8 +29,8 @@
         "region_name": "Fire Lower Locked Door",
         "dungeon": "Fire Temple",
         "locations": {
-            "Fire Temple MQ Megaton Hammer Chest": "is_adult and (has_explosives or Megaton_Hammer or Hookshot)",
-            "Fire Temple MQ Map Chest": "can_use(Megaton_Hammer)",
+            "Fire Temple MQ Megaton Hammer Chest": "is_adult and (has_explosives or Megaton_Hammer or Hookshot) and can_see_chests",
+            "Fire Temple MQ Map Chest": "can_use(Megaton_Hammer) and can_see_chests",
             "Fairy Pot": "has_bottle"
         }
     },
@@ -37,11 +39,13 @@
         "dungeon": "Fire Temple",
         "locations": {
             "Fire Temple MQ Boss Key Chest": "
-                has_fire_source and (Bow or logic_fire_mq_bk_chest) and can_use(Hookshot)",
+                has_fire_source and (Bow or logic_fire_mq_bk_chest) and can_use(Hookshot) and can_see_chests",
             "Fire Temple MQ Big Lava Room Blocked Door Chest": "
-                has_fire_source and has_explosives and
-                (can_use(Hookshot) or logic_fire_mq_blocked_chest)",
+                can_see_chests and
+                (has_fire_source and has_explosives and
+                (can_use(Hookshot) or logic_fire_mq_blocked_chest))",
             "Fire Temple MQ GS Big Lava Room Open Door": "True",
+            # A fully charged (orange, not blue) spin attack can break the fairy pot from outside the fire wall.
             "Fairy Pot": "
                 has_bottle and has_fire_source and (Bow or logic_fire_mq_bk_chest) and
                 (can_use(Hookshot) or logic_fire_song_of_time)"
@@ -57,9 +61,9 @@
         "region_name": "Fire Lower Maze",
         "dungeon": "Fire Temple",
         "locations": {
-            "Fire Temple MQ Lizalfos Maze Lower Chest": "True",
+            "Fire Temple MQ Lizalfos Maze Lower Chest": "can_see_chests",
             "Fire Temple MQ Lizalfos Maze Side Room Chest": "
-                has_explosives and (logic_fire_mq_maze_side_room or at('Fire Upper Maze', True))"
+                has_explosives and (logic_fire_mq_maze_side_room or at('Fire Upper Maze', True)) and can_see_chests"
         },
         "exits": {
             "Fire Upper Maze": "
@@ -71,11 +75,11 @@
         "region_name": "Fire Upper Maze",
         "dungeon": "Fire Temple",
         "locations": {
-            "Fire Temple MQ Lizalfos Maze Upper Chest": "True",
-            "Fire Temple MQ Compass Chest": "has_explosives",
+            "Fire Temple MQ Lizalfos Maze Upper Chest": "can_see_chests",
+            "Fire Temple MQ Compass Chest": "has_explosives and can_see_chests",
             "Fire Temple MQ GS Skull On Fire": "
                 (can_play(Song_of_Time) and can_use(Hookshot) and (has_explosives or logic_rusted_switches)) or
-                can_use(Longshot)",
+                (can_use(Longshot) and (has_explosives or logic_rusted_switches or logic_fire_scarecrow))"
             "Wall Fairy": "
                 has_bottle and
                 ((can_play(Song_of_Time) and can_use(Hookshot) and (has_explosives or logic_rusted_switches)) or
@@ -90,11 +94,11 @@
     },
     {
         "region_name": "Fire Temple Upper",
-        "dungeon": "Fire Temple",
+        "dungeon": "Fire Temple",  
         "locations": {
             "Fire Temple MQ Freestanding Key": "can_use(Hookshot) or logic_fire_mq_flame_maze",
             "Fire Temple MQ Chest On Fire": "
-                (can_use(Hookshot) or logic_fire_mq_flame_maze) and (Small_Key_Fire_Temple, 4)",
+                (can_use(Hookshot) or logic_fire_mq_flame_maze) and (Small_Key_Fire_Temple, 4) and can_see_chests",
             "Fire Temple MQ GS Fire Wall Maze Side Room": "
                 can_play(Song_of_Time) or Hover_Boots or logic_fire_mq_flame_maze",
             "Fire Temple MQ GS Fire Wall Maze Center": "has_explosives",

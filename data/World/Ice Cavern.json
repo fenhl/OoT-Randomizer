@@ -12,12 +12,13 @@
         "region_name": "Ice Cavern",
         "dungeon": "Ice Cavern",
         "locations": {
-            "Ice Cavern Map Chest": "Blue_Fire and is_adult",
-            "Ice Cavern Compass Chest": "Blue_Fire",
+            "Ice Cavern Map Chest": "Blue_Fire and is_adult and can_see_chests",
+            "Ice Cavern Compass Chest": "Blue_Fire and can_see_chests",
             "Ice Cavern Iron Boots Chest": "
-                Blue_Fire and 
+                can_see_chests and
+                (Blue_Fire and 
                 (is_adult or Slingshot or Sticks or 
-                    Kokiri_Sword or can_use(Dins_Fire))",
+                    Kokiri_Sword or can_use(Dins_Fire)))",
             "Sheik in Ice Cavern": "
                 Blue_Fire and 
                 (is_adult or Slingshot or Sticks or 

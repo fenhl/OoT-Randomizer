@@ -24,17 +24,17 @@
         "region_name": "Shadow Temple Dead Hand Area",
         "dungeon": "Shadow Temple",
         "locations": {
-            "Shadow Temple MQ Compass Chest": "True",
-            "Shadow Temple MQ Hover Boots Chest": "can_play(Song_of_Time) and Bow"
+            "Shadow Temple MQ Compass Chest": "can_see_chests",
+            "Shadow Temple MQ Hover Boots Chest": "can_play(Song_of_Time) and Bow and can_see_chests"
         }
     },
     {
         "region_name": "Shadow Temple First Beamos",
         "dungeon": "Shadow Temple",
         "locations": {
-            "Shadow Temple MQ Map Chest": "True",
-            "Shadow Temple MQ Early Gibdos Chest": "True",
-            "Shadow Temple MQ Near Ship Invisible Chest": "True"
+            "Shadow Temple MQ Map Chest": "can_see_chests",
+            "Shadow Temple MQ Early Gibdos Chest": "can_see_chests",
+            "Shadow Temple MQ Near Ship Invisible Chest": "can_see_chests"
         },
         "exits": {
             "Shadow Temple Upper Huge Pit": "has_explosives and (Small_Key_Shadow_Temple, 2)"
@@ -45,11 +45,13 @@
         "dungeon": "Shadow Temple",
         "locations": {
             "Shadow Temple MQ Invisible Blades Visible Chest": "
-                can_play(Song_of_Time) or
-                (logic_shadow_mq_invisible_blades and damage_multiplier != 'ohko')",
+                can_see_chests and
+                (can_play(Song_of_Time) or
+                (logic_shadow_mq_invisible_blades and damage_multiplier != 'ohko'))",
             "Shadow Temple MQ Invisible Blades Invisible Chest": "
-                can_play(Song_of_Time) or
-                (logic_shadow_mq_invisible_blades and damage_multiplier != 'ohko')"
+                can_see_chests and
+                (can_play(Song_of_Time) or
+                (logic_shadow_mq_invisible_blades and damage_multiplier != 'ohko'))"
         },
         "exits": {
             "Shadow Temple Lower Huge Pit": "has_fire_source or logic_shadow_mq_huge_pit"
@@ -59,12 +61,14 @@
         "region_name": "Shadow Temple Lower Huge Pit",
         "dungeon": "Shadow Temple",
         "locations": {
-            "Shadow Temple MQ Beamos Silver Rupees Chest": "can_use(Longshot)",
-            "Shadow Temple MQ Falling Spikes Lower Chest": "True",
+            "Shadow Temple MQ Beamos Silver Rupees Chest": "can_use(Longshot) and can_see_chests",
+            "Shadow Temple MQ Falling Spikes Lower Chest": "can_see_chests",
             "Shadow Temple MQ Falling Spikes Upper Chest": "
-                (logic_shadow_umbrella and Hover_Boots) or Progressive_Strength_Upgrade",
+                can_see_chests and
+                ((logic_shadow_umbrella and Hover_Boots) or Progressive_Strength_Upgrade)",
             "Shadow Temple MQ Falling Spikes Switch Chest": "
-                (logic_shadow_umbrella and Hover_Boots) or Progressive_Strength_Upgrade",
+                can_see_chests and
+                ((logic_shadow_umbrella and Hover_Boots) or Progressive_Strength_Upgrade)",
             "Shadow Temple MQ Invisible Spikes Chest": "
                 Hover_Boots and (Small_Key_Shadow_Temple, 3) and
                 (logic_lens_shadow_mq_back or can_use(Lens_of_Truth))",
@@ -84,9 +88,9 @@
         "region_name": "Shadow Temple Wind Tunnel",
         "dungeon": "Shadow Temple",
         "locations": {
-            "Shadow Temple MQ Wind Hint Chest": "True",
-            "Shadow Temple MQ After Wind Enemy Chest": "True",
-            "Shadow Temple MQ After Wind Hidden Chest": "True",
+            "Shadow Temple MQ Wind Hint Chest": "can_see_chests",
+            "Shadow Temple MQ After Wind Enemy Chest": "can_see_chests",
+            "Shadow Temple MQ After Wind Hidden Chest": "can_see_chests",
             "Shadow Temple MQ GS Wind Hint Room": "True",
             "Shadow Temple MQ GS After Wind": "True",
             "Nut Pot": "True"
@@ -117,10 +121,10 @@
         "dungeon": "Shadow Temple",
         "locations": {
             "Shadow Temple MQ Spike Walls Left Chest": "
-                can_use(Dins_Fire) and (Small_Key_Shadow_Temple, 6)",
+                can_use(Dins_Fire) and (Small_Key_Shadow_Temple, 6) and can_see_chests",
             "Shadow Temple MQ Boss Key Chest": "
-                can_use(Dins_Fire) and (Small_Key_Shadow_Temple, 6)",
-            "Shadow Temple MQ Bomb Flower Chest": "True",
+                can_use(Dins_Fire) and (Small_Key_Shadow_Temple, 6) and can_see_chests",
+            "Shadow Temple MQ Bomb Flower Chest": "can_see_chests",
             "Shadow Temple MQ Freestanding Key": "True"
         }
     }

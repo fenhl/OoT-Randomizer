@@ -11,7 +11,7 @@
         "region_name": "Jabu Jabus Belly Main",
         "dungeon": "Jabu Jabus Belly",
         "locations": {
-            "Jabu Jabus Belly Boomerang Chest": "True",
+            "Jabu Jabus Belly Boomerang Chest": "can_see_chests",
             "Jabu Jabus Belly GS Water Switch Room": "True",
             "Jabu Jabus Belly GS Lobby Basement Lower": "can_use(Boomerang) or can_use(Hookshot)",
             "Jabu Jabus Belly GS Lobby Basement Upper": "can_use(Boomerang) or can_use(Hookshot)",
@@ -29,8 +29,8 @@
         "region_name": "Jabu Jabus Belly Depths",
         "dungeon": "Jabu Jabus Belly",
         "locations": {
-            "Jabu Jabus Belly Map Chest": "True",
-            "Jabu Jabus Belly Compass Chest": "True"
+            "Jabu Jabus Belly Map Chest": "can_see_chests",
+            "Jabu Jabus Belly Compass Chest": "can_see_chests"
         },
         "exits": {
             "Jabu Jabus Belly Main": "True",

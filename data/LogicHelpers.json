@@ -117,5 +117,9 @@
         (shuffle_ganon_bosskey == 'dungeons' and has_dungeon_rewards(ganon_bosskey_rewards)) or
         (shuffle_ganon_bosskey == 'tokens' and (Gold_Skulltula_Token, ganon_bosskey_tokens))) or
         (shuffle_ganon_bosskey != 'stones' and shuffle_ganon_bosskey != 'medallions' and
-         shuffle_ganon_bosskey != 'dungeons' and shuffle_ganon_bosskey != 'tokens')"
+         shuffle_ganon_bosskey != 'dungeons' and shuffle_ganon_bosskey != 'tokens')",
+
+    #All chests set to invisible
+        "can_see_chests": "chest_appearance" != 'invisible' or (chest_appearance" == 'invisible' and (logic_lens_invis or can_use(Lens_of_Truth)))"
+
 }

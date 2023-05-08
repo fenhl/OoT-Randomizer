@@ -3,12 +3,12 @@
         "region_name": "Gerudo Training Ground Lobby",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground MQ Lobby Left Chest": "True",
-            "Gerudo Training Ground MQ Lobby Right Chest": "True",
+            "Gerudo Training Ground MQ Lobby Left Chest": "can_see_chests",
+            "Gerudo Training Ground MQ Lobby Right Chest": "can_see_chests",
             "Gerudo Training Ground MQ Hidden Ceiling Chest": "logic_lens_gtg_mq or can_use(Lens_of_Truth)",
-            "Gerudo Training Ground MQ Maze Path First Chest": "True",
-            "Gerudo Training Ground MQ Maze Path Second Chest": "True",
-            "Gerudo Training Ground MQ Maze Path Third Chest": "(Small_Key_Gerudo_Training_Ground, 1)"
+            "Gerudo Training Ground MQ Maze Path First Chest": "can_see_chests",
+            "Gerudo Training Ground MQ Maze Path Second Chest": "can_see_chests",
+            "Gerudo Training Ground MQ Maze Path Third Chest": "(Small_Key_Gerudo_Training_Ground, 1) and can_see_chests"
         },
         "exits": {
             "Gerudo Fortress": "True",
@@ -20,7 +20,7 @@
         "region_name": "Gerudo Training Ground Right Side",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground MQ Dinolfos Chest": "is_adult",
+            "Gerudo Training Ground MQ Dinolfos Chest": "is_adult and can_see_chests",
             "Wall Fairy": "has_bottle and can_use(Bow)" #in the Dinalfos room shoot the Gerudo symbol above the door to the lava room.
         },
         "exits": {
@@ -34,15 +34,16 @@
         "dungeon": "Gerudo Training Ground",
         "locations": {
             "Gerudo Training Ground MQ Underwater Silver Rupee Chest": "
-                has_fire_source and can_use(Iron_Boots) and
-                (logic_fewer_tunic_requirements or can_use(Zora_Tunic)) and can_take_damage"
+                can_see_chests and
+                (has_fire_source and can_use(Iron_Boots) and
+                (logic_fewer_tunic_requirements or can_use(Zora_Tunic)) and can_take_damage)"
         }
     },
     {
         "region_name": "Gerudo Training Ground Left Side",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground MQ First Iron Knuckle Chest": "is_adult or Kokiri_Sword or has_explosives"
+            "Gerudo Training Ground MQ First Iron Knuckle Chest": "can_see_chests and (is_adult or Kokiri_Sword or has_explosives)"
         },
         "exits": {
             "Gerudo Training Ground Stalfos Room": "
@@ -55,8 +56,8 @@
         "dungeon": "Gerudo Training Ground",
         "locations": {
             # Very difficult to fight the Stalfos and Stulltulas under the time limit as child.
-            "Gerudo Training Ground MQ Before Heavy Block Chest": "is_adult",
-            "Gerudo Training Ground MQ Heavy Block Chest": "can_use(Silver_Gauntlets)",
+            "Gerudo Training Ground MQ Before Heavy Block Chest": "is_adult and can_see_chests",
+            "Gerudo Training Ground MQ Heavy Block Chest": "can_use(Silver_Gauntlets) and can_see_chests",
             "Blue Fire": "has_bottle"
         },
         "exits": {
@@ -69,9 +70,9 @@
         "region_name": "Gerudo Training Ground Back Areas",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground MQ Eye Statue Chest": "Bow",
-            "Gerudo Training Ground MQ Second Iron Knuckle Chest": "True",
-            "Gerudo Training Ground MQ Flame Circle Chest": "can_use(Hookshot) or Bow or has_explosives"
+            "Gerudo Training Ground MQ Eye Statue Chest": "Bow and can_see_chests",
+            "Gerudo Training Ground MQ Second Iron Knuckle Chest": "can_see_chests",
+            "Gerudo Training Ground MQ Flame Circle Chest": "can_see_chests and (can_use(Hookshot) or Bow or has_explosives)"
         },
         "exits": {
             "Gerudo Training Ground Central Maze Right": "Megaton_Hammer",
@@ -82,11 +83,11 @@
         "region_name": "Gerudo Training Ground Central Maze Right",
         "dungeon": "Gerudo Training Ground",
         "locations": {
-            "Gerudo Training Ground MQ Maze Right Central Chest": "True",
-            "Gerudo Training Ground MQ Maze Right Side Chest": "True",
+            "Gerudo Training Ground MQ Maze Right Central Chest": "can_see_chests",
+            "Gerudo Training Ground MQ Maze Right Side Chest": "can_see_chests",
             # The switch that opens the door to the Ice Arrows chest can be hit with a precise jumpslash.
             "Gerudo Training Ground MQ Ice Arrows Chest": "
-                (Small_Key_Gerudo_Training_Ground, 3)"
+                (Small_Key_Gerudo_Training_Ground, 3) and can_see_chests"
         },
         "exits": {
             # guarantees fire with torch
