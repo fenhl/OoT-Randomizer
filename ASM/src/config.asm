@@ -197,6 +197,10 @@ HEART_CHEST_SIZES:
 .byte 0x01
 CFG_GLITCHLESS_LOGIC:
 .byte 0x00
+.align 16
+.area 16, 0
+EVERDRIVE_READ_BUF:
+.endarea
 .align 4
 
 ; These configuration values are given fixed addresses to aid auto-trackers.
