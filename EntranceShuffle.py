@@ -631,6 +631,7 @@ def shuffle_random_entrances(worlds):
             elif pool_type == 'ChildSpawn':
                 valid_target_types = ('ChildSpawn', 'AdultSpawn', 'WarpSong', 'BlueWarp', 'OwlDrop', 'OverworldOneWay', 'Overworld', 'Interior', 'SpecialInterior', 'Extra')
                 valid_target_types_reverse = ('Overworld', 'Interior', 'SpecialInterior')
+                exclude = []
                 if world.settings.shuffle_child_spawn == 'full':
                     # grotto entrances don't work properly (they cause a black screen on file load)
                     valid_target_types = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grave', *valid_target_types)
@@ -638,10 +639,14 @@ def shuffle_random_entrances(worlds):
                     if world.dungeon_back_access:
                         valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types)
                         valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
-                one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse)
+                else:
+                    # Restrict spawn entrances from linking to regions with no or extremely specific glitchless itemless escapes.
+                    exclude += ['Volvagia Boss Room -> DMC Central Local', 'Bolero of Fire Warp -> DMC Central Local', 'Queen Gohma Boss Room -> KF Outside Deku Tree']
+                one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse, exclude=exclude)
             elif pool_type == 'AdultSpawn':
                 valid_target_types = ('ChildSpawn', 'AdultSpawn', 'WarpSong', 'BlueWarp', 'OwlDrop', 'OverworldOneWay', 'Overworld', 'Interior', 'SpecialInterior', 'Extra')
                 valid_target_types_reverse = ('Overworld', 'Interior', 'SpecialInterior')
+                exclude = []
                 if world.settings.shuffle_adult_spawn == 'full':
                     # grotto entrances don't work properly (they cause a black screen on file load)
                     valid_target_types = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grave', *valid_target_types)
@@ -649,7 +654,10 @@ def shuffle_random_entrances(worlds):
                     if world.dungeon_back_access:
                         valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types)
                         valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
-                one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse)
+                else:
+                    # Restrict spawn entrances from linking to regions with no or extremely specific glitchless itemless escapes.
+                    exclude += ['Volvagia Boss Room -> DMC Central Local', 'Bolero of Fire Warp -> DMC Central Local']
+                one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse, exclude=exclude)
             elif pool_type == 'WarpSong':
                 valid_target_types = ('ChildSpawn', 'AdultSpawn', 'WarpSong', 'BlueWarp', 'OwlDrop', 'OverworldOneWay', 'Overworld', 'Interior', 'SpecialInterior', 'Extra')
                 valid_target_types_reverse = ('Overworld', 'Interior', 'SpecialInterior')
