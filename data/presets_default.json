@@ -248,7 +248,7 @@
         "starting_tod":                            "default",
         "starting_age":                            "adult"
     },
-    "Triforce Blitz S2": {
+    "Triforce Blitz S2 Tournament": {
         "show_seed_info":                          true,
         "user_message":                            "Triforce Blitz S2",
         "world_count":                              1,
@@ -377,7 +377,7 @@
         "starting_tod":                            "default",
         "starting_age":                            "adult"
     },
-    "Triforce Blitz S2.5": {
+    "Triforce Blitz S2": {
         "show_seed_info":                          true,
         "user_message":                            "Triforce Blitz - Jabu's Revenge",
         "world_count":                              1,
