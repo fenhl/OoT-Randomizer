@@ -20,6 +20,7 @@
 #include "textures.h"
 #include "scene.h"
 #include "music.h"
+#include "everdrive.h"
 
 void Gameplay_InitSkybox(z64_game_t* globalCtx, int16_t skyboxId);
 
@@ -34,6 +35,7 @@ void c_init() {
 }
 
 void before_game_state_update() {
+    everdrive_frame();
     handle_pending_items();
     handle_dpad();
     update_misc_colors();

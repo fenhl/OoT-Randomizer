@@ -500,10 +500,11 @@ void draw_dungeon_info(z64_disp_buf_t *db) {
 
     } else if (pad_held.du) {
         extern uint8_t everdrive_detection_state;
+        extern uint8_t everdrive_protocol_state;
 
         int icon_size = 16;
         int padding = 1;
-        int rows = 3;
+        int rows = 4;
         int bg_width =
             (23 * font_sprite.tile_w) +
             (2 * padding);
@@ -518,13 +519,33 @@ void draw_dungeon_info(z64_disp_buf_t *db) {
         draw_background(db, bg_left, bg_top, bg_width, bg_height);
         gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
 
-        if (everdrive_detect()) {
+        if (everdrive_detection_state == ED64_DETECTION_PRESENT) {
             char top_text[16] = "EverDrive found";
             text_print(top_text, left, top);
             top += icon_size + padding;
-            if(everdrive_read(EVERDRIVE_READ_BUF)) {
-                everdrive_write("OoTR\0\0\0\0\0\0\0\0\0\0\0\0");
+            switch (everdrive_protocol_state) {
+                case EVERDRIVE_PROTOCOL_STATE_INIT: {
+                    char state_text[12] = "state: init";
+                    text_print(state_text, left, top);
+                    break;
+                }
+                case EVERDRIVE_PROTOCOL_STATE_HANDSHAKE: {
+                    char state_text[17] = "state: handshake";
+                    text_print(state_text, left, top);
+                    break;
+                }
+                case EVERDRIVE_PROTOCOL_STATE_MW: {
+                    char state_text[18] = "state: multiworld";
+                    text_print(state_text, left, top);
+                    break;
+                }
+                default: {
+                    char state_text[11] = "state: ???";
+                    text_print(state_text, left, top);
+                    break;
+                }
             }
+            top += icon_size + padding;
             char buf_line_1[24] = "OO OO OO OO OO OO OO OO";
             for (int i = 0; i < 8; i++) {
                 uint8_t hi = EVERDRIVE_READ_BUF[i] >> 4;

@@ -15,7 +15,7 @@ from Hints import GossipText, HintArea, writeGossipStoneHints, buildAltarHints, 
         buildGanonText, buildMiscItemHints, buildMiscLocationHints, getSimpleHintNoPrefix, getItemGenericName
 from ItemList import REWARD_COLORS
 from Location import DisableType
-from Utils import data_path
+from Utils import data_path, get_version_bytes
 from Messages import read_messages, update_message_by_id, read_shop_items, update_warp_song_text, \
         write_shop_items, remove_unused_messages, make_player_message, \
         add_item_messages, repack_messages, shuffle_messages, \
@@ -23,7 +23,7 @@ from Messages import read_messages, update_message_by_id, read_shop_items, updat
 from OcarinaSongs import patch_songs
 from MQ import patch_files, File, update_dmadata, insert_space, add_relocations
 from SaveContext import SaveContext, Scenes, FlagType
-from version import __version__
+from version import __version__, base_version, branch_identifier, supplementary_version
 from ItemPool import song_list, trade_items, child_trade_items
 from SceneFlags import get_alt_list_bytes, get_collectible_flag_table, get_collectible_flag_table_bytes
 from texture_util import ci4_rgba16patch_to_ci8, rgba16_patch
@@ -329,6 +329,12 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom):
 
     if world.settings.free_bombchu_drops:
         rom.write_int32(rom.sym('FREE_BOMBCHU_DROPS'), 1)
+
+    # include version info
+    rom.write_bytes(rom.sym('CFG_RANDO_VERSION_MAJOR'), get_version_bytes(base_version, branch_identifier, supplementary_version))
+
+    # initialize world ID
+    rom.write_byte(rom.sym('PLAYER_ID'), world.id + 1)
 
     # show seed info on file select screen
     def makebytes(txt, size):

@@ -36,10 +36,11 @@ static uint32_t cart_lat;
 static uint32_t cart_pwd;
 static uint16_t spi_cfg;
 
-#define ED64_DETECTION_UNKNOWN 0
-#define ED64_DETECTION_PRESENT 1
-#define ED64_DETECTION_NOT_PRESENT 2
 uint8_t everdrive_detection_state = ED64_DETECTION_UNKNOWN;
+
+extern uint8_t EVERDRIVE_READ_BUF[16];
+
+uint8_t EVERDRIVE_PROTOCOL_VERSION = 1;
 
 uint8_t TIMEOUT_ERROR[16] = { 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
@@ -252,5 +253,85 @@ bool everdrive_write(uint8_t *buf) {
         }
         cart_unlock();
         return true;
+    }
+}
+
+extern uint8_t CFG_RANDO_VERSION_MAJOR;
+extern uint8_t CFG_RANDO_VERSION_MINOR;
+extern uint8_t CFG_RANDO_VERSION_PATCH;
+extern uint8_t CFG_RANDO_VERSION_BRANCH;
+extern uint8_t CFG_RANDO_VERSION_SUPPLEMENTARY;
+extern uint8_t PLAYER_ID;
+extern uint8_t CFG_FILE_SELECT_HASH[5];
+
+uint8_t everdrive_protocol_state = EVERDRIVE_PROTOCOL_STATE_INIT;
+
+uint8_t EVERDRIVE_MESSAGE_PING[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8_t EVERDRIVE_MESSAGE_RESET[16] = { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+uint8_t frames_since_last_ping = 0;
+
+void everdrive_handshake() {
+    if (EVERDRIVE_READ_BUF[0] == 'c' && EVERDRIVE_READ_BUF[1] == 'm' && EVERDRIVE_READ_BUF[2] == 'd' && EVERDRIVE_READ_BUF[3] == 't') {
+        uint8_t reply[16] = {
+            'O', 'o', 'T', 'R',
+            CFG_RANDO_VERSION_MAJOR,
+            CFG_RANDO_VERSION_MINOR,
+            CFG_RANDO_VERSION_PATCH,
+            CFG_RANDO_VERSION_BRANCH,
+            CFG_RANDO_VERSION_SUPPLEMENTARY,
+            EVERDRIVE_PROTOCOL_VERSION,
+            PLAYER_ID,
+            CFG_FILE_SELECT_HASH[0],
+            CFG_FILE_SELECT_HASH[1],
+            CFG_FILE_SELECT_HASH[2],
+            CFG_FILE_SELECT_HASH[3],
+            CFG_FILE_SELECT_HASH[4],
+        };
+        everdrive_write(reply);
+        everdrive_protocol_state = EVERDRIVE_PROTOCOL_STATE_HANDSHAKE;
+    } else {
+        everdrive_write(EVERDRIVE_MESSAGE_RESET);
+        everdrive_protocol_state = EVERDRIVE_PROTOCOL_STATE_INIT;
+    }
+}
+
+void everdrive_frame() {
+    if (everdrive_detect()) {
+        if (everdrive_protocol_state == EVERDRIVE_PROTOCOL_STATE_MW && ++frames_since_last_ping >= 5 * 20) {
+            everdrive_write(EVERDRIVE_MESSAGE_PING);
+            frames_since_last_ping = 0;
+        }
+        if (everdrive_read(EVERDRIVE_READ_BUF)) {
+            switch (everdrive_protocol_state) {
+                case EVERDRIVE_PROTOCOL_STATE_INIT: {
+                    everdrive_handshake();
+                    break;
+                }
+                case EVERDRIVE_PROTOCOL_STATE_HANDSHAKE: {
+                    if (EVERDRIVE_READ_BUF[0] == 'M' && EVERDRIVE_READ_BUF[1] == 'W') {
+                        //TODO send state packet
+                        everdrive_protocol_state = EVERDRIVE_PROTOCOL_STATE_MW;
+                    } else if (EVERDRIVE_READ_BUF[0] == 'c') {
+                        everdrive_handshake();
+                    } else {
+                        everdrive_write(EVERDRIVE_MESSAGE_RESET);
+                        everdrive_protocol_state = EVERDRIVE_PROTOCOL_STATE_INIT;
+                    }
+                    break;
+                }
+                case EVERDRIVE_PROTOCOL_STATE_MW: {
+                    if (EVERDRIVE_READ_BUF[0] == 0x00) {
+                        // ping
+                    } else if (EVERDRIVE_READ_BUF[0] == 'c') {
+                        everdrive_handshake();
+                    } else { //TODO handle other messages
+                        everdrive_write(EVERDRIVE_MESSAGE_RESET);
+                        everdrive_protocol_state = EVERDRIVE_PROTOCOL_STATE_INIT;
+                    }
+                    break;
+                }
+            }
+        }
     }
 }
