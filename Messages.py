@@ -162,7 +162,6 @@ ITEM_MESSAGES: list[tuple[int, str]] = [
     (0x0042, "\x08\x13\x14You got an \x05\x41Empty Bottle\x05\x40!\x01You can put something in this\x01bottle."),
     (0x0048, "\x08\x13\x10You got a \x05\x41Magic Bean\x05\x40!\x01Find a suitable spot for a garden\x01and plant it."),
     (0x9048, "\x08\x13\x10You got a \x05\x41Pack of Magic Beans\x05\x40!\x01Find suitable spots for a garden\x01and plant them."),
-    (0x004A, "\x08\x13\x07You received the \x05\x41Fairy Ocarina\x05\x40!\x01This is a memento from Saria."),
     (0x004B, "\x08\x13\x3DYou got the \x05\x42Giant's Knife\x05\x40!\x01Hold it with both hands to\x01attack! It's so long, you\x01can't use it with a \x05\x44shield\x05\x40."),
     (0x004E, "\x08\x13\x40You found the \x05\x44Mirror Shield\x05\x40!\x01The shield's polished surface can\x01reflect light or energy."),
     (0x004F, "\x08\x13\x0BYou found the \x05\x41Longshot\x05\x40!\x01It's an upgraded Hookshot.\x01It extends \x05\x41twice\x05\x40 as far!"),
@@ -248,7 +247,8 @@ ITEM_MESSAGES: list[tuple[int, str]] = [
     (0x9094, "\x08\x06\x28You have learned the\x01\x06\x2D\x05\x46Requiem of Spirit\x05\x40!"),
     (0x9095, "\x08\x06\x28You have learned the\x01\x06\x28\x05\x45Nocturne of Shadow\x05\x40!"),
     (0x9096, "\x08\x06\x28You have learned the\x01\x06\x32\x05\x44Prelude of Light\x05\x40!"),
-    # 0x9097 and 0x9098 unused
+    (0x9097, "\x08\x13\x07You received the \x05\x41Fairy Ocarina\x05\x40!\x01This is a memento from Saria."),
+    # 0x9098 unused
     # 0x9099 used above
     (0x909A, "\x08\x06\x15You've learned \x05\x43Zelda's Lullaby\x05\x40!"),
     (0x909B, "\x08\x06\x11You've learned \x05\x41Epona's Song\x05\x40!"),
@@ -517,6 +517,7 @@ MISC_MESSAGES: dict[int, tuple[str | bytearray, int]] = {
     0x0045: ("\x08\x13\x17You got a \x05\x43Blue Potion\x05\x40!\x01It will recover your health\x01and magic.", 0x23),
     0x0046: ("\x08\x13\x18You caught a \x05\x41Fairy\x05\x40 in a bottle!\x01It will revive you\x01the moment you run out of life \x01energy.", 0x23),
     0x0047: ("\x08\x13\x19You got a \x05\x41Fish\x05\x40!\x01It looks so fresh and\x01delicious!", 0x23),
+    0x004A: ("\x08\x13\x07You received the \x05\x41Fairy Ocarina\x05\x40!\x01This is a memento from Saria.", 0x23),
     0x004C: ("\x08\x13\x3EYou got a \x05\x44Deku Shield\x05\x40!", 0x23),
     0x004D: ("\x08\x13\x3FYou got a \x05\x44Hylian Shield\x05\x40!", 0x23),
     0x0050: ("\x08\x13\x42You got a \x05\x41Goron Tunic\x05\x40!\x01Going to a hot place? No worry!", 0x23),
