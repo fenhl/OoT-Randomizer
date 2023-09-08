@@ -428,9 +428,9 @@ KEYSANITY_MESSAGES: list[tuple[int, str]] = [
     (0x9089, "\x08You found a \x05\x44Silver Rupee\x05\x40 for the\x01\x05\x43Water Trial\x05\x40 in \x05\x41Ganon's Castle\x05\x40!\x09"),
     (0x908A, "\x08You found a \x05\x44Silver Rupee\x05\x40 for the\x01\x05\x42Forest Trial\x05\x40 in \x05\x41Ganon's Castle\x05\x40!\x09"),
 
-	(0x90A0, "\x08You found the \x05\x41Triforce of Power\x05\x40!"),
-    (0x90A1, "\x08You found the \x05\x45Triforce of Wisdom\x05\x40!"),
-    (0x90A2, "\x08You found the \x05\x42Triforce of Courage\x05\x40!"),
+	(0x90E0, "\x08You found the \x05\x41Triforce of Power\x05\x40!"),
+    (0x90E1, "\x08You found the \x05\x45Triforce of Wisdom\x05\x40!"),
+    (0x90E2, "\x08You found the \x05\x42Triforce of Courage\x05\x40!"),
 ]
 
 dungeon_names = [
