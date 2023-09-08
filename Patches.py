@@ -2508,6 +2508,16 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
         torch_count = world.settings.fae_torch_count
         rom.write_byte(0xCA61E3, torch_count)
 
+    # Locks access to reversing through Shadow temple if you clip through the cage in the early silver rupee room
+    # A side effect of this is that the door will no longer require a small key, so there will be an unused key in Shadow Temple
+    if world.settings.lock_reverse_shadow:
+        actor = 0x027a7190 # transition actor for Shadow Temple door between rooms 20 aand 21
+        rom.write_byte(actor, 0x14) # Flip the loading zones between rooms 20 and 21
+        rom.write_byte(actor + 2, 0x15) 
+        rom.write_int16(actor + 4, 0x002E) # Change actor type from door to shutter
+        rom.write_int16(actor + 12, 0x8000) # Rotate door so front and back sides of the door flip
+        rom.write_int16(actor + 14, 0x00D5) # Back side permanently locked
+
     # Fix crash when hitting white bubbles enemies with Dins Fire
     rom.write_byte(0xCB4397, 0x00)
 
@@ -2905,7 +2915,6 @@ def move_fado_in_lost_woods(rom):
             rom.write_int16(actor + 12, 0x0000)
 
     get_actor_list(rom, move_fado)
-
 
 # Gets a dict of doors to unlock based on settings
 # Returns: dict with entries address: [byte_offset, bit]
