@@ -1037,6 +1037,18 @@ class SettingInfos:
             'hide_when_disabled': True,
         }
     )
+
+    triforce_blitz_mask_hint_shop = Checkbutton(
+        gui_text       = 'Triforce Blitz Mask Hint Shop',
+        gui_tooltip    = '''\
+            Place purchasable hints at the mask shop for various progressive items.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+            'hide_when_disabled': True,
+        }
+    )
     
     shuffle_ganon_bosskey = Combobox(
         gui_text         = "Ganon's Boss Key",
