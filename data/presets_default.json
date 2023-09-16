@@ -685,7 +685,17 @@
         "hint_dist":                               "triforce-blitz-s2",
         "item_hints":                              [],
         "hint_dist_user":                          {},
-        "plandomized_locations":                   {"Shadow Temple Invisible Floormaster Chest": "Small Key (Shadow Temple)"},
+        "plandomized_locations":                   {
+            "Shadow Temple Invisible Floormaster Chest": "Small Key (Shadow Temple)",
+            "Market Mask Shop Item 1": "Buy Silver Scale Hint",
+            "Market Mask Shop Item 2": "Buy Goron Bracelet Hint",
+            "Market Mask Shop Item 3": "Buy Wallet Hint",
+            "Market Mask Shop Item 4": "Buy Silver Gauntlets Hint",
+            "Market Mask Shop Item 5": "Buy Hookshot Hint",
+            "Market Mask Shop Item 6": "Buy Bow Hint",
+            "Market Mask Shop Item 7": "Buy Magic Hint",
+            "Market Mask Shop Item 8": "Buy Bomb Bag Hint"
+        },
         "text_shuffle":                            "none",
         "misc_hints":                              ["altar", "ganondorf", "warp_songs_and_owls", "20_skulltulas"],
         "ice_trap_appearance":                     "junk_only",

@@ -705,7 +705,12 @@ class World:
                             self.shop_prices[location.name] = 10
 
     def mask_hint_shop_prices(self) -> None:
-        prices = {
+        # layout:   8       6               2       4
+        #           7       5               1       3
+        #
+        #           BombBag Bow           Str1    Str2
+        #           Magic   Hook          Scale   Wallet
+        prices = {          
             '1': 21,
             '2': 22,
             '3': 23,

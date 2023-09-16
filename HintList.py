@@ -1218,6 +1218,15 @@ hintTable: dict[str, tuple[list[str] | str, Optional[str], str | list[str]]] = {
     'Colossus GS Hill':                                            ("night reveals a #spider deep in the desert# holding", None, 'exclude'),
     'Colossus GS Tree':                                            ("night reveals a #spider deep in the desert# holding", None, 'exclude'),
 
+    'Buy Bomb Bag Hint':                                           ("an explosive #rumor# for sale", "Bomb Bag Hint", 'exclude'),
+    'Buy Bow Hint':                                                ("a high-strung #rumor# for sale", "Bow Hint", 'exclude'),
+    'Buy Hookshot Hint':                                           ("a grabby #rumor# for sale", "Hookshot Hint", 'exclude'),
+    'Buy Magic Hint':                                              ("a magical #rumor# for sale", "Magic Hint", 'exclude'),
+    'Buy Goron Bracelet Hint':                                     ("a gripping #rumor# for sale", "Goron Bracelet Hint", 'exclude'),
+    'Buy Silver Gauntlets Hint':                                   ("a silvery #rumor# for sale", "Silver Gauntlets Hint", 'exclude'),
+    'Buy Silver Scale Hint':                                       ("a deep #rumor# for sale", "Silver Scale Hint", 'exclude'),
+    'Buy Wallet Hint':                                             ("an expensive #rumor# for sale", "Wallet Hint", 'exclude'),
+
     'KF Shop Item 1':                                              ("a #child shopkeeper# sells", None, 'exclude'),
     'KF Shop Item 2':                                              ("a #child shopkeeper# sells", None, 'exclude'),
     'KF Shop Item 3':                                              ("a #child shopkeeper# sells", None, 'exclude'),
