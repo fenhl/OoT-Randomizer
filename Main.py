@@ -147,8 +147,6 @@ def build_world_graphs(settings: Settings) -> list[World]:
 
         if settings.shopsanity != 'off':
             world.random_shop_prices()
-        if settings.triforce_blitz_mask_hint_shop:
-            world.mask_hint_shop_prices()
         world.set_scrub_prices()
 
         logger.info('Calculating Access Rules.')
