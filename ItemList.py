@@ -361,14 +361,14 @@ item_table: dict[str, tuple[str, Optional[bool], Optional[int], Optional[dict[st
     'Buy Red Potion for 40 Rupees':     ('Shop',     False, 0x30, {'object': 0x00EB, 'price': 40}),
     'Buy Red Potion for 50 Rupees':     ('Shop',     False, 0x31, {'object': 0x00EB, 'price': 50}),
 
-    'Buy Bomb Bag Hint':                ('Item', False, 0x1010, None),
-    'Buy Bow Hint':                     ('Item', False, 0x1010, None),
-    'Buy Hookshot Hint':                ('Item', False, 0x1010, None),
-    'Buy Magic Hint':                   ('Item', False, 0x1010, None),
-    'Buy Silver Gauntlets Hint':        ('Item', False, 0x1010, None),
-    'Buy Goron Bracelet Hint':          ('Item', False, 0x1010, None),
-    'Buy Silver Scale Hint':            ('Item', False, 0x1010, None),
-    'Buy Wallet Hint':                  ('Item', False, 0x1010, None),
+    'Buy Bomb Bag Hint':                ('Item',    False,  0x1010,     None),
+    'Buy Bow Hint':                     ('Item',    False,  0x1010,     None),
+    'Buy Hookshot Hint':                ('Item',    False,  0x1010,     None),
+    'Buy Magic Hint':                   ('Item',    False,  0x1010,     None),
+    'Buy Silver Gauntlets Hint':        ('Item',    False,  0x1010,     None),
+    'Buy Goron Bracelet Hint':          ('Item',    False,  0x1010,     None),
+    'Buy Silver Scale Hint':            ('Shop',    False, 0x31, {'object': 0x00EB, 'price': 0}),
+    'Buy Wallet Hint':                  ('Item',    False,  0x1010,     None),
 
     'Kokiri Emerald':                   ('DungeonReward',    True,  None,
                                             {

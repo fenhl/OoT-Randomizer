@@ -3016,10 +3016,7 @@ def place_shop_items(rom: Rom, world: World, shop_items, messages, locations, in
             shop_item.object = rom_item['object_id']
             shop_item.model = rom_item['graphic_id'] - 1
             if location.type == 'MaskShop':
-                if world.settings.triforce_blitz_mask_hint_shop:
-                    shop_item.price = location.price
-                else:
-                    shop_item.price = 0
+                shop_item.price = 0
             else:
                 shop_item.price = location.price
             shop_item.pieces = 1

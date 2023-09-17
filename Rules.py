@@ -58,10 +58,6 @@ def set_rules(world: World) -> None:
         else:
             add_item_rule(location, lambda location, item: item.type != 'Shop')
 
-        if location.type == 'MaskShop' and world.settings.triforce_blitz_mask_hint_shop:
-            if location.name in world.shop_prices:
-                location.price = world.shop_prices[location.name]
-
         if world.skip_child_zelda and location.name == 'Song from Impa':
             if world.settings.triforce_hunt and world.total_starting_triforce_count >= world.triforce_goal - world.settings.world_count:
                 # We have enough starting Triforce pieces that putting a piece on every world's Song from Impa would hit the goal count

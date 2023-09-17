@@ -1038,10 +1038,10 @@ class SettingInfos:
         }
     )
 
-    triforce_blitz_mask_hint_shop = Checkbutton(
-        gui_text       = 'Triforce Blitz Mask Hint Shop',
+    triforce_blitz_hint_shop = Checkbutton(
+        gui_text       = 'Triforce Blitz Hint Shop',
         gui_tooltip    = '''\
-            Place purchasable hints at the mask shop for various progressive items.
+            Place purchasable hints at the Market shops for various progressive items.
         ''',
         shared         = True,
         gui_params     = {

@@ -704,29 +704,6 @@ class World:
                         elif self.settings.shopsanity_prices == 'affordable':
                             self.shop_prices[location.name] = 10
 
-    def mask_hint_shop_prices(self) -> None:
-        # layout:   8       6               2       4
-        #           7       5               1       3
-        #
-        #           BombBag Bow           Str1    Str2
-        #           Magic   Hook          Scale   Wallet
-        prices = {          
-            '1': 21,
-            '2': 22,
-            '3': 23,
-            '4': 24,
-            '5': 25, 
-            '6': 26,
-            '7': 27,
-            '8': 28
-        }
-        for region in self.regions:
-            for location in region.locations:
-                if location.type == 'MaskShop':
-                    index = location.name[-1:]
-                    if index in prices: 
-                        self.shop_prices[location.name] = prices[index]
-
     def set_scrub_prices(self) -> None:
         # Get Deku Scrub Locations
         scrub_locations = [location for location in self.get_locations() if location.type in ['Scrub', 'GrottoScrub']]
