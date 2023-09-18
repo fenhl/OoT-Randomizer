@@ -118,7 +118,7 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
         ice_trap.looks_like_item = random_item
 
     if world.settings.triforce_blitz_hint_shop:
-        hintpool = [item for item in world.itempool if item.name[-4:] == 'Hint']
+        hintpool = [item for item in world.itempool if item.hint]
         looks_like_table = {
             "Bomb Bag Hint": "Bomb Bag",
             "Bow Hint": "Bow",

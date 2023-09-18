@@ -3074,6 +3074,10 @@ def place_shop_items(rom: Rom, world: World, shop_items, messages, locations, in
                 if location.item.name == 'Ice Trap':
                     shop_item_name = create_fake_name(shop_item_name)
 
+                # Don't use alias name for hints
+                if location.item.hint:
+                    shop_item_name = location.item.name
+
                 if world.settings.world_count > 1:
                     description_text = '\x08\x05\x41%s  %d Rupees\x01\x05\x42Player %d\x05\x40\x01Special deal! ONE LEFT!\x09\x0A\x02' % (shop_item_name, shop_item.price, location.item.world.id + 1)
                 else:
