@@ -117,21 +117,6 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
         ice_trap = ice_traps.pop(0)
         ice_trap.looks_like_item = random_item
 
-    if world.settings.triforce_blitz_hint_shop:
-        hintpool = [item for item in world.itempool if item.hint]
-        looks_like_table = {
-            "Bomb Bag Hint": "Bomb Bag",
-            "Bow Hint": "Bow",
-            "Hookshot Hint": "Progressive Hookshot",
-            "Magic Hint": "Magic Meter",
-            "Silver Gauntlets Hint": "Progressive Strength Upgrade",
-            "Goron Bracelet Hint": "Progressive Strength Upgrade",
-            "Silver Scale Hint": "Progressive Scale",
-            "Wallet Hint": "Progressive Wallet"
-        }
-        for hint in hintpool:
-            hint.looks_like_item = ItemFactory(looks_like_table[hint.name])
-
     # Start a search cache here.
     search = Search([world.state for world in worlds])
 
