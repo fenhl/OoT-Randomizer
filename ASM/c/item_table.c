@@ -333,7 +333,14 @@ item_row_t item_table[] = {
     [0x1005] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x90E1, 0x0193, 0x76, no_upgrade, give_triforce_piece, -1, -1, NULL), // Triforce of Wisdom
     [0x1006] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x90E2, 0x0193, 0x76, no_upgrade, give_triforce_piece, -1, -1, NULL), // Triforce of Courage
 
-    [0x1010] = ITEM_ROW(0x4D,      BROWN_CHEST,  0x41, -1, 0x0054, 0x0157, 0x5F, no_upgrade, no_effect, -1, -1, NULL), // Bomb Bag Hint
+    [0x1010] = ITEM_ROW(0x4D,       BROWN_CHEST, 0x83,  3, 0x90E0, 0x00B7, 0x09, no_upgrade, no_effect, -1, -1, NULL), // Bomb Bag Hint
+    [0x1011] = ITEM_ROW(0x4D,       BROWN_CHEST, 0x83,  3, 0x90E0, 0x00B7, 0x09, no_upgrade, no_effect, -1, -1, NULL), // Bow Hint
+    [0x1012] = ITEM_ROW(0x4D,       BROWN_CHEST, 0x83,  3, 0x90E0, 0x00B7, 0x09, no_upgrade, no_effect, -1, -1, NULL), // Hookshot Hint
+    [0x1013] = ITEM_ROW(0x4D,       BROWN_CHEST, 0x83,  3, 0x90E0, 0x00B7, 0x09, no_upgrade, no_effect, -1, -1, NULL), // Magic Hint
+    [0x1014] = ITEM_ROW(0x4D,       BROWN_CHEST, 0x83,  3, 0x90E0, 0x00B7, 0x09, no_upgrade, no_effect, -1, -1, NULL), // Silver Gauntlets Hint
+    [0x1015] = ITEM_ROW(0x4D,       BROWN_CHEST, 0x83,  3, 0x90E0, 0x00B7, 0x09, no_upgrade, no_effect, -1, -1, NULL), // Goron Bracelet Hint
+    [0x1016] = ITEM_ROW(0x4D,       BROWN_CHEST, 0x83,  3, 0x90E0, 0x00B7, 0x09, no_upgrade, no_effect, -1, -1, NULL), // Silver Scale Hint
+    [0x1017] = ITEM_ROW(0x4D,       BROWN_CHEST, 0x83,  3, 0x90E0, 0x00B7, 0x09, no_upgrade, no_effect, -1, -1, NULL), // Wallet Hint
 };
 
 /*  Determine which message to display based on the number of silver rupees collected.

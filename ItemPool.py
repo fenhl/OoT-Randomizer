@@ -261,14 +261,14 @@ triforce_blitz_items: list[str] = ([
 ])
 
 triforce_blitz_hint_shop_items: list[str] = ([
-    'Buy Bomb Bag Hint',
-    'Buy Bow Hint',
-    'Buy Hookshot Hint',
-    'Buy Magic Hint',
-    'Buy Goron Bracelet Hint',
-    'Buy Silver Gauntlets Hint',
-    'Buy Silver Scale Hint',
-    'Buy Wallet Hint'
+    'Bomb Bag Hint',
+    'Bow Hint',
+    'Hookshot Hint',
+    'Magic Hint',
+    'Goron Bracelet Hint',
+    'Silver Gauntlets Hint',
+    'Silver Scale Hint',
+    'Wallet Hint'
 ])
 
 shopsanity_rupees: list[str] = (
@@ -877,7 +877,7 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
             else:
                 pending_junk_pool.append(rupee)
 
-    if world.settings.triforce_blitz_mask_hint_shop:
+    if world.settings.triforce_blitz_hint_shop:
         pending_junk_pool.extend(triforce_blitz_hint_shop_items)
 
     if world.settings.free_scarecrow:

@@ -205,7 +205,7 @@ SYMBOL TABLE:
 00000094 g     O .sdata	00000004 text_height
 00000000         *UND*	00000000 CFG_CORRECT_MODEL_COLORS
 0000de30 g     F .text	00000068 stick_upgrade
-0001de04 g     O .data	000000fc adultSkeleton
+0001dec8 g     O .data	000000fc adultSkeleton
 00000010 g     O .data	00000018 medals
 0001285c g     F .text	0000002c text_init
 00000000         *UND*	00000000 INCOMING_PLAYER
@@ -266,7 +266,7 @@ SYMBOL TABLE:
 00000000         *UND*	00000000 OUTGOING_PLAYER
 000002c0 g     O .bss	00000258 collectible_scene_flags_table
 00013e68 g     F .text	00000240 override_weather_state
-0001dc08 g     O .data	00000100 FILENAME_ENCODING
+0001dccc g     O .data	00000100 FILENAME_ENCODING
 000078e4 g     F .text	00000044 push_delayed_item
 0000dc68 g     F .text	0000007c slingshot_upgrade
 00012450 g     F .text	000001d0 Sram_CopySave
@@ -429,7 +429,7 @@ SYMBOL TABLE:
 00000408 g     O .data	00000028 setup_db
 0000fc08 g     F .text	00000060 get_object
 0000d020 g     F .text	000000bc give_triforce_piece
-00001a2c g     O .data	0001c1dc item_table
+00001a2c g     O .data	0001c2a0 item_table
 00000000         *UND*	00000000 CFG_UNINVERT_YAXIS_IN_FIRST_PERSON_CAMERA
 000003b8 g     O .data	00000010 font_sprite
 0000024c g     F .text	00000050 Actor_After_UpdateAll_Hack
@@ -562,7 +562,7 @@ SYMBOL TABLE:
 0000003c g     O .sbss	00000004 active_item_action_id
 00007ab4 g     F .text	000000e0 try_pending_item
 00009acc g     F .text	00000120 draw_gi_compass
-0001df00 g     O .data	000001f0 texture_table
+0001dfc4 g     O .data	000001f0 texture_table
 0000d5c0 g     F .text	0000002c fill_wallet_upgrade
 00009968 g     F .text	000000c0 draw_gi_eggs_and_medallions
 00000080 g     O .sbss	00000004 heap_next
@@ -592,7 +592,7 @@ SYMBOL TABLE:
 00007748 g     F .text	000000a4 move_outgoing_queue
 00002d20 g     F .text	00000318 draw_silver_rupee_count
 00000000         *UND*	00000000 CFG_RAINBOW_NAVI_NPC_INNER_ENABLED
-0001dd08 g     O .data	000000fc childSkeleton
+0001ddcc g     O .data	000000fc childSkeleton
 00000004 g     O .sbss	00000004 CHEST_SIZE_TEXTURE
 0000fd1c g     F .text	00000078 draw_model_low_level
 0000b780 g     F .text	000001ec draw_gi_fairy_lantern
