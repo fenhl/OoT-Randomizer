@@ -169,7 +169,7 @@ class ShopHint:
         self.message_id: int = message_id
 
 shopHints: dict[int, ShopHint] = {
-    0x90F0: ShopHint('Bomb Bag Hint', 'Progressive Bomb Bag', 1, 0x90F0),
+    0x90F0: ShopHint('Bomb Bag Hint', 'Bomb Bag', 1, 0x90F0),
     0x90F1: ShopHint('Bow Hint', 'Bow', 1, 0x90F1),
     0x90F2: ShopHint('Hookshot Hint', 'Progressive Hookshot', 1, 0x90F2),
     0x90F3: ShopHint('Magic Hint', 'Magic Meter', 1, 0x90F3),
@@ -2108,7 +2108,31 @@ def build_misc_location_hints(world: World, messages: list[Message]) -> None:
         update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), 0x23)
 
 def get_hint_shop_hint(item_name: str, upgrade_level: int, spoiler: Spoiler, world: World) -> GossipText:
-    return GossipText('asdf')
+    path_items = [location for location in spoiler.required_locations[world.id] if location.item.name == item_name]
+    playthrough_items = [location for location in spoiler.playthrough_locations if location.item.name == item_name and location.item.world.id == world.id]
+    world_items = world.find_items(item_name)
+
+    if (len(path_items) >= upgrade_level):
+        item_importance_text = 'path'
+        item_importance_color = 'Green'
+        hinted_location = playthrough_items[upgrade_level - 1]
+    elif (len(playthrough_items) >= upgrade_level):
+        item_importance_text = 'wanderer'
+        item_importance_color = 'Yellow'
+        hinted_location = playthrough_items[upgrade_level - 1]
+    else:
+        item_importance_text = 'foolish'
+        item_importance_color = 'Pink'
+        hinted_location = random.choice(world_items)
+    
+    hint_area = HintArea.at(hinted_location)
+    location_text = hint_area.text(world.settings.clearer_hints)
+
+    if "Progressive " in item_name:
+        item_text = item_name[12:]
+    else:
+        item_text = item_name
+    return GossipText('%s hoards a #%s# %s.' % (location_text, item_importance_text, item_text), ['Light Blue', item_importance_color], [hinted_location.name], [hinted_location.item.name])
 
 def build_hint_shop_hints(spoiler: Spoiler, worlds: list[World]) -> None:
     for world in worlds:

@@ -706,14 +706,14 @@ class World:
 
     def hint_shop_prices(self) -> None:
         hint_prices = {
-            'Market Bazaar Item 5': 21,
-            'Market Bazaar Item 6': 22,
-            'Market Bazaar Item 7': 23,
-            'Market Bazaar Item 8': 24,
-            'Market Potion Shop Item 5': 25, 
-            'Market Potion Shop Item 6': 26,
-            'Market Potion Shop Item 7': 27,
-            'Market Potion Shop Item 8': 28
+            'Market Bazaar Item 5': 99, # Bow
+            'Market Bazaar Item 6': 40, # Scale
+            'Market Bazaar Item 7': 99, # Bomb Bag
+            'Market Bazaar Item 8': 0, # Wallet
+            'Market Potion Shop Item 5': 99, # Str 1
+            'Market Potion Shop Item 6': 200, # Magic
+            'Market Potion Shop Item 7': 200, # Str 2
+            'Market Potion Shop Item 8': 200  # Hook
         }
         self.shop_prices.update(hint_prices)
 
