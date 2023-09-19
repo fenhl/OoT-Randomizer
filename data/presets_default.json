@@ -675,7 +675,7 @@
         "clearer_hints":                           true,
         "no_collectible_hearts":                   false,
         "hints":                                   "always",
-        "hint_dist":                               "triforce-blitz-s2",
+        "hint_dist":                               "triforce-blitz-s3",
         "item_hints":                              [],
         "hint_dist_user":                          {},
         "plandomized_locations":                   {
