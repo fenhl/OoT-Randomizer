@@ -629,6 +629,7 @@ hintTable: dict[str, tuple[list[str] | str, Optional[str], str | list[str]]] = {
     'Haunted Wasteland Checks':                                    ("deep in the #wasteland a spider and a chest# hold...^", None, 'dual'),
     'Castle Fairy Checks':                                         ("Great Fairies outside #Hyrule and Ganon's castles# reward...^", None, 'dual'),
     'King Zora Items':                                             ("#unfreezing King Zora and giving him the Prescription# rewards...^", None, 'dual'),
+
     'Kak 20 and 30 Gold Skulltula Rewards':                        ("#in a peaceful village# collecting 20 and 30 spider tokens will reward...^", None, 'dual_always'),
     'Kak 40 and 50 Gold Skulltula Rewards':                        ("#in a peaceful village# collecting 40 and 50 spider tokens will reward...^", None, 'dual_always'),
     'DMT Biggoron and ZR Frogs Ocarina Game':                      ("#Biggoron and the Frogs of Zora River#, for retinal relief and a proud performance reward respectively...^", None, 'dual_always'),
