@@ -15,7 +15,7 @@ from Cosmetics import CosmeticsLog, patch_cosmetics
 from EntranceShuffle import set_entrances
 from Fill import distribute_items_restrictive, ShuffleError
 from Goals import update_goal_items, replace_goal_names, calculate_playthrough_locations
-from Hints import build_gossip_hints
+from Hints import build_gossip_hints, build_hint_shop_hints
 from HintList import clear_hint_exclusion_cache, misc_item_hint_table, misc_location_hint_table
 from ItemPool import generate_itempool
 from MBSDIFFPatch import apply_ootr_3_web_patch
@@ -189,6 +189,8 @@ def make_spoiler(settings: Settings, worlds: list[World]) -> Spoiler:
         build_gossip_hints(spoiler, worlds)
     elif any(world.dungeon_rewards_hinted for world in worlds) or any(hint_type in settings.misc_hints for hint_type in misc_item_hint_table) or any(hint_type in settings.misc_hints for hint_type in misc_location_hint_table):
         spoiler.find_misc_hint_items()
+    if settings.triforce_blitz_hint_shop:
+        build_hint_shop_hints(spoiler, worlds)
     spoiler.build_file_hash()
     return spoiler
 

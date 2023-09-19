@@ -11,7 +11,7 @@ from typing import Optional, Any
 
 from Entrance import Entrance
 from HintList import get_hint
-from Hints import GossipText, HintArea, write_gossip_stone_hints, build_altar_hints, \
+from Hints import GossipText, HintArea, write_gossip_stone_hints, write_hint_shop_hints, build_altar_hints, \
         build_ganon_text, build_misc_item_hints, build_misc_location_hints, get_simple_hint_no_prefix, get_item_generic_name
 from Item import Item
 from ItemPool import song_list, trade_items, child_trade_items
@@ -1794,6 +1794,9 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             rom.write_int32(symbol, 2)
         else:
             rom.write_int32(symbol, 1)
+    
+    if world.settings.triforce_blitz_hint_shop:
+        write_hint_shop_hints(spoiler, world, messages)
 
     # build silly ganon lines
     if 'ganondorf' in world.settings.misc_hints:

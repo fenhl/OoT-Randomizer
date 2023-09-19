@@ -72,6 +72,7 @@ class Spoiler:
         self.playthrough_locations = {}
         self.playthrough_location_requirements = {}
         self.hints: dict[int, dict[int, GossipText]] = {world.id: {} for world in worlds}
+        self.shop_hints: dict[int, dict[int, GossipText]] = {world.id: {} for world in worlds}
         self.file_hash: list[int] = []
 
     def build_file_hash(self) -> None:

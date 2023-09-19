@@ -13,7 +13,7 @@ import StartingItems
 from Entrance import Entrance
 from EntranceShuffle import EntranceShuffleError, change_connections, confirm_replacement, validate_world, check_entrances_compatibility
 from Fill import FillError
-from Hints import HintArea, gossipLocations, GossipText
+from Hints import HintArea, gossipLocations, shopHints, GossipText
 from Item import ItemFactory, ItemInfo, ItemIterator, is_item, Item
 from ItemPool import item_groups, get_junk_item, song_list, trade_items, child_trade_items, triforce_blitz_items
 from JSONDump import dump_obj, CollapseList, CollapseDict, AlignedDict, SortedDict
@@ -49,6 +49,7 @@ per_world_keys = (
     ':goal_locations',
     ':barren_regions',
     'gossip_stones',
+    'shop_hints',
 )
 
 
@@ -273,6 +274,7 @@ class WorldDistribution:
         self.goal_locations: Optional[dict[str, dict[str, dict[str, LocationRecord | dict[str, LocationRecord]]]]] = None
         self.barren_regions: Optional[list[str]] = None
         self.gossip_stones: Optional[dict[str, GossipRecord]] = None
+        self.shop_hints: Optional[dict[str, GossipRecord]] = None
 
         self.distribution: Distribution = distribution
         self.id: int = id
@@ -299,6 +301,7 @@ class WorldDistribution:
             'goal_locations': None,
             'barren_regions': None,
             'gossip_stones': {name: [GossipRecord(rec) for rec in record] if is_pattern(name) else GossipRecord(record) for (name, record) in src_dict.get('gossip_stones', {}).items()},
+            'shop_hints': {name: [GossipRecord(rec) for rec in record] if is_pattern(name) else GossipRecord(record) for (name, record) in src_dict.get('shop_hints', {}).items()},
         }
 
         if update_all:
@@ -331,6 +334,7 @@ class WorldDistribution:
             ':goal_locations': self.goal_locations,
             ':barren_regions': self.barren_regions,
             'gossip_stones': SortedDict({name: [rec.to_json() for rec in record] if is_pattern(name) else record.to_json() for (name, record) in self.gossip_stones.items()}),
+            'shop_hints': SortedDict({name: [rec.to_json() for rec in record] if is_pattern(name) else record.to_json() for (name, record) in self.shop_hints.items()}),
         }
 
     def __str__(self) -> str:
@@ -1421,6 +1425,14 @@ class Distribution:
                     world_dist.gossip_stones[gossipLocations[loc].name] = hint
                 else:
                     world_dist.gossip_stones["0x{:04X}".format(loc)] = hint
+
+            world_dist.shop_hints = {}
+            for hint_id in spoiler.shop_hints[world.id]:
+                hint = GossipRecord(spoiler.shop_hints[world.id][hint_id].to_json())
+                if hint_id in shopHints:
+                    world_dist.shop_hints[shopHints[hint_id].name] = hint
+                else:
+                    world_dist.shop_hints["0x{:04X}".format(loc)] = hint
 
         self.playthrough = {}
         for (sphere_nr, sphere) in spoiler.playthrough.items():
