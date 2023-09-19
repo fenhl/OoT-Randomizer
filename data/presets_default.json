@@ -589,7 +589,7 @@
         "logic_no_night_tokens_without_suns_song":  false,
         "free_scarecrow":                           true,
         "fast_bunny_hood":                          true,
-        "start_with_rupees":                        true,
+        "start_with_rupees":                        false,
         "start_with_consumables":                   true,
         "starting_hearts":                          3,
         "plant_beans":                              false,
