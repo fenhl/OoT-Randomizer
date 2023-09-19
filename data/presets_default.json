@@ -570,6 +570,8 @@
         ],
         "triforce_hunt":                            false,
         "triforce_blitz":                           true,
+        "triforce_blitz_minimum_path_count":        4,
+        "triforce_blitz_maximum_empty_paths":       1,
         "triforce_blitz_jabus_revenge":             false,
         "triforce_blitz_hint_shop":                 true,
         "logic_rules":                              "glitchless",

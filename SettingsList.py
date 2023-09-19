@@ -1022,7 +1022,47 @@ class SettingInfos:
         disable        = {
             True  : {'settings' : ['shuffle_ganon_bosskey', 'ganon_bosskey_stones', 'ganon_bosskey_medallions', 
                                    'ganon_bosskey_rewards', 'ganon_bosskey_tokens', 'triforce_hunt', 'triforce_goal_per_world']},
-            False : {'settings' : ['triforce_blitz_jabus_revenge']}
+            False : {'settings' : ['triforce_blitz_jabus_revenge', 'triforce_blitz_minimum_path_count']}
+        },
+    )
+    
+    triforce_blitz_minimum_path_count = Scale(
+        gui_text       = 'Triforce Blitz Minimum Path Count Sum',
+        default        = 0,
+        minimum        = 0,
+        maximum        = 100,
+        shared         = True,
+        gui_tooltip    = '''\
+            Select the minimum total path count for a Triforce Blitz
+            seed.  If the triforce pieces are placed in locations where
+            this threshold is not reached, the entire seed will be re-rolled.
+
+            In multiworld, this is enforced on a per-world basis, so use with caution.
+        ''',
+        gui_params     = {
+            "hide_when_disabled": True,
+            'web:max':            100,
+            'electron:max':       100,
+        },
+    )
+
+    triforce_blitz_maximum_empty_paths = Scale(
+        gui_text       = 'Triforce Blitz Maximum Empty Paths',
+        default        = 3,
+        minimum        = 0,
+        maximum        = 3,
+        shared         = True,
+        gui_tooltip    = '''\
+            Select the maximum number of 0 step paths for a Triforce Blitz
+            seed.  If the triforce pieces are placed in locations where
+            this threshold is reached, the entire seed will be re-rolled.
+
+            In multiworld, this is enforced on a per-world basis, so use with caution.
+        ''',
+        gui_params     = {
+            "hide_when_disabled": True,
+            'web:max':            100,
+            'electron:max':       100,
         },
     )
 

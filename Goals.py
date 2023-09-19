@@ -3,12 +3,14 @@ import sys
 from collections import defaultdict
 from collections.abc import Iterable, Collection
 from typing import TYPE_CHECKING, Optional, Any
+from functools import reduce
 
 from HintList import goalTable, get_hint_group, hint_exclusions
 from ItemList import item_table
 from ItemPool import item_groups, triforce_items
 from RulesCommon import AccessRule
 from Search import Search, ValidGoals
+from Fill import FillError
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
@@ -288,6 +290,25 @@ def update_goal_items(spoiler: Spoiler) -> None:
         for world in worlds:
             spoiler.goal_categories[world.id] = {cat_name: category.copy() for cat_name, category in world.goal_categories.items()}
     spoiler.goal_locations = required_locations_dict
+
+    if worlds[0].settings.triforce_blitz:
+        minimum = worlds[0].settings.triforce_blitz_minimum_path_count
+        maximum_empty = worlds[0].settings.triforce_blitz_maximum_empty_paths
+        for world in spoiler.worlds:
+            path_sum: int = 0
+            empty_paths: int = 0
+            for category_name in world.goal_categories:
+                for goal in world.goal_categories[category_name].goals:
+                    path_count = reduce(lambda acc, locations: acc + len(locations), spoiler.goal_locations[world.id][category_name][goal.name].values(), 0)
+                    path_sum += path_count
+                    if path_count == 0:
+                        empty_paths += 1
+        
+        if path_sum < minimum:
+            raise FillError(f'Minimum path sum of {minimum} was not reached, re-rolling...')
+        
+        if empty_paths > maximum_empty:
+            raise FillError(f'Maximum empty paths of {maximum_empty} was exceeded, re-rolling...')
 
 
 def lock_category_entrances(category: GoalCategory, state_list: Iterable[State]) -> dict[int, dict[str, AccessRule]]:

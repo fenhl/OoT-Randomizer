@@ -178,6 +178,8 @@
             "triforce_count_per_world",
             "triforce_goal_per_world",
             "triforce_blitz",
+            "triforce_blitz_minimum_path_count",
+            "triforce_blitz_maximum_empty_paths",
             "triforce_blitz_jabus_revenge",
             "triforce_blitz_hint_shop",
             "free_bombchu_drops",
