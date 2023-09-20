@@ -3472,7 +3472,7 @@ class SettingInfos:
     )
 
     hint_dist_user = SettingInfoDict(None, None, True, {})
-    plandomized_locations = SettingInfoDict(None, None, True, {})
+    plandomized_locations = SettingInfoDict("Plandomized Locations", None, True, {})
 
     misc_hints = MultipleSelect(
         gui_text        = 'Misc. Hints',
