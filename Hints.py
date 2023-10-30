@@ -2108,10 +2108,14 @@ def build_misc_location_hints(world: World, messages: list[Message]) -> None:
 
         update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), 0x23)
 
-def get_hint_shop_hint(item_name: str, upgrade_level: int, spoiler: Spoiler, world: World) -> GossipText:
+def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set(Location), spoiler: Spoiler, world: World) -> GossipText:
     path_items = [location for location in spoiler.required_locations[world.id] if location.item.name == item_name]
     playthrough_items = [location for location in spoiler.playthrough_locations if location.item.name == item_name and location.item.world.id == world.id]
     world_items = world.find_items(item_name)
+    foolish_world_items = [location for location in world_items if 
+                           location not in path_items and 
+                           location not in playthrough_items and
+                           location not in hinted_locations]
 
     if (len(path_items) >= upgrade_level):
         item_importance_text = 'path'
@@ -2124,10 +2128,11 @@ def get_hint_shop_hint(item_name: str, upgrade_level: int, spoiler: Spoiler, wor
     else:
         item_importance_text = 'foolish'
         item_importance_color = 'Pink'
-        hinted_location = random.choice(world_items)
+        hinted_location = random.choice(foolish_world_items)
     
     hint_area = HintArea.at(hinted_location)
     location_text = hint_area.text(world.settings.clearer_hints)
+    hinted_locations.add(hinted_location)
 
     if "Progressive " in item_name:
         item_text = item_name[12:]
@@ -2137,8 +2142,9 @@ def get_hint_shop_hint(item_name: str, upgrade_level: int, spoiler: Spoiler, wor
 
 def build_hint_shop_hints(spoiler: Spoiler, worlds: list[World]) -> None:
     for world in worlds:
+        hinted_locations: set(Location) = set()
         for hint_id, data in shopHints.items():
-            hint_text = get_hint_shop_hint(data.hinted_item_name, data.upgrade_level, spoiler, world)
+            hint_text = get_hint_shop_hint(data.hinted_item_name, data.upgrade_level, hinted_locations, spoiler, world)
             spoiler.shop_hints[world.id][data.message_id] = hint_text
 
 def get_raw_text(string: str) -> str:
