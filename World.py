@@ -377,7 +377,7 @@ class World:
         # copy any randomized settings to match the original copy
         new_world.randomized_list = list(self.randomized_list)
         for randomized_item in new_world.randomized_list:
-            setattr(new_world, randomized_item, getattr(self.settings, randomized_item))
+            setattr(new_world.settings, randomized_item, getattr(self.settings, randomized_item))
 
         new_world.always_hints = list(self.always_hints)
         new_world.max_progressions = copy.copy(self.max_progressions)
