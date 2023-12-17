@@ -39,7 +39,7 @@ void get_chest_override(z64_actor_t* actor) {
                 item_row = get_item_row(override.value.base.item_id);
             }
             if (CHEST_SIZE_MATCH_CONTENTS || CHEST_SIZE_TEXTURE) {
-                if (item_row->chest_type == BROWN_CHEST || item_row->chest_type == SILVER_CHEST || item_row->chest_type == SKULL_CHEST_SMALL || item_row->chest_type == HEART_CHEST_SMALL) {
+                if (item_row->chest_type == BROWN_CHEST || item_row->chest_type == SILVER_CHEST || item_row->chest_type == SKULL_CHEST_SMALL || item_row->chest_type == HEART_CHEST_SMALL || item_row->chest_type == BOMBCHU_CHEST_SMALL) {
                     // Ensure vanilla chest size in Chest Game when not shuffled
                     size = (scene == 0x10 && actor->variable != 0x4ECA && !SHUFFLE_CHEST_GAME) ? BROWN_CHEST : SMALL_CHEST;
                 } else {
@@ -96,6 +96,12 @@ void set_chest_texture(z64_gfx_t* gfx, uint8_t chest_type, Gfx** opa_ptr) {
             case HEART_CHEST_BIG:
                 frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_HEART);
                 baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_HEART);
+                break;
+
+            case BOMBCHU_CHEST_SMALL:
+            case BOMBCHU_CHEST_BIG:
+                frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_BOMBCHU);
+                baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_BOMBCHU);
                 break;
 
             default:
