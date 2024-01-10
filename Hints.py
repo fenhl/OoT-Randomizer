@@ -558,7 +558,7 @@ def get_woth_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintRetu
         return None
 
     location = random.choice(locations)
-    checked.add(location.name)
+    checked.add(location.worldAndName)
 
     hint_area = HintArea.at(location)
     if hint_area.is_dungeon:
@@ -699,7 +699,7 @@ def get_goal_legacy_hint(spoiler, world, checked):
 
         required_locations = reduce(lambda acc, locations: acc + locations, spoiler.goal_locations[world.id][goal_category.name][goal.name].values(), [])
         goal_locations = list(filter(lambda location:
-            location.name not in checked
+            location.worldAndName not in checked
             and location.name not in world.hint_exclusions
             and location.name not in world.hint_type_overrides['goal']
             and location.item.name not in world.item_hint_type_overrides['goal']
@@ -720,7 +720,7 @@ def get_goal_legacy_hint(spoiler, world, checked):
     else:
         location = random.choice(goal_locations)
 
-    checked.add(location.name)
+    checked.add(location.worldAndName)
 
     location_text = HintArea.at(location).text(world.settings.clearer_hints)
     if location.world.id == world.id:
@@ -746,7 +746,7 @@ def get_goal_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintRetu
 
     # Filters Goal.required_locations to those still eligible to be hinted.
     hintable_required_locations_filter = (lambda required_location:
-        required_location[0].name not in checked
+        required_location[0].worldAndName not in checked
         and required_location[0].name not in world.hint_exclusions
         and required_location[0].name not in world.hint_type_overrides['goal']
         and required_location[0].item.name not in world.item_hint_type_overrides['goal']
@@ -784,7 +784,7 @@ def get_goal_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintRetu
 
     location, goal_list = random.choice(list(required_location_reverse_map.items()))
     goal, world_id = random.choice(goal_list)
-    checked.add(location.name)
+    checked.add(location.worldAndName)
 
     # Make sure this wasn't the last hintable location for other goals.
     # If so, set weights to zero. This is important for one-hint-per-goal.
@@ -892,7 +892,7 @@ def get_playthrough_location_hint(spoiler, world, checked):
     required_location_names = list(map(lambda location: location.name, spoiler.required_locations[world.id]))
 
     locations = list(filter(lambda location:
-        location.name not in checked
+        location.worldAndName not in checked
         and location.name not in required_location_names
         and location.name not in world.hint_exclusions
         and location.name not in world.hint_type_overrides['playthrough-location']
@@ -903,7 +903,7 @@ def get_playthrough_location_hint(spoiler, world, checked):
         return None
 
     location = random.choice(locations)
-    checked.add(location.name)
+    checked.add(location.worldAndName)
 
     hint_area = HintArea.at(location)
     location_text = hint_area.text(world.settings.clearer_hints)
@@ -946,7 +946,7 @@ def get_unlock_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type
 
     hintable_locations = list(filter(lambda location:
         len(required_locations[location]) > 0
-        and (location.name + '- unlock') not in checked
+        and (location.worldAndName + ' - unlock') not in checked
         and location.name not in world.hint_exclusions
         and location.name not in world.hint_type_overrides[hint_type]
         and location.item.name not in world.item_hint_type_overrides[hint_type]
@@ -966,7 +966,7 @@ def get_unlock_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type
     location = random.choices(hintable_locations, location_weights)[0]
     required_location_weights = list(map(lambda req_loc: len(required_locations[req_loc]) + 1, required_locations[location]))
     required_location = random.choices(required_locations[location], required_location_weights)[0]
-    checked.add(location.name + '- unlock')
+    checked.add(location.worldAndName + ' - unlock')
 
     item_text = get_hint(get_item_generic_name(location.item), world.settings.clearer_hints).text
     required_item_text = get_hint(get_item_generic_name(required_location.item), world.settings.clearer_hints).text
@@ -1054,7 +1054,7 @@ def get_barren_hint(spoiler: Spoiler, world: World, checked: set[str], all_check
 
 
 def is_not_checked(locations: Iterable[Location], checked: set[HintArea | str]) -> bool:
-    return not any(location.name in checked or HintArea.at(location) in checked for location in locations)
+    return not any(location.worldAndName in checked or HintArea.at(location) in checked for location in locations)
 
 
 def get_good_item_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintReturn:
@@ -1073,7 +1073,7 @@ def get_good_item_hint(spoiler: Spoiler, world: World, checked: set[str]) -> Hin
         return None
 
     location = random.choice(locations)
-    checked.add(location.name)
+    checked.add(location.worldAndName)
 
     item_text = get_hint(get_item_generic_name(location.item), world.settings.clearer_hints).text
     hint_area = HintArea.at(location)
@@ -1128,7 +1128,7 @@ def get_specific_item_hint(spoiler: Spoiler, world: World, checked: set[str]) ->
                 return None
 
         location = random.choice(locations)
-        checked.add(location.name)
+        checked.add(location.worldAndName)
         item_text = get_hint(get_item_generic_name(location.item), world.settings.clearer_hints).text
 
         hint_area = HintArea.at(location)
@@ -1209,7 +1209,7 @@ def get_specific_item_hint(spoiler: Spoiler, world: World, checked: set[str]) ->
                 return None
 
         location = random.choice(locations)
-        checked.add(location.name)
+        checked.add(location.worldAndName)
         item_text = get_hint(get_item_generic_name(location.item), world.settings.clearer_hints).text
 
         hint_area = HintArea.at(location)
@@ -1238,7 +1238,7 @@ def get_random_location_hint(spoiler: Spoiler, world: World, checked: set[str]) 
         return None
 
     location = random.choice(locations)
-    checked.add(location.name)
+    checked.add(location.worldAndName)
     item_text = get_hint(get_item_generic_name(location.item), world.settings.clearer_hints).text
 
     hint_area = HintArea.at(location)
@@ -1277,7 +1277,7 @@ def get_specific_hint(spoiler: Spoiler, world: World, checked: set[str], hint_ty
                 return get_specific_multi_hint(spoiler, world, checked, hint)
 
     location = world.get_location(hint.name)
-    checked.add(location.name)
+    checked.add(location.worldAndName)
 
     if location.name in world.hint_text_overrides:
         location_text = world.hint_text_overrides[location.name]
@@ -1339,7 +1339,7 @@ def get_specific_multi_hint(spoiler: Spoiler, world: World, checked: set[str], h
     locations = [world.get_location(location) for location in multi.locations]
 
     for location in locations:
-        checked.add(location.name)
+        checked.add(location.worldAndName)
 
     if hint.name in world.hint_text_overrides:
         multi_text = world.hint_text_overrides[hint.name]
@@ -1588,20 +1588,20 @@ def build_gossip_hints(spoiler: Spoiler, worlds: list[World]) -> None:
                 item_world = location.world
                 if item_world.id not in checked_locations:
                     checked_locations[item_world.id] = set()
-                checked_locations[item_world.id].add(location.name)
+                checked_locations[item_world.id].add(location.worldAndName)
         for hint_type, location in world.misc_hint_item_locations.items():
             if hint_type in world.settings.misc_hints and can_reach_hint(worlds, world.get_location(misc_item_hint_table[hint_type]['hint_location']), location):
                 item_world = location.world
                 if item_world.id not in checked_locations:
                     checked_locations[item_world.id] = set()
-                checked_locations[item_world.id].add(location.name)
+                checked_locations[item_world.id].add(location.worldAndName)
         for hint_type in world.misc_hint_location_items.keys():
             location = world.get_location(misc_location_hint_table[hint_type]['item_location'])
             if hint_type in world.settings.misc_hints and can_reach_hint(worlds, world.get_location(misc_location_hint_table[hint_type]['hint_location']), location):
                 item_world = location.world
                 if item_world.id not in checked_locations:
                     checked_locations[item_world.id] = set()
-                checked_locations[item_world.id].add(location.name)
+                checked_locations[item_world.id].add(location.worldAndName)
 
     # Build all the hints.
     for world in worlds:
@@ -1741,8 +1741,8 @@ def build_world_gossip_hints(spoiler: Spoiler, world: World, checked_locations: 
             multi = get_multi(hint.name)
             first_location = world.get_location(multi.locations[0])
             second_location = world.get_location(multi.locations[1])
-            checked_always_locations.add(first_location.name)
-            checked_always_locations.add(second_location.name)
+            checked_always_locations.add(first_location.worldAndName)
+            checked_always_locations.add(second_location.worldAndName)
 
             always_named_item(world, [first_location, second_location])
 
@@ -1763,7 +1763,7 @@ def build_world_gossip_hints(spoiler: Spoiler, world: World, checked_locations: 
                                        get_hint_group('always', world)))
         for hint in always_locations:
             location = world.get_location(hint.name)
-            checked_always_locations.add(hint.name)
+            checked_always_locations.add(location.worldAndName)
 
             always_named_item(world, [location])
 
