@@ -71,8 +71,8 @@ class World:
             'scarce': settings.starting_hearts + 9 - math.ceil((settings.starting_hearts - 3) / 2),
             'minimal': settings.starting_hearts,
         }[settings.item_pool_value]
-        if required_hearts < available_hearts:
-            raise ValueError("Not enough heart pieces/containers in item pool for win conditions. Decrease the number of required hearts or increase the item pool.")
+        if required_hearts > available_hearts:
+            raise ValueError(f"Not enough heart pieces/containers in item pool for win conditions ({available_hearts} available but {required_hearts} required). Decrease the number of required hearts or increase the item pool.")
 
         # rename a few attributes...
         self.keysanity: bool = settings.shuffle_smallkeys in ('keysanity', 'remove', 'any_dungeon', 'overworld', 'regional')
