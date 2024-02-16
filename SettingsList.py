@@ -3374,6 +3374,23 @@ class SettingInfos:
         },
     )
 
+    minor_items_special_texture = MultipleSelect(
+        gui_text       = 'Minor Items use Chext Texture',
+        choices        = {
+            'bombchus': 'Bombchus',
+            'hearts':   'Heart Pieces & Containers',
+        },
+        gui_tooltip    = '''\
+            Chests with Heart Pieces, Heart Containers, or Bombchus 
+            will appear in chests with an item-specific texture.
+        ''',
+        shared         = True,
+        default        = ['hearts'],
+        gui_params     = {
+            "hide_when_disabled" : True,
+        },
+    )
+
     invisible_chests = Checkbutton(
         gui_text       = 'Invisible Chests',
         gui_tooltip    = '''\
