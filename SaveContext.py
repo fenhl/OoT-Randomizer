@@ -243,14 +243,14 @@ class SaveContext:
         extended_table = []
         for address, value in self.save_bits.items():
             table = save_table
-            if(address >= Address.EXTENDED_CONTEXT_START):
+            if address >= Address.EXTENDED_CONTEXT_START:
                 table = extended_table
                 address -= Address.EXTENDED_CONTEXT_START
             if value != 0:
                 table += [(address & 0xFF00) >> 8, address & 0xFF, 0x00, value]
         for address, value in self.save_bytes.items():
             table = save_table
-            if(address >= Address.EXTENDED_CONTEXT_START):
+            if address >= Address.EXTENDED_CONTEXT_START:
                 table = extended_table
                 address -= Address.EXTENDED_CONTEXT_START
             table += [(address & 0xFF00) >> 8, address & 0xFF, 0x01, value]
@@ -404,13 +404,13 @@ class SaveContext:
                         'total_keys.tcg': 6,
                     },
                 }[dungeon]
-                if world.settings.keyring_give_bk:
+                if world.keyring_give_bk(dungeon):
                     bk_names = {
                         "Forest Temple": 'dungeon_items.forest.boss_key',
                         "Fire Temple": 'dungeon_items.fire.boss_key',
                         "Water Temple": 'dungeon_items.water.boss_key',
                         "Spirit Temple": 'dungeon_items.spirit.boss_key',
-                        "Shadow Temple": 'dungeon_items.shadow.boss_key'
+                        "Shadow Temple": 'dungeon_items.shadow.boss_key',
                     }
                     save_writes[dungeon][bk_names[dungeon]] = True
             else:
