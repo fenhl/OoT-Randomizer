@@ -2090,7 +2090,7 @@ def build_misc_location_hints(world: World, messages: list[Message]) -> None:
 
         update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), 0x23)
 
-def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set(Location), spoiler: Spoiler, world: World) -> GossipText:
+def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set[Location], spoiler: Spoiler, world: World) -> GossipText:
     path_items = [location for location in spoiler.required_locations[world.id] if location.item.name == item_name]
     playthrough_items = [location for location in spoiler.playthrough_locations if location.item.name == item_name and location.item.world.id == world.id]
     world_items = world.find_items(item_name)

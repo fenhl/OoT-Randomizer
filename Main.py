@@ -179,10 +179,10 @@ def place_items(worlds: list[World]) -> None:
 def make_spoiler(settings: Settings, worlds: list[World]) -> Spoiler:
     logger = logging.getLogger('')
     spoiler = Spoiler(worlds)
-    if settings.create_spoiler:
+    if settings.create_spoiler or settings.hints != 'none':
         logger.info('Calculating playthrough.')
         spoiler.create_playthrough()
-    if settings.create_spoiler or settings.hints != 'none':
+        
         logger.info('Calculating hint data.')
         update_goal_items(spoiler)
         calculate_playthrough_locations(spoiler)
