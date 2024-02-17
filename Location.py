@@ -71,6 +71,13 @@ class Location:
     @property
     def dungeon(self) -> Optional[Dungeon]:
         return self.parent_region.dungeon if self.parent_region is not None else None
+    
+    @property
+    def worldAndName(self) -> str:
+        if self.world is not None:
+            return "W" + str(self.world.id) + ":" + self.name
+        else:
+            return self.name
 
     def add_rule(self, lambda_rule: AccessRule) -> None:
         if self.always:
