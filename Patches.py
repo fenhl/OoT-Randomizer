@@ -11,7 +11,7 @@ from typing import Optional, Any
 
 from Entrance import Entrance
 from HintList import get_hint
-from Hints import GossipText, HintArea, write_gossip_stone_hints, build_altar_hints, \
+from Hints import GossipText, HintArea, write_gossip_stone_hints, write_hint_shop_hints, build_altar_hints, \
         build_ganon_text, build_misc_item_hints, build_misc_location_hints, get_simple_hint_no_prefix, get_item_generic_name
 from Item import Item
 from ItemPool import song_list, trade_items, child_trade_items
@@ -168,6 +168,9 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
         (27, 'texture_pot_top_heart',       0x01739000,    None,            256,    rgba16_patch,               'textures/pot/pot_top_heart_rgba16_patch.bin'),
         (28, 'texture_crate_heart',         0x18B6020,     0x018B6000,      4096,   ci4_rgba16patch_to_ci8,     'textures/crate/crate_heart_rgba16_patch.bin'),
         (29, 'texture_smallcrate_heart',    0xF7ECA0,      None,            2048,   rgba16_patch,               'textures/crate/smallcrate_heart_rgba16_patch.bin'),
+        
+        (42, "texture_chest_front_bombchu", 0xFEC798,      None,            4096,   rgba16_patch,               'textures/chest/chest_front_bombchu_rgba16_patch.bin'),
+        (43, "texture_chest_base_bombchu",  0xFED798,      None,            2048,   rgba16_patch,               'textures/chest/chest_base_bombchu_rgba16_patch.bin'),
     ]
 
     # Loop through the textures and apply the patch. Add the new textures as a new file in rom.
@@ -1811,6 +1814,9 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             rom.write_int32(symbol, 2)
         else:
             rom.write_int32(symbol, 1)
+    
+    if world.settings.triforce_blitz_hint_shop:
+        write_hint_shop_hints(spoiler, world, messages)
 
     # build silly ganon lines
     if 'ganondorf' in world.settings.misc_hints:
@@ -2242,26 +2248,39 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     SKULL_CHEST_BIG =  15
     HEART_CHEST_SMALL = 16
     HEART_CHEST_BIG = 17
+    BOMBCHU_CHEST_SMALL = 18
+    BOMBCHU_CHEST_BIG = 19
     if world.settings.shuffle_tcgkeys == 'vanilla':
         # Force key chests in Treasure Chest Game to use the default chest texture when not shuffled
         item = read_rom_item(rom, 0x0071)
         item['chest_type'] = BROWN_CHEST
         write_rom_item(rom, 0x0071, item)
-    if world.settings.free_bombchu_drops or 'bombchus' in world.settings.minor_items_as_major_chest:
+    if world.settings.free_bombchu_drops or 'bombchus' in world.settings.minor_items_as_major_chest or 'bombchus' in world.settings.minor_items_special_texture:
+        if 'bombchus' in world.settings.minor_items_special_texture:
+            if world.settings.free_bombchu_drops or 'bombchus' in world.settings.minor_items_as_major_chest:
+                bombchu_texture = BOMBCHU_CHEST_BIG
+            else:
+                bombchu_texture = BOMBCHU_CHEST_SMALL
+        else: 
+            bombchu_texture = GILDED_CHEST
         bombchu_ids = [0x006A, 0x0003, 0x006B]
         for i in bombchu_ids:
             item = read_rom_item(rom, i)
-            item['chest_type'] = GILDED_CHEST
+            item['chest_type'] = bombchu_texture
             write_rom_item(rom, i, item)
     if world.settings.bridge == 'tokens' or world.settings.lacs_condition == 'tokens' or world.settings.shuffle_ganon_bosskey == 'tokens':
         item = read_rom_item(rom, 0x005B)
         item['chest_type'] = SKULL_CHEST_BIG
         write_rom_item(rom, 0x005B, item)
-    if world.settings.bridge == 'hearts' or world.settings.lacs_condition == 'hearts' or world.settings.shuffle_ganon_bosskey == 'hearts':
-        heart_ids = [0x003D, 0x003E, 0x0076]
+    if 'hearts' in world.settings.minor_items_special_texture:
+        if world.settings.bridge == 'hearts' or world.settings.lacs_condition == 'hearts' or world.settings.shuffle_ganon_bosskey == 'hearts':
+            heart_texture = HEART_CHEST_BIG
+        else:
+            heart_texture = HEART_CHEST_SMALL
+        heart_ids = [0x003D, 0x003E, 0x004F, 0x0076, 0x007D, 0x007E, 0x007F]
         for i in heart_ids:
             item = read_rom_item(rom, i)
-            item['chest_type'] = HEART_CHEST_BIG
+            item['chest_type'] = heart_texture
             write_rom_item(rom, i, item)
     if 'shields' in world.settings.minor_items_as_major_chest:
         # Deku
@@ -2298,7 +2317,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             chest_name = 'Ganons Castle Light Trial Lullaby Chest'
             location = world.get_location(chest_name)
             item = read_rom_item(rom, (location.item.looks_like_item or location.item).index)
-            if item['chest_type'] in (GOLD_CHEST, GILDED_CHEST, SKULL_CHEST_BIG, HEART_CHEST_BIG):
+            if item['chest_type'] in (GOLD_CHEST, GILDED_CHEST, SKULL_CHEST_BIG, HEART_CHEST_BIG, BOMBCHU_CHEST_BIG):
                 rom.write_int16(0x321B176, 0xFC40) # original 0xFC48
 
         # Move Spirit Temple Compass Chest if it is a small chest so it is reachable with hookshot
@@ -2307,7 +2326,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             chest_address = 0x2B6B07C
             location = world.get_location(chest_name)
             item = read_rom_item(rom, (location.item.looks_like_item or location.item).index)
-            if item['chest_type'] in (BROWN_CHEST, SILVER_CHEST, SKULL_CHEST_SMALL, HEART_CHEST_SMALL):
+            if item['chest_type'] in (BROWN_CHEST, SILVER_CHEST, SKULL_CHEST_SMALL, HEART_CHEST_SMALL, BOMBCHU_CHEST_SMALL):
                 rom.write_int16(chest_address + 2, 0x0190) # X pos
                 rom.write_int16(chest_address + 6, 0xFABC) # Z pos
 
@@ -2318,7 +2337,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             chest_address_2 = 0x21A06E4  # Address in setup 2
             location = world.get_location(chest_name)
             item = read_rom_item(rom, (location.item.looks_like_item or location.item).index)
-            if item['chest_type'] in (BROWN_CHEST, SILVER_CHEST, SKULL_CHEST_SMALL, HEART_CHEST_SMALL):
+            if item['chest_type'] in (BROWN_CHEST, SILVER_CHEST, SKULL_CHEST_SMALL, HEART_CHEST_SMALL, BOMBCHU_CHEST_SMALL):
                 rom.write_int16(chest_address_0 + 6, 0x0172)  # Z pos
                 rom.write_int16(chest_address_2 + 6, 0x0172)  # Z pos
 
@@ -2548,6 +2567,16 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     if world.settings.easier_fire_arrow_entry:
         torch_count = world.settings.fae_torch_count
         rom.write_byte(0xCA61E3, torch_count)
+
+    # Locks access to reversing through Shadow temple if you clip through the cage in the early silver rupee room
+    # A side effect of this is that the door will no longer require a small key, so there will be an unused key in Shadow Temple
+    if world.settings.lock_reverse_shadow:
+        actor = 0x027a7190 # transition actor for Shadow Temple door between rooms 20 aand 21
+        rom.write_byte(actor, 0x14) # Flip the loading zones between rooms 20 and 21
+        rom.write_byte(actor + 2, 0x15) 
+        rom.write_int16(actor + 4, 0x002E) # Change actor type from door to shutter
+        rom.write_int16(actor + 12, 0x8000) # Rotate door so front and back sides of the door flip
+        rom.write_int16(actor + 14, 0x00D5) # Back side permanently locked
 
     # Fix crash when hitting white bubbles enemies with Dins Fire
     rom.write_byte(0xCB4397, 0x00)
@@ -2947,7 +2976,6 @@ def move_fado_in_lost_woods(rom):
 
     get_actor_list(rom, move_fado)
 
-
 # Gets a dict of doors to unlock based on settings
 # Returns: dict with entries address: [byte_offset, bit]
 # Where:    address = rom address of the door
@@ -3109,6 +3137,10 @@ def place_shop_items(rom: Rom, world: World, shop_items, messages, locations, in
                 shop_item_name = get_simple_hint_no_prefix(item_display)
                 if location.item.name == 'Ice Trap':
                     shop_item_name = create_fake_name(shop_item_name)
+
+                # Don't use alias name for hints
+                if location.item.hint:
+                    shop_item_name = location.item.name
 
                 if world.settings.world_count > 1:
                     description_text = '\x08\x05\x41%s  %d Rupees\x01\x05\x42Player %d\x05\x40\x01Special deal! ONE LEFT!\x09\x0A\x02' % (shop_item_name, shop_item.price, location.item.world.id + 1)

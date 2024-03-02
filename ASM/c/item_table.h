@@ -25,6 +25,8 @@ typedef enum {
     /* 15 */ SKULL_CHEST_BIG,
     /* 16 */ HEART_CHEST_SMALL,
     /* 17 */ HEART_CHEST_BIG,
+    /* 18 */ BOMBCHU_CHEST_SMALL,
+    /* 19 */ BOMBCHU_CHEST_BIG,
 } ChestType;
 
 struct item_row_t;

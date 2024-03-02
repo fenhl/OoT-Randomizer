@@ -713,6 +713,19 @@ class World:
                         elif self.settings.shopsanity_prices == 'affordable':
                             self.shop_prices[location.name] = 10
 
+    def hint_shop_prices(self) -> None:
+        hint_prices = {
+            'Market Bazaar Item 5': 99, # Bow
+            'Market Bazaar Item 6': 40, # Scale
+            'Market Bazaar Item 7': 99, # Bomb Bag
+            'Market Bazaar Item 8': 0, # Wallet
+            'Market Potion Shop Item 5': 99, # Str 1
+            'Market Potion Shop Item 6': 200, # Magic
+            'Market Potion Shop Item 7': 200, # Str 2
+            'Market Potion Shop Item 8': 200  # Hook
+        }
+        self.shop_prices.update(hint_prices)
+
     def set_scrub_prices(self) -> None:
         # Get Deku Scrub Locations
         scrub_locations = [location for location in self.get_locations() if location.type in ('Scrub', 'GrottoScrub')]

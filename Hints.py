@@ -162,6 +162,23 @@ gossipLocations_reversemap: dict[str, int] = {
     stone.name: stone_id for stone_id, stone in gossipLocations.items()
 }
 
+class ShopHint:
+    def __init__(self, name: str, hinted_item_name: str, upgrade_level: int, message_id: int) -> None:
+        self.name: str = name
+        self.hinted_item_name: str = hinted_item_name
+        self.upgrade_level: int = upgrade_level
+        self.message_id: int = message_id
+
+shopHints: dict[int, ShopHint] = {
+    0x90F0: ShopHint('Bomb Bag Hint', 'Bomb Bag', 1, 0x90F0),
+    0x90F1: ShopHint('Bow Hint', 'Bow', 1, 0x90F1),
+    0x90F2: ShopHint('Hookshot Hint', 'Progressive Hookshot', 1, 0x90F2),
+    0x90F3: ShopHint('Magic Hint', 'Magic Meter', 1, 0x90F3),
+    0x90F4: ShopHint('Silver Gauntlets Hint', 'Progressive Strength Upgrade', 2, 0x90F4),
+    0x90F5: ShopHint('Goron Bracelet Hint', 'Progressive Strength Upgrade', 1, 0x90F5),
+    0x90F6: ShopHint('Silver Scale Hint', 'Progressive Scale', 1, 0x90F6),
+    0x90F7: ShopHint('Wallet Hint', 'Progressive Wallet', 1, 0x90F7),
+}
 
 def get_item_generic_name(item: Item) -> str:
     if item.unshuffled_dungeon_item:
@@ -314,6 +331,10 @@ def can_reach_hint(worlds: list[World], hint_location: Location, location: Locat
 def write_gossip_stone_hints(spoiler: Spoiler, world: World, messages: list[Message]) -> None:
     for id, gossip_text in spoiler.hints[world.id].items():
         update_message_by_id(messages, id, str(gossip_text), 0x23)
+
+def write_hint_shop_hints(spoiler: Spoiler, world: World, messages: list[Message]) -> None:
+    for id, hint_text in spoiler.shop_hints[world.id].items():
+        update_message_by_id(messages, id, str(hint_text), 0x23)
 
 
 def filter_trailing_space(text: str) -> str:
@@ -2069,6 +2090,44 @@ def build_misc_location_hints(world: World, messages: list[Message]) -> None:
 
         update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), 0x23)
 
+def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set[Location], spoiler: Spoiler, world: World) -> GossipText:
+    path_items = [location for location in spoiler.required_locations[world.id] if location.item.name == item_name]
+    playthrough_items = [location for location in spoiler.playthrough_locations if location.item.name == item_name and location.item.world.id == world.id]
+    world_items = world.find_items(item_name)
+    foolish_world_items = [location for location in world_items if 
+                           location not in path_items and 
+                           location not in playthrough_items and
+                           location not in hinted_locations]
+
+    if (len(path_items) >= upgrade_level):
+        item_importance_text = 'path'
+        item_importance_color = 'Green'
+        hinted_location = playthrough_items[upgrade_level - 1]
+    elif (len(playthrough_items) >= upgrade_level):
+        item_importance_text = 'wanderer'
+        item_importance_color = 'Yellow'
+        hinted_location = playthrough_items[upgrade_level - 1]
+    else:
+        item_importance_text = 'foolish'
+        item_importance_color = 'Pink'
+        hinted_location = random.choice(foolish_world_items)
+    
+    hint_area = HintArea.at(hinted_location)
+    location_text = hint_area.text(world.settings.clearer_hints)
+    hinted_locations.add(hinted_location)
+
+    if "Progressive " in item_name:
+        item_text = item_name[12:]
+    else:
+        item_text = item_name
+    return GossipText('%s hoards a #%s# %s.' % (location_text, item_importance_text, item_text), ['Light Blue', item_importance_color], [hinted_location.name], [hinted_location.item.name])
+
+def build_hint_shop_hints(spoiler: Spoiler, worlds: list[World]) -> None:
+    for world in worlds:
+        hinted_locations: set(Location) = set()
+        for hint_id, data in shopHints.items():
+            hint_text = get_hint_shop_hint(data.hinted_item_name, data.upgrade_level, hinted_locations, spoiler, world)
+            spoiler.shop_hints[world.id][data.message_id] = hint_text
 
 def get_raw_text(string: str) -> str:
     text = ''

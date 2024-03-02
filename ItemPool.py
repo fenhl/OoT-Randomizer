@@ -260,6 +260,17 @@ triforce_blitz_items: list[str] = ([
     'Triforce of Courage'
 ])
 
+triforce_blitz_hint_shop_items: list[str] = ([
+    'Bomb Bag Hint',
+    'Bow Hint',
+    'Hookshot Hint',
+    'Magic Hint',
+    'Goron Bracelet Hint',
+    'Silver Gauntlets Hint',
+    'Silver Scale Hint',
+    'Wallet Hint'
+])
+
 shopsanity_rupees: list[str] = (
     ['Rupees (20)'] * 5 +
     ['Rupees (50)'] * 3 +
@@ -869,6 +880,9 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
                 pool[pool.index('Rupees (5)')] = rupee
             else:
                 pending_junk_pool.append(rupee)
+
+    if world.settings.triforce_blitz_hint_shop:
+        pending_junk_pool.extend(triforce_blitz_hint_shop_items)
 
     if world.settings.free_scarecrow:
         world.state.collect(ItemFactory('Scarecrow Song', world))

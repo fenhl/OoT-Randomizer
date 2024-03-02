@@ -131,6 +131,10 @@ class Item:
     @property
     def dungeonitem(self) -> bool:
         return self.smallkey or self.bosskey or self.map or self.compass or self.type == 'SilverRupee'
+    
+    @property
+    def hint(self) -> bool:
+        return self.type == 'Hint'
 
     @property
     def unshuffled_dungeon_item(self) -> bool:

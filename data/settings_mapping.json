@@ -178,9 +178,13 @@
             "triforce_count_per_world",
             "triforce_goal_per_world",
             "triforce_blitz",
+            "triforce_blitz_minimum_path_count",
+            "triforce_blitz_maximum_empty_paths",
             "triforce_blitz_jabus_revenge",
+            "triforce_blitz_hint_shop",
             "free_bombchu_drops",
-            "one_item_per_dungeon"
+            "one_item_per_dungeon",
+            "plandomized_locations"
           ]
         },
         {
@@ -345,7 +349,8 @@
             "big_poe_count",
             "easier_fire_arrow_entry",
             "fae_torch_count",
-            "ruto_already_f1_jabu"
+            "ruto_already_f1_jabu",
+            "lock_reverse_shadow"
           ]
         },
         {
@@ -356,6 +361,7 @@
             "ocarina_songs",
             "correct_chest_appearances",
             "minor_items_as_major_chest",
+            "minor_items_special_texture",
             "invisible_chests",
             "correct_potcrate_appearances",
             "key_appearance_match_dungeon",
