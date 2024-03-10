@@ -684,14 +684,23 @@ def get_goal_category(spoiler: Spoiler, world: World, goal_categories: dict[str,
 
     return goal_category
 
-def get_goal_legacy_hint(spoiler, world, checked):
+def get_echo_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintReturn:
+    hint = get_goal_legacy_hint(spoiler, world, set(), "They #echo# that ")
+    if not hint:
+        return None
+    
+    hint[0].colors.insert(0, "Yellow")
+
+    return hint
+
+def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], custom_prefix: str = "They say that ") -> HintReturn:
     goal_category = get_goal_category(spoiler, world, world.goal_categories)
 
     # check if no goals were generated (and thus no categories available)
     if not goal_category:
         return None
-
-    goals = goal_category.goals
+    
+    goals = list(goal_category.goals)
     goal_locations = []
 
     # Choose random goal and check if any locations are already hinted.
@@ -700,8 +709,9 @@ def get_goal_legacy_hint(spoiler, world, checked):
     # If all locations for all goal categories are hinted, return no hint.
     while not goal_locations:
         if not goals:
-            del world.goal_categories[goal_category.name]
-            goal_category = get_goal_category(spoiler, world, world.goal_categories)
+            goal_categories = dict(world.goal_categories)
+            del goal_categories[goal_category.name]
+            goal_category = get_goal_category(spoiler, world, goal_categories)
             if not goal_category:
                 return None
             else:
@@ -752,7 +762,7 @@ def get_goal_legacy_hint(spoiler, world, checked):
 
     goal_text = "the " + goal.hint_text
 
-    return (GossipText('%s is on %s.' % (player_location_text, goal_text), ['Light Blue', goal.color], [location.name], [location.item.name]), [location])
+    return (GossipText('%s is on %s.' % (player_location_text, goal_text), ['Light Blue', goal.color], [location.name], [location.item.name], custom_prefix), [location])
 
 def get_goal_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintReturn:
     goal_category = get_goal_category(spoiler, world, world.goal_categories)
@@ -1497,6 +1507,7 @@ hint_func: dict[str, HintFunc | BarrenFunc] = {
     'goal':             get_goal_hint,
     'goal-legacy':      get_goal_legacy_hint,
     'goal-legacy-single':   get_goal_legacy_hint,
+    'echo':             get_echo_hint,
     'goal-count':       get_goal_count_hint,
     'wanderer':         get_wanderer_hint,
     'playthrough-location': get_playthrough_location_hint,
