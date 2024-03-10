@@ -686,6 +686,9 @@ def get_goal_category(spoiler: Spoiler, world: World, goal_categories: dict[str,
 
 def get_echo_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintReturn:
     hint = get_goal_legacy_hint(spoiler, world, set(), "They #echo# that ")
+    if not hint:
+        return None
+    
     hint[0].colors.insert(0, "Yellow")
 
     return hint
