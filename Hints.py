@@ -2114,10 +2114,10 @@ def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set
     world_items = list(filter(lambda location: location.item.world.id == world.id, all_world_items))
 
     foolish_world_items = [location for location in world_items if 
-                           location not in path_items and 
-                           location not in playthrough_items and
-                           location not in hinted_locations]
-
+                           location.worldAndName not in [location.worldAndName for location in path_items] and 
+                           location.worldAndName not in [location.worldAndName for location in playthrough_items] and
+                           location.worldAndName not in [location.worldAndName for location in hinted_locations]]
+    
     if (len(path_items) >= upgrade_level):
         item_importance_text = 'path'
         item_importance_color = 'Green'
