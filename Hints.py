@@ -763,15 +763,11 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
 
     checked.add(location.worldAndName)
 
-    location_text = HintArea.at(location).text(world.settings.clearer_hints)
-    if location.world.id == world.id:
-        player_location_text = location_text
-    else:
-        player_location_text = "Player %s's " % (location.world.id + 1) + location_text
+    location_text = HintArea.at(location).text(world.settings.clearer_hints, world=None if location.world.id == world.id else location.world.id + 1)
 
     goal_text = "the " + goal.hint_text
 
-    return (GossipText('%s is on %s.' % (player_location_text, goal_text), ['Light Blue', goal.color], [location.name], [location.item.name], custom_prefix), [location])
+    return (GossipText('%s is on %s.' % (location_text, goal_text), ['Light Blue', goal.color], [location.name], [location.item.name], custom_prefix), [location])
 
 def get_goal_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintReturn:
     goal_category = get_goal_category(spoiler, world, world.goal_categories)
@@ -2136,19 +2132,14 @@ def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set
         hinted_location = random.choice(foolish_world_items)
     
     hint_area = HintArea.at(hinted_location)
-    location_text = hint_area.text(world.settings.clearer_hints)
+    location_text = hint_area.text(world.settings.clearer_hints, world=None if hinted_location.world.id == world.id else hinted_location.world.id + 1)
     hinted_locations.add(hinted_location)
-
-    if hinted_location.world.id == world.id:
-        player_location_text = location_text
-    else:
-        player_location_text = "Player %s's " % (hinted_location.world.id + 1) + location_text
 
     if "Progressive " in item_name:
         item_text = item_name[12:]
     else:
         item_text = item_name
-    return GossipText('%s hoards a #%s# %s.' % (player_location_text, item_importance_text, item_text), ['Light Blue', item_importance_color], [hinted_location.name], [hinted_location.item.name])
+    return GossipText('%s hoards a #%s# %s.' % (location_text, item_importance_text, item_text), ['Light Blue', item_importance_color], [hinted_location.name], [hinted_location.item.name])
 
 def build_hint_shop_hints(spoiler: Spoiler, worlds: list[World]) -> None:
     for world in worlds:
