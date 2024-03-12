@@ -310,6 +310,10 @@ def add_hint(spoiler: Spoiler, world: World, groups: list[list[int]], gossip_tex
             # Failure
             success = False
             break
+    
+    if success and hint_type in ['goal-legacy', 'goal-legacy-single']:
+        spoiler.echo_hint_pool[world.id].append((gossip_text, locations))
+
     groups.extend(duplicates)
     groups.extend(skipped_groups)
     return success
@@ -685,13 +689,17 @@ def get_goal_category(spoiler: Spoiler, world: World, goal_categories: dict[str,
     return goal_category
 
 def get_echo_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintReturn:
-    hint = get_goal_legacy_hint(spoiler, world, set(), "They #echo# that ")
-    if not hint:
+
+    hint_pool = spoiler.echo_hint_pool[world.id]
+    if len(hint_pool) == 0:
         return None
     
-    hint[0].colors.insert(0, "Yellow")
+    hint_tuple = random.choice(hint_pool)
+    colors = list(hint_tuple[0].colors)
+    colors.insert(0, "Yellow")
 
-    return hint
+    return (GossipText(hint_tuple[0].text.replace("They say that", ""), 
+               colors, list(hint_tuple[0].hinted_locations), list(hint_tuple[0].hinted_items), "They #echo# that"), list(hint_tuple[1]))
 
 def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], custom_prefix: str = "They say that ") -> HintReturn:
     goal_category = get_goal_category(spoiler, world, world.goal_categories)
@@ -700,7 +708,7 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
     if not goal_category:
         return None
     
-    goals = list(goal_category.goals)
+    goals = goal_category.goals
     goal_locations = []
 
     # Choose random goal and check if any locations are already hinted.
@@ -709,9 +717,8 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
     # If all locations for all goal categories are hinted, return no hint.
     while not goal_locations:
         if not goals:
-            goal_categories = dict(world.goal_categories)
-            del goal_categories[goal_category.name]
-            goal_category = get_goal_category(spoiler, world, goal_categories)
+            del world.goal_categories[goal_category.name]
+            goal_category = get_goal_category(spoiler, world, world.goal_categories)
             if not goal_category:
                 return None
             else:
