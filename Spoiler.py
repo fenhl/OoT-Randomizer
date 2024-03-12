@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 from Item import Item
 from LocationList import location_sort_order
 from Search import Search, RewindableSearch
+from Hints import HintReturn
 
 if TYPE_CHECKING:
     from Dungeon import Dungeon
@@ -73,6 +74,7 @@ class Spoiler:
         self.playthrough_location_requirements = {}
         self.hints: dict[int, dict[int, GossipText]] = {world.id: {} for world in worlds}
         self.shop_hints: dict[int, dict[int, GossipText]] = {world.id: {} for world in worlds}
+        self.echo_hint_pool: dict[int, list[HintReturn]] = {world.id: [] for world in worlds}
         self.file_hash: list[int] = []
 
     def build_file_hash(self) -> None:
