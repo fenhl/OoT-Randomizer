@@ -310,6 +310,10 @@ def add_hint(spoiler: Spoiler, world: World, groups: list[list[int]], gossip_tex
             # Failure
             success = False
             break
+    
+    if success and hint_type in ['goal-legacy', 'goal-legacy-single']:
+        spoiler.echo_hint_pool[world.id].append((gossip_text, locations))
+
     groups.extend(duplicates)
     groups.extend(skipped_groups)
     return success
@@ -685,13 +689,19 @@ def get_goal_category(spoiler: Spoiler, world: World, goal_categories: dict[str,
     return goal_category
 
 def get_echo_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintReturn:
-    hint = get_goal_legacy_hint(spoiler, world, set(), "They #echo# that ")
-    if not hint:
+
+    hint_pool = spoiler.echo_hint_pool[world.id]
+    if len(hint_pool) == 0:
         return None
     
-    hint[0].colors.insert(0, "Yellow")
+    hint_tuple = random.choice(hint_pool)
+    colors = list(hint_tuple[0].colors)
+    colors.insert(0, "Yellow")
 
-    return hint
+    # We deliberately omit the location to prevent an issue where the generator could get stuck in an infinite loop trying to ensure
+    # that the echo hint was reachable, even though we don't care about reachability at all
+    return (GossipText(hint_tuple[0].text.replace("They say that", ""), 
+               colors, list(hint_tuple[0].hinted_locations), list(hint_tuple[0].hinted_items), "They #echo# that"), None)
 
 def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], custom_prefix: str = "They say that ") -> HintReturn:
     goal_category = get_goal_category(spoiler, world, world.goal_categories)
@@ -700,7 +710,7 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
     if not goal_category:
         return None
     
-    goals = list(goal_category.goals)
+    goals = goal_category.goals
     goal_locations = []
 
     # Choose random goal and check if any locations are already hinted.
@@ -709,9 +719,8 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
     # If all locations for all goal categories are hinted, return no hint.
     while not goal_locations:
         if not goals:
-            goal_categories = dict(world.goal_categories)
-            del goal_categories[goal_category.name]
-            goal_category = get_goal_category(spoiler, world, goal_categories)
+            del world.goal_categories[goal_category.name]
+            goal_category = get_goal_category(spoiler, world, world.goal_categories)
             if not goal_category:
                 return None
             else:
@@ -754,15 +763,17 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
 
     checked.add(location.worldAndName)
 
-    location_text = HintArea.at(location).text(world.settings.clearer_hints)
-    if location.world.id == world.id:
-        player_location_text = location_text
-    else:
-        player_location_text = "Player %s's " % (location.world.id + 1) + location_text
+    location_text = HintArea.at(location).text(world.settings.clearer_hints, world=None if location.world.id == world.id else location.world.id + 1)
 
     goal_text = "the " + goal.hint_text
 
-    return (GossipText('%s is on %s.' % (player_location_text, goal_text), ['Light Blue', goal.color], [location.name], [location.item.name], custom_prefix), [location])
+    # Disable hint accessibility checks in multiworld.  Hinting locations in other worlds might be breaking this.
+    if world.settings.world_count == 1:
+        locations = [location]
+    else:
+        locations = None
+
+    return (GossipText('%s is on %s.' % (location_text, goal_text), ['Light Blue', goal.color], [location.name], [location.item.name], custom_prefix), locations)
 
 def get_goal_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintReturn:
     goal_category = get_goal_category(spoiler, world, world.goal_categories)
@@ -2101,15 +2112,18 @@ def build_misc_location_hints(world: World, messages: list[Message]) -> None:
 
         update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), 0x23)
 
-def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set[Location], spoiler: Spoiler, world: World) -> GossipText:
-    path_items = [location for location in spoiler.required_locations[world.id] if location.item.name == item_name]
+def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set[Location], spoiler: Spoiler, world: World, worlds: list[World]) -> GossipText:
+    all_path_items = reduce(lambda acc, locations: acc + locations, list(map(lambda world: spoiler.required_locations[world.id], worlds)), [])
+    path_items = [location for location in all_path_items if location.item.name == item_name and location.item.world.id == world.id]
     playthrough_items = [location for location in spoiler.playthrough_locations if location.item.name == item_name and location.item.world.id == world.id]
-    world_items = world.find_items(item_name)
-    foolish_world_items = [location for location in world_items if 
-                           location not in path_items and 
-                           location not in playthrough_items and
-                           location not in hinted_locations]
+    all_world_items = reduce(lambda acc, locations: acc + locations, list(map(lambda world:  world.find_items(item_name), worlds)), [])
+    world_items = list(filter(lambda location: location.item.world.id == world.id, all_world_items))
 
+    foolish_world_items = [location for location in world_items if 
+                           location.worldAndName not in [location.worldAndName for location in path_items] and 
+                           location.worldAndName not in [location.worldAndName for location in playthrough_items] and
+                           location.worldAndName not in [location.worldAndName for location in hinted_locations]]
+    
     if (len(path_items) >= upgrade_level):
         item_importance_text = 'path'
         item_importance_color = 'Green'
@@ -2124,7 +2138,7 @@ def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set
         hinted_location = random.choice(foolish_world_items)
     
     hint_area = HintArea.at(hinted_location)
-    location_text = hint_area.text(world.settings.clearer_hints)
+    location_text = hint_area.text(world.settings.clearer_hints, world=None if hinted_location.world.id == world.id else hinted_location.world.id + 1)
     hinted_locations.add(hinted_location)
 
     if "Progressive " in item_name:
@@ -2135,9 +2149,9 @@ def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set
 
 def build_hint_shop_hints(spoiler: Spoiler, worlds: list[World]) -> None:
     for world in worlds:
-        hinted_locations: set(Location) = set()
+        hinted_locations: set[Location] = set()
         for hint_id, data in shopHints.items():
-            hint_text = get_hint_shop_hint(data.hinted_item_name, data.upgrade_level, hinted_locations, spoiler, world)
+            hint_text = get_hint_shop_hint(data.hinted_item_name, data.upgrade_level, hinted_locations, spoiler, world, worlds)
             spoiler.shop_hints[world.id][data.message_id] = hint_text
 
 def get_raw_text(string: str) -> str:

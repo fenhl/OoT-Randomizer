@@ -307,11 +307,11 @@ def update_goal_items(spoiler: Spoiler) -> None:
                     if path_count == 0:
                         empty_paths += 1
         
-        if path_sum < minimum:
-            raise FillError(f'Minimum path sum of {minimum} was not reached, re-rolling...')
-        
-        if empty_paths > maximum_empty:
-            raise FillError(f'Maximum empty paths of {maximum_empty} was exceeded, re-rolling...')
+            if path_sum < minimum:
+                raise FillError(f'Minimum path sum of {minimum} was not reached, re-rolling...')
+            
+            if empty_paths > maximum_empty:
+                raise FillError(f'Maximum empty paths of {maximum_empty} was exceeded, re-rolling...')
 
 
 def lock_category_entrances(category: GoalCategory, state_list: Iterable[State]) -> dict[int, dict[str, AccessRule]]:
