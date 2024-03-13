@@ -767,7 +767,13 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
 
     goal_text = "the " + goal.hint_text
 
-    return (GossipText('%s is on %s.' % (location_text, goal_text), ['Light Blue', goal.color], [location.name], [location.item.name], custom_prefix), [location])
+    # Disable hint accessibility checks in multiworld.  Hinting locations in other worlds might be breaking this.
+    if world.settings.world_count == 1:
+        locations = [location]
+    else:
+        locations = None
+
+    return (GossipText('%s is on %s.' % (location_text, goal_text), ['Light Blue', goal.color], [location.name], [location.item.name], custom_prefix), locations)
 
 def get_goal_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintReturn:
     goal_category = get_goal_category(spoiler, world, world.goal_categories)
