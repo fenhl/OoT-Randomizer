@@ -145,7 +145,7 @@ def create_patch_file(rom: Rom, file: str, xor_range: tuple[int, int] = (0x00B8A
 
     # Write the address changes. We'll store the data with XOR so that
     # the patch data won't be raw data from the patched rom.
-    data = []
+    data: list[int] = []
     block_start = block_end = None
     BLOCK_HEADER_SIZE = 7  # this is used to break up gaps
     for address in changed_addresses:

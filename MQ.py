@@ -46,12 +46,19 @@
 from __future__ import annotations
 import json
 from struct import pack, unpack
-from typing import Optional, Any
+from typing import Optional, Any, TypedDict
 
 from Rom import Rom
 from Utils import data_path
 
 SCENE_TABLE: int = 0xB71440
+
+
+class JsonFile(TypedDict):
+    Name: str
+    Start: Optional[str]
+    End: Optional[str]
+    RemapStart: Optional[str]
 
 
 class File:
@@ -66,7 +73,7 @@ class File:
         self.dma_key: int = self.start
 
     @classmethod
-    def from_json(cls, file: dict[str, Optional[str]]) -> File:
+    def from_json(cls, file: JsonFile) -> File:
         return cls(
             file['Name'],
             int(file['Start'], 16) if file.get('Start', None) is not None else 0,

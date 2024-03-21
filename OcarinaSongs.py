@@ -3,7 +3,7 @@ import random
 import sys
 from collections.abc import Callable, Sequence
 from itertools import chain
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, TypeVar
 
 from Fill import ShuffleError
 
@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 ActivationTransform: TypeAlias = "Callable[[list[int]], list[int]]"
 PlaybackTransform: TypeAlias = "Callable[[list[dict[str, int]]], list[dict[str, int]]]"
-Transform: TypeAlias = "ActivationTransform | PlaybackTransform"
 
 PLAYBACK_START: int = 0xB781DC
 PLAYBACK_LENGTH: int = 0xA0
@@ -163,7 +162,8 @@ def transpose_piece(amount: int) -> ActivationTransform:
     return transpose
 
 
-def compose(f: Transform, g: Transform) -> Transform:
+T = TypeVar('T', ActivationTransform, PlaybackTransform)
+def compose(f: T, g: T) -> T:
     return lambda x: f(g(x))
 
 

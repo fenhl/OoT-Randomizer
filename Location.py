@@ -175,7 +175,7 @@ def LocationFactory(locations: str | list[str]) -> Location | list[Location]:
             match_location = location
         else:
             match_location = next(filter(lambda k: k.lower() == location.lower(), location_table), None)
-        if match_location:
+        if match_location is not None:
             type, scene, default, addresses, vanilla_item, filter_tags = location_table[match_location]
             if addresses is None:
                 addresses = (None, None)

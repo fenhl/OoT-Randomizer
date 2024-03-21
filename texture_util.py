@@ -58,9 +58,9 @@ def get_colors_from_rgba16(rgba16_texture: list[int]) -> list[int]:
 # rgba16_texture - Original texture
 # rgba16_patch - Patch texture. If this parameter is not supplied, this function will simply return the original texture.
 # returns - new texture = texture xor patch
-def apply_rgba16_patch(rgba16_texture: list[int], rgba16_patch: list[int]) -> list[int]:
-    if rgba16_patch is not None and (len(rgba16_texture) != len(rgba16_patch)):
-        raise(Exception("OG Texture and Patch not the same length!"))
+def apply_rgba16_patch(rgba16_texture: list[int], rgba16_patch: Optional[list[int]]) -> list[int]:
+    if rgba16_patch is not None and len(rgba16_texture) != len(rgba16_patch):
+        raise Exception("OG Texture and Patch not the same length!")
 
     new_texture = []
     if not rgba16_patch:

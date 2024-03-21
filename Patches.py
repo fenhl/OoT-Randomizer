@@ -56,8 +56,8 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     ]
 
     for (bin_path, write_address) in bin_patches:
-        with open(bin_path, 'rb') as stream:
-            bytes_compressed = stream.read()
+        with open(bin_path, 'rb') as bin_stream:
+            bytes_compressed = bin_stream.read()
             bytes_diff = zlib.decompress(bytes_compressed)
             original_bytes = rom.original.buffer[write_address: write_address + len(bytes_diff)]
             new_bytes = bytearray([a ^ b for a, b in zip(bytes_diff, original_bytes)])
@@ -1705,7 +1705,6 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
                 # This ensures that if the region behind the boss door is a boss arena, the medallion or stone will be used.
                 priority_types = (
                     "Freestanding",
-                    "ActorOverride",
                     "RupeeTower",
                     "Pot",
                     "Crate",
@@ -1831,11 +1830,8 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     # Patch freestanding items
     if world.settings.shuffle_freestanding_items:
         # Get freestanding item locations
-        actor_override_locations = [location for location in world.get_locations() if location.disabled == DisableType.ENABLED and location.type == 'ActorOverride']
         rupeetower_locations = [location for location in world.get_locations() if location.disabled == DisableType.ENABLED and location.type == 'RupeeTower']
 
-        for location in actor_override_locations:
-            patch_actor_override(location, rom)
         for location in rupeetower_locations:
             patch_rupee_tower(location, rom)
 
@@ -2692,7 +2688,7 @@ def get_override_entry(location: Location) -> Optional[OverrideEntry]:
         return None
 
     # Don't add freestanding items, pots/crates, beehives to the override table if they're disabled. We use this check to determine how to draw and interact with them
-    if location.type in ["ActorOverride", "Freestanding", "RupeeTower", "Pot", "Crate", "FlyingPot", "SmallCrate", "Beehive", "Wonderitem"] and location.disabled != DisableType.ENABLED:
+    if location.type in ["Freestanding", "RupeeTower", "Pot", "Crate", "FlyingPot", "SmallCrate", "Beehive", "Wonderitem"] and location.disabled != DisableType.ENABLED:
         return None
 
     player_id = location.item.world.id + 1
@@ -2714,7 +2710,7 @@ def get_override_entry(location: Location) -> Optional[OverrideEntry]:
             default = location.default[0]
         room, scene_setup, flag = default
         default = (room << 8) + (scene_setup << 14) + flag
-    elif location.type in ('Collectable', 'ActorOverride'):
+    elif location.type == 'Collectable':
         type = 2
     elif location.type == 'GS Token':
         type = 3
@@ -3142,10 +3138,10 @@ def configure_dungeon_info(rom: Rom, world: World) -> None:
     dungeon_rewards = [0xff] * 14
     dungeon_reward_areas = bytearray()
     for reward in ('Kokiri Emerald', 'Goron Ruby', 'Zora Sapphire', 'Light Medallion', 'Forest Medallion', 'Fire Medallion', 'Water Medallion', 'Shadow Medallion', 'Spirit Medallion'):
-        location = next(filter(lambda loc: loc.item.name == reward, world.get_filled_locations()))
+        location = next(world.get_filled_locations(lambda item: item.name == reward))
         area = HintArea.at(location)
         dungeon_reward_areas += area.short_name.encode('ascii').ljust(0x16) + b'\0'
-        if area.is_dungeon:
+        if area.dungeon_name is not None:
             dungeon_rewards[codes.index(area.dungeon_name)] = boss_reward_index(location.item)
 
     dungeon_is_mq = [1 if world.dungeon_mq.get(c) else 0 for c in codes]
@@ -3162,15 +3158,6 @@ def configure_dungeon_info(rom: Rom, world: World) -> None:
     rom.write_bytes(rom.sym('CFG_DUNGEON_REWARD_AREAS'), dungeon_reward_areas)
 
 
-# Overwrite an actor in rom w/ the actor data from LocationList
-def patch_actor_override(location: Location, rom: Rom) -> None:
-    addresses = location.address
-    patch = location.address2
-    if addresses is not None and patch is not None:
-        for address in addresses:
-            rom.write_bytes(address, patch)
-
-
 # Patch rupee towers (circular patterns of rupees) to include their flag in their actor initialization data z rotation.
 # Also used for goron pot, shadow spinning pots
 def patch_rupee_tower(location: Location, rom: Rom) -> None:
@@ -3183,6 +3170,7 @@ def patch_rupee_tower(location: Location, rom: Rom) -> None:
 
     flag = flag + (room << 8)
     if location.address:
+        assert isinstance(location.address, list)
         for address in location.address:
             rom.write_bytes(address + 12, flag.to_bytes(2, byteorder='big'))
 

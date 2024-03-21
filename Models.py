@@ -94,10 +94,12 @@ class ModelPointerWriter:
 # Either return the starting index of the requested data (when start == 0)
 # or the offset of the element in the footer, if it exists (start > 0)
 def scan(bytes: bytearray, data: bytearray | str, start: int = 0) -> int:
-    databytes = data
+    databytes: bytearray | bytes
     # If a string was passed, encode string as bytes
     if isinstance(data, str):
         databytes = data.encode()
+    else:
+        databytes = data
     dataindex = 0
     for i in range(start, len(bytes)):
         # Byte matches next byte in string

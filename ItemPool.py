@@ -412,7 +412,7 @@ def generate_itempool(world: World) -> None:
 
     # set up item pool
     (pool, placed_items) = get_pool_core(world)
-    placed_items_count = {}
+    placed_items_count: dict[str, int] = {}
     world.itempool = ItemFactory(pool, world)
     world.initialize_items(world.itempool + list(placed_items.values()))
     placed_locations = list(filter(lambda loc: loc.name in placed_items, world.get_locations()))
@@ -707,7 +707,7 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
                 location.disabled = DisableType.DISABLED
 
         # Freestanding Rupees and Hearts
-        elif location.type in ('ActorOverride', 'Freestanding', 'RupeeTower'):
+        elif location.type in ('Freestanding', 'RupeeTower'):
             if world.settings.shuffle_freestanding_items == 'all':
                 shuffle_item = True
             elif world.settings.shuffle_freestanding_items == 'dungeons' and location.dungeon is not None:

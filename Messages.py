@@ -127,7 +127,7 @@ TEMPLE_HINTS_MESSAGES: list[int] = [0x7057, 0x707A]  # dungeon reward hints from
 GS_TOKEN_MESSAGES: list[int] = [0x00B4, 0x00B5]  # Get Gold Skulltula Token messages
 ERROR_MESSAGE: int = 0x0001
 
-new_messages = [] # Used to keep track of new/updated messages to prevent duplicates. Clear it at the start of patches
+new_messages: list[int] = [] # Used to keep track of new/updated messages to prevent duplicates. Clear it at the start of patches
 
 # messages for shorter item messages
 # ids are in the space freed up by move_shop_item_messages()

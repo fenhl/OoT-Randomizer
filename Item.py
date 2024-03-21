@@ -30,7 +30,7 @@ class ItemInfo:
             item_type = 'Event'
             progressive = True
             item_id = None
-            special = None
+            special: dict[str, Any] = {}
         else:
             (item_type, progressive, item_id, special) = item_table[name]
 
@@ -38,7 +38,7 @@ class ItemInfo:
         self.advancement: bool = (progressive is True)
         self.priority: bool = (progressive is False)
         self.type: str = item_type
-        self.special: dict[str, Any] = special or {}
+        self.special: dict[str, Any] = special
         self.index: Optional[int] = item_id
         self.price: Optional[int] = self.special.get('price', None)
         self.bottle: bool = self.special.get('bottle', False)
