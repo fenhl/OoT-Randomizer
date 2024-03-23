@@ -95,8 +95,8 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
 
     extended_objects_start = start_address = rom.dma.free_space()
     for name, zobj_path, object_id in zobj_imports:
-        with open(zobj_path, 'rb') as stream:
-            obj_data = stream.read()
+        with open(zobj_path, 'rb') as zobj_stream:
+            obj_data = zobj_stream.read()
             rom.write_bytes(start_address, obj_data)
         # Add it to the extended object table
         end_address = ((start_address + len(obj_data) + 0x0F) >> 4) << 4
