@@ -174,7 +174,11 @@ def LocationFactory(locations: str | list[str]) -> Location | list[Location]:
         if location in location_table:
             match_location = location
         else:
-            match_location = next(filter(lambda k: k.lower() == location.lower(), location_table), None)
+            match_location = None
+            for k in location_table:
+                if k.lower() == location.lower():
+                    match_location = k
+                    break
         if match_location is not None:
             type, scene, default, addresses, vanilla_item, filter_tags = location_table[match_location]
             if addresses is None:

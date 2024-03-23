@@ -17,7 +17,8 @@ from Item import Item
 from ItemPool import song_list, trade_items, child_trade_items
 from Location import Location, DisableType
 from LocationList import business_scrubs
-from Messages import read_messages, update_message_by_id, read_shop_items, update_warp_song_text, \
+import Messages
+from Messages import SCRUBS_MESSAGE_IDS, SHOP_ITEM_MESSAGES, read_messages, update_message_by_id, read_shop_items, update_warp_song_text, \
         write_shop_items, remove_unused_messages, make_player_message, \
         add_item_messages, repack_messages, shuffle_messages, \
         get_message_by_id, TextCode, new_messages
@@ -1988,7 +1989,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     shop_items[0x000A].description_message = 0x80B5
     shop_items[0x000A].purchase_message = 0x80BE
 
-    shuffle_messages.shop_item_messages = []
+    Messages.SHOP_ITEM_MESSAGES = []
 
     # kokiri shop
     shop_locations = [location for location in world.get_region('KF Kokiri Shop').locations if location.type == 'Shop'] # Need to filter because of the freestanding item in KF Shop
@@ -2115,11 +2116,11 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
         set_deku_salesman_data(rom)
 
     # Update scrub messages.
-    shuffle_messages.scrubs_message_ids = []
+    Messages.SCRUBS_MESSAGE_IDS = []
     for text_id, message in scrub_message_dict.items():
         update_message_by_id(messages, text_id, message)
         if world.settings.shuffle_scrubs == 'random':
-            shuffle_messages.scrubs_message_ids.append(text_id)
+            Messages.SCRUBS_MESSAGE_IDS.append(text_id)
 
     if world.settings.shuffle_grotto_entrances:
         # Build the Grotto Load Table based on grotto entrance data
@@ -3071,7 +3072,7 @@ def place_shop_items(rom: Rom, world: World, shop_items, messages, locations, in
             shop_item.description_message = 0x8100 + message_id
             shop_item.purchase_message = 0x8100 + message_id + 1
 
-            shuffle_messages.shop_item_messages.extend(
+            Messages.SHOP_ITEM_MESSAGES.extend(
                 [shop_item.description_message, shop_item.purchase_message])
 
             if item_display.dungeonitem:
