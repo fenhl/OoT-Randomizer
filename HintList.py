@@ -90,6 +90,7 @@ def get_hint_group(group: str, world: World) -> list[Hint]:
                 type_append = True
             if name_is_location(name, hint.type, world):
                 location = world.get_location(name)
+                assert location.item is not None
                 for i in world.item_added_hint_types[group]:
                     if i == location.item.name:
                         hint.type = [group]
@@ -104,6 +105,7 @@ def get_hint_group(group: str, world: World) -> list[Hint]:
         if group in world.item_hint_type_overrides:
             if name_is_location(name, hint.type, world):
                 location = world.get_location(name)
+                assert location.item is not None
                 if location.item.name in world.item_hint_type_overrides[group]:
                     type_override = True
             elif name in multiTable.keys():
@@ -111,6 +113,7 @@ def get_hint_group(group: str, world: World) -> list[Hint]:
                 for locationName in multi.locations:
                     if locationName not in hint_exclusions(world):
                         location = world.get_location(locationName)
+                        assert location.item is not None
                         if location.item.name in world.item_hint_type_overrides[group]:
                             type_override = True
 
@@ -148,6 +151,7 @@ def get_upgrade_hint_list(world: World, locations: list[str]) -> list[Hint]:
                         for locationName in multi.locations:
                             if locationName not in hint_exclusions(world):
                                 location = world.get_location(locationName)
+                                assert location.item is not None
                                 if location.item.name in world.item_hint_type_overrides[hint_type]:
                                     type_override = True
 
@@ -1910,8 +1914,8 @@ def hint_exclusions(world: World, clear_cache: bool = False) -> list[str]:
                  'dual_always']):
             multi = get_multi(hint.name)
             exclude_hint = False
-            for location in multi.locations:
-                if location not in world_location_names or world.get_location(location).locked:
+            for location_name in multi.locations:
+                if location_name not in world_location_names or world.get_location(location_name).locked:
                     exclude_hint = True
             if exclude_hint:
                 HINT_EXCLUSION_CACHE[world.id].append(hint.name)

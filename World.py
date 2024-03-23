@@ -1138,13 +1138,13 @@ class World:
                 self._cached_locations.extend(region.locations)
         return self._cached_locations
 
-    def get_unfilled_locations(self) -> Iterable[Location]:
+    def get_unfilled_locations(self) -> Iterator[Location]:
         return filter(Location.has_no_item, self.get_locations())
 
-    def get_filled_locations(self, item_filter: Callable[[Item], bool] = lambda item: True) -> Iterable[Location]:
+    def get_filled_locations(self, item_filter: Callable[[Item], bool] = lambda item: True) -> Iterator[Location]:
         return filter(lambda loc: loc.item is not None and item_filter(loc.item), self.get_locations())
 
-    def get_progression_locations(self) -> Iterable[Location]:
+    def get_progression_locations(self) -> Iterator[Location]:
         return filter(Location.has_progression_item, self.get_locations())
 
     def get_entrances(self) -> list[Entrance]:

@@ -872,7 +872,7 @@ def get_specific_item_hint(spoiler: Spoiler, world: World, checked: set[HintArea
                 all_named_items = set(itertools.chain.from_iterable([w.named_item_pool for w in worlds]))
                 if "Bottle" in all_named_items and world.settings.hint_dist == "bingo":
                     all_named_items.update(bingoBottlesForHints)
-                named_item_locations = [location for w in worlds for location in w.get_filled_locations() if (location.item.name in all_named_items)]
+                named_item_locations = [location for w in worlds for location in w.get_filled_locations(lambda item: item.name in all_named_items)]
                 spoiler._cached_named_item_locations = named_item_locations
 
                 always_hints = [(hint, w.id) for w in worlds for hint in get_hint_group('always', w)]
@@ -880,6 +880,7 @@ def get_specific_item_hint(spoiler: Spoiler, world: World, checked: set[HintArea
                 for hint, id  in always_hints:
                     location = worlds[id].get_location(hint.name)
                     assert location.item is not None
+                    assert location.item.world is not None
                     if location.item.name in bingoBottlesForHints and world.settings.hint_dist == 'bingo':
                         always_item = 'Bottle'
                     else:
@@ -929,6 +930,7 @@ def get_specific_item_hint(spoiler: Spoiler, world: World, checked: set[HintArea
 
         location = random.choice(locations)
         assert location.item is not None
+        assert location.world is not None
         checked.add(location.name)
         item_text = get_hint(get_item_generic_name(location.item), world.settings.clearer_hints).text
 
@@ -999,6 +1001,7 @@ def get_specific_hint(spoiler: Spoiler, world: World, checked: set[HintArea | st
                 return get_specific_multi_hint(spoiler, world, checked, hint)
 
     location = world.get_location(hint.name)
+    assert location.item is not None
     checked.add(location.name)
 
     if location.name in world.hint_text_overrides:
@@ -1080,7 +1083,7 @@ def get_specific_multi_hint(spoiler: Spoiler, world: World, checked: set[HintAre
         else:
             gossip_string = gossip_string + '#%s# '
 
-    items = [location.item for location in locations]
+    items = [location.item for location in locations if location.item is not None]
     text_segments = [multi_text] + [get_hint(get_item_generic_name(item), world.settings.clearer_hints).text for item in items]
     return GossipText(gossip_string % tuple(text_segments), colors, [location.name for location in locations], [item.name for item in items]), locations
 
@@ -1097,9 +1100,12 @@ def get_entrance_hint(spoiler: Spoiler, world: World, checked: set[HintArea | st
     shuffled_entrance_hints = list(filter(lambda entrance_hint: world.get_entrance(entrance_hint.name).shuffled, entrance_hints))
 
     regions_with_hint = [hint.name for hint in get_hint_group('region', world)]
-    valid_entrance_hints = list(filter(lambda entrance_hint:
-                                       (world.get_entrance(entrance_hint.name).connected_region.name in regions_with_hint or
-                                        world.get_entrance(entrance_hint.name).connected_region.dungeon), shuffled_entrance_hints))
+    valid_entrance_hints = []
+    for entrance_hint in shuffled_entrance_hints:
+        entrance = world.get_entrance(entrance_hint.name)
+        assert entrance.connected_region is not None
+        if entrance.connected_region.name in regions_with_hint or entrance.connected_region.dungeon:
+            valid_entrance_hints.append(entrance_hint)
 
     if not valid_entrance_hints:
         return None
@@ -1114,7 +1120,8 @@ def get_entrance_hint(spoiler: Spoiler, world: World, checked: set[HintArea | st
         entrance_text = '#%s#' % entrance_text
 
     connected_region = entrance.connected_region
-    if connected_region.dungeon:
+    assert connected_region is not None
+    if connected_region.dungeon is not None:
         region_text = get_hint(connected_region.dungeon.name, world.settings.clearer_hints).text
     else:
         region_text = get_hint(connected_region.name, world.settings.clearer_hints).text
@@ -1256,6 +1263,7 @@ def build_bingo_hint_list(board_url: str) -> list[str]:
 
 def always_named_item(world: World, locations: Iterable[Location]):
     for location in locations:
+        assert location.item is not None
         if location.item.name in bingoBottlesForHints and world.settings.hint_dist == 'bingo':
             always_item = 'Bottle'
         else:
@@ -1269,14 +1277,17 @@ def build_gossip_hints(spoiler: Spoiler, worlds: list[World]) -> None:
     # Add misc. item hint locations to "checked" locations if the respective hint is reachable without the hinted item.
     for world in worlds:
         for location in world.hinted_dungeon_reward_locations.values():
+            assert location.item is not None
             if 'altar' in world.settings.misc_hints and not world.settings.enhance_map_compass and can_reach_hint(worlds, world.get_location('ToT Child Altar Hint' if location.item.info.stone else 'ToT Adult Altar Hint'), location):
                 item_world = location.world
+                assert item_world is not None
                 if item_world.id not in checked_locations:
                     checked_locations[item_world.id] = set()
                 checked_locations[item_world.id].add(location.name)
         for hint_type, location in world.misc_hint_item_locations.items():
             if hint_type in world.settings.misc_hints and can_reach_hint(worlds, world.get_location(misc_item_hint_table[hint_type]['hint_location']), location):
                 item_world = location.world
+                assert item_world is not None
                 if item_world.id not in checked_locations:
                     checked_locations[item_world.id] = set()
                 checked_locations[item_world.id].add(location.name)
@@ -1284,6 +1295,7 @@ def build_gossip_hints(spoiler: Spoiler, worlds: list[World]) -> None:
             location = world.get_location(misc_location_hint_table[hint_type]['item_location'])
             if hint_type in world.settings.misc_hints and can_reach_hint(worlds, world.get_location(misc_location_hint_table[hint_type]['hint_location']), location):
                 item_world = location.world
+                assert item_world is not None
                 if item_world.id not in checked_locations:
                     checked_locations[item_world.id] = set()
                 checked_locations[item_world.id].add(location.name)
@@ -1307,7 +1319,7 @@ def build_world_gossip_hints(spoiler: Spoiler, world: World, checked_locations: 
 
     if checked_locations is None:
         checked_locations = set()
-    checked_always_locations = set()
+    checked_always_locations: set[HintArea | str] = set()
 
     stone_ids = list(gossipLocations.keys())
 
@@ -1325,7 +1337,9 @@ def build_world_gossip_hints(spoiler: Spoiler, world: World, checked_locations: 
                 raise ValueError(f'Gossip stone location "{stone_name}" is not valid')
             if stone_id in stone_ids:
                 stone_ids.remove(stone_id)
-                (gossip_text, _) = get_junk_hint(spoiler, world, checked_locations)
+                hint_return = get_junk_hint(spoiler, world, checked_locations)
+                assert hint_return is not None
+                gossip_text, _ = hint_return
                 spoiler.hints[world.id][stone_id] = gossip_text
 
     stone_groups = []
@@ -1425,7 +1439,9 @@ def build_world_gossip_hints(spoiler: Spoiler, world: World, checked_locations: 
         for hint in always_duals:
             multi = get_multi(hint.name)
             first_location = world.get_location(multi.locations[0])
+            assert first_location.item is not None
             second_location = world.get_location(multi.locations[1])
+            assert second_location.item is not None
             checked_always_locations.add(first_location.name)
             checked_always_locations.add(second_location.name)
 
@@ -1444,10 +1460,14 @@ def build_world_gossip_hints(spoiler: Spoiler, world: World, checked_locations: 
 
     # Add required location hints, only if hint copies > 0
     if hint_dist['always'][1] > 0:
-        always_locations = list(filter(lambda hint: is_not_checked([world.get_location(hint.name)], checked_always_locations),
-                                       get_hint_group('always', world)))
+        always_locations = [
+            hint
+            for hint in get_hint_group('always', world)
+            if is_not_checked([world.get_location(hint.name)], checked_always_locations)
+        ]
         for hint in always_locations:
             location = world.get_location(hint.name)
+            assert location.item is not None
             checked_always_locations.add(hint.name)
 
             always_named_item(world, [location])
@@ -1468,6 +1488,7 @@ def build_world_gossip_hints(spoiler: Spoiler, world: World, checked_locations: 
         for entrance_hint in always_entrances:
             entrance = world.get_entrance(entrance_hint.name)
             connected_region = entrance.connected_region
+            assert connected_region is not None
             if entrance.shuffled and (connected_region.dungeon or any(hint.name == connected_region.name for hint in
                                                                       get_hint_group('region', world))):
                 checked_always_locations.add(entrance.name)
@@ -1516,18 +1537,21 @@ def build_world_gossip_hints(spoiler: Spoiler, world: World, checked_locations: 
             # Assumes that a "wasted" hint is desired since Light Arrows have to be added
             # explicitly to the list for named item hints.
             filtered_checked = set(checked_locations | checked_always_locations)
-            for location in (checked_locations | checked_always_locations):
+            for checked_location_name in (checked_locations | checked_always_locations):
                 try:
-                    if world.get_location(location).item.name == 'Light Arrows':
-                        filtered_checked.remove(location)
+                    checked_location = world.get_location(checked_location_name)
                 except KeyError:
                     pass  # checked_always_locations can also contain entrances from entrance_always hints, ignore those here
+                else:
+                    assert checked_location.item is not None
+                    if checked_location.item.name == 'Light Arrows':
+                        filtered_checked.remove(checked_location_name)
             for i in range(0, len(world.named_item_pool)):
-                hint = get_specific_item_hint(spoiler, world, filtered_checked)
-                if hint:
+                hint_return = get_specific_item_hint(spoiler, world, filtered_checked)
+                if hint_return is not None:
                     checked_locations.update(filtered_checked - checked_always_locations)
-                    gossip_text, location = hint
-                    place_ok = add_hint(spoiler, world, stone_groups, gossip_text, hint_dist['named-item'][1], location, hint_type='named-item')
+                    gossip_text, locations = hint_return
+                    place_ok = add_hint(spoiler, world, stone_groups, gossip_text, hint_dist['named-item'][1], locations, hint_type='named-item')
                     if not place_ok:
                         raise Exception('Not enough gossip stones for user-provided item hints')
 
