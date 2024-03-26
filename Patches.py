@@ -175,7 +175,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     extended_textures_start = start_address = rom.dma.free_space()
     for texture_id, texture_name, rom_address_base, rom_address_palette, size, func, patch_file in crate_textures:
         # Apply the texture patch. Resulting texture will be stored in texture_data as a bytearray
-        texture_data = func(rom, rom_address_base, rom_address_palette, size, data_path(patch_file) if patch_file else None)
+        texture_data = func(rom, rom_address_base, rom_address_palette, size, None if patch_file is None else data_path(patch_file))
         rom.write_bytes(start_address, texture_data)  # write the bytes to our new file
         end_address = ((start_address + len(texture_data) + 0x0F) >> 4) << 4
 
@@ -1002,12 +1002,15 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
                 continue
             new_entrance = entrance.data
             replaced_entrance = (entrance.replaces or entrance).data
+            assert replaced_entrance is not None
 
             # Fixup save/quit and death warping entrance IDs on bosses.
             if 'savewarp_addresses' in replaced_entrance and entrance.reverse:
-                if entrance.parent_region.savewarp:
+                if entrance.parent_region is not None and entrance.parent_region.savewarp is not None:
+                    assert entrance.parent_region.savewarp.replaces is not None
+                    assert entrance.parent_region.savewarp.replaces.data is not None
                     savewarp = entrance.parent_region.savewarp.replaces.data['index']
-                elif 'savewarp_fallback' in entrance.reverse.data:
+                elif entrance.reverse.data is not None and 'savewarp_fallback' in entrance.reverse.data:
                     # Spawning outside a grotto crashes the game, so we use a nearby regular entrance instead.
                     if entrance.reverse.data['savewarp_fallback'] == 0x0117:
                         # We don't want savewarping in a boss room inside GV Octorok Grotto to allow out-of-logic access to Gerudo Valley,
@@ -1521,7 +1524,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     # start with silver rupees
     if world.settings.shuffle_silver_rupees == 'remove':
         for puzzle in world.silver_rupee_puzzles():
-            save_context.give_item(world, f'Silver Rupee ({puzzle})', float('inf'))
+            save_context.give_item(world, f'Silver Rupee ({puzzle})', 10)
 
     if world.settings.shuffle_smallkeys == 'vanilla':
         if world.dungeon_mq['Spirit Temple']:
@@ -1618,7 +1621,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     insert_space(rom, shop_item_file, shop_item_vram_start, 1, 0x3C + (0x20 * 50), 0x20 * 50)
 
     # Add relocation entries for shop item table
-    new_relocations = []
+    new_relocations: list[int | tuple[int, int]] = []
     for i in range(50, 100):
         new_relocations.append(shop_item_file.start + 0x1DEC + (i * 0x20) + 0x04)
         new_relocations.append(shop_item_file.start + 0x1DEC + (i * 0x20) + 0x14)
@@ -1697,7 +1700,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
                 if region is not None and region.locations is not None
                 for loc in region.locations
                 if not loc.locked
-                and loc.has_item()
+                and loc.item is not None
                 and not loc.item.event
                 and (loc.type != "Shop" or loc.name in world.shop_prices) # ignore regular shop items (but keep special deals)
             ]
@@ -1910,11 +1913,14 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     # Patch songs and boss rewards
     for location in world.get_filled_locations():
         item = location.item
+        assert item is not None
         special = item.special
         locationaddress = location.address
         secondaryaddress = location.address2
 
         if location.type == 'Song' and not songs_as_items:
+            assert not isinstance(locationaddress, list)
+            assert not isinstance(secondaryaddress, list)
             bit_mask_pointer = 0x8C34 + ((special['item_id'] - 0x65) * 4)
             rom.write_byte(locationaddress, special['song_id'])
             next_song_id = special['song_id'] + 0x0D
@@ -1953,6 +1959,8 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             elif location.name == 'Sheik at Colossus':
                 rom.write_byte(0x218C589, special['text_id'])  # Fix text box
         elif location.type == 'Boss' and location.name != 'Links Pocket':
+            assert not isinstance(locationaddress, list)
+            assert not isinstance(secondaryaddress, list)
             rom.write_byte(locationaddress, special['item_id'])
             rom.write_byte(secondaryaddress, special['addr2_data'])
             bit_mask_hi = special['bit_mask'] >> 16
@@ -2098,7 +2106,9 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
         for (scrub_item, default_price, text_id, text_replacement) in business_scrubs:
             if scrub_item not in single_item_scrubs.keys():
                 continue
-            scrub_message_dict[text_id] = update_scrub_text(get_message_by_id(messages, text_id).raw_text, text_replacement, default_price, default_price)
+            message = get_message_by_id(messages, text_id)
+            assert message is not None
+            scrub_message_dict[text_id] = update_scrub_text(message.raw_text, text_replacement, default_price, default_price)
     else:
         # Rebuild Business Scrub Item Table
         rom.seek_address(0xDF8684)
@@ -2110,15 +2120,17 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             rom.write_int32(None, 0x80A74FF8)  # Can_Buy_Func
             rom.write_int32(None, 0x80A75354)  # Buy_Func
 
-            scrub_message_dict[text_id] = update_scrub_text(get_message_by_id(messages, text_id).raw_text, text_replacement, default_price, price)
+            message = get_message_by_id(messages, text_id)
+            assert message is not None
+            scrub_message_dict[text_id] = update_scrub_text(message.raw_text, text_replacement, default_price, price)
 
         # update actor IDs
         set_deku_salesman_data(rom)
 
     # Update scrub messages.
     Messages.SCRUBS_MESSAGE_IDS = []
-    for text_id, message in scrub_message_dict.items():
-        update_message_by_id(messages, text_id, message)
+    for text_id, text in scrub_message_dict.items():
+        update_message_by_id(messages, text_id, text)
         if world.settings.shuffle_scrubs == 'random':
             Messages.SCRUBS_MESSAGE_IDS.append(text_id)
 
@@ -2126,6 +2138,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
         # Build the Grotto Load Table based on grotto entrance data
         for entrance in world.get_shuffled_entrances(type='Grotto'):
             if entrance.primary:
+                assert entrance.data is not None
                 load_table_pointer = rom.sym('GROTTO_LOAD_TABLE') + 4 * entrance.data['grotto_id']
                 rom.write_int16(load_table_pointer, entrance.data['entrance'])
                 rom.write_byte(load_table_pointer + 2, entrance.data['content'])
@@ -2147,6 +2160,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             update_message_by_id(messages, 0x405E, "\x1AChomp chomp chomp...\x01We have... \x05\x41a mysterious item\x05\x40! \x01Do you want it...huh? Huh?\x04\x05\x41\x0860 Rupees\x05\x40 and it's yours!\x01Keyahahah!\x01\x1B\x05\x42Yes\x01No\x05\x40\x02")
         else:
             location = world.get_location("ZR Magic Bean Salesman")
+            assert location.item is not None
             item_text = get_hint(get_item_generic_name(location.item), True).text
             wrapped_item_text = line_wrap(item_text, False, False, False)
             if wrapped_item_text != item_text:
@@ -2165,6 +2179,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             update_message_by_id(messages, 0x6077, "\x06\x41Well Come!\x04I am selling stuff, strange and \x01rare, from all over the world to \x01everybody.\x01Today's special is...\x04A mysterious item! \x01Intriguing! \x01I won't tell you what it is until \x01I see the money....\x04How about \x05\x41200 Rupees\x05\x40?\x01\x01\x1B\x05\x42Buy\x01Don't buy\x05\x40\x02")
         else:
             location = world.get_location("Wasteland Bombchu Salesman")
+            assert location.item is not None
             item_text = get_hint(get_item_generic_name(location.item), True).text
             wrapped_item_text = line_wrap(item_text, False, False, False)
             if wrapped_item_text != item_text:
@@ -2181,6 +2196,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             update_message_by_id(messages, 0x304F, "How about buying this cool item for \x01200 Rupees?\x01\x1B\x05\x42Buy\x01Don't buy\x05\x40\x02")
         else:
             location = world.get_location("GC Medigoron")
+            assert location.item is not None
             item_text = get_hint(get_item_generic_name(location.item), True).text
             wrapped_item_text = line_wrap(item_text, False, False, False)
             if wrapped_item_text != item_text:
@@ -2193,6 +2209,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             update_message_by_id(messages, 0x500C, "Mysterious item! How about\x01\x05\x41100 Rupees\x05\x40?\x01\x1B\x05\x42Buy\x01Don't buy\x05\x40\x02")
         else:
             location = world.get_location("Kak Granny Buy Blue Potion")
+            assert location.item is not None
             item_text = get_hint(get_item_generic_name(location.item), True).text
             wrapped_item_text = line_wrap(item_text, False, False, False)
             if wrapped_item_text != item_text:
@@ -2212,6 +2229,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             update_message_by_id(messages, 0x6D, "I seem to have misplaced my\x01keys, but I have a fun item to\x01sell instead.\x04How about \x05\x4110 Rupees\x05\x40?\x01\x01\x1B\x05\x42Buy\x01Don't Buy\x05\x40\x02")
         else:
             location = world.get_location("Market Treasure Chest Game Salesman")
+            assert location.item is not None
             item_text = get_hint(get_item_generic_name(location.item), True).text
             wrapped_item_text = line_wrap(item_text, False, False, False)
             if wrapped_item_text != item_text:
@@ -2239,43 +2257,43 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     HEART_CHEST_BIG = 17
     if world.settings.shuffle_tcgkeys == 'vanilla':
         # Force key chests in Treasure Chest Game to use the default chest texture when not shuffled
-        item = read_rom_item(rom, 0x0071)
-        item['chest_type'] = BROWN_CHEST
-        write_rom_item(rom, 0x0071, item)
+        rom_item = read_rom_item(rom, 0x0071)
+        rom_item['chest_type'] = BROWN_CHEST
+        write_rom_item(rom, 0x0071, rom_item)
     if world.settings.free_bombchu_drops or 'bombchus' in world.settings.minor_items_as_major_chest:
         bombchu_ids = [0x006A, 0x0003, 0x006B]
         for i in bombchu_ids:
-            item = read_rom_item(rom, i)
-            item['chest_type'] = GILDED_CHEST
-            write_rom_item(rom, i, item)
+            rom_item = read_rom_item(rom, i)
+            rom_item['chest_type'] = GILDED_CHEST
+            write_rom_item(rom, i, rom_item)
     if world.settings.bridge == 'tokens' or world.settings.lacs_condition == 'tokens' or world.settings.shuffle_ganon_bosskey == 'tokens':
-        item = read_rom_item(rom, 0x005B)
-        item['chest_type'] = SKULL_CHEST_BIG
-        write_rom_item(rom, 0x005B, item)
+        rom_item = read_rom_item(rom, 0x005B)
+        rom_item['chest_type'] = SKULL_CHEST_BIG
+        write_rom_item(rom, 0x005B, rom_item)
     if world.settings.bridge == 'hearts' or world.settings.lacs_condition == 'hearts' or world.settings.shuffle_ganon_bosskey == 'hearts':
         heart_ids = [0x003D, 0x003E, 0x0076]
         for i in heart_ids:
-            item = read_rom_item(rom, i)
-            item['chest_type'] = HEART_CHEST_BIG
-            write_rom_item(rom, i, item)
+            rom_item = read_rom_item(rom, i)
+            rom_item['chest_type'] = HEART_CHEST_BIG
+            write_rom_item(rom, i, rom_item)
     if 'shields' in world.settings.minor_items_as_major_chest:
         # Deku
-        item = read_rom_item(rom, 0x0029)
-        item['chest_type'] = GILDED_CHEST
-        write_rom_item(rom, 0x0029, item)
+        rom_item = read_rom_item(rom, 0x0029)
+        rom_item['chest_type'] = GILDED_CHEST
+        write_rom_item(rom, 0x0029, rom_item)
         # Hylian
-        item = read_rom_item(rom, 0x002A)
-        item['chest_type'] = GILDED_CHEST
-        write_rom_item(rom, 0x002A, item)
+        rom_item = read_rom_item(rom, 0x002A)
+        rom_item['chest_type'] = GILDED_CHEST
+        write_rom_item(rom, 0x002A, rom_item)
     if 'capacity' in world.settings.minor_items_as_major_chest:
         # Nuts
-        item = read_rom_item(rom, 0x0087)
-        item['chest_type'] = GILDED_CHEST
-        write_rom_item(rom, 0x0087, item)
+        rom_item = read_rom_item(rom, 0x0087)
+        rom_item['chest_type'] = GILDED_CHEST
+        write_rom_item(rom, 0x0087, rom_item)
         # Sticks
-        item = read_rom_item(rom, 0x0088)
-        item['chest_type'] = GILDED_CHEST
-        write_rom_item(rom, 0x0088, item)
+        rom_item = read_rom_item(rom, 0x0088)
+        rom_item['chest_type'] = GILDED_CHEST
+        write_rom_item(rom, 0x0088, rom_item)
 
     # Update chest type appearance
     if world.settings.correct_chest_appearances == 'textures':
@@ -2292,8 +2310,9 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
         if not world.dungeon_mq['Ganons Castle']:
             chest_name = 'Ganons Castle Light Trial Lullaby Chest'
             location = world.get_location(chest_name)
-            item = read_rom_item(rom, (location.item.looks_like_item or location.item).index)
-            if item['chest_type'] in (GOLD_CHEST, GILDED_CHEST, SKULL_CHEST_BIG, HEART_CHEST_BIG):
+            assert location.item is not None
+            rom_item = read_rom_item(rom, (location.item.looks_like_item or location.item).index)
+            if rom_item['chest_type'] in (GOLD_CHEST, GILDED_CHEST, SKULL_CHEST_BIG, HEART_CHEST_BIG):
                 rom.write_int16(0x321B176, 0xFC40) # original 0xFC48
 
         # Move Spirit Temple Compass Chest if it is a small chest so it is reachable with hookshot
@@ -2301,8 +2320,9 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             chest_name = 'Spirit Temple Compass Chest'
             chest_address = 0x2B6B07C
             location = world.get_location(chest_name)
-            item = read_rom_item(rom, (location.item.looks_like_item or location.item).index)
-            if item['chest_type'] in (BROWN_CHEST, SILVER_CHEST, SKULL_CHEST_SMALL, HEART_CHEST_SMALL):
+            assert location.item is not None
+            rom_item = read_rom_item(rom, (location.item.looks_like_item or location.item).index)
+            if rom_item['chest_type'] in (BROWN_CHEST, SILVER_CHEST, SKULL_CHEST_SMALL, HEART_CHEST_SMALL):
                 rom.write_int16(chest_address + 2, 0x0190) # X pos
                 rom.write_int16(chest_address + 6, 0xFABC) # Z pos
 
@@ -2312,8 +2332,9 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             chest_address_0 = 0x21A02D0  # Address in setup 0
             chest_address_2 = 0x21A06E4  # Address in setup 2
             location = world.get_location(chest_name)
-            item = read_rom_item(rom, (location.item.looks_like_item or location.item).index)
-            if item['chest_type'] in (BROWN_CHEST, SILVER_CHEST, SKULL_CHEST_SMALL, HEART_CHEST_SMALL):
+            assert location.item is not None
+            rom_item = read_rom_item(rom, (location.item.looks_like_item or location.item).index)
+            if rom_item['chest_type'] in (BROWN_CHEST, SILVER_CHEST, SKULL_CHEST_SMALL, HEART_CHEST_SMALL):
                 rom.write_int16(chest_address_0 + 6, 0x0172)  # Z pos
                 rom.write_int16(chest_address_2 + 6, 0x0172)  # Z pos
 
@@ -2372,19 +2393,24 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
                     update_message_by_id(messages, map_id, map_message, allow_duplicates=True)
             else:
                 dungeon_name, boss_name, compass_id, map_id = dungeon_list[dungeon]
+                assert boss_name is not None
                 if world.settings.world_count > 1:
                     compass_message = "\x13\x75\x08\x05\x42\x0F\x05\x40 found the \x05\x41Compass\x05\x40\x01for %s\x05\x40!\x09" % (dungeon_name)
                 elif world.mixed_pools_bosses: #TODO also enable if boss reward shuffle is on
                     vanilla_reward = world.get_location(boss_name).vanilla_item
+                    assert vanilla_reward is not None
                     vanilla_reward_location = world.hinted_dungeon_reward_locations[vanilla_reward]
                     area = HintArea.at(vanilla_reward_location)
-                    area = GossipText(area.text(world.settings.clearer_hints, preposition=True), [area.color], prefix='')
-                    compass_message = "\x13\x75\x08You found the \x05\x41Compass\x05\x40\x01for %s\x05\x40!\x01The %s can be found\x01%s!\x09" % (dungeon_name, vanilla_reward, area) #TODO figure out why the player name isn't being displayed
+                    area_text = GossipText(area.text(world.settings.clearer_hints, preposition=True), [area.color], prefix='')
+                    compass_message = f"\x13\x75\x08You found the \x05\x41Compass\x05\x40\x01for {dungeon_name}\x05\x40!\x01The {vanilla_reward} can be found\x01{area_text}!\x09" #TODO figure out why the player name isn't being displayed
                 else:
                     if world.settings.logic_rules == 'glitched':
                         boss_location = world.get_location(boss_name)
                     else:
-                        boss_location = next(filter(lambda loc: loc.type == 'Boss', world.get_entrance(f'{dungeon} Before Boss -> {boss_name} Boss Room').connected_region.locations))
+                        entrance = world.get_entrance(f'{dungeon} Before Boss -> {boss_name} Boss Room')
+                        assert entrance.connected_region is not None
+                        boss_location = next(filter(lambda loc: loc.type == 'Boss', entrance.connected_region.locations))
+                    assert boss_location.item is not None
                     dungeon_reward = reward_list[boss_location.item.name]
                     compass_message = "\x13\x75\x08You found the \x05\x41Compass\x05\x40\x01for %s\x05\x40!\x01It holds the %s!\x09" % (dungeon_name, dungeon_reward)
                 update_message_by_id(messages, compass_id, compass_message, allow_duplicates=True)
@@ -2429,7 +2455,9 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     for message_id in (0x706F, 0x7091, 0x7092, 0x7093, 0x7094, 0x7095):
         text_codes = []
         chars_in_section = 1
-        for code in get_message_by_id(messages, message_id).text_codes:
+        message = get_message_by_id(messages, message_id)
+        assert message is not None
+        for code in message.text_codes:
             if code.code == 0x04:  # box-break
                 text_codes.append(TextCode(0x0c, 80 + chars_in_section))
                 chars_in_section = 1
@@ -2465,8 +2493,8 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             bfa_message = make_player_message(bfa_message)
         update_message_by_id(messages, 0x0071, bfa_message, 0x23, allow_duplicates=True)
 
-        with open(data_path('blue_fire_arrow_item_name_eng.ia4'), 'rb') as stream:
-            bfa_name_bytes = stream.read()
+        with open(data_path('blue_fire_arrow_item_name_eng.ia4'), 'rb') as bin_stream:
+            bfa_name_bytes = bin_stream.read()
             rom.write_bytes(0x8a1c00, bfa_name_bytes)
 
     repack_messages(rom, messages, permutation)
@@ -2684,6 +2712,8 @@ def get_override_table_bytes(override_table):
 def get_override_entry(location: Location) -> Optional[OverrideEntry]:
     scene = location.scene
     default = location.default
+    assert location.item is not None
+    assert location.world is not None
     item_id = location.item.index
     if None in (scene, default, item_id):
         return None
@@ -2692,6 +2722,7 @@ def get_override_entry(location: Location) -> Optional[OverrideEntry]:
     if location.type in ["Freestanding", "RupeeTower", "Pot", "Crate", "FlyingPot", "SmallCrate", "Beehive", "Wonderitem"] and location.disabled != DisableType.ENABLED:
         return None
 
+    assert location.item.world is not None
     player_id = location.item.world.id + 1
     if location.item.looks_like_item is not None:
         looks_like_item_id = location.item.looks_like_item.index
@@ -2853,10 +2884,14 @@ def remove_entrance_blockers(rom: Rom) -> None:
 
 
 def set_cow_id_data(rom: Rom, world: World) -> None:
+    last_actor = -1
+    last_scene = -1
+    cow_count = 1
+
     def set_cow_id(rom: Rom, actor_id: int, actor: int, scene: int) -> None:
+        nonlocal last_actor
         nonlocal last_scene
         nonlocal cow_count
-        nonlocal last_actor
 
         if actor_id == 0x01C6:  # Cow
             if scene == last_scene and last_actor != actor:
@@ -2870,10 +2905,6 @@ def set_cow_id_data(rom: Rom, world: World) -> None:
                 rom.write_int16(actor + 0x8, 1 if cow_count == 17 else 0)  # Give all wall cows ID 0, and set cow 11's ID to 1
             else:
                 rom.write_int16(actor + 0x8, cow_count)
-
-    last_actor = -1
-    last_scene = -1
-    cow_count = 1
 
     get_actor_list(rom, set_cow_id)
 

@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 ActivationTransform: TypeAlias = "Callable[[list[int]], list[int]]"
 PlaybackTransform: TypeAlias = "Callable[[list[dict[str, int]]], list[dict[str, int]]]"
-P = TypeVar('P', list[int], list[dict[str, int]])
+P = TypeVar('P', "list[int]", "list[dict[str, int]]")
 T = TypeVar('T', ActivationTransform, PlaybackTransform)
 
 PLAYBACK_START: int = 0xB781DC
