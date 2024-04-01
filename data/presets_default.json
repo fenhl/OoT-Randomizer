@@ -1,5 +1,8 @@
 {
     "Easy Mode": {
+        "aliases": [
+            "easy"
+        ],
         "show_seed_info": true,
         "user_message": "Easy Mode",
         "world_count": 1,
@@ -757,6 +760,10 @@
         "starting_age":                            "adult"
     },
     "S7 Tournament": {
+        "aliases": [
+            "s7",
+            "tournament"
+        ],
         "show_seed_info": true,
         "user_message": "S7 Tournament",
         "world_count": 1,
@@ -934,7 +941,11 @@
             "Claim Check"
         ]
     },
-    "Standard Weekly (Latest)": {
+    "Standard Weekly (2023-08-12)": {
+        "aliases": [
+            "Standard Weekly (Latest)",
+            "weekly"
+        ],
         "show_seed_info": true,
         "user_message": "Standard Weekly (Latest)",
         "world_count": 1,
@@ -1113,6 +1124,10 @@
         ]
     },
     "DDR Weekly (2023-06-12)": {
+        "aliases": [
+            "ddr",
+            "ddrweekly"
+        ],
         "show_seed_info": true,
         "user_message": "DDR Season 2",
         "world_count": 1,
@@ -1297,6 +1312,9 @@
         ]
     },
     "Scrub Tournament": {
+        "aliases": [
+            "scrub"
+        ],
         "show_seed_info": true,
         "user_message": "Scrub Tournament",
         "world_count": 1,
@@ -1477,6 +1495,10 @@
         ]
     },
     "Multiworld Tournament Season 4": {
+        "aliases": [
+            "mw",
+            "mw_s4"
+        ],
         "show_seed_info": true,
         "user_message": "Multiworld Tournament Season 4",
         "world_count": 3,
@@ -1657,6 +1679,9 @@
         ]
     },
     "Hell Mode": {
+        "aliases": [
+            "hell"
+        ],
         "show_seed_info": true,
         "user_message": "Hell Mode",
         "world_count": 1,
@@ -2011,6 +2036,9 @@
         ]
     },
     "Bingo": {
+        "aliases": [
+            "bingo"
+        ],
         "show_seed_info": true,
         "user_message": "Bingo",
         "world_count": 1,
@@ -2175,6 +2203,10 @@
         ]
     },
     "League S6": {
+        "aliases": [
+            "league",
+            "league_s6"
+        ],
         "show_seed_info": true,
         "user_message": "OoTR League S6",
         "world_count": 1,
@@ -2356,6 +2388,11 @@
         ]
     },
     "Co-Op Tournament Season 3": {
+        "aliases": [
+            "co-op",
+            "co-op_s3",
+            "coop"
+        ],
         "show_seed_info": true,
         "user_message": "Co-Op Tournament Season 3",
         "world_count": 1,
