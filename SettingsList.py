@@ -2351,7 +2351,7 @@ class SettingInfos:
 
             'Vanilla Locations': Songs will remain unshuffled.
 
-            'Song Locations': Song will only appear at locations that
+            'Song Locations': Songs will only appear at locations that
             normally teach songs. In Multiworld, songs will only
             appear in their own world.
 
