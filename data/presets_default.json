@@ -1,5 +1,8 @@
 {
     "Easy Mode": {
+        "aliases": [
+            "easy"
+        ],
         "show_seed_info": true,
         "user_message": "Easy Mode",
         "world_count": 1,
@@ -124,9 +127,25 @@
         "ruto_already_f1_jabu": false,
         "ocarina_songs": "off",
         "correct_chest_appearances": "off",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_chest_texture": false,
         "minor_items_as_major_chest": [],
         "invisible_chests": false,
         "correct_potcrate_appearances": "textures_unchecked",
+        "potcrate_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_potcrate_texture": false,
         "key_appearance_match_dungeon": false,
         "clearer_hints": true,
         "hints": "always",
@@ -413,8 +432,16 @@
         "starting_songs":                          [],
         "ocarina_songs":                           false,
         "correct_chest_appearances":               "both",
-        "minor_items_as_major_chest":              [],
-        "minor_items_special_texture":             ["bombchus"],
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts",
+            "bombchus"
+        ],
+        "soa_unlocks_chest_texture":               false,
+        "minor_items_as_major_chest":              "bombchus",
         "clearer_hints":                           true,
         "no_collectible_hearts":                   false,
         "hints":                                   "always",
@@ -611,6 +638,15 @@
         "starting_songs":                          [],
         "ocarina_songs":                           false,
         "correct_chest_appearances":               "both",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts",
+            "bombchus"
+        ],
+        "soa_unlocks_chest_texture":               false,
         "minor_items_as_major_chest":              "bombchus",
         "clearer_hints":                           true,
         "no_collectible_hearts":                   false,
@@ -748,6 +784,15 @@
         "starting_songs":                          [],
         "ocarina_songs":                           false,
         "correct_chest_appearances":               "both",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts",
+            "bombchus"
+        ],
+        "soa_unlocks_chest_texture":               false,
         "minor_items_as_major_chest":              [],
         "minor_items_special_texture":             ["bombchus"],
         "clearer_hints":                           true,
@@ -833,6 +878,10 @@
         "starting_age":                            "adult"
     },
     "S7 Tournament": {
+        "aliases": [
+            "s7",
+            "tournament"
+        ],
         "show_seed_info": true,
         "user_message": "S7 Tournament",
         "world_count": 1,
@@ -975,9 +1024,25 @@
         "ruto_already_f1_jabu": false,
         "ocarina_songs": "off",
         "correct_chest_appearances": "both",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_chest_texture": false,
         "minor_items_as_major_chest": [],
         "invisible_chests": false,
         "correct_potcrate_appearances": "textures_content",
+        "potcrate_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_potcrate_texture": false,
         "key_appearance_match_dungeon": false,
         "clearer_hints": true,
         "hints": "always",
@@ -1010,7 +1075,11 @@
             "Claim Check"
         ]
     },
-    "Standard Weekly (Latest)": {
+    "Standard Weekly (2023-08-12)": {
+        "aliases": [
+            "Standard Weekly (Latest)",
+            "weekly"
+        ],
         "show_seed_info": true,
         "user_message": "Standard Weekly (Latest)",
         "world_count": 1,
@@ -1154,9 +1223,25 @@
         "ruto_already_f1_jabu": false,
         "ocarina_songs": "off",
         "correct_chest_appearances": "both",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_chest_texture": false,
         "minor_items_as_major_chest": [],
         "invisible_chests": false,
         "correct_potcrate_appearances": "textures_content",
+        "potcrate_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_potcrate_texture": false,
         "key_appearance_match_dungeon": false,
         "clearer_hints": true,
         "hints": "always",
@@ -1189,6 +1274,10 @@
         ]
     },
     "DDR Weekly (2023-06-12)": {
+        "aliases": [
+            "ddr",
+            "ddrweekly"
+        ],
         "show_seed_info": true,
         "user_message": "DDR Season 2",
         "world_count": 1,
@@ -1334,9 +1423,25 @@
         "ruto_already_f1_jabu": false,
         "ocarina_songs": "off",
         "correct_chest_appearances": "off",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_chest_texture": false,
         "minor_items_as_major_chest": [],
         "invisible_chests": false,
         "correct_potcrate_appearances": "textures_unchecked",
+        "potcrate_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_potcrate_texture": false,
         "key_appearance_match_dungeon": false,
         "clearer_hints": true,
         "hints": "always",
@@ -1373,6 +1478,9 @@
         ]
     },
     "Scrub Tournament": {
+        "aliases": [
+            "scrub"
+        ],
         "show_seed_info": true,
         "user_message": "Scrub Tournament",
         "world_count": 1,
@@ -1522,9 +1630,25 @@
         "ruto_already_f1_jabu": true,
         "ocarina_songs": "off",
         "correct_chest_appearances": "textures",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_chest_texture": false,
         "minor_items_as_major_chest": [],
         "invisible_chests": false,
         "correct_potcrate_appearances": "textures_unchecked",
+        "potcrate_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_potcrate_texture": false,
         "key_appearance_match_dungeon": false,
         "clearer_hints": true,
         "hints": "always",
@@ -1553,6 +1677,10 @@
         ]
     },
     "Multiworld Tournament Season 4": {
+        "aliases": [
+            "mw",
+            "mw_s4"
+        ],
         "show_seed_info": true,
         "user_message": "Multiworld Tournament Season 4",
         "world_count": 3,
@@ -1699,9 +1827,25 @@
         "ruto_already_f1_jabu": true,
         "ocarina_songs": "off",
         "correct_chest_appearances": "textures",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_chest_texture": false,
         "minor_items_as_major_chest": [],
         "invisible_chests": false,
         "correct_potcrate_appearances": "textures_content",
+        "potcrate_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_potcrate_texture": false,
         "key_appearance_match_dungeon": true,
         "clearer_hints": true,
         "hints": "always",
@@ -1733,6 +1877,9 @@
         ]
     },
     "Hell Mode": {
+        "aliases": [
+            "hell"
+        ],
         "show_seed_info": true,
         "user_message": "Hell Mode",
         "world_count": 1,
@@ -2051,9 +2198,25 @@
         "ruto_already_f1_jabu": false,
         "ocarina_songs": "all",
         "correct_chest_appearances": "off",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_chest_texture": false,
         "minor_items_as_major_chest": [],
         "invisible_chests": true,
         "correct_potcrate_appearances": "off",
+        "potcrate_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_potcrate_texture": false,
         "key_appearance_match_dungeon": false,
         "clearer_hints": false,
         "hints": "none",
@@ -2087,6 +2250,9 @@
         ]
     },
     "Bingo": {
+        "aliases": [
+            "bingo"
+        ],
         "show_seed_info": true,
         "user_message": "Bingo",
         "world_count": 1,
@@ -2218,9 +2384,25 @@
         "ruto_already_f1_jabu": false,
         "ocarina_songs": "off",
         "correct_chest_appearances": "off",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_chest_texture": false,
         "minor_items_as_major_chest": [],
         "invisible_chests": false,
         "correct_potcrate_appearances": "textures_unchecked",
+        "potcrate_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_potcrate_texture": false,
         "key_appearance_match_dungeon": false,
         "clearer_hints": true,
         "hints": "always",
@@ -2251,6 +2433,10 @@
         ]
     },
     "League S6": {
+        "aliases": [
+            "league",
+            "league_s6"
+        ],
         "show_seed_info": true,
         "user_message": "OoTR League S6",
         "world_count": 1,
@@ -2396,9 +2582,25 @@
         "ruto_already_f1_jabu": true,
         "ocarina_songs": "off",
         "correct_chest_appearances": "both",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_chest_texture": false,
         "minor_items_as_major_chest": [],
         "invisible_chests": false,
         "correct_potcrate_appearances": "textures_content",
+        "potcrate_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_potcrate_texture": false,
         "key_appearance_match_dungeon": false,
         "clearer_hints": true,
         "hints": "always",
@@ -2432,6 +2634,11 @@
         ]
     },
     "Co-Op Tournament Season 3": {
+        "aliases": [
+            "co-op",
+            "co-op_s3",
+            "coop"
+        ],
         "show_seed_info": true,
         "user_message": "Co-Op Tournament Season 3",
         "world_count": 1,
@@ -2581,9 +2788,25 @@
         "ruto_already_f1_jabu": false,
         "ocarina_songs": "off",
         "correct_chest_appearances": "off",
+        "chest_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_chest_texture": false,
         "minor_items_as_major_chest": [],
         "invisible_chests": false,
         "correct_potcrate_appearances": "textures_unchecked",
+        "potcrate_textures_specific": [
+            "major",
+            "bosskeys",
+            "keys",
+            "tokens",
+            "hearts"
+        ],
+        "soa_unlocks_potcrate_texture": false,
         "key_appearance_match_dungeon": false,
         "clearer_hints": true,
         "hints": "always",

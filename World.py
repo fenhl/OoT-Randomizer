@@ -333,12 +333,13 @@ class World:
         # over again after the first round through the categories.
         if len(self.goal_categories) > 0:
             self.one_hint_per_goal = True
+            minor_goal_categories = ('door_of_time', 'ganon')
             goal_list1 = []
             for category in self.goal_categories.values():
-                if category.name != 'door_of_time':
+                if category.name not in minor_goal_categories:
                     goal_list1 = [goal.name for goal in category.goals]
             for category in self.goal_categories.values():
-                if goal_list1 != [goal.name for goal in category.goals] and category.name != 'door_of_time':
+                if goal_list1 != [goal.name for goal in category.goals] and category.name not in minor_goal_categories:
                     self.one_hint_per_goal = False
 
         # initialize category check for first rounds of goal hints
@@ -816,6 +817,7 @@ class World:
         gbk = GoalCategory('ganon_bosskey', 20)
         trials = GoalCategory('trials', 30, minimum_goals=1)
         th = GoalCategory('triforce_hunt', 30, goal_count=round(self.settings.triforce_goal_per_world / 10), minimum_goals=1)
+        ganon = GoalCategory('ganon', 40, goal_count=1)
         trial_goal = Goal(self, 'the Tower', 'path to #the Tower#', 'White', items=[], create_empty=True)
 
         if self.settings.triforce_hunt and self.settings.triforce_goal_per_world > 0:
@@ -837,10 +839,9 @@ class World:
         # Ganon's Boss Key can be Stones, Medallions, Dungeons, Skulls, LACS or
         # one of the keysanity variants.
         # Trials is one goal that is only on if at least one trial is on in the world.
-        # If there are no win conditions beyond Kill Ganon (open bridge, GBK removed,
-        # no trials), a fallback "path of the hero" clone of WOTH is created. Path
-        # wording is used to distinguish the hint type even though the hintable location
-        # set is identical to WOTH.
+        # If there are no trials, a "path of the hero" clone of WOTH is created, which
+        # is deprioritized compared to other goals. Path wording is used to distinguish
+        # the hint type even though the hintable location set is identical to WOTH.
         if not self.settings.triforce_hunt:
             if self.settings.starting_age == 'child':
                 dot_items = [{'name': 'Temple of Time Access', 'quantity': 1, 'minimum': 1, 'hintable': True}]
@@ -1060,12 +1061,12 @@ class World:
                 trials.add_goal(trial_goal)
                 self.goal_categories[trials.name] = trials
 
-            if (self.shuffle_special_dungeon_entrances or self.settings.bridge == 'open') and (self.settings.shuffle_ganon_bosskey == 'remove' or self.settings.shuffle_ganon_bosskey == 'vanilla') and self.settings.trials == 0:
-                g = GoalCategory('ganon', 30, goal_count=1)
-                # Equivalent to WOTH, but added in case WOTH hints are disabled in favor of goal hints
-                g.add_goal(Goal(self, 'the hero', 'path of #the hero#', 'White', items=[{'name': 'Triforce', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
-                g.minimum_goals = 1
-                self.goal_categories[g.name] = g
+            # In glitched logic or if trials are off, it's possible that some items required to beat the game
+            # (such as bow, magic, light arrows, or anything required to reach Ganon's Castle)
+            # don't appear on any other paths, so a goal specifically for beating the game is added.
+            ganon.add_goal(Goal(self, 'the hero', 'path of #the hero#', 'White', items=[{'name': 'Triforce', 'quantity': 1, 'minimum': 1, 'hintable': True}]))
+            ganon.minimum_goals = 1
+            self.goal_categories[ganon.name] = ganon
 
     def get_region(self, region_name: str | Region) -> Region:
         if isinstance(region_name, Region):
@@ -1267,7 +1268,7 @@ class World:
             self.settings.shuffle_scrubs == 'off' and not self.settings.shuffle_grotto_entrances):
             # nayru's love may be required to prevent forced damage
             exclude_item_list.append('Nayrus Love')
-        if 'logic_grottos_without_agony' in self.settings.allowed_tricks and self.settings.hints != 'agony':
+        if ('logic_grottos_without_agony' in self.settings.allowed_tricks or self.settings.logic_rules != 'glitchless') and self.settings.hints != 'agony':
             # Stone of Agony skippable if not used for hints or grottos
             exclude_item_list.append('Stone of Agony')
         if not self.shuffle_special_interior_entrances and not self.settings.shuffle_overworld_entrances and not self.settings.warp_songs:

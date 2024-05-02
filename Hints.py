@@ -1275,7 +1275,8 @@ def get_random_location_hint(spoiler: Spoiler, world: World, checked: set[str]) 
         and not location.locked
         and location.name not in world.hint_exclusions
         and location.name not in world.hint_type_overrides['item']
-        and location.item.name not in world.item_hint_type_overrides['item'],
+        and location.item.name not in world.item_hint_type_overrides['item']
+        and (location.world.settings.empty_dungeons_mode == 'none' or not location.world.empty_dungeons[HintArea.at(location).dungeon_name].empty),
         world.get_filled_locations()))
     if not locations:
         return None
@@ -1294,8 +1295,16 @@ def get_random_location_hint(spoiler: Spoiler, world: World, checked: set[str]) 
 
 
 def get_specific_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type: str) -> HintReturn:
+    def is_valid_hint(hint: Hint) -> bool:
+        location = world.get_location(hint.name)
+        if not is_not_checked([world.get_location(hint.name)], checked):
+            return False
+        if location.world.settings.empty_dungeons_mode != 'none' and location.world.empty_dungeons[HintArea.at(location).dungeon_name].empty:
+            return False
+        return True
+
     hint_group = get_hint_group(hint_type, world)
-    hint_group = list(filter(lambda hint: is_not_checked([world.get_location(hint.name)], checked), hint_group))
+    hint_group = list(filter(is_valid_hint, hint_group))
     if not hint_group:
         return None
 
@@ -2068,7 +2077,7 @@ def build_ganon_text(world: World, messages: list[Message]) -> None:
     update_message_by_id(messages, 0x70CB, text)
 
 
-def build_misc_item_hints(world: World, messages: list[Message]) -> None:
+def build_misc_item_hints(world: World, messages: list[Message], allow_duplicates: bool = False) -> None:
     for hint_type, data in misc_item_hint_table.items():
         if hint_type in world.settings.misc_hints:
             item = world.misc_hint_items[hint_type]
@@ -2098,7 +2107,7 @@ def build_misc_item_hints(world: World, messages: list[Message]) -> None:
             for find, replace in data.get('replace', {}).items():
                 text = text.replace(find, replace)
 
-            update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')))
+            update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), allow_duplicates=allow_duplicates)
 
 
 def build_misc_location_hints(world: World, messages: list[Message]) -> None:
