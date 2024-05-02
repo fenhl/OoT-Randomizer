@@ -3,7 +3,6 @@
 #include "gfx.h"
 #include "sys_matrix.h"
 #include "textures.h"
-#include "objects.h"
 
 #define BROWN_FRONT_TEXTURE 0x06001798
 #define BROWN_BASE_TEXTURE 0x06002798
@@ -20,6 +19,13 @@ extern uint8_t SHUFFLE_CHEST_GAME;
 uint32_t CHEST_TEXTURE_MATCH_CONTENTS = 0;
 uint32_t CHEST_SIZE_MATCH_CONTENTS = 0;
 uint32_t CHEST_SIZE_TEXTURE = 0;
+extern uint8_t CHEST_GOLD_TEXTURE;
+extern uint8_t CHEST_GILDED_TEXTURE;
+extern uint8_t CHEST_SILVER_TEXTURE;
+extern uint8_t CHEST_SKULL_TEXTURE;
+extern uint8_t CHEST_HEART_TEXTURE;
+extern uint8_t CHEST_BOMBCHU_TEXTURE;
+extern uint8_t SOA_UNLOCKS_CHEST_TEXTURE;
 
 extern Mtx_t* write_matrix_stack_top(z64_gfx_t* gfx);
 asm(".equ write_matrix_stack_top, 0x800AB900");
@@ -28,10 +34,10 @@ void get_chest_override(z64_actor_t* actor) {
     Chest* chest = (Chest*)actor;
     uint8_t size = chest->en_box.type;
     uint8_t color = size;
-    uint8_t item_id = (actor->variable & 0x0FE0) >> 5;
-    uint8_t scene = z64_game.scene_index;
-    override_t override = lookup_override(actor, scene, item_id);
     if (CHEST_SIZE_MATCH_CONTENTS || CHEST_SIZE_TEXTURE || CHEST_TEXTURE_MATCH_CONTENTS) {
+        uint8_t scene = z64_game.scene_index;
+        uint8_t item_id = (actor->variable & 0x0FE0) >> 5;
+        override_t override = lookup_override(actor, scene, item_id);
         if (override.value.base.item_id != 0) {
             item_row_t* item_row = get_item_row(override.value.looks_like_item_id);
             if (item_row == NULL) {
@@ -57,15 +63,6 @@ void get_chest_override(z64_actor_t* actor) {
         // Usually only applies to chest types 4 and 6
         actor->flags |= 0x80;
     }
-
-    // If the chest has an ice trap, load OBJECT_FZ (0x0114) to make the ice smoke effect work.
-    if (override.value.base.item_id == 0x7C) {
-        int object_fz_index = z64_ObjectIndex(&z64_game.obj_ctxt, 0x0114);
-        // No need to spawn more than one by scene.
-        if (!z64_ObjectIsLoaded(&z64_game.obj_ctxt, object_fz_index)) {
-            object_index_or_spawn(&z64_game.obj_ctxt, 0x0114);
-        }
-    }
 }
 
 uint8_t get_chest_type(z64_actor_t* actor) {
@@ -83,37 +80,49 @@ void set_chest_texture(z64_gfx_t* gfx, uint8_t chest_type, Gfx** opa_ptr) {
     void* baseTexture = (void*)BROWN_BASE_TEXTURE;
 
     if (CHEST_SIZE_TEXTURE || CHEST_TEXTURE_MATCH_CONTENTS) {
-        switch (chest_type) {
-            case GILDED_CHEST:
-                frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_GILDED);
-                baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_GILDED);
-                break;
+        if (!SOA_UNLOCKS_CHEST_TEXTURE || z64_file.stone_of_agony != 0) {
+            switch (chest_type) {
+                case GILDED_CHEST:
+                    if (CHEST_GILDED_TEXTURE) {
+                        frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_GILDED);
+                        baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_GILDED);
+                    }
+                    break;
 
-            case SILVER_CHEST:
-                frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_SILVER);
-                baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_SILVER);
-                break;
+                case SILVER_CHEST:
+                    if (CHEST_SILVER_TEXTURE) {
+                        frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_SILVER);
+                        baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_SILVER);
+                    }
+                    break;
 
-            case SKULL_CHEST_SMALL:
-            case SKULL_CHEST_BIG:
-                frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_SKULL);
-                baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_SKULL);
-                break;
+                case SKULL_CHEST_SMALL:
+                case SKULL_CHEST_BIG:
+                    if (CHEST_SKULL_TEXTURE) {
+                        frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_SKULL);
+                        baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_SKULL);
+                    }
+                    break;
 
-            case HEART_CHEST_SMALL:
-            case HEART_CHEST_BIG:
-                frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_HEART);
-                baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_HEART);
-                break;
+                case HEART_CHEST_SMALL:
+                case HEART_CHEST_BIG:
+                    if (CHEST_HEART_TEXTURE) {
+                        frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_HEART);
+                        baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_HEART);
+                    }
+                    break;
 
-            case BOMBCHU_CHEST_SMALL:
-            case BOMBCHU_CHEST_BIG:
-                frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_BOMBCHU);
-                baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_BOMBCHU);
-                break;
+                case BOMBCHU_CHEST_SMALL:
+		        case BOMBCHU_CHEST_BIG:
+                    if (CHEST_BOMBCHU_TEXTURE) {
+                        frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_BOMBCHU);
+                        baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_BOMBCHU);
+                    }
+	                break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -133,7 +142,8 @@ void draw_chest_base(z64_game_t* game, z64_actor_t* actor, Gfx** opa_ptr) {
     z64_gfx_t* gfx = game->common.gfx;
     uint8_t chest_type = get_chest_type(actor);
     gSPMatrix((*opa_ptr)++, write_matrix_stack_top(gfx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    if (chest_type != GOLD_CHEST) {
+    if (chest_type != GOLD_CHEST || !CHEST_GOLD_TEXTURE ||
+        (SOA_UNLOCKS_CHEST_TEXTURE && z64_file.stone_of_agony == 0)) {
         set_chest_texture(gfx, chest_type, opa_ptr);
         gSPDisplayList((*opa_ptr)++, 0x060006F0);
     } else {
@@ -145,7 +155,8 @@ void draw_chest_lid(z64_game_t* game, z64_actor_t* actor, Gfx** opa_ptr) {
     z64_gfx_t* gfx = game->common.gfx;
     uint8_t chest_type = get_chest_type(actor);
     gSPMatrix((*opa_ptr)++, write_matrix_stack_top(gfx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    if (chest_type != GOLD_CHEST) {
+    if (chest_type != GOLD_CHEST || !CHEST_GOLD_TEXTURE ||
+        (SOA_UNLOCKS_CHEST_TEXTURE && z64_file.stone_of_agony == 0)) {
         set_chest_texture(gfx, chest_type, opa_ptr);
         gSPDisplayList((*opa_ptr)++, 0x060010C0);
     } else {
