@@ -441,7 +441,8 @@
             "bombchus"
         ],
         "soa_unlocks_chest_texture":               false,
-        "minor_items_as_major_chest":              "bombchus",
+        "minor_items_as_major_chest":              [],
+        "minor_items_special_texture":             ["bombchus"],
         "clearer_hints":                           true,
         "no_collectible_hearts":                   false,
         "hints":                                   "always",
