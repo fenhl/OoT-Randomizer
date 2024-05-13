@@ -280,6 +280,7 @@
           "row_span": [3,3,3],
           "settings": [
             "reachable_locations",
+            "bingosync_url",
             "logic_no_night_tokens_without_suns_song",
             "logic_water_gold_scale_no_entry"
           ]
@@ -396,7 +397,6 @@
             "clearer_hints",
             "hints",
             "hint_dist",
-            "bingosync_url",
             "misc_hints",
             "text_shuffle",
             "damage_multiplier",

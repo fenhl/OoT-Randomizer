@@ -1494,30 +1494,38 @@ hint_func: dict[str, HintFunc | BarrenFunc] = {
 hint_dist_keys: set[str] = set(hint_func)
 
 
-def build_bingo_hint_list(board_url: str) -> list[str]:
+def get_bingo_board(board_url: str) -> Optional[list[str]]:
+    if not board_url.startswith("https://bingosync.com/"): # Verify that user actually entered a bingosync URL
+        raise ValueError(f'Bingosync URL must start with https://bingosync.com/')
     try:
         if len(board_url) > 256:
             raise URLError(f"URL too large {len(board_url)}")
         with urllib.request.urlopen(board_url + "/board") as board:
             if board.length and 0 < board.length < 4096:
-                goal_list = board.read()
+                board = board.read()
             else:
                 raise URLError(f"Board of invalid size {board.length}")
     except (URLError, HTTPError) as e:
         logger = logging.getLogger('')
         logger.info(f"Could not retrieve board info. Using default bingo hints instead: {e}")
+        return None
+
+    # Goal list returned from Bingosync is a sequential list of all of the goals on the bingo board, starting at top-left and moving to the right.
+    # Each goal is a dictionary with attributes for name, slot, and colours. The only one we use is the name
+    return [goal['name'] for goal in json.loads(board)]
+
+
+def build_bingo_hint_list(board: Optional[list[str]]) -> list[str]:
+    if board is None:
         with open(data_path('Bingo/generic_bingo_hints.json'), 'r') as bingoFile:
             generic_bingo = json.load(bingoFile)
         return generic_bingo['settings']['item_hints']
 
-    # Goal list returned from Bingosync is a sequential list of all of the goals on the bingo board, starting at top-left and moving to the right.
-    # Each goal is a dictionary with attributes for name, slot, and colours. The only one we use is the name
-    goal_list = [goal['name'] for goal in json.loads(goal_list)]
     with open(data_path('Bingo/bingo_goals.json'), 'r') as bingoFile:
         goal_hint_requirements = json.load(bingoFile)
 
     hints_to_add = {}
-    for goal in goal_list:
+    for goal in board:
         # Using 'get' here ensures some level of forward compatibility, where new goals added to randomiser bingo won't
         # cause the generator to crash (though those hints won't have item hints for them)
         requirements = goal_hint_requirements.get(goal, {})
@@ -1675,10 +1683,10 @@ def build_world_gossip_hints(spoiler: Spoiler, world: World, checked_locations: 
     if world.settings.hint_dist == "bingo":
         with open(data_path('Bingo/generic_bingo_hints.json'), 'r') as bingoFile:
             bingo_defaults = json.load(bingoFile)
-        if world.settings.bingosync_url and world.settings.bingosync_url.startswith("https://bingosync.com/"): # Verify that user actually entered a bingosync URL
+        if world.bingo_board is not None:
             logger = logging.getLogger('')
-            logger.info("Got Bingosync URL. Building board-specific goals.")
-            world.item_hints = build_bingo_hint_list(world.settings.bingosync_url)
+            logger.info("Got Bingo board. Building board-specific goals.")
+            world.item_hints = build_bingo_hint_list(world.bingo_board)
         else:
             world.item_hints = bingo_defaults['settings']['item_hints']
 

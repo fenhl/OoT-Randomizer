@@ -4202,9 +4202,6 @@ class SettingInfos:
             "dynamic": True,
         },
         shared         = True,
-        disable        = {
-            '!bingo' : {'settings' : ['bingosync_url']},
-        },
     )
 
     bingosync_url = Textinput(
@@ -4212,19 +4209,16 @@ class SettingInfos:
         shared         = False,
         gui_tooltip    = '''\
             Enter a URL to a Bingosync bingo board in
-            order to have hints specific to items needed
-            to beat the board. Goals which are completed simply
-            by finding a specific item are not hinted
-            (e.g. "Boomerang").
+            order to adjust goals to match bingo goals.
+
+            With the Bingo hint distribution, also generates
+            hints specific to items needed to beat the board.
+            Goals which are completed simply by finding a
+            specific item are not hinted (e.g. "Boomerang").
             In addition, overworld token shuffle will always
             hint the location of Sun's Song, and shop shuffle
             will always hint the location of a wallet.
 
-            Leaving this entry blank or providing an
-            invalid URL will generate generic item hints
-            designed to allow completion of most bingo goals.
-            Non Bingosync bingo boards are not directly
-            supported, and will also generate generic item hints.
         ''',
         disabled_default = None,
         gui_params       = {

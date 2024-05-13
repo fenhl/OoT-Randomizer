@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Optional, Any
 
 from Item import Item, ItemInfo
 from RulesCommon import escape_name
+import Bingo
 
 if TYPE_CHECKING:
     from Goals import GoalCategory, Goal
@@ -42,7 +43,24 @@ class State:
         return location.item.name
 
     def won(self) -> bool:
-        return self.won_triforce_hunt() if self.world.settings.triforce_hunt else self.won_normal()
+        if self.world.bingo_board is not None:
+            return self.won_bingo()
+        elif self.world.settings.triforce_hunt:
+            return self.won_triforce_hunt()
+        else:
+            return self.won_normal()
+
+    def won_bingo(self) -> bool:
+        if self.world.bingo_board is None:
+            raise ValueError('Cannot determine bingo win condition without a board')
+        fulfilled_goals = [
+            Bingo.has_goal(self, goal)
+            for goal in self.world.bingo_board
+        ]
+        return any( #TODO assumes single line, allow specifying number of lines
+            all(fulfilled_goals[idx] for idx in line)
+            for line in Bingo.LINES
+        )
 
     def won_triforce_hunt(self) -> bool:
         return self.has(Triforce_Piece, self.world.triforce_goal_per_world)

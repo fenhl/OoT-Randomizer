@@ -12,7 +12,7 @@ from Dungeon import Dungeon
 from Entrance import Entrance
 from Goals import Goal, GoalCategory
 from HintList import get_required_hints, misc_item_hint_table, misc_location_hint_table
-from Hints import HintArea, hint_dist_keys, hint_dist_files
+from Hints import HintArea, get_bingo_board, hint_dist_keys, hint_dist_files
 from Item import Item, ItemFactory, ItemInfo, make_event_item
 from ItemPool import reward_list, triforce_pieces
 from Location import Location, LocationFactory
@@ -54,6 +54,11 @@ class World:
         self.event_items: set[str] = set()
         self.settings: Settings = settings
         self.distribution: WorldDistribution = settings.distribution.world_dists[world_id]
+
+        # download bingo board
+        self.bingo_board: Optional[list[str]] = None
+        if self.settings.bingosync_url:
+            self.bingo_board = get_bingo_board(self.settings.bingosync_url)
 
         # rename a few attributes...
         self.keysanity: bool = settings.shuffle_smallkeys in ('keysanity', 'remove', 'any_dungeon', 'overworld', 'regional')
