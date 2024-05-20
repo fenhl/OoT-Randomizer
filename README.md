@@ -130,11 +130,16 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * Fix castle courtyard exiting to incorrect area in Ganon's Castle Dungeon ER.
 * Fix heart piece count getting zeroed out incorrectly in certain circumstances.
 
+#### New Speedups
+* Meg will now take less time before respawning after getting hurt.
+* The cutscenes for stealing Epona by jumping over a fence are now sped up. Previously, only the cutscene for jumping over the front gate was shortened.
+* The cutscenes for pulling and dropping the Master Sword are now sped up.
+* The cutscenes changing the water level in Lake Hylia and the Kakariko well are now even faster.
+
 #### Other Changes
 * Clarified the error message shown when an unshuffled trade quest item is used as a starting item.
 * Locations in pre-completed dungeons will no longer be hinted.
 * Treasure Chest Game key and silver rupee options are now included in `Randomize Main Rule Settings`.
-* Meg will now take less time before respawning after getting hurt.
 * Pause menu has been modified so that equip swap will work again.
 
 ### 8.1
