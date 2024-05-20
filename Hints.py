@@ -1393,8 +1393,8 @@ def get_entrance_hint(spoiler: Spoiler, world: World, checked: set[str]) -> Hint
         entrance_text = '#%s#' % entrance_text
 
     connected_region = entrance.connected_region
-    if connected_region.dungeon:
-        region_text = get_hint(connected_region.dungeon.name, world.settings.clearer_hints).text
+    if connected_region.hint is not None:
+        region_text = connected_region.hint.text(world.settings.clearer_hints)
     else:
         region_text = get_hint(connected_region.name, world.settings.clearer_hints).text
 
@@ -1791,16 +1791,18 @@ def build_world_gossip_hints(spoiler: Spoiler, world: World, checked_locations: 
         for entrance_hint in always_entrances:
             entrance = world.get_entrance(entrance_hint.name)
             connected_region = entrance.connected_region
-            if entrance.shuffled and (connected_region.dungeon or any(hint.name == connected_region.name for hint in
-                                                                      get_hint_group('region', world))):
+            if entrance.shuffled and (
+                connected_region.hint is not None
+                or any(hint.name == connected_region.name for hint in get_hint_group('region', world))
+            ):
                 checked_always_locations.add(entrance.name)
 
                 entrance_text = entrance_hint.text
                 if '#' not in entrance_text:
                     entrance_text = '#%s#' % entrance_text
 
-                if connected_region.dungeon:
-                    region_text = get_hint(connected_region.dungeon.name, world.settings.clearer_hints).text
+                if connected_region.hint is not None:
+                    region_text = connected_region.hint.text(world.settings.clearer_hints)
                 else:
                     region_text = get_hint(connected_region.name, world.settings.clearer_hints).text
                 if '#' not in region_text:
