@@ -73,7 +73,6 @@ Differences between `dev-fenhl` and [`Dev-R`](https://github.com/Roman971/OoT-Ra
   * “SGL 2023 Tournament” is a game mode that was used for [a tournament at SpeedGaming Live 2023](https://midos.house/event/sgl/2023live) as well as [an online tournament](https://midos.house/event/sgl/2023onl), taken from [Elagatua's `feature/sgl-2023` branch](https://github.com/Elagatua/OoT-Randomizer/tree/feature/sgl-2023). Note that the tournament itself was played on that branch, not this one. See [the official document](https://docs.google.com/document/d/1EACqBl8ZOreD6xT5jQ2HrdLOnpBpKyjS3FUYK8XFeqg/edit) for details.
   * “SDG Bingo Tournament 3” is a variant of “Bingo” used for an ongoing tournament. Note that the tournament itself is being played on version 8.0 of the randomizer, not this branch. See [the official document](https://docs.google.com/document/d/1fpDPSBGH9YQeC9W3P1SMDE7FhoikVgbFTJapqKnMmL4/edit) for details.
 * Other changes:
-  * The time travel cutscenes are shortened, and the Kakariko well draining cutscene is shortened further ([#2219](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2219))
   * On Wii Virtual Console, additional information is displayed while the game is loading and when it crashes ([#2153](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2153))
   * The magic meter has a new model to prepare for shuffled magic refills ([#2081](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2081))
   * Fairy pots are now included in “Shuffle Pots.” Major items from pots, crates, etc now display above Link's head while the text box is open. Gameplay is no longer interrupted if you receive a junk item from another player in multiworld. (parts of [#2069](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2069))
@@ -230,13 +229,17 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * Fix castle courtyard exiting to incorrect area in Ganon's Castle Dungeon ER.
 * Fix heart piece count getting zeroed out incorrectly in certain circumstances.
 
+#### New Speedups
+* Meg will now take less time before respawning after getting hurt.
+* The cutscenes for stealing Epona by jumping over a fence are now sped up. Previously, only the cutscene for jumping over the front gate was shortened.
+* The cutscenes for pulling and dropping the Master Sword are now sped up.
+* The cutscenes changing the water level in Lake Hylia and the Kakariko well are now even faster.
+
 #### Other Changes
 * Clarified the error message shown when an unshuffled trade quest item is used as a starting item.
 * Locations in pre-completed dungeons will no longer be hinted.
 * Treasure Chest Game key and silver rupee options are now included in `Randomize Main Rule Settings`.
-* Meg will now take less time before respawning after getting hurt.
 * Pause menu has been modified so that equip swap will work again.
-* The cutscenes for stealing Epona by jumping over a fence are now sped up. Previously, only the cutscene for jumping over the front gate was shortened.
 
 ### 8.1
 
