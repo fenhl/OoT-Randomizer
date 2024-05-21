@@ -6,6 +6,7 @@
         { "location": "Deku Theater Skull Mask", "types": ["always"] },
         { "location": "Shadow Temple Before Boss -> Bongo Bongo Boss Room", "types": ["entrance_always"] },
         { "location": "Forest Temple Before Boss -> Phantom Ganon Boss Room", "types": ["entrance_always"] },
+        { "location": "Deku Tree Before Boss -> Queen Gohma Boss Room", "types": ["entrance"] },
         { "location": "Dodongos Cavern Before Boss -> King Dodongo Boss Room", "types": ["entrance"] },
         { "location": "Jabu Jabus Belly Before Boss -> Barinade Boss Room", "types": ["entrance"] },
         { "location": "Fire Temple Before Boss -> Volvagia Boss Room", "types": ["entrance"] },
