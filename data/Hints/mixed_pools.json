@@ -1,7 +1,7 @@
 {
     "name":                  "mixed_pools",
     "gui_name":              "Mixed Pools Tournament",
-    "description":           "Tournament hints used for the Mixed Pools tournament. Duplicates of each hint, Skull Mask is an always hint, 5 WotH, 3 Foolish, 8 sometimes, Zelda's Lullaby can't be hinted WotH, no entrance hints.",
+    "description":           "Tournament hints used for the 3rd Mixed Pools tournament. Duplicates of each hint, 5 WotH, 3 Foolish, 4 Always (including skull mask), 2 Entrance Always (Forest and Shadow boss doors), 2 Dual Sometimes, 2 Entrance Sometimes (including boss doors), 2 Sometimes.",
     "add_locations":         [
         { "location": "Deku Theater Skull Mask", "types": ["always"] },
         { "location": "Shadow Temple Before Boss -> Bongo Bongo Boss Room", "types": ["entrance_always"] },
