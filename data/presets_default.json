@@ -1502,8 +1502,10 @@
         "open_door_of_time": true,
         "zora_fountain": "open",
         "gerudo_fortress": "open",
-        "dungeon_shortcuts_choice": "off",
-        "dungeon_shortcuts": [],
+        "dungeon_shortcuts_choice": "choice",
+        "dungeon_shortcuts": [
+            "Jabu Jabus Belly"
+        ],
         "starting_age": "random",
         "mq_dungeons_mode": "vanilla",
         "mq_dungeons_specific": [],
