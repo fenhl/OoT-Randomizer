@@ -588,10 +588,14 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
             }
             text_print(buf_line_2, left, top);
         } else {
-            char bottom_text[20] = "2 + 3 = ?";
             uint32_t sum = rust_add(2, 3);
-            bottom_text[8] = '0' + sum;
-            //char bottom_text[20] = "EverDrive not found";
+            char default_bottom_text[20] = "EverDrive not found";
+            char error_bottom_text[20] = "2 + 3 = ?";
+            char* bottom_text = default_bottom_text;
+            if (sum != 5) {
+                bottom_text = error_bottom_text;
+                bottom_text[8] = '0' + sum;
+            }
             text_print(bottom_text, left, top);
         }
     } else if (pad_held.dd) {
