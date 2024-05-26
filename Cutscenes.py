@@ -184,7 +184,7 @@ def patch_cutscenes(rom: Rom, songs_as_items:bool) -> None:
     patch_cutscene_destination_and_length(rom, 0xCA0784, 1)
 
     # Ruto pointing to the Zora Sapphire when you enter Big Octo's room.
-    delete_cutscene(rom, 0xD03BAC)
+    delete_cutscene(rom, 0xD03BA8)
 
     # Speed scene after Jabu Jabu's Belly
     # Cut Ruto talking to Link when entering the blue warp.
