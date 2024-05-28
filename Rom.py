@@ -136,7 +136,7 @@ class Rom(BigStream):
         else:
             raise RuntimeError('Unsupported operating system for decompression. Please supply an already decompressed ROM.')
 
-        subprocess.call(subcall, **subprocess_args())
+        subprocess.check_call(subcall, **subprocess_args())
         self.read_rom(output_file, verify_crc=verify_crc, pal=pal)
 
     def write_byte(self, address: int, value: int) -> None:
