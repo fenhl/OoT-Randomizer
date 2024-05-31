@@ -45,5 +45,6 @@ tests/Output
 
 # Rust build scaffolding
 
+/ASM/c/rs.h
 /rs.pyd
 /target

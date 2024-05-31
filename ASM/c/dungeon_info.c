@@ -8,6 +8,7 @@
 #include "dpad.h"
 #include "item_effects.h"
 #include "save.h"
+#include "rs.h"
 
 int dungeon_count = 13;
 

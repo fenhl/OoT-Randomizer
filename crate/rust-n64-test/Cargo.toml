@@ -14,3 +14,6 @@ warnings = "deny"
 
 [lib]
 crate-type = ["staticlib"]
+
+[build-dependencies]
+cbindgen = "0.26.0"
