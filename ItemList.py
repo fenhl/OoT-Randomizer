@@ -311,15 +311,15 @@ item_table: dict[str, tuple[str, Optional[bool], Optional[int], Optional[dict[st
     'Buy Red Potion for 40 Rupees':                             ('Shop',        False, 0x30,   {'object': 0x00EB, 'price': 40}),
     'Buy Red Potion for 50 Rupees':                             ('Shop',        False, 0x31,   {'object': 0x00EB, 'price': 50}),
 
-    'Kokiri Emerald':                                         ('DungeonReward', True,  0x0127, {'stone':     True, 'item_id': 0x6C, 'actor_type': 0x13, 'object_id': 0x00AD}),
-    'Goron Ruby':                                             ('DungeonReward', True,  0x0128, {'stone':     True, 'item_id': 0x6D, 'actor_type': 0x14, 'object_id': 0x00AD}),
-    'Zora Sapphire':                                          ('DungeonReward', True,  0x0129, {'stone':     True, 'item_id': 0x6E, 'actor_type': 0x15, 'object_id': 0x00AD}),
-    'Light Medallion':                                        ('DungeonReward', True,  0x012A, {'medallion': True, 'item_id': 0x6B, 'actor_type': 0x0E, 'object_id': 0x00BA}),
-    'Forest Medallion':                                       ('DungeonReward', True,  0x012B, {'medallion': True, 'item_id': 0x66, 'actor_type': 0x0B, 'object_id': 0x00BA}),
-    'Fire Medallion':                                         ('DungeonReward', True,  0x012C, {'medallion': True, 'item_id': 0x67, 'actor_type': 0x09, 'object_id': 0x00BA}),
-    'Water Medallion':                                        ('DungeonReward', True,  0x012D, {'medallion': True, 'item_id': 0x68, 'actor_type': 0x0A, 'object_id': 0x00BA}),
-    'Shadow Medallion':                                       ('DungeonReward', True,  0x012E, {'medallion': True, 'item_id': 0x6A, 'actor_type': 0x0D, 'object_id': 0x00BA}),
-    'Spirit Medallion':                                       ('DungeonReward', True,  0x012F, {'medallion': True, 'item_id': 0x69, 'actor_type': 0x0C, 'object_id': 0x00BA}),
+    'Kokiri Emerald':                                         ('DungeonReward', True,  0x0127, {'stone':     True, 'item_id': 0x6C}),
+    'Goron Ruby':                                             ('DungeonReward', True,  0x0128, {'stone':     True, 'item_id': 0x6D}),
+    'Zora Sapphire':                                          ('DungeonReward', True,  0x0129, {'stone':     True, 'item_id': 0x6E}),
+    'Light Medallion':                                        ('DungeonReward', True,  0x012A, {'medallion': True, 'item_id': 0x6B}),
+    'Forest Medallion':                                       ('DungeonReward', True,  0x012B, {'medallion': True, 'item_id': 0x66}),
+    'Fire Medallion':                                         ('DungeonReward', True,  0x012C, {'medallion': True, 'item_id': 0x67}),
+    'Water Medallion':                                        ('DungeonReward', True,  0x012D, {'medallion': True, 'item_id': 0x68}),
+    'Shadow Medallion':                                       ('DungeonReward', True,  0x012E, {'medallion': True, 'item_id': 0x6A}),
+    'Spirit Medallion':                                       ('DungeonReward', True,  0x012F, {'medallion': True, 'item_id': 0x69}),
 }
 
 REWARD_COLORS: dict[str, str] = {

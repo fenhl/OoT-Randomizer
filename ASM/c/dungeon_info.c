@@ -326,7 +326,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
                 if (total_keys < 0) total_keys = 0;
                 if (total_keys > 9) total_keys = 9;
 
-                char count[5] = "O(O)";
+                char count[5] = "O(O)"; // we use O instead of 0 because it's easier to distinguish from 8
                 if (current_keys > 0) count[0] = current_keys + '0';
                 if (total_keys > 0) count[2] = total_keys + '0';
                 int top = start_top + ((icon_size + padding) * i) + 1;
@@ -653,7 +653,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
 
         left += icon_size + padding;
 
-        // Draw reward worlds
+        // Draw reward world numbers
 
         if (CFG_DUNGEON_INFO_REWARD_WORLDS_ENABLE) {
             for (int i = 0; i < 9; i++) {
@@ -682,7 +682,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
                     continue;
                 }
                 uint8_t world = CFG_DUNGEON_REWARD_WORLDS[i];
-                char world_text[5] = "WOOO";
+                char world_text[5] = "WOOO"; // we use O instead of 0 because it's easier to distinguish from 8
                 if (world < 100) {
                     world_text[0] = ' ';
                     world_text[1] = 'W';
@@ -794,7 +794,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
             if (total_keys < 0) total_keys = 0;
             if (total_keys > 9) total_keys = 9;
 
-            char count[5] = "O(O)";
+            char count[5] = "O(O)"; // we use O instead of 0 because it's easier to distinguish from 8
             if (current_keys > 0) count[0] = current_keys + '0';
             if (total_keys > 0) count[2] = total_keys + '0';
             int top = start_top + ((icon_size + padding) * i) + 1;

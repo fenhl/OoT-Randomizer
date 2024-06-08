@@ -99,3 +99,6 @@ class Entrance:
 
     def __str__(self) -> str:
         return self.name
+
+    def __repr__(self) -> str:
+        return f"{self.world.__repr__()} {self.name}"

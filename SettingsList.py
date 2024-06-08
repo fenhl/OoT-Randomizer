@@ -1369,8 +1369,9 @@ class SettingInfos:
             'Own Dungeon': Each dungeon reward appears in its respective
             dungeon, but not necessarily on the boss. If boss entrances
             are mixed, boss rooms that aren't in a dungeon can't have
-            dungeon rewards. The Light Medallion is either a starting
-            item or appears in the Temple of Time.
+            dungeon rewards. The Light Medallion appears in the Temple
+            of Time, or may be a starting item if the "Free Reward from
+            Rauru" setting is enabled.
 
             'Regional': Dungeon rewards can only appear in regions
             near the original dungeon (including the dungeon

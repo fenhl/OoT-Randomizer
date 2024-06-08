@@ -117,7 +117,7 @@ class Location:
     def has_preview(self) -> bool:
         if self.world is None:
             return False
-        return location_is_viewable(self.name, self.world.settings.correct_chest_appearances, self.world.settings.fast_chests)
+        return location_is_viewable(self.name, self.world.settings.correct_chest_appearances, self.world.settings.fast_chests, world=self.world)
 
     def has_item(self) -> bool:
         return self.item is not None

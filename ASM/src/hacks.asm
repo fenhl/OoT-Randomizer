@@ -3626,13 +3626,22 @@ courtyard_guards_kill:
     sw     a1, 0x64(sp)
 
 ;==================================================================================================
-; Jabu Spiritual Stone Actor Override
+; Override appearance of Zoras Sapphire spiritual stone inside Jabu
 ;==================================================================================================
-; Replaces: addiu   t8, zero, 0x0006
-;           sh      t8, 0x017C(a0)
-.orga 0xCC8594
-    jal     demo_effect_medal_init
-    addiu   t8, zero, 0x0006
+.headersize(0x8092ACC0 - 0x00CC8430)
+; Increase the size of DemoEffect actor to store override
+.org 0x8093019c
+; Replaces: .d32 0x00000190
+.d32 0x000001C0
+
+; Hook the function DemoEffect_DrawJewel
+.org 0x8092e3f8
+; Replaces:
+;   addiu   sp, sp, -0x78
+;   sw      s3, 0x40(sp)
+    j   DemoEffect_DrawJewel_Hook
+    nop
+DemoEffect_DrawJewel_AfterHook:
 
 ;==================================================================================================
 ; Use Sticks and Masks as Adult
@@ -4205,6 +4214,7 @@ courtyard_guards_kill:
 ; Replaces Item_Give(play, ITEM_OCARINA_FAIRY)
     jal      fairy_ocarina_getitem_override
     nop
+
 ;===================================================================================================
 ; Move the small key counter horizontally if we have boss key, to make room for the BK icon.
 ;===================================================================================================
@@ -4246,9 +4256,8 @@ courtyard_guards_kill:
     addiu   $at, $zero, 0x0003
 
 .include "hacks/z_parameter.asm"
-
-
 .include "hacks/ovl_en_kz.asm"
+.include "hacks/ovl_en_dns.asm"
 .include "hacks/ovl_bg_spot18_basket.asm"
 .include "hacks/ovl_obj_mure3.asm"
 .include "hacks/ovl_bg_haka_tubo.asm"
