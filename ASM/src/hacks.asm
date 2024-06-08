@@ -4249,12 +4249,6 @@ DemoEffect_DrawJewel_AfterHook:
     jal     volvagia_flying_hitbox
     nop
 
-; Replaces     lh      t6, 0x01D0(a1)
-;              addiu   $at, $zero, 0x0003
-.orga 0xE56B38
-    jal     kz_no_timer
-    addiu   $at, $zero, 0x0003
-
 .include "hacks/z_parameter.asm"
 .include "hacks/ovl_en_kz.asm"
 .include "hacks/ovl_en_dns.asm"
