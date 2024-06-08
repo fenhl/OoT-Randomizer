@@ -15,6 +15,11 @@ for old_line, new_line in zip(old_version_py.splitlines(), new_version_py.splitl
         same_primary = old_line == new_line
     if old_line.startswith('supplementary_version = '):
         same_supplementary = old_line == new_line
+        reset_supplementary = new_line == 'supplementary_version = 1'
 
-if same_primary and same_supplementary:
-    sys.exit('Missing version bump')
+if same_primary:
+    if same_supplementary:
+        sys.exit('Missing supplementary version bump')
+else:
+    if not reset_supplementary:
+        sys.exit('Missing supplementary version reset')
