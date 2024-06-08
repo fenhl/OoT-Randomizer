@@ -12,7 +12,6 @@
 #define object_size 0x1E70
 #define num_vanilla_objects 0x192
 
-
 extern uint8_t SHUFFLE_CHEST_GAME;
 extern uint32_t EXTENDED_OBJECT_TABLE;
 extern EnItem00* collectible_mutex;

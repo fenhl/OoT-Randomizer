@@ -258,6 +258,9 @@ CFG_RANDO_VERSION_BRANCH:
 CFG_RANDO_VERSION_SUPPLEMENTARY:
 .byte 0
 .align 4
+CFG_BIGOCTO_OVERRIDE_KEY:
+.word 0
+.align 4
 
 ; These configuration values are given fixed addresses to aid auto-trackers.
 ; Any changes made here should be documented in Notes/auto-tracker-ctx.md

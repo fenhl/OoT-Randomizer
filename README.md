@@ -13,6 +13,7 @@ This branch (`dev-fenhl`) is based on [Roman971](https://github.com/Roman971)'s 
 Differences between `dev-fenhl` and [`Dev-R`](https://github.com/Roman971/OoT-Randomizer):
 
 * New settings and options:
+  * New “Specific Rewards” option for the “Pre-completed Dungeons Mode” setting ([#2233](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2233))
   * New “Shuffle Gerudo Fortress Heart Piece” setting to control the behavior of this check with “Shuffle Thieves' Hideout Entrances” ([#2179](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2179))
   * New settings “Include Empty Pots” and “Include Empty Crates” ([#2069](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2069))
   * New “Frogs Ocarina Game” option for the “Randomize Ocarina Song Notes” setting ([#2064](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2064))
@@ -20,13 +21,11 @@ Differences between `dev-fenhl` and [`Dev-R`](https://github.com/Roman971/OoT-Ra
   * New “Special Deal Prices”, “Minimum Special Deal Price”, and “Maximum Special Deal Price” settings replacing “Shopsanity Prices” ([#2037](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2037))
   * New plando-only “Chest, Pot, Crate, & Beehive Appearance Does Not Match Contents” setting which makes each chest etc. randomly choose any appearance except the correct one ([#1950](https://github.com/OoTRandomizer/OoT-Randomizer/pull/1950))
   * New “Vanilla Locations” option for the “Shuffle Songs” setting ([#1882](https://github.com/OoTRandomizer/OoT-Randomizer/pull/1882))
-  * New “Shuffle Dungeon Rewards” and “Free Reward from Rauru” settings ([#1833](https://github.com/OoTRandomizer/OoT-Randomizer/issues/1833))
   * New “Bosses” option for the “Mix Entrance Pools” setting (based on [#1820](https://github.com/OoTRandomizer/OoT-Randomizer/pull/1820))
   * New “Triforce Hunt Mode” setting with “Normal”, “Easter Egg Hunt”, “Ice%”, and “Triforce Blitz” options (Easter Egg Hunt based on [#1804](https://github.com/OoTRandomizer/OoT-Randomizer/pull/1804), Triforce Blitz based on [Elagatua's `Dev` branch](https://github.com/Elagatua/OoT-Randomizer/tree/Dev))
   * New “Open Deku Tree” setting separate from “Open Forest” ([#1536](https://github.com/OoTRandomizer/OoT-Randomizer/pull/1536))
   * “Closed Forest Requires Gohma” is a separate setting. With it enabled, items that can be used to escape the forest won't appear in the forest, and the randomizer will try to place at least one slingshot for each player in the forest. The setting is compatible with all forms of entrance randomizer by restricting entrances inside the forest area to only be shuffled among themselves. ([#1531](https://github.com/OoTRandomizer/OoT-Randomizer/pull/1531))
   * New “Full” options for the settings “Randomize Owl Drops”, “Randomize Warp Song Destinations”, and “Randomize Overworld Spawns” (which is split into “Randomize Child Overworld Spawn” and “Randomize Adult Overworld Spawn” for this reason) that include more types of entrances (based on [#1179](https://github.com/OoTRandomizer/OoT-Randomizer/pull/1179) and [#1287](https://github.com/OoTRandomizer/OoT-Randomizer/pull/1287))
-  * New “Specific Rewards” option for the “Pre-completed Dungeons Mode” setting (based on [Elagatua's `feature/sgl-2023` branch](https://github.com/Elagatua/OoT-Randomizer/tree/feature/sgl-2023))
   * New “On (Savewarp to Overworld)” option for the “Shuffle Thieves' Hideout Entrances” setting (based on [fenhl#7](https://github.com/fenhl/OoT-Randomizer/pull/7))
   * New “Shuffle Items” and “Shuffle Other Items” settings which can be disabled to generate vanilla seeds, only shuffle songs, only shuffle entrances, etc. (Currently not compatible with Master Quest)
   * Work-in-progress “Language” setting to translate the game into French or German
@@ -67,7 +66,7 @@ Differences between `dev-fenhl` and [`Dev-R`](https://github.com/Roman971/OoT-Ra
   * “Vanilla (Master Quest)” and “Fast Vanilla (Master Quest)” are “Vanilla” and “Fast Vanilla” but with all dungeons from Master Quest.
   * “Ice%” is an extremely fast-paced game mode where the goal is to reach the Iron Boots chest.
   * “3rd Mixed Pools Tournament” will be used for [an upcoming tournament](https://midos.house/event/mp/3) with full mixed pools entrance randomizer.
-  * “Standard Anti-Weekly Settings (Beginner)” disables every location that's enabled in “S6 Tournament” and enables every location that's disabled there, as well as changing some miscellaneous settings. See [the official document](https://docs.google.com/document/d/1sbL6Zju943F5qyx4QbTLUsqZqOTMmvqKVbDwJl08SGc/edit) for details.
+  * “Standard Anti-Weekly Settings (Beginner)” disables every location that's enabled in “S7 Tournament” and enables every location that's disabled there, as well as changing some miscellaneous settings. See [the official document](https://docs.google.com/document/d/1sbL6Zju943F5qyx4QbTLUsqZqOTMmvqKVbDwJl08SGc/edit) for details.
   * “Standard Anti-Weekly Settings (Advanced)” adds “Shuffle Rupees & Hearts”, “Shuffle Pots”, “Shuffle Crates”, “Shuffle Beehives”, and “Shuffle Silver Rupees”, has a minimal item pool, and adds extra ice traps.
   * “Triforce Blitz S2” is a fast-paced game mode with very powerful hints used for [a tournament](https://midos.house/event/tfb/2), taken from [Elagatua's `Dev` branch](https://github.com/Elagatua/OoT-Randomizer/tree/Dev). Note that the tournament itself was played on that branch, not this one. See [the official website](https://www.triforceblitz.com/) for details.
   * “SGL 2023 Tournament” is a game mode that was used for [a tournament at SpeedGaming Live 2023](https://midos.house/event/sgl/2023live) as well as [an online tournament](https://midos.house/event/sgl/2023onl), taken from [Elagatua's `feature/sgl-2023` branch](https://github.com/Elagatua/OoT-Randomizer/tree/feature/sgl-2023). Note that the tournament itself was played on that branch, not this one. See [the official document](https://docs.google.com/document/d/1EACqBl8ZOreD6xT5jQ2HrdLOnpBpKyjS3FUYK8XFeqg/edit) for details.
@@ -219,6 +218,8 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * Add new options for chest/pot/etc. textures, including `Stone of Agony Unlocks Chest Textures` which gives new functionality to the Stone of Agony.
 * A boss key icon will now be displayed near the small key icon in dungeons where it has been obtained.
 * The name of the currently playing custom music will now be displayed.
+* New setting to control how dungeon rewards are shuffled.
+* The `Links Pocket` location is renamed to `ToT Reward from Rauru`, and a new setting has been added that controls whether it is skipped.
 
 #### Bug Fixes
 * Goal hints can now hint items required to defeat Ganon even if they're not required for the rainbow bridge, Ganon's boss key, or the trials. These items will be hinted as being on the "path of the hero".
@@ -229,12 +230,14 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * Fix seeds with Plentiful item pool and no adult trade items selected failing to generate.
 * Fix castle courtyard exiting to incorrect area in Ganon's Castle Dungeon ER.
 * Fix heart piece count getting zeroed out incorrectly in certain circumstances.
+* Business scrubs now take their payment before giving the item.
 
 #### New Speedups
 * Meg will now take less time before respawning after getting hurt.
 * The cutscenes for stealing Epona by jumping over a fence are now sped up. Previously, only the cutscene for jumping over the front gate was shortened.
 * The cutscenes for pulling and dropping the Master Sword are now sped up.
-* The cutscenes changing the water level in Lake Hylia and the Kakariko well are now even faster.
+* The cutscene changing the water level of the Kakariko well is now even faster.
+* The cutscenes playing when a blue warp is taken for the first time have been removed.
 
 #### Other Changes
 * Clarified the error message shown when an unshuffled trade quest item is used as a starting item.

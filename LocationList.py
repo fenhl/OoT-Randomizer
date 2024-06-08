@@ -1,7 +1,7 @@
 from __future__ import annotations
 import sys
 from collections import OrderedDict
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
@@ -12,6 +12,9 @@ LocationDefault: TypeAlias = "Optional[int | tuple[int, ...] | list[tuple[int, .
 LocationAddress: TypeAlias = "Optional[int | list[int]]"
 LocationAddresses: TypeAlias = "Optional[tuple[LocationAddress, LocationAddress]]"
 LocationFilterTags: TypeAlias = "Optional[tuple[str, ...] | str]"
+
+if TYPE_CHECKING:
+    from World import World
 
 
 def shop_address(shop_id: int, shelf_id: int) -> int:
@@ -2641,6 +2644,9 @@ location_groups: dict[str, list[str]] = {
 }
 
 
-def location_is_viewable(loc_name: str, correct_chest_appearances: str, fast_chests: bool) -> bool:
-    return (((correct_chest_appearances in ('textures', 'both', 'classic') or not fast_chests) and loc_name in location_groups['Chest'])
-            or loc_name in location_groups['CanSee'])
+def location_is_viewable(loc_name: str, correct_chest_appearances: str, fast_chests: bool, *, world: Optional[World] = None) -> bool:
+    return (
+        ((correct_chest_appearances in ('textures', 'both', 'classic') or not fast_chests) and loc_name in location_groups['Chest'])
+        or loc_name in location_groups['CanSee']
+        or (world is not None and world.bigocto_location() is not None and world.bigocto_location().name == loc_name)
+    )

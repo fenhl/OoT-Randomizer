@@ -218,8 +218,8 @@ item_row_t item_table[] = {
     [0x00B7] = ITEM_ROW(0x53,      SILVER_CHEST, 0x41, -1, 0x00A1, 0x00AA, 0x02, no_upgrade, give_small_key, CASTLE_ID, -1, resolve_text_small_keys), // Ganon's Castle Small Key
 
     [0x00B8] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x00E9, 0x0194, 0x13, no_upgrade, give_defense,      -1, -1, NULL), // Double Defense
-    [0x00B9] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x00E4, 0x01AB, 0x95, no_upgrade, give_magic,        -1, -1, NULL), // Magic Meter
-    [0x00BA] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x00E8, 0x01AB, 0x95, no_upgrade, give_double_magic, -1, -1, NULL), // Double Magic
+    [0x00B9] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x00E4, 0x01B4, 0xA0, no_upgrade, give_magic,        -1, -1, NULL), // Magic Meter
+    [0x00BA] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x00E8, 0x01B4, 0xA0, no_upgrade, give_double_magic, -1, -1, NULL), // Double Magic
 
     [0x00BB] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x9091, 0x0196, 0x78, no_upgrade, give_quest_item,  6, -1, NULL), // Minuet of Forest
     [0x00BC] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x9092, 0x0196, 0x79, no_upgrade, give_quest_item,  7, -1, NULL), // Bolero of Fire
@@ -328,20 +328,20 @@ item_row_t item_table[] = {
     [0x0117] = ITEM_ROW(0x53,      SILVER_CHEST, 0x41, -1, 0x00A1, 0x01A1, 0x88, no_upgrade, give_small_key, CASTLE_ID, -1, resolve_text_small_keys), // Ganon's Castle Small Key
     [0x0118] = ITEM_ROW(0x53,      SILVER_CHEST, 0x41, -1, 0x00F3, 0x01A2, 0x89, no_upgrade, give_small_key, TCG_ID,    -1, resolve_text_small_keys_cmg), // Small Key (Chest Game)
 
-    [0x0119] = ITEM_ROW(0x53,       BROWN_CHEST, 0x41, -1, 0x90B4, 0x0177, 0x9F, no_upgrade, full_heal, -1, -1, NULL), // Fairy
-    [0x011A] = ITEM_ROW(0x53,       BROWN_CHEST, 0x41, -1, 0x90B5, 0x0177, 0xA0, no_upgrade, no_effect, -1, -1, NULL), // Nothing :)
+    [0x0119] = ITEM_ROW(0x53,       BROWN_CHEST, 0x41, -1, 0x90B4, 0x0177, 0x9E, no_upgrade, full_heal, -1, -1, NULL), // Fairy
+    [0x011A] = ITEM_ROW(0x53,       BROWN_CHEST, 0x41, -1, 0x90B5, 0x0177, 0x9F, no_upgrade, no_effect, -1, -1, NULL), // Nothing :)
 
     // 0x011B through 0x0126 reserved for https://github.com/OoTRandomizer/OoT-Randomizer/pull/2108
 
-    [0x0127] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0080, 0x01AC, 0x9C, no_upgrade, give_quest_item, 18, -1, NULL), // Kokiri Emerald
-    [0x0128] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0081, 0x01AD, 0x9D, no_upgrade, give_quest_item, 19, -1, NULL), // Goron Ruby
-    [0x0129] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0082, 0x01AE, 0x9E, no_upgrade, give_quest_item, 20, -1, NULL), // Zora Sapphire
-    [0x012A] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0040, 0x01AF, 0x96, no_upgrade, give_quest_item,  5, -1, NULL), // Light Medallion
-    [0x012B] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003E, 0x01B0, 0x97, no_upgrade, give_quest_item,  0, -1, NULL), // Forest Medallion
-    [0x012C] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003C, 0x01B1, 0x98, no_upgrade, give_quest_item,  1, -1, NULL), // Fire Medallion
-    [0x012D] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003D, 0x01B2, 0x99, no_upgrade, give_quest_item,  2, -1, NULL), // Water Medallion
-    [0x012E] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0041, 0x01B3, 0x9A, no_upgrade, give_quest_item,  4, -1, NULL), // Shadow Medallion
-    [0x012F] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003F, 0x01B4, 0x9B, no_upgrade, give_quest_item,  3, -1, NULL), // Spirit Medallion
+    [0x0127] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0080, 0x01AB, 0x9B, no_upgrade, give_quest_item, 18, -1, NULL), // Kokiri Emerald
+    [0x0128] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0081, 0x01AC, 0x9C, no_upgrade, give_quest_item, 19, -1, NULL), // Goron Ruby
+    [0x0129] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0082, 0x01AD, 0x9D, no_upgrade, give_quest_item, 20, -1, NULL), // Zora Sapphire
+    [0x012A] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0040, 0x01AE, 0x95, no_upgrade, give_quest_item,  5, -1, NULL), // Light Medallion
+    [0x012B] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003E, 0x01AF, 0x96, no_upgrade, give_quest_item,  0, -1, NULL), // Forest Medallion
+    [0x012C] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003C, 0x01B0, 0x97, no_upgrade, give_quest_item,  1, -1, NULL), // Fire Medallion
+    [0x012D] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003D, 0x01B1, 0x98, no_upgrade, give_quest_item,  2, -1, NULL), // Water Medallion
+    [0x012E] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x0041, 0x01B2, 0x99, no_upgrade, give_quest_item,  4, -1, NULL), // Shadow Medallion
+    [0x012F] = ITEM_ROW(0x53,      GILDED_CHEST, 0x41, -1, 0x003F, 0x01B3, 0x9A, no_upgrade, give_quest_item,  3, -1, NULL), // Spirit Medallion
 
     // New items in dev-fenhl which are not in main Dev
     // Some previously used IDs may be skipped, to simplify auto-tracker support

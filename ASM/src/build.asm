@@ -127,10 +127,10 @@ RANDO_CONTEXT:
 .include "en_item00.asm"
 .include "volvagia.asm"
 .include "key_counter.asm"
-
 .include "armos.asm"
 .include "ocarina_buttons.asm"
 .include "fairy_ocarina.asm"
+.include "en_dns.asm"
 
 .align 0x10
 .importobj "../build/bundle.o"

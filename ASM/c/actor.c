@@ -29,8 +29,6 @@ extern xflag_t* spawn_actor_with_flag;
 #define EN_G_SWITCH         0x0117 //Silver Rupee
 #define EN_WONDER_ITEM      0x0112  // Wonder Item
 
-ActorOverlay* gActorOverlayTable = (ActorOverlay*)ACTOR_OVERLAY_TABLE_ADDR;
-
 // Get a pointer to the additional data that is stored at the beginning of every actor
 // This is calculated as the actor's address + the actor instance size from the overlay table.
 ActorAdditionalData* Actor_GetAdditionalData(z64_actor_t* actor) {
