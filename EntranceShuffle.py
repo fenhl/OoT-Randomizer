@@ -1138,6 +1138,8 @@ def validate_world(world: World, worlds: list[World], entrance_placed: Optional[
         ADULT_FORBIDDEN += ('HC Great Fairy Fountain -> Castle Grounds', 'HC Storms Grotto -> Castle Grounds')
     if not world.dungeon_back_access:
         # Logic for back access to Shadow and Spirit temples is experimental
+        # See https://github.com/OoTRandomizer/OoT-Randomizer/pull/1820#issuecomment-1408443498 for context on Shadow
+        # and https://github.com/OoTRandomizer/OoT-Randomizer/pull/1820#issuecomment-1407314635 for context on Spirit
         CHILD_FORBIDDEN += ('Bongo Bongo Boss Room -> Shadow Temple Before Boss', 'Twinrova Boss Room -> Spirit Temple Before Boss')
         ADULT_FORBIDDEN += ('Bongo Bongo Boss Room -> Shadow Temple Before Boss', 'Twinrova Boss Room -> Spirit Temple Before Boss')
         if world.dungeon_mq['Forest Temple'] and 'Forest Temple' in world.settings.dungeon_shortcuts:
