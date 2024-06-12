@@ -662,6 +662,53 @@ class TestEntranceRandomizer(unittest.TestCase):
             with self.assertRaises(EntranceShuffleError):
                 build_world_graphs(world_settings)
 
+    def test_decoupled_boss_shuffle(self):
+        # Note that this test will frequently fail to shuffle all entrances.
+        # This is a side effect of the settings combo and not related to the
+        # goal of this test. Failure does not mean anything broke, which
+        # makes this test less useful but still has a place for documentation.
+        #
+        # Savewarps in boss rooms are set during entrance shuffle, while
+        # all other savewarps are set immediately after region file parsing
+        # and kept static. Boss room savewarps are identified by filtering
+        # shuffled entrance pools for ChildBoss and AdultBoss types. In
+        # decoupled, the entrance pools need to filter for only forward/primary
+        # entrances to avoid catching the savewarp on the dungeon side of the
+        # boss door and modifying it. This test ensures that all dungeon-side
+        # savewarps remain pointing to their vanilla regions. While possible
+        # for modified savewarps to be set to all of their vanilla regions, it
+        # is unlikely enough that this check should provide confidence nothing
+        # is being touched that shouldn't be.
+        filenames = [
+            "decoupled_boss_shuffle.sav",
+        ]
+        boss_door_savewarps = [
+            "Deku Tree Before Boss -> Deku Tree Lobby",
+            "Dodongos Cavern Before Boss -> Dodongos Cavern Beginning",
+            "Jabu Jabus Belly Before Boss -> Jabu Jabus Belly Beginning",
+            "Forest Temple Before Boss -> Forest Temple Lobby",
+            "Fire Temple Before Boss -> Fire Temple Lower",
+            "Water Temple Before Boss -> Water Temple Lobby",
+            "Shadow Temple Before Boss -> Shadow Temple Entryway",
+            "Spirit Temple Before Boss -> Spirit Temple Lobby",
+        ]
+        for filename in filenames:
+            with self.subTest(filename):
+                # Work around normal test loading system to avoid disturbing the seed
+                sfile = os.path.join(test_dir, 'plando', filename)
+                basename = os.path.splitext(filename)[0]
+                with open(sfile) as f:
+                    j = json.load(f)
+                base_settings = make_settings_for_test(j, seed='UWR8ZEKTU7', outfilename=basename)
+                _, world_settings = resolve_settings(base_settings)
+                # Known working seed values hardcoded to avoid issues with version/setting changes
+                world_settings[0].seed = 'UWR8ZEKTU7'
+                world_settings[0].numeric_seed = 24225027679129157771418409769358900835786779545219061240209643832751186884349
+                worlds = build_world_graphs(world_settings)
+                for savewarp_name in boss_door_savewarps:
+                    savewarp = worlds[0].get_entrance(savewarp_name)
+                    self.assertEqual(savewarp.connected_region.name, savewarp.name.split(' -> ')[1])
+
 
 class TestValidSpoilers(unittest.TestCase):
     # Normalizes spoiler dict for single world or multiple worlds

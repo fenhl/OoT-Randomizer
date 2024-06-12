@@ -778,7 +778,7 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
         for pool_type, entrance_pool in entrance_pools.items():
             for entrance in entrance_pool:
                 target = (entrance.replaces or entrance).reverse
-                if not target or target.type not in ('ChildBoss', 'AdultBoss'):
+                if not entrance.primary or not target or target.type not in ('ChildBoss', 'AdultBoss'):
                     continue
                 savewarp = target.parent_region.savewarp
                 if not savewarp:
