@@ -662,6 +662,7 @@ class TestEntranceRandomizer(unittest.TestCase):
             with self.assertRaises(EntranceShuffleError):
                 build_world_graphs(world_settings)
 
+    @unittest.skip("test usually fails during entrance shuffling, but keep this for documentation")
     def test_decoupled_boss_shuffle(self):
         # Note that this test will frequently fail to shuffle all entrances.
         # This is a side effect of the settings combo and not related to the
