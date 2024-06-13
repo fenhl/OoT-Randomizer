@@ -6,7 +6,7 @@ This is a randomizer for _The Legend of Zelda: Ocarina of Time_ for the Nintendo
 When asking questions or reporting issues in the main Randomizer Discord, please make sure to include the full version number in the `A.B.C Fenhl-D` format — that last part is important!
 You can also [open an issue](https://github.com/fenhl/OoT-Randomizer/issues/new) on this fork or contact me directly on Discord (`@fenhl`) for any help, report or request.
 
-This branch is available to use online at <https://ootrandomizer.com/generatorDev?version=devFenhl_> (may be outdated).
+This branch is available to use online at <https://ootrandomizer.com/generatorDev?version=devFenhl_>.
 
 This branch (`dev-fenhl`) is based on [Roman971](https://github.com/Roman971)'s branch ([`Dev-R`](https://github.com/Roman971/OoT-Randomizer)) which is in turn based on the main [`Dev`](https://github.com/OoTRandomizer/OoT-Randomizer) branch.
 
