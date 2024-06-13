@@ -779,7 +779,7 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
         for pool_type, entrance_pool in entrance_pools.items():
             for entrance in entrance_pool:
                 target = (entrance.replaces or entrance).reverse
-                if not target or target.type not in (EntranceKind.ChildBoss, EntranceKind.AdultBoss):
+                if not entrance.primary or not target or target.type not in (EntranceKind.ChildBoss, EntranceKind.AdultBoss):
                     continue
                 savewarp = target.parent_region.savewarp
                 if not savewarp:
@@ -1139,6 +1139,8 @@ def validate_world(world: World, worlds: list[World], entrance_placed: Optional[
         ADULT_FORBIDDEN += ('HC Great Fairy Fountain -> Castle Grounds', 'HC Storms Grotto -> Castle Grounds')
     if not world.dungeon_back_access:
         # Logic for back access to Shadow and Spirit temples is experimental
+        # See https://github.com/OoTRandomizer/OoT-Randomizer/pull/1820#issuecomment-1408443498 for context on Shadow
+        # and https://github.com/OoTRandomizer/OoT-Randomizer/pull/1820#issuecomment-1407314635 for context on Spirit
         CHILD_FORBIDDEN += ('Bongo Bongo Boss Room -> Shadow Temple Before Boss', 'Twinrova Boss Room -> Spirit Temple Before Boss')
         ADULT_FORBIDDEN += ('Bongo Bongo Boss Room -> Shadow Temple Before Boss', 'Twinrova Boss Room -> Spirit Temple Before Boss')
         if world.dungeon_mq['Forest Temple'] and 'Forest Temple' in world.settings.dungeon_shortcuts:
