@@ -505,9 +505,9 @@ def rebuild_sequences(rom: Rom, sequences: list[Sequence], log: CosmeticsLog, sy
     bank_index_base = (rom.read_int32(symbols['CFG_AUDIOBANK_TABLE_EXTENDED_ADDR']) - 0x80400000) + 0x3480000
     # Build new fanfare banks by copying each entry in audiobank_index
     for i in range(0, 0x26):
-        bank_entry = rom.read_bytes(bank_index_base + 0x10 + (0x10*i), 0x10) # Get the vanilla entry
+        bank_entry = rom.read_bytes(bank_index_base + 0x10 + 0x10 * i, 0x10) # Get the vanilla entry
         bank_entry[9] = 1 # Update the cache type to 1
-        rom.write_bytes(bank_index_base + 0x270 + 0x10*i, bank_entry) # Write the new entry at the end of the bank table.
+        rom.write_bytes(bank_index_base + 0x270 + 0x10 * i, bank_entry) # Write the new entry at the end of the bank table.
     rom.write_byte(bank_index_base + 0x01, 0x4C) # Updates AudioBank Index Header if no custom banks are present as this would be 0x26 which would crash the game if a fanfare was played
 
     added_banks = []  # Store copies of all the banks we've added
@@ -813,6 +813,10 @@ def randomize_music(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: di
     if fanfare_sequences and target_fanfare_sequences:
         shuffled_fanfare_sequences = shuffle_music(log, fanfare_sequences, target_fanfare_sequences, music_mapping, "fanfares")
 
+    # Ensure disabled sequences are flagged in cosmetics log
+    for name in disabled_target_sequences:
+        log.bgm[name] = "None"
+
     # If "sequences_available" is in the cosmetic plando, just skip the actual patching portion and leave that to the web patcher
     if available_sequences:
         return
@@ -830,7 +834,6 @@ def disable_music(rom: Rom, log: CosmeticsLog, ids: Iterable[tuple[str, int]]) -
     blank_track = rom.read_bytes(0xB89AE0 + (0 * 0x10), 0x10)
     for bgm in ids:
         rom.write_bytes(0xB89AE0 + (bgm[1] * 0x10), blank_track)
-        log.bgm[bgm[0]] = "None"
 
 
 def restore_music(rom: Rom) -> None:

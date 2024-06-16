@@ -1,6 +1,6 @@
 #include "obj_kibako2.h"
 #include "textures.h"
-#define CRATE_DLIST (z64_gfx_t *)0x06000960
+#define CRATE_DLIST (z64_gfx_t*)0x06000960
 
 #define CRATE_CI8_TEXTURE_PALETTE_OFFSET 0x00
 #define CRATE_CI8_TEXTURE_TOP_OFFSET 0x200
@@ -9,9 +9,15 @@
 
 extern uint8_t POTCRATE_TEXTURES_MATCH_CONTENTS;
 extern uint16_t drop_collectible_override_flag;
+extern uint8_t POTCRATE_GOLD_TEXTURE;
+extern uint8_t POTCRATE_GILDED_TEXTURE;
+extern uint8_t POTCRATE_SILVER_TEXTURE;
+extern uint8_t POTCRATE_SKULL_TEXTURE;
+extern uint8_t POTCRATE_HEART_TEXTURE;
+extern uint8_t SOA_UNLOCKS_POTCRATE_TEXTURE;
 
 // Hacks the regular crate spawn collectible function to spawn overridden collectibles
-void ObjKibako2_SpawnCollectible_Hack(ObjKibako2 *this, z64_game_t *globalCtx) {
+void ObjKibako2_SpawnCollectible_Hack(ObjKibako2* this, z64_game_t* globalCtx) {
     int16_t itemDropped;
     int16_t collectibleFlagTemp;
 
@@ -24,7 +30,7 @@ void ObjKibako2_SpawnCollectible_Hack(ObjKibako2 *this, z64_game_t *globalCtx) {
     }
 }
 
-override_t get_crate_override(z64_actor_t *actor, z64_game_t *game) {
+override_t get_crate_override(z64_actor_t* actor, z64_game_t* game) {
     // make a dummy EnItem00 with enough info to get the override
     EnItem00 dummy;
     dummy.actor.actor_id = 0x15;
@@ -41,42 +47,54 @@ override_t get_crate_override(z64_actor_t *actor, z64_game_t *game) {
     return (override_t) { 0 };
 }
 
-void ObjKibako2_Draw(z64_actor_t *actor, z64_game_t *game) {
+void ObjKibako2_Draw(z64_actor_t* actor, z64_game_t* game) {
     uint8_t* texture = get_texture(TEXTURE_ID_CRATE_DEFAULT);
 
     // get override palette and textures
 
-    ObjKibako2 *this = (ObjKibako2 *)actor;
+    ObjKibako2* this = (ObjKibako2*)actor;
 
-    switch (this->chest_type) {
-        case GILDED_CHEST:
-            texture = get_texture(TEXTURE_ID_CRATE_GOLD);
-            break;
+    if (!SOA_UNLOCKS_POTCRATE_TEXTURE || z64_file.stone_of_agony != 0) {
+        switch (this->chest_type) {
+            case GILDED_CHEST:
+                if (POTCRATE_GILDED_TEXTURE) {
+                    texture = get_texture(TEXTURE_ID_CRATE_GOLD);
+                }
+                break;
 
-        case SILVER_CHEST:
-            texture = get_texture(TEXTURE_ID_CRATE_KEY);
-            break;
+            case SILVER_CHEST:
+                if (POTCRATE_SILVER_TEXTURE) {
+                    texture = get_texture(TEXTURE_ID_CRATE_KEY);
+                }
+                break;
 
-        case GOLD_CHEST:
-            texture = get_texture(TEXTURE_ID_CRATE_BOSSKEY);
-            break;
+            case GOLD_CHEST:
+                if (POTCRATE_GOLD_TEXTURE) {
+                    texture = get_texture(TEXTURE_ID_CRATE_BOSSKEY);
+                }
+                break;
 
-        case SKULL_CHEST_SMALL:
-        case SKULL_CHEST_BIG:
-            texture = get_texture(TEXTURE_ID_CRATE_SKULL);
-            break;
+            case SKULL_CHEST_SMALL:
+            case SKULL_CHEST_BIG:
+                if (POTCRATE_SKULL_TEXTURE) {
+                    texture = get_texture(TEXTURE_ID_CRATE_SKULL);
+                }
+                break;
 
-        case HEART_CHEST_SMALL:
-        case HEART_CHEST_BIG:
-            texture = get_texture(TEXTURE_ID_CRATE_HEART);
-            break;
+            case HEART_CHEST_SMALL:
+            case HEART_CHEST_BIG:
+                if (POTCRATE_HEART_TEXTURE) {
+                    texture = get_texture(TEXTURE_ID_CRATE_HEART);
+                }
+                break;
 
-        default:
-            break;
+            default:
+                break;
+        }
     }
 
     // push custom dlists (that set the palette and textures) to segment 09
-    z64_gfx_t *gfx = game->common.gfx;
+    z64_gfx_t* gfx = game->common.gfx;
     gfx->poly_opa.d -= 6;
     gDPSetTextureImage(gfx->poly_opa.d, G_IM_FMT_CI, G_IM_SIZ_16b, 1, texture + CRATE_CI8_TEXTURE_TOP_OFFSET);
     gSPEndDisplayList(gfx->poly_opa.d + 1);
