@@ -140,7 +140,7 @@ RANDO_CONTEXT:
 
 .align 0x10
 
-.skip 0x1000 ; Temporary address bump to avoid audio issues
+.skip 0x2000 ; Temporary address bump to avoid audio issues
 
 AUDIO_THREAD_MEM_START:
 .skip AUDIO_THREAD_MEM_SIZE
