@@ -845,8 +845,8 @@ class World:
                 item = prizepool.pop()
             self.push_item(loc, item)
 
-    def set_empty_dungeon_rewards(self, emptyRewards=[]) -> None:
-        empty_dungeon_bosses = list(map(lambda reward: self.find_items(reward)[0].name, emptyRewards))
+    def set_empty_dungeon_rewards(self, empty_rewards: list[str] = []) -> None:
+        empty_dungeon_bosses = list(map(lambda reward: self.find_items(reward)[0].name, empty_rewards))
         for boss in empty_dungeon_bosses:
             for dungeon_item in self.empty_dungeons.items():
                 if dungeon_item[1].boss_name == boss:
