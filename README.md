@@ -233,6 +233,7 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * Business scrubs now take their payment before giving the item.
 * The softlock which occurs when collecting a shuffled silver rupee on the ladder in the Bottom of the Well is now fixed by moving the item location so it can't be collected from the ladder instead of disallowing silver rupees on this location.
 * Fix inverted cursor in the pause menu when pausing while in first person with the `Uninvert Y-Axis in First Person Camera` cosmetic setting enabled.
+* Fix some inconsistent tags for wonderitem locations in the `Exclude Locations` list.
 
 #### New Speedups
 * Meg will now take less time before respawning after getting hurt.
