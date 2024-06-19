@@ -248,7 +248,6 @@ def check_table_sizes() -> None:
     if len(override_table_bytes) >= rom.sym_length('cfg_item_overrides'):
         error(f'Exceeded override table size: {len(override_table)}', False)
 
-
 def run_ci_checks() -> NoReturn:
     parser = argparse.ArgumentParser()
     parser.add_argument('--no_unit_tests', help="Skip unit tests", action='store_true')

@@ -37,11 +37,10 @@ void EnWonderitem_AfterInitHack(z64_actor_t* this, z64_game_t* globalCtx) {
 void EnWonderItem_Multitag_DrawHack(z64_xyzf_t* tags, uint32_t index, EnWonderItem* this) {
     if (this->overridden) {
         colorRGBA8_t* color = &sEffectPrimColorBlue;
-        if(this->wonderMode == WONDERITEM_MULTITAG_ORDERED)
+        if (this->wonderMode == WONDERITEM_MULTITAG_ORDERED) {
             color = &sEffectPrimColorCyan;
+        }
         z64_xyzf_t pos = tags[index];
-//        if(this->wonderMode != WONDERITEM_INTERACT_SWITCH)
-//            pos.y += 20.0;
         z64_EffectSsKiraKira_SpawnSmall(&z64_game, &pos, &sEffectVelocity, &sEffectAccel, color, &sEffectEnvColor);
     }
 }
@@ -105,17 +104,20 @@ void EnWonderItem_Update_Hack(EnWonderItem* this) {
     colorRGBA8_t* color = NULL;
     if (this->overridden) {
         switch (this->wonderMode) {
-            case (WONDERITEM_PROXIMITY_DROP): {
+            case WONDERITEM_PROXIMITY_DROP:
+            {
                 color = &sEffectPrimColorYellow;
                 break;
             }
-            case (WONDERITEM_INTERACT_SWITCH):
-            case (WONDERITEM_BOMB_SOLDIER): {
+            case WONDERITEM_INTERACT_SWITCH:
+            case WONDERITEM_BOMB_SOLDIER:
+            {
                 color = &sEffectPrimColorRed;
                 break;
             }
-            default:
+            default: {
                 break;
+            }
         }
         if (color) {
             z64_EffectSsKiraKira_SpawnSmall(&z64_game, &(this->actor.pos_world), &sEffectVelocity, &sEffectAccel, color, &sEffectEnvColor);

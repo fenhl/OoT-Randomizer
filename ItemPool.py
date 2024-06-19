@@ -361,7 +361,7 @@ remove_junk_ludicrous_items: list[str] = [
 
 # a useless placeholder item placed at some skipped and inaccessible locations
 # (e.g. HC Malon Egg with Skip Child Zelda, or the carpenters with Open Gerudo Fortress)
-IGNORE_LOCATION: str = 'Recovery Heart'
+IGNORE_LOCATION: str = 'Nothing'
 
 pending_junk_pool: list[str] = []
 junk_pool: list[tuple[str, int]] = []

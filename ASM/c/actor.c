@@ -143,7 +143,7 @@ void Actor_StoreChestType(z64_actor_t* actor, z64_game_t* game) {
         pChestType = &(((ObjKibako*)actor)->chest_type);
     } else if (actor->actor_id == OBJ_COMB) {
         override = get_newflag_override(flag);
-        pChestType = &(((ObjComb *)actor)->chest_type);
+        pChestType = &(((ObjComb*)actor)->chest_type);
     }
     if (override.key.all != 0 && pChestType != NULL) { // If we don't have an override key, then either this item doesn't have an override entry, or it has already been collected.
         if (POTCRATE_TEXTURES_MATCH_CONTENTS == PTMC_UNCHECKED && override.key.all > 0) { // For "unchecked" PTMC setting: Check if we have an override which means it wasn't collected.
@@ -193,11 +193,11 @@ bool spawn_override_silver_rupee(ActorEntry* actorEntry, z64_game_t* globalCtx, 
     *overridden = false;
     if (SHUFFLE_SILVER_RUPEES) { // Check if silver rupee shuffle is enabled.
         xflag_t flag = {
-        .scene = globalCtx->scene_index,
-        .setup = curr_scene_setup,
-        .room = globalCtx->room_index,
-        .flag = CURR_ACTOR_SPAWN_INDEX,
-        .subflag = 0
+            .scene = globalCtx->scene_index,
+            .setup = curr_scene_setup,
+            .room = globalCtx->room_index,
+            .flag = CURR_ACTOR_SPAWN_INDEX,
+            .subflag = 0,
         };
 
         flag = resolve_alternative_flag(&flag);
@@ -240,10 +240,9 @@ z64_actor_t* Player_SpawnEntry_Hack(void* actorCtx, ActorEntry* playerEntry, z64
 }
 
 // This is our entrypoint back into Actor_Spawn. Call/return this to spawn the actor
-extern z64_actor_t *Actor_Spawn_Continue(void* actorCtx, z64_game_t* globalCtx, int16_t actorId, float posX, float posY, float posZ, int16_t rotX, int16_t rotY, int16_t rotZ, int16_t params);
+extern z64_actor_t* Actor_Spawn_Continue(void* actorCtx, z64_game_t* globalCtx, int16_t actorId, float posX, float posY, float posZ, int16_t rotX, int16_t rotY, int16_t rotZ, int16_t params);
 
-z64_actor_t * Actor_Spawn_Hook(void* actorCtx, z64_game_t* globalCtx, int16_t actorId,
-                                float posX, float posY, float posZ, int16_t rotX, int16_t rotY, int16_t rotZ, int16_t params) {
+z64_actor_t* Actor_Spawn_Hook(void* actorCtx, z64_game_t* globalCtx, int16_t actorId, float posX, float posY, float posZ, int16_t rotX, int16_t rotY, int16_t rotZ, int16_t params) {
     bool continue_spawn = true;
 
     ActorEntry entry;
@@ -256,7 +255,7 @@ z64_actor_t * Actor_Spawn_Hook(void* actorCtx, z64_game_t* globalCtx, int16_t ac
     entry.rot.y = rotY;
     entry.rot.z = rotZ;
 
-    if(continue_spawn) {
+    if (continue_spawn) {
         z64_actor_t* spawned = Actor_Spawn_Continue(actorCtx, globalCtx, actorId, posX, posY, posZ, rotX, rotY, rotZ, params);
         if (spawned) {
             if (spawn_actor_with_flag) {

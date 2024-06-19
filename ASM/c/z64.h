@@ -365,7 +365,7 @@ typedef enum {
   PLAYER_AP_MASK_GERUDO,
   PLAYER_AP_MASK_TRUTH,
   PLAYER_AP_LENS,
-  PLAYER_AP_MAX
+  PLAYER_AP_MAX,
 } z64_action_parameter_t;
 
 typedef enum {
@@ -419,7 +419,7 @@ typedef enum {
   SI_BOMBS_5_R35,
   SI_RED_POTION_R40,
   SI_RED_POTION_R50,
-  SI_MAX
+  SI_MAX,
 } z64_shop_item_t;
 
 typedef enum {
@@ -469,7 +469,7 @@ typedef enum {
     /* 0x09 */ ACTORCAT_BOSS,
     /* 0x0A */ ACTORCAT_DOOR,
     /* 0x0B */ ACTORCAT_CHEST,
-    /* 0x0C */ ACTORCAT_MAX
+    /* 0x0C */ ACTORCAT_MAX,
 } ActorCategory;
 
 typedef struct {
@@ -1333,7 +1333,7 @@ typedef enum {
     /* 0x12 */ CAM_MODE_STILL, // Attacks without Z pressed, falling in air from knockback
     /* 0x13 */ CAM_MODE_PUSH_PULL,
     /* 0x14 */ CAM_MODE_FOLLOW_BOOMERANG, // Boomerang has been thrown, force-target the boomerang as it flies
-    /* 0x15 */ CAM_MODE_MAX
+    /* 0x15 */ CAM_MODE_MAX,
 } CameraModeType;
 
 /* game context */

@@ -47,16 +47,14 @@ bool EnItem00_ProximityCheck_Hack(EnItem00* this, z64_game_t* GlobalCtx) {
 extern void EnItem00_Init(EnItem00* this, z64_game_t* globalCtx);
 extern void en_item00_update(EnItem00* this, z64_game_t* globalCtx);
 
-
 void EnItem00_Init_Hook(EnItem00* this, z64_game_t* globalCtx) {
     EnItem00_Init(this, globalCtx);
     // Reset the scale for overridden collectibles
-    if(this->override.key.all) {
+    if (this->override.key.all) {
         this->scale = this->actor.scale.x = this->actor.scale.y = this->actor.scale.z = 0.015f;
         this->actor.yOffset = 750.0f;
     }
 }
-
 
 void en_item00_update_hook(EnItem00* this, z64_game_t* globalCtx) {
     xflag_t* flag = &(Actor_GetAdditionalData(&this->actor)->flag);

@@ -150,9 +150,9 @@ Gameplay_InitSkybox:
 ;   skip
 ;   sb      a1, 0x3468(v0)
     li      t6, FONTLOADSTATUS_EXTENDED
-    .skip   4
+.skip 4
     lbu     t7, 0x00(v0)
-    .skip   12
+.skip 12
     sb      a1, 0x00(v0)
 
 ; Hacks in AudioLoad_SyncLoadFont
@@ -397,7 +397,7 @@ Gameplay_InitSkybox:
 ;   sw      s1, 0x0020(sp)
 .headersize(0x800110A0 - 0xA87000)
 .org 0x80012938
-    j   en_item00_update_hook
+    j       en_item00_update_hook
     nop
 en_item00_update_continue:
 
@@ -763,7 +763,7 @@ Actor_Spawn_Continue_Jump_Point:
 ; Replaces:
 ;   jal     0x80066C90
 ;   or      a0, s0, r0
-    .skip   4
+.skip 4
     addiu   a0, s0, -0x10
 
 ; Hook Actor_UpdateAll when each actor is being initialized. At the call to Actor_SpawnEntry
@@ -1471,9 +1471,9 @@ nop
 ; lhu t9, 0xef0(v1)
 .orga 0xEBB85C
     jal     Deku_Check_Sold_Out
-    .skip 4
+.skip 4
     bnez    v0, @Deku_Check_True
-    .skip 4
+.skip 4
     b       @Deku_Check_False
 .orga 0xEBB8B0
 @Deku_Check_True:
