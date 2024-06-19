@@ -84,13 +84,12 @@ void item_overrides_init() {
 }
 
 override_key_t get_override_search_key_by_newflag(xflag_t* flag) {
-    if(flag > 0)
-    {
+    if (flag > 0) {
         override_key_t key = {
-        .scene = flag->scene,
-        .type = OVR_NEWFLAGCOLLECTIBLE,
-        .pad = 0,
-        .flag = flag->all,
+            .scene = flag->scene,
+            .type = OVR_NEWFLAGCOLLECTIBLE,
+            .pad = 0,
+            .flag = flag->all,
         };
         return resolve_alternative_override(key);
     }
@@ -152,8 +151,7 @@ override_key_t get_override_search_key(z64_actor_t* actor, uint8_t scene, uint8_
             .pad = 0,
             .flag = item_id,
         };
-    }
-    else {
+    } else {
         return (override_key_t) {
             .scene = scene,
             .type = OVR_BASE_ITEM,
@@ -211,8 +209,7 @@ override_key_t resolve_alternative_override(override_key_t override_key) {
     return override_key;
 }
 
-xflag_t resolve_alternative_flag(xflag_t* flag)
-{
+xflag_t resolve_alternative_flag(xflag_t* flag) {
     override_key_t key;
     key.scene = flag->scene;
     key.type = 0x06;
@@ -330,6 +327,7 @@ void push_pending_item(override_t override) {
             break;
         }
         if (extended_savectx.incoming_queue[i].key.all == override.key.all) {
+            // Prevent duplicate entries
             break;
         }
     }
@@ -432,8 +430,7 @@ inline uint32_t link_is_ready() {
         (z64_event_state_1 & 0x20) == 0 &&
         (z64_game.camera_2 == 0)) {
         satisfied_pending_frames++;
-    }
-    else {
+    } else {
         satisfied_pending_frames = 0;
     }
     if (satisfied_pending_frames >= 2) {
@@ -446,7 +443,7 @@ inline uint32_t link_is_ready() {
 void try_pending_item() {
     override_t override = extended_savectx.incoming_queue[0];
 
-    if(override.key.all == 0) {
+    if (override.key.all == 0) {
         return;
     }
     uint16_t resolved_item_id = resolve_upgrades(override);
@@ -460,17 +457,16 @@ void try_pending_item() {
         return;
     }
 
-    if(item_row->collectible >= 0 && override.key.flag == 0xFF) {
+    if (item_row->collectible >= 0 && override.key.flag == 0xFF) {
         // This is an incoming collectible junk item so speed it up by spawning a give immediate collectible
-        EnItem00 *collectible = (EnItem00*)z64_SpawnActor(&z64_game.actor_ctxt, &z64_game, 0x0015, z64_link.common.pos_world.x, z64_link.common.pos_world.y, z64_link.common.pos_world.z, 0,0,0, 0x8000 | item_row->collectible);
+        EnItem00* collectible = (EnItem00*)z64_SpawnActor(&z64_game.actor_ctxt, &z64_game, 0x0015, z64_link.common.pos_world.x, z64_link.common.pos_world.y, z64_link.common.pos_world.z, 0, 0, 0, 0x8000 | item_row->collectible);
         collectible->override = override;
         collectible->scale = collectible->actor.scale.x = collectible->actor.scale.y = collectible->actor.scale.z = 0.015f;
         collectible->actor.yOffset = 750.0f;
-        lookup_model_by_override(&collectible->model,collectible->override);
+        lookup_model_by_override(&collectible->model, collectible->override);
         pop_pending_item();
         after_key_received(override.key);
-    }
-    else {
+    } else {
         activate_override(override);
         z64_link.incoming_item_actor = dummy_actor;
         z64_link.incoming_item_id = active_item_row->base_item_id;
@@ -614,18 +610,17 @@ void reset_collectible_mutex() {
 
 // New EnItem00 function that freezes Link until the messagebox is closed. Similar to how skulls work.
 void Collectible_WaitForMessageBox(EnItem00* this, z64_game_t* game) {
-    // Put the item above link's head and keep it spinning like the normal action function
+    // Put the item above Link's head and keep it spinning like the normal action function
     this->actor.rot_2.y += 960;
     this->actor.pos_world = z64_link.common.pos_world;
     this->actor.pos_world.y += 40.0f;
-    if(z64_file.link_age == 0) // link is adult so move it up another 20.0f
-    {
+    if (z64_file.link_age == 0) { // Link is adult so move it up another 20.0f
         this->actor.pos_world.y += 20.0f;
     }
 
     // Check message state:
     if (z64_MessageGetState(((uint8_t*)(&z64_game)) + 0x20D8) == 0) {
-        // Make sure link was frozen for the minimum amount of time
+        // Make sure Link was frozen for the minimum amount of time
         if (this->timeToLive == 0) {
             reset_collectible_mutex(); // release the mutex
             // Kill the actor
@@ -656,23 +651,21 @@ uint16_t get_xflag_bit_offset(xflag_t* flag) {
     uint32_t test_scene_room_setup;
 
     // Check if we're in a grotto because we calculate grotto scene/room/setup differently because grottos are dumb
-    if(is_grotto) {
+    if (is_grotto) {
         test_scene_room_setup = (flag->scene << 24) + (flag->grotto.grotto_id << 8) + (flag->grotto.room);
-    }
-    else {
+    } else {
         test_scene_room_setup = (flag->scene << 24) + (flag->setup << 6) + (flag->room);
     }
 
     // Check if we have this scene/room/setup cached already
-    if(test_scene_room_setup != loaded_scene_room_setup)
-    {
+    if (test_scene_room_setup != loaded_scene_room_setup) {
         // Not cached so load it using the xflag tables
         loaded_room_bit_offset = -1;
         loaded_scene_room_setup = -1;
 
         // Get the offset into xflag_room_table for the current scene.
         uint16_t room_table_index = xflag_scene_table[flag->scene];
-        if(room_table_index == 0xffff) {
+        if (room_table_index == 0xffff) {
             return 0xffff;
         }
 
@@ -680,16 +673,15 @@ uint16_t get_xflag_bit_offset(xflag_t* flag) {
         room_setup_count = xflag_room_table[room_table_index++];
 
         // Loop through all of the rooms/setups to find the one for this flag
-        for(i = 0; i < room_setup_count; i++) {
+        for (i = 0; i < room_setup_count; i++) {
             // Get the setup/room from the entry
-            if(flag->scene == 0x3E) {
+            if (flag->scene == 0x3E) {
                 // If we're in a the room/setup entries are stored differently because we need 2 bytes to represent them
                 setup_id_temp = (xflag_room_table[room_table_index++]);
                 room_id_temp = xflag_room_table[room_table_index++];
                 room_id = flag->grotto.room;
                 setup_id = flag->grotto.grotto_id;
-            }
-            else {
+            } else {
                 setup_id_temp = (xflag_room_table[room_table_index] & 0xC0) >> 6;
                 room_id_temp = xflag_room_table[room_table_index++] & 0x3F;
                 room_id = flag->room;
@@ -697,7 +689,7 @@ uint16_t get_xflag_bit_offset(xflag_t* flag) {
             }
 
             // Test if the setup/room matches the flag
-            if((room_id_temp == room_id) && setup_id_temp == setup_id) {
+            if ((room_id_temp == room_id) && setup_id_temp == setup_id) {
                 // Match. Read the next 2 bytes which contains the byte offset into the xflag_room_blob table
                 room_byte_offset = (xflag_room_table[room_table_index] << 8) + xflag_room_table[room_table_index+1];
                 break;
@@ -706,7 +698,7 @@ uint16_t get_xflag_bit_offset(xflag_t* flag) {
             room_table_index += 2;
         }
         // If we get here and room_byte_offset is still 0xFFFF then the room/setup combination for this flag wasn't found in the table. Just return 0xFFFF
-        if(room_byte_offset == 0xFFFF) {
+        if (room_byte_offset == 0xFFFF) {
             return 0xFFFF;
         }
 
@@ -748,15 +740,12 @@ uint16_t get_xflag_bit_offset(xflag_t* flag) {
     // Substract 1 from the value in room_flags because we use 0 to indicate that there is no flag for that actor.
     if (loaded_room_bit_offset != -1) {
         if (is_grotto) {
-            if (room_flags[flag->grotto.flag]) {
-                return loaded_room_bit_offset + room_flags[flag->grotto.flag] - 1 + flag->grotto.subflag;
-            }
+            if (room_flags[flag->grotto.flag]) return loaded_room_bit_offset + room_flags[flag->grotto.flag] - 1 + flag->grotto.subflag;
         } else if (room_flags[flag->flag]) {
             return loaded_room_bit_offset + room_flags[flag->flag] - 1 + flag->subflag;
         }
     }
     return 0xFFFF;
-
 }
 
 // Check if the new collectible flag for an actor is set.
@@ -816,13 +805,12 @@ bool Item00_KillActorIfFlagIsSet(z64_actor_t* actor) {
         flag = drop_collectible_override_flag;
     } else if (CURR_ACTOR_SPAWN_INDEX) {
         flag.scene = z64_game.scene_index;
-        if(z64_game.scene_index == 0x3E) {
+        if (z64_game.scene_index == 0x3E) {
             flag.grotto.room = actor->room_index;
             flag.grotto.grotto_id = z64_file.grotto_id & 0x1F;
             flag.grotto.flag = CURR_ACTOR_SPAWN_INDEX;
             flag.grotto.subflag = 0;
-        }
-        else {
+        } else {
             flag.room = actor->room_index;
             flag.setup = curr_scene_setup;
             flag.flag = CURR_ACTOR_SPAWN_INDEX;
@@ -841,23 +829,6 @@ bool Item00_KillActorIfFlagIsSet(z64_actor_t* actor) {
         this->override = (override_t) { 0 };
         extra->flag = (xflag_t) { 0 };
     }
-
-    /*
-    // Pots with overridden fairy drops just spawn the fairy like they normally do and set the collectible flag
-    if(this->override.value.base.item_id == 0x0119 && drop_collectible_override_flag.all)
-    {
-        Set_NewOverrideFlag(&flag);
-        z64_SpawnActor(&(z64_game.actor_ctxt), &z64_game, 24, this->actor.pos_world.x, this->actor.pos_world.y, this->actor.pos_world.z, 0,0,0, 6);
-        z64_ActorKill(actor);
-        return 1;
-    }
-
-    // Pots with nothing drops don't drop anything and just set the collectible flag.
-    if(this->override.value.base.item_id == 0x011A) {
-        Set_NewOverrideFlag(&flag);
-        z64_ActorKill(actor);
-        return 1;
-    }*/
 
     if (this->override.key.all) { // If an override exists and we haven't already collected it
         extra->flag = flag;

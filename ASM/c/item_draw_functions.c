@@ -748,5 +748,4 @@ void draw_gi_fairy(z64_game_t* game, uint32_t draw_id) {
 }
 
 void draw_gi_nothing(z64_game_t* game, uint32_t draw_id) {
-
 }

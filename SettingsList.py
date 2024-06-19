@@ -754,7 +754,7 @@ class SettingInfos:
 
             'Required Only': Only items and locations required to beat the game will be guaranteed reachable.
         ''',
-        gui_params={
+        gui_params     = {
             "hide_when_disabled": True,
         },
         shared         = True,
@@ -1747,9 +1747,9 @@ class SettingInfos:
         ''',
         shared         = True,
         disable        = {
-            'off':    {'settings' : ['silver_rupee_pouches']},
-            'all':    {'settings' : ['silver_rupee_pouches']},
-            'random': {'settings' : ['silver_rupee_pouches']},
+            'off':    {'settings': ['silver_rupee_pouches']},
+            'all':    {'settings': ['silver_rupee_pouches']},
+            'random': {'settings': ['silver_rupee_pouches']},
         },
         gui_params     = {
             "hide_when_disabled": True,
@@ -3240,7 +3240,7 @@ class SettingInfos:
         },
         shared         = True,
         disable        = {
-            'off': {'settings' : ['shuffle_empty_pots']},
+            'off': {'settings': ['shuffle_empty_pots']},
         }
     )
 
@@ -3251,7 +3251,7 @@ class SettingInfos:
             Enabling this will include empty pots into the location
             pool based on the Shuffle Pots setting chosen.
         ''',
-        gui_params={
+        gui_params     = {
             "hide_when_disabled": True,
         },
         shared         = True
@@ -3279,7 +3279,7 @@ class SettingInfos:
         },
         shared         = True,
         disable        = {
-            'off': {'settings' : ['shuffle_empty_crates']},
+            'off': {'settings': ['shuffle_empty_crates']},
         }
     )
 
@@ -3288,9 +3288,9 @@ class SettingInfos:
         default        = False,
         gui_tooltip    = '''\
             Enabling this will include empty crates into the location
-            pool based on the Shuffle Pots setting chosen.
+            pool based on the Shuffle Crates setting chosen.
         ''',
-        gui_params={
+        gui_params     = {
             "hide_when_disabled": True,
         },
         shared         = True
@@ -3817,7 +3817,7 @@ class SettingInfos:
             number of Cuccos.
         ''',
         disable        = {
-            True: {'settings' : ['chicken_count']},
+            True: {'settings': ['chicken_count']},
         },
         shared         = True,
     )
@@ -3844,7 +3844,7 @@ class SettingInfos:
             in a random number of Big Poes.
         ''',
         disable        = {
-            True: {'settings' : ['big_poe_count']},
+            True: {'settings': ['big_poe_count']},
         },
         shared         = True,
     )
@@ -4028,7 +4028,7 @@ class SettingInfos:
         shared         = True,
         default        = [],
         gui_params     = {
-            "hide_when_disabled" : True,
+            "hide_when_disabled": True,
         },
     )
 
@@ -4214,7 +4214,7 @@ class SettingInfos:
         },
         shared         = True,
         disable        = {
-            '!bingo' : {'settings' : ['bingosync_url']},
+            '!bingo' : {'settings': ['bingosync_url']},
         },
     )
 
