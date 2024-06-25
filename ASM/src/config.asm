@@ -260,6 +260,8 @@ CFG_RANDO_VERSION_SUPPLEMENTARY:
 .align 4
 CFG_BIGOCTO_OVERRIDE_KEY:
 .word 0
+REWARDS_AS_ITEMS:
+.byte 0x00
 .align 4
 
 ; These configuration values are given fixed addresses to aid auto-trackers.
