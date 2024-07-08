@@ -46,7 +46,7 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
 * New hint distributions:
   * “Chaos!!! (dev-fenhl)” is like “Chaos!!!” but including hint types not available on [`Dev-R`](https://github.com/Roman971/OoT-Randomizer).
   * “Chaos!!! (dev-fenhl, no goal hints)” is like “Chaos!!! (no goal hints)” but including hint types not available on [`Dev-R`](https://github.com/Roman971/OoT-Randomizer).
-  * “Fenhl's Casual (TOoTR compat)” is the subset of “Chaos!!! (dev-fenhl)” that can be tracked using [TOoTR](https://tootr.mracsys.com/), namely Always, Trial, Dual Always, and Entrance Always hints.
+  * “Fenhl's Casual (TOoTR compat)” is the subset of “Chaos!!! (dev-fenhl)” that can be correctly tracked using [TOoTR](https://tootr.mracsys.com/).
   * “Ice%” consists of only Sometimes hints, and replaces the hookshot hint in Dampé's diary with a blue fire arrows hint.
   * “Mixed Pools Tournament” is the hint distribution that will be used for the [3nd Mixed Pools Tournament](https://midos.house/event/mp/3).
   * “SAWS” is the hint distribution used for the Standard Anti-Weekly Settings presets (see below).
@@ -55,8 +55,8 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
 * New settings presets:
   * “Fenhl's Casual” is my preferred flavor of playing OoTR, with everything shuffled, full entrance randomizer, chaos hints, warp song note shuffle, half damage, no Master Quest, and no tricks enabled. The rainbow bridge requires all dungeon rewards and Ganon's boss key requires all 100 gold skulltula tokens.
   * “Fenhl's Casual (TOoTR compat)” is Fenhl's Casual but with the following changes for compatibility with [TOoTR](https://tootr.mracsys.com/):
+    * Hint distribution is “Fenhl's Casual (TOoTR compat)” instead of “Chaos!!! (dev-fenhl)” ([TOoTR#59](https://github.com/mracsys/tootr/issues/59) and lack of support for Triforce Blitz hints)
     * Thieves' Hideout savewarp goes to overworld spawn instead of 1-torch jail ([TOoTR#48](https://github.com/mracsys/tootr/issues/48))
-    * Shop shuffle is off ([TOoTR#50](https://github.com/mracsys/tootr/issues/50))
   * “Vanilla” generates a seed that's as close to the vanilla game as possible with current randomizer features. Unlike the vanilla seed available on <https://ootrandomizer.com/>, this preset uses glitchless logic to produce a useful spoiler log playthrough.
   * “Fast Vanilla” is “Vanilla” but with speed-ups like fast bunny hood, fast chest cutscenes, or “Skip Some Minigame Phases” enabled.
   * “Vanilla (Master Quest)” and “Fast Vanilla (Master Quest)” are “Vanilla” and “Fast Vanilla” but with all dungeons from Master Quest.
@@ -68,6 +68,7 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
   * “SGL 2023 Tournament” is a game mode that was used for [a tournament at SpeedGaming Live 2023](https://midos.house/event/sgl/2023live) as well as [an online tournament](https://midos.house/event/sgl/2023onl), taken from [Elagatua's `feature/sgl-2023` branch](https://github.com/Elagatua/OoT-Randomizer/tree/feature/sgl-2023). Note that the tournament itself was played on that branch, not this one. See [the official document](https://docs.google.com/document/d/1EACqBl8ZOreD6xT5jQ2HrdLOnpBpKyjS3FUYK8XFeqg/edit) for details.
   * “SDG Bingo Tournament 3” is a variant of “Bingo” used for an ongoing tournament. Note that the tournament itself is being played on version 8.0 of the randomizer, not this branch. See [the official document](https://docs.google.com/document/d/1fpDPSBGH9YQeC9W3P1SMDE7FhoikVgbFTJapqKnMmL4/edit) for details.
 * Other changes:
+  * The first text box from the carpenters in the Thieves' Hideout is skipped ([#2232](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2232))
   * On Wii Virtual Console, additional information is displayed while the game is loading and when it crashes ([#2153](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2153))
   * The magic meter has a new model to prepare for shuffled magic refills ([#2081](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2081))
   * Plandos can specify different settings for each world ([#2055](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2055))
