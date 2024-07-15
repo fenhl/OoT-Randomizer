@@ -6,6 +6,7 @@ Usage:
 
 Options:
   -E, --no-emu                  don't automatically launch BizHawk
+  -P, --no-plando               ignore plando.json
   -c, --cosmetics               include cosmetics from cosmetics-plando.json
   -e, --everdrive               test world 1 on EverDrive
   -h, --help                    show this help message and exit
@@ -77,11 +78,15 @@ for _ in range(arguments['--seeds']):
             #rando_args = ['target/debug/ootr', '--settings=-']
             rando_args = [sys.executable]
             rando_args += ['.\\OoTRandomizer.py', '--settings=-']
-            with open(settings['distribution_file'], encoding='utf-8') as f:
-                if json.load(f) == {}:
-                    # don't show “Plandomizer” in file select since nothing has actually been plando'd
-                    del iter_settings['distribution_file']
-                    iter_settings['enable_distribution_file'] = False
+            if arguments['--no-plando']:
+                del iter_settings['distribution_file']
+                iter_settings['enable_distribution_file'] = False
+            else:
+                with open(settings['distribution_file'], encoding='utf-8') as f:
+                    if json.load(f) == {}:
+                        # don't show “Plandomizer” in file select since nothing has actually been plando'd
+                        del iter_settings['distribution_file']
+                        iter_settings['enable_distribution_file'] = False
             if arguments['--preset']:
                 rando_args.append(f'--settings_preset={arguments["--preset"]}')
             if arguments['--settings']:
