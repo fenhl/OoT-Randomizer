@@ -192,7 +192,7 @@ def make_spoiler(world_settings: list[Settings], worlds: list[World]) -> Spoiler
     ):
         spoiler.find_misc_hint_items()
     spoiler.build_file_hash()
-    spoiler.build_password(settings.password_lock)
+    spoiler.build_password()
     return spoiler
 
 
