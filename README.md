@@ -61,7 +61,7 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
   * “Fast Vanilla” is “Vanilla” but with speed-ups like fast bunny hood, fast chest cutscenes, or “Skip Some Minigame Phases” enabled.
   * “Vanilla (Master Quest)” and “Fast Vanilla (Master Quest)” are “Vanilla” and “Fast Vanilla” but with all dungeons from Master Quest.
   * “Ice%” is an extremely fast-paced game mode where the goal is to reach the Iron Boots chest.
-  * “3rd Mixed Pools Tournament” will be used for [an upcoming tournament](https://midos.house/event/mp/3) with full mixed pools entrance randomizer.
+  * “3rd Mixed Pools Tournament” is used for [an ongoing tournament](https://midos.house/event/mp/3) with full mixed pools entrance randomizer.
   * “Standard Anti-Weekly Settings (Beginner)” disables every location that's enabled in “S7 Tournament” and enables every location that's disabled there, as well as changing some miscellaneous settings. See [the official document](https://docs.google.com/document/d/1sbL6Zju943F5qyx4QbTLUsqZqOTMmvqKVbDwJl08SGc/edit) for details.
   * “Standard Anti-Weekly Settings (Advanced)” adds “Shuffle Rupees & Hearts”, “Shuffle Pots”, “Shuffle Crates”, “Shuffle Beehives”, and “Shuffle Silver Rupees”, has a minimal item pool, and adds extra ice traps.
   * “Triforce Blitz S2” is a fast-paced game mode with very powerful hints used for [a tournament](https://midos.house/event/tfb/2), taken from [Elagatua's `Dev` branch](https://github.com/Elagatua/OoT-Randomizer/tree/Dev). Note that the tournament itself was played on that branch, not this one. See [the official website](https://www.triforceblitz.com/) for details.
@@ -215,6 +215,8 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * The `Links Pocket` location is renamed to `ToT Reward from Rauru`, and a new setting has been added that controls whether it is skipped.
 * New option `Specific Rewards` for the `Pre-completed Dungeons Mode` setting, allowing the user to set dungeons to be precompleted depending on which medallion or stone they have. Not compatible with shuffled dungeon rewards.
 * New settings to `Include Empty Pots` and `Include Empty Crates` when pots and crates are shuffled respectively.
+* New settings preset for the No Logic Weekly.
+* New plando-only `password_lock` setting to require a password to start the seed. The password is a sequence of 6 button presses (A and C) shown near the top of the spoiler log.
 
 #### Other New Features
 * A text box has been added when completing the adult shooting gallery without a bow to warn the player that they haven't received the real reward.
@@ -222,6 +224,7 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * The plando-only `item_hints` setting can now include special items such as songs or keys.
 * A boss key icon will now be displayed near the small key icon in dungeons where it has been obtained.
 * Fairy pots are now included in `Shuffle Pots`.
+* A message is shown the first time a seed with No Logic is generated, to warn the user that the seed may be unbeatable.
 
 #### Bug Fixes
 * Goal hints can now hint items required to defeat Ganon even if they're not required for the rainbow bridge, Ganon's boss key, or the trials. These items will be hinted as being on the "path of the hero".
