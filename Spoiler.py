@@ -87,10 +87,10 @@ class Spoiler:
         for i in range(5):
             self.file_hash.append(random.randint(0, 31) if dist_file_hash[i] is None else HASH_ICONS.index(dist_file_hash[i]))
 
-    def build_password(self, password: bool = False) -> None:
+    def build_password(self) -> None:
         dist_password = self.settings.distribution.password
         for i in range(6):
-            if password:
+            if self.settings.password_lock:
                 self.password.append(random.randint(1, 5) if dist_password[i] is None else PASSWORD_NOTES.index(dist_password[i]) + 1)
             else:
                 self.password.append(0)
