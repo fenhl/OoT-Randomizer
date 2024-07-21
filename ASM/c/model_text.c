@@ -9,6 +9,8 @@ bool child_safe = false;
 
 bool missing_dlist = false;
 
+extern uint8_t CFG_SONG_NAME_STATE;
+
 const int text_width = 5;
 const int text_height = 10;
 
@@ -20,7 +22,7 @@ void draw_illegal_model_text(z64_disp_buf_t* db) {
     }
 
     // If custom music songs are displayed, only show the text in the inventory screen.
-    if (are_song_displayed() && z64_game.pause_ctxt.screen_idx != 0) {
+    if (CFG_SONG_NAME_STATE > SONG_NAME_NONE && z64_game.pause_ctxt.screen_idx != 0) {
         return;
     }
 
