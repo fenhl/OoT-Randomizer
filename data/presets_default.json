@@ -297,7 +297,7 @@
         "empty_dungeons_rewards": [],
         "empty_dungeons_count": 2,
         "shuffle_interior_entrances": "all",
-        "shuffle_hideout_entrances": "overworld_savewarp",
+        "shuffle_hideout_entrances": "hideout_savewarp",
         "shuffle_gerudo_fortress_heart_piece": "shuffle",
         "shuffle_grotto_entrances": true,
         "shuffle_dungeon_entrances": "all",
