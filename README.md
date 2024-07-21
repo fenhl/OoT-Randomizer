@@ -56,7 +56,6 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
   * “Fenhl's Casual” is my preferred flavor of playing OoTR, with everything shuffled, full entrance randomizer, chaos hints, warp song note shuffle, half damage, no Master Quest, and no tricks enabled. The rainbow bridge requires all dungeon rewards and Ganon's boss key requires all 100 gold skulltula tokens.
   * “Fenhl's Casual (TOoTR compat)” is Fenhl's Casual but with the following changes for compatibility with [TOoTR](https://tootr.mracsys.com/):
     * Hint distribution is “Fenhl's Casual (TOoTR compat)” instead of “Chaos!!! (dev-fenhl)” ([TOoTR#59](https://github.com/mracsys/tootr/issues/59) and lack of support for Triforce Blitz hints)
-    * Thieves' Hideout savewarp goes to overworld spawn instead of 1-torch jail ([TOoTR#48](https://github.com/mracsys/tootr/issues/48))
   * “Vanilla” generates a seed that's as close to the vanilla game as possible with current randomizer features. Unlike the vanilla seed available on <https://ootrandomizer.com/>, this preset uses glitchless logic to produce a useful spoiler log playthrough.
   * “Fast Vanilla” is “Vanilla” but with speed-ups like fast bunny hood, fast chest cutscenes, or “Skip Some Minigame Phases” enabled.
   * “Vanilla (Master Quest)” and “Fast Vanilla (Master Quest)” are “Vanilla” and “Fast Vanilla” but with all dungeons from Master Quest.
