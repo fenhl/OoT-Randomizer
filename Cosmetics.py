@@ -1028,11 +1028,12 @@ def patch_input_viewer(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
 
 def patch_song_names(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: dict[str, int]) -> None:
     bytes_to_write = []
+    rom.write_byte(symbols['CFG_SONG_NAME_STATE'], 0x00)
     if settings.display_custom_song_names != 'off':
         if settings.display_custom_song_names == 'top':
-            rom.write_byte(symbols['CFG_SONG_NAME_POSITION'], 0x00)
+            rom.write_byte(symbols['CFG_SONG_NAME_STATE'], 0x01)
         if settings.display_custom_song_names == 'pause':
-            rom.write_byte(symbols['CFG_SONG_NAME_POSITION'], 0x01)
+            rom.write_byte(symbols['CFG_SONG_NAME_STATE'], 0x02)
 
     for index, song_name in enumerate(log.bgm.values()):
         if index >= 47:
@@ -1260,7 +1261,7 @@ patch_sets[0x1F073FE2] = {
     ],
     "symbols": {
         **patch_sets[0x1F073FE1]["symbols"],
-        "CFG_SONG_NAME_POSITION": 0x006C,
+        "CFG_SONG_NAME_STATE": 0x006C,
         "CFG_SONG_NAMES": 0x006D,
     }
 }
