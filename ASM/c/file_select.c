@@ -123,9 +123,8 @@ void manage_password(z64_disp_buf_t* db, z64_menudata_t* menu_data) {
         gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
         sprite_load(db, &quest_items_sprite, 17, 1);
         sprite_draw(db, &quest_items_sprite, 0, left, top - 2, BUTTON_WIDTH, BUTTON_HEIGHT);
-        text_print_size("Password locked", left + TEXT_HEIGHT + padding, top, TEXT_WIDTH);
+        text_print_size(db, "Password locked", left + TEXT_HEIGHT + padding, top, TEXT_WIDTH, TEXT_HEIGHT);
         sprite_draw(db, &quest_items_sprite, 0, left + TEXT_WIDTH + 2 * padding + 15 * font_sprite.tile_w, top - 2, BUTTON_WIDTH, BUTTON_HEIGHT);
-        text_flush_size(db, TEXT_WIDTH, TEXT_HEIGHT, 0, 0);
     }
     if (menu_data->menu_transition == SM_CONFIRM_FILE) {
         if (password_index < 0) {
@@ -169,8 +168,7 @@ void manage_password(z64_disp_buf_t* db, z64_menudata_t* menu_data) {
             gDPPipeSync(db->p++);
             gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
             gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
-            text_print_size("Enter Password", left_password, top_password, TEXT_WIDTH);
-            text_flush_size(db, TEXT_WIDTH, TEXT_HEIGHT, 0, 0);
+            text_print_size(db, "Enter Password", left_password, top_password, TEXT_WIDTH, TEXT_HEIGHT);
 
             if (is_buffer_password_clear()) {
                 password_index = -1;

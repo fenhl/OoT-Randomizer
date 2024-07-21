@@ -51,8 +51,7 @@ void draw_illegal_model_text(z64_disp_buf_t* db) {
     gDPSetPrimColor(db->p++, 0, 0, 0xD7, 0x16, 0x0D, 0xFF);
 
     //Set text to print and flush it
-    text_print_size(text, draw_x, draw_y_text, text_width);
-    text_flush_size(db, text_width, text_height, 0, 0);
+    text_print_size(db, text, draw_x, draw_y_text, text_width, text_height);
 }
 
 typedef struct Limb {
