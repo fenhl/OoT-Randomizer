@@ -1038,11 +1038,14 @@ def patch_song_names(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: d
     for index, song_name in enumerate(log.bgm.values()):
         if index >= 47:
             break
-        if len(song_name) > 50:
-            song_name_cropped = song_name[:50]
-            text_bytes = [ord('?' if ord(c) >= 0x80 else c) for c in song_name_cropped]
+        if song_name == 'None':
+            text_bytes = [ord('\0')] * 50
         else:
-            text_bytes = [ord('?' if ord(c) >= 0x80 else c) for c in song_name] + [ord('\0')] * (50 - len(song_name))
+            if len(song_name) > 50:
+                song_name_cropped = song_name[:50]
+                text_bytes = [ord('?' if ord(c) >= 0x80 else c) for c in song_name_cropped]
+            else:
+                text_bytes = [ord('?' if ord(c) >= 0x80 else c) for c in song_name] + [ord('\0')] * (50 - len(song_name))
         bytes_to_write += text_bytes
     rom.write_bytes(symbols['CFG_SONG_NAMES'], bytes_to_write)
     log.display_custom_song_names = settings.display_custom_song_names

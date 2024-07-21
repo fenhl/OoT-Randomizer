@@ -41,8 +41,7 @@ void draw_start(z64_disp_buf_t* db) {
     if (z64_game.common.input[0].raw.pad.s) {
         gDPSetPrimColor(db->p++, 0, 0, 0xDC, 0xDC, 0xDC, 0xFF); // grey
         int8_t xy_stick_length = 3 * rupee_digit_sprite.tile_w + font_sprite.tile_w - 2;
-        text_print_size("S", left_alignment + 2 * xy_stick_length + buttons_sprite.tile_w, top_alignment, input_icon_width);
-        text_flush_size(db, input_icon_width, input_icon_height, 0, 0);
+        text_print_size(db, "S", left_alignment + 2 * xy_stick_length + buttons_sprite.tile_w, top_alignment, input_icon_width, input_icon_height);
     }
 }
 

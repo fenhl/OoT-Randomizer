@@ -302,9 +302,8 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
         for (int i = 0; i < rows; i++) {
             dungeon_entry_t* d = &(dungeons[i]);
             int top = start_top + ((icon_size + padding) * i) + 1;
-            text_print_size(d->name, left, top, font_width);
+            text_print_size(db, d->name, left, top, font_width, font_height);
         }
-        text_flush_size(db, font_width, font_height, 0, 0);
 
         left += ((SHUFFLE_CHEST_GAME == 1 ? 11 : 8) * font_width) + padding;
 
@@ -330,9 +329,8 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
                 if (current_keys > 0) count[0] = current_keys + '0';
                 if (total_keys > 0) count[2] = total_keys + '0';
                 int top = start_top + ((icon_size + padding) * i) + 1;
-                text_print_size(count, left, top, font_width);
+                text_print_size(db, count, left, top, font_width, font_height);
             }
-            text_flush_size(db, font_width, font_height, 0, 0);
 
             left += (4 * font_width) + padding;
 
@@ -430,12 +428,11 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
                 }
                 char* str = CFG_DUNGEON_IS_MQ[d->index] ? "MQ" : "Normal";
                 int top = start_top + ((icon_size + padding) * i) + 1;
-                text_print_size(str, left, top, font_width);
+                text_print_size(db, str, left, top, font_width, font_height);
             }
 
             left += (6 * font_width) + padding;
         }
-        text_flush_size(db, font_width, font_height, 0, 0);
 
         if (CFG_DUNGEON_INFO_SILVER_RUPEES) {
             // Draw silver rupee icons
@@ -530,27 +527,27 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
 
         if (everdrive_detection_state == ED64_DETECTION_PRESENT) {
             char top_text[16] = "EverDrive found";
-            text_print(top_text, left, top);
+            text_print(db, top_text, left, top);
             top += icon_size + padding;
             switch (everdrive_protocol_state) {
                 case EVERDRIVE_PROTOCOL_STATE_INIT: {
                     char state_text[12] = "state: init";
-                    text_print(state_text, left, top);
+                    text_print(db, state_text, left, top);
                     break;
                 }
                 case EVERDRIVE_PROTOCOL_STATE_HANDSHAKE: {
                     char state_text[17] = "state: handshake";
-                    text_print(state_text, left, top);
+                    text_print(db, state_text, left, top);
                     break;
                 }
                 case EVERDRIVE_PROTOCOL_STATE_MW: {
                     char state_text[18] = "state: multiworld";
-                    text_print(state_text, left, top);
+                    text_print(db, state_text, left, top);
                     break;
                 }
                 default: {
                     char state_text[11] = "state: ???";
-                    text_print(state_text, left, top);
+                    text_print(db, state_text, left, top);
                     break;
                 }
             }
@@ -570,7 +567,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
                     buf_line_1[3 * i + 1] = '0' + lo;
                 }
             }
-            text_print(buf_line_1, left, top);
+            text_print(db, buf_line_1, left, top);
             top += icon_size + padding;
             char buf_line_2[24] = "OO OO OO OO OO OO OO OO";
             for (int i = 8; i < 16; i++) {
@@ -587,7 +584,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
                     buf_line_2[3 * i + 1] = '0' + lo;
                 }
             }
-            text_print(buf_line_2, left, top);
+            text_print(db, buf_line_2, left, top);
         } else {
             uint32_t sum = rust_add(2, 3);
             char default_bottom_text[20] = "EverDrive not found";
@@ -597,7 +594,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
                 bottom_text = error_bottom_text;
                 bottom_text[8] = '0' + sum;
             }
-            text_print(bottom_text, left, top);
+            text_print(db, bottom_text, left, top);
         }
     } else if (pad_held.dd) {
         show_dungeon_info = 1;
@@ -701,7 +698,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
                     world_text[3] = world % 10 + '0';
                 }
                 int top = start_top + ((icon_size + padding) * i) + 1;
-                text_print(world_text, left, top);
+                text_print(db, world_text, left, top);
             }
             left += 5 * font_sprite.tile_w;
         }
@@ -735,7 +732,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
                     continue;
                 }
                 int top = start_top + ((icon_size + padding) * i) + 1;
-                text_print(CFG_DUNGEON_REWARD_AREAS[i], left, top);
+                text_print(db, CFG_DUNGEON_REWARD_AREAS[i], left, top);
             }
         }
 
@@ -771,7 +768,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
         for (int i = 0; i < rows; i++) {
             dungeon_entry_t* d = &(dungeons[d_right_dungeon_idx(i)]); // skip Deku/DC/Jabu/Ice dynamically
             int top = start_top + ((icon_size + padding) * i) + 1;
-            text_print(d->name, left, top);
+            text_print(db, d->name, left, top);
         }
 
         left += ((SHUFFLE_CHEST_GAME == 1 ? 11 : 8) * font_sprite.tile_w) + padding;
@@ -798,7 +795,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
             if (current_keys > 0) count[0] = current_keys + '0';
             if (total_keys > 0) count[2] = total_keys + '0';
             int top = start_top + ((icon_size + padding) * i) + 1;
-            text_print(count, left, top);
+            text_print(db, count, left, top);
         }
 
         left += (4 * font_sprite.tile_w) + padding;
@@ -935,7 +932,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
         for (int i = 0; i < 12; i++) {
             dungeon_entry_t* d = &(dungeons[i + (i > 9 ? 1 : 0)]); // skip Hideout
             int top = start_top + ((icon_size + padding) * i) + 1;
-            text_print(d->name, left, top);
+            text_print(db, d->name, left, top);
         }
 
         left += (8 * font_sprite.tile_w) + padding;
@@ -1002,7 +999,7 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
                 }
                 char* str = CFG_DUNGEON_IS_MQ[d->index] ? "MQ" : "Normal";
                 int top = start_top + ((icon_size + padding) * i) + 1;
-                text_print(str, left, top);
+                text_print(db, str, left, top);
             }
 
             left += icon_size + padding;
@@ -1010,7 +1007,6 @@ void draw_dungeon_info(z64_disp_buf_t* db) {
     }
 
     // Finish
-    text_flush(db);
 }
 
 int dungeon_info_is_drawn() {
