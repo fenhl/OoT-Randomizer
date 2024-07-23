@@ -32,7 +32,7 @@
         "length": 4
     },
     "AUDIO_THREAD_MEM_START": {
-        "address": "034EAF40",
+        "address": "034EAF00",
         "length": 0
     },
     "AUTO_TRACKER_CONTEXT": {
@@ -736,8 +736,12 @@
         "length": 4
     },
     "RANDO_DB_SIZE": {
-        "address": "034A3C14",
+        "address": "034A3C18",
         "length": 4
+    },
+    "REQUIRED_PENDING_FRAMES": {
+        "address": "034A3C00",
+        "length": 1
     },
     "REWARDS_AS_ITEMS": {
         "address": "03481E40",
@@ -1060,11 +1064,11 @@
         "length": 1
     },
     "defaultDDHeart": {
-        "address": "034A3C24",
+        "address": "034A3C28",
         "length": 6
     },
     "defaultHeart": {
-        "address": "034A3C2C",
+        "address": "034A3C30",
         "length": 6
     },
     "dpad_sprite": {
@@ -1164,19 +1168,19 @@
         "length": 2
     },
     "input_icon_height": {
-        "address": "034A3C3E",
+        "address": "034A3C42",
         "length": 1
     },
     "input_icon_width": {
-        "address": "034A3C3F",
+        "address": "034A3C43",
         "length": 1
     },
     "input_number_height": {
-        "address": "034A3C3C",
+        "address": "034A3C40",
         "length": 1
     },
     "input_number_width": {
-        "address": "034A3C3D",
+        "address": "034A3C41",
         "length": 1
     },
     "item_digit_sprite": {
@@ -1220,7 +1224,7 @@
         "length": 4
     },
     "left_alignment": {
-        "address": "034A3C3A",
+        "address": "034A3C3E",
         "length": 2
     },
     "linkhead_skull_sprite": {
@@ -1308,7 +1312,7 @@
         "length": 256
     },
     "rupee_colors": {
-        "address": "034A3C18",
+        "address": "034A3C1C",
         "length": 12
     },
     "rupee_digit_sprite": {
@@ -1384,7 +1388,7 @@
         "length": 496
     },
     "top_alignment": {
-        "address": "034A3C38",
+        "address": "034A3C3C",
         "length": 2
     },
     "trade_quest_items": {
