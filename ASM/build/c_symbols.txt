@@ -107,16 +107,16 @@ SYMBOL TABLE:
 0001c53c l       .rodata	00000000 $LC2
 00000000 l    df *ABS*	00000000 ganon.c
 00000000 l    df *ABS*	00000000 get_items.c
-0001c560 l       .rodata	00000000 $LC0
-0001c564 l       .rodata	00000000 $LC1
-0001c568 l       .rodata	00000000 $LC3
-0001c56c l       .rodata	00000000 $LC4
-0001c570 l       .rodata	00000000 $LC5
+0001c564 l       .rodata	00000000 $LC0
+0001c568 l       .rodata	00000000 $LC1
+0001c56c l       .rodata	00000000 $LC3
+0001c570 l       .rodata	00000000 $LC4
+0001c574 l       .rodata	00000000 $LC5
 00000000 l    df *ABS*	00000000 gfx.c
 00000000 l    df *ABS*	00000000 hud_colors.c
 00000000 l    df *ABS*	00000000 icetrap.c
 00000000 l    df *ABS*	00000000 inputviewer.c
-0001c5a0 l       .rodata	00000000 $LC1
+0001c5a4 l       .rodata	00000000 $LC1
 00000000 l    df *ABS*	00000000 item_draw_functions.c
 0001c5e8 l     O .rodata	00000030 kInitListMedallion
 0001c5a8 l     O .rodata	00000040 kMatrixRot.0
@@ -258,7 +258,7 @@ SYMBOL TABLE:
 00000000         *UND*	00000000 CFG_DPAD_ON_THE_LEFT
 00000000         *UND*	00000000 CFG_HEART_COLOR
 00007d70 g     F .text	00000070 EnWonderitem_AfterInitHack
-0001c59a g     O .rodata	00000002 left_alignment
+0001c59e g     O .rodata	00000002 left_alignment
 00000000         *UND*	00000000 CFG_CHILD_TRADE_SHUFFLE
 000100f0 g     F .text	0000012c draw_gi_magic_arrows
 00000018 g     F .text	00000008 Actor_GetAdditionalData
@@ -284,7 +284,7 @@ SYMBOL TABLE:
 0001a810 g     F .text	00000048 print_char
 0003e4d8 g     O .data	000000fc adultSkeleton
 0002024c g     O .data	00000018 medals
-0001c59f g     O .rodata	00000001 input_icon_width
+0001c5a3 g     O .rodata	00000001 input_icon_width
 0004922c g     O .data	00000001 satisfied_ice_percent_frames
 00000000         *UND*	00000000 INCOMING_PLAYER
 00020720 g     O .data	00000004 beating_no_dd
@@ -314,7 +314,7 @@ SYMBOL TABLE:
 0002023c g     O .data	00000003 debug_text_color
 000490ee g     O .data	00000001 adult_safe
 000145cc g     F .text	0000007c letter_to_bottle
-0001c598 g     O .rodata	00000002 top_alignment
+0001c59c g     O .rodata	00000002 top_alignment
 00000000         *UND*	00000000 CFG_B_BUTTON_COLOR
 8007e868 g       *ABS*	00000000 z64_Gfx_SetupDL_42Opa
 00040716 g     O .data	00000001 satisfied_pending_frames
@@ -420,7 +420,7 @@ SYMBOL TABLE:
 00000000         *UND*	00000000 SPOILER_AVAILABLE
 00013fb4 g     F .text	00000010 no_upgrade
 000164f8 g     F .text	00000224 update_navi_colors
-0001c59e g     O .rodata	00000001 input_icon_height
+0001c5a2 g     O .rodata	00000001 input_icon_height
 0001975c g     F .text	0000000c Seeded_Rand_Seed
 00014474 g     F .text	00000070 arrows_to_rupee
 000206e0 g     O .data	00000004 a_note_font_glow_max
@@ -438,7 +438,7 @@ SYMBOL TABLE:
 000142c0 g     F .text	0000005c nut_upgrade
 00000000         *UND*	00000000 CFG_RAINBOW_NAVI_PROP_OUTER_ENABLED
 0000be9c g     F .text	00000064 push_coop_item
-0001c59d g     O .rodata	00000001 input_number_width
+0001c5a1 g     O .rodata	00000001 input_number_width
 00000774 g     F .text	00000094 Actor_Spawn_Hook
 00000d84 g     F .text	00000018 DoorWarp1_ForestMedallion_Overwrite
 00020410 g     O .data	00000004 scene_fog_distance
@@ -567,13 +567,14 @@ SYMBOL TABLE:
 00000000         *UND*	00000000 NO_COLLECTIBLE_HEARTS
 00000000         *UND*	00000000 OUTGOING_KEY
 0001f864 g     O .data	000003da items_debug
-0001c574 g     O .rodata	00000004 RANDO_DB_SIZE
+0001c578 g     O .rodata	00000004 RANDO_DB_SIZE
 0001c724 g     O .rodata	00000004 text_width
 000203f8 g     O .data	00000014 extern_ctxt
 0001b094 g     F .text	000000fc UpdateTradeEquips
 000144e4 g     F .text	00000070 bombs_to_rupee
 000206c8 g     O .data	00000004 text_cursor_inner_max
 000206fc g     O .data	00000004 a_note_b
+0001c560 g     O .rodata	00000001 REQUIRED_PENDING_FRAMES
 0003e8c8 g     O .data	00000004 EXTRA_BOWLING_SHUFFLE
 000134c0 g     F .text	00000008 draw_gi_nothing
 0003e694 g     O .data	00000040 num_to_bits
@@ -639,7 +640,7 @@ SYMBOL TABLE:
 0000e2d8 g     F .text	00000240 gfx_init
 0000b52c g     F .text	0000002c override_flags_init
 0000e9fc g     F .text	00000074 draw_y_stick
-0001c584 g     O .rodata	00000006 defaultDDHeart
+0001c588 g     O .rodata	00000006 defaultDDHeart
 00015d58 g     F .text	00000070 display_misc_messages
 0001c31e g     O .rodata	00000001 debug_text_height
 0001c410 g     O .rodata	00000042 freecam_modes
@@ -660,7 +661,7 @@ SYMBOL TABLE:
 0001876c g     F .text	000001c4 ObjKibako2_Draw
 00000000         *UND*	00000000 WORLD_STRING_TXT
 80104394 g       *ABS*	00000000 z64_SfxDefaultPos
-0001c59c g     O .rodata	00000001 input_number_height
+0001c5a0 g     O .rodata	00000001 input_number_height
 00007a8c g     F .text	000000c8 EnItem00_OutgoingAction
 0000b8f4 g     F .text	0000004c get_override_search_key_by_newflag
 00000000         *UND*	00000000 CFG_RANDO_VERSION_MAJOR
@@ -741,7 +742,7 @@ SYMBOL TABLE:
 00000000         *UND*	00000000 FREE_BOMBCHU_DROPS
 0001bd8c g     F .text	00000120 ice_percent_credits_warp
 00014684 g     F .text	000000ec bombchus_to_bag
-0001c58c g     O .rodata	00000006 defaultHeart
+0001c590 g     O .rodata	00000006 defaultHeart
 0000e280 g     F .text	00000058 rando_display_buffer_init
 000203e4 g     O .data	00000010 TIMEOUT_ERROR
 00040718 g     O .data	00000002 incoming_junk
@@ -904,7 +905,7 @@ SYMBOL TABLE:
 0001671c g     F .text	000000b0 update_tunic_colors
 0003eac8 g     O .data	00000004 collectible_mutex
 00000000         *UND*	00000000 SKULL_CHEST_SIZES
-0001c578 g     O .rodata	0000000c rupee_colors
+0001c57c g     O .rodata	0000000c rupee_colors
 00013c20 g     F .text	0000001c trade_quest_upgrade
 0001e838 g       .rodata	00000000 TRIFORCE_SPRITE_RESOURCE
 00000000         *UND*	00000000 EXTENDED_OBJECT_TABLE

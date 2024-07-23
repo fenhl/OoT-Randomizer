@@ -9,7 +9,7 @@ extern uint8_t DPAD_RESOURCE[];
 extern uint8_t TRIFORCE_SPRITE_RESOURCE[];
 
 z64_disp_buf_t* rando_db __attribute__ ((aligned (16)));
-const unsigned int RANDO_DB_SIZE = 0x4000;
+const unsigned int RANDO_DB_SIZE = 0x5000;
 
 #if DEBUG_MODE
 z64_disp_buf_t* debug_db __attribute__ ((aligned (16)));

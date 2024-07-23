@@ -736,8 +736,12 @@
         "length": 4
     },
     "RANDO_DB_SIZE": {
-        "address": "034A3BA4",
+        "address": "034A3BA8",
         "length": 4
+    },
+    "REQUIRED_PENDING_FRAMES": {
+        "address": "034A3B90",
+        "length": 1
     },
     "REWARDS_AS_ITEMS": {
         "address": "03481E40",
@@ -1060,11 +1064,11 @@
         "length": 1
     },
     "defaultDDHeart": {
-        "address": "034A3BB4",
+        "address": "034A3BB8",
         "length": 6
     },
     "defaultHeart": {
-        "address": "034A3BBC",
+        "address": "034A3BC0",
         "length": 6
     },
     "dpad_sprite": {
@@ -1164,19 +1168,19 @@
         "length": 2
     },
     "input_icon_height": {
-        "address": "034A3BCE",
+        "address": "034A3BD2",
         "length": 1
     },
     "input_icon_width": {
-        "address": "034A3BCF",
+        "address": "034A3BD3",
         "length": 1
     },
     "input_number_height": {
-        "address": "034A3BCC",
+        "address": "034A3BD0",
         "length": 1
     },
     "input_number_width": {
-        "address": "034A3BCD",
+        "address": "034A3BD1",
         "length": 1
     },
     "item_digit_sprite": {
@@ -1220,7 +1224,7 @@
         "length": 4
     },
     "left_alignment": {
-        "address": "034A3BCA",
+        "address": "034A3BCE",
         "length": 2
     },
     "linkhead_skull_sprite": {
@@ -1308,7 +1312,7 @@
         "length": 256
     },
     "rupee_colors": {
-        "address": "034A3BA8",
+        "address": "034A3BAC",
         "length": 12
     },
     "rupee_digit_sprite": {
@@ -1384,7 +1388,7 @@
         "length": 496
     },
     "top_alignment": {
-        "address": "034A3BC8",
+        "address": "034A3BCC",
         "length": 2
     },
     "trade_quest_items": {
