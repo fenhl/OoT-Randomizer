@@ -118,7 +118,7 @@ void display_song_name(z64_disp_buf_t* db) {
         frames++;
         uint8_t top = 7;
         uint8_t left = 7;
-        uint8_t bgm_found = -1;
+        int8_t bgm_found = -1;
         for (uint8_t i = 0; i < 47; i++) {
             if (z64_Audio_GetActiveSeqId(0) == bgm_sequence_ids[i]) {
                 bgm_found = i;
@@ -137,10 +137,14 @@ void display_song_name(z64_disp_buf_t* db) {
                 }
                 subStringNameLength++;
             }
+            gSPDisplayList(db->p++, &setup_db);
+            gDPPipeSync(db->p++);
             gDPSetPrimColor(db->p++, 0, 0, 0, 0, 0, alpha);
             text_print_size(db, subStringName, left + 1, top + 1, TEXT_WIDTH, TEXT_HEIGHT);
+            gDPPipeSync(db->p++);
             gDPSetPrimColor(db->p++, 0, 0, 255, 255, 255, alpha);
             text_print_size(db, subStringName, left, top, TEXT_WIDTH, TEXT_HEIGHT);
+            gDPPipeSync(db->p++);
         }
     }
 }
@@ -160,8 +164,11 @@ void display_song_name_on_file_select(z64_disp_buf_t* db) {
             }
             subStringNameLength++;
         }
+        gSPDisplayList(db->p++, &setup_db);
+        gDPPipeSync(db->p++);
         gDPSetPrimColor(db->p++, 0, 0, 0, 0, 0, alpha);
         text_print_size(db, subStringName, left + 1, top + 1, TEXT_WIDTH, TEXT_HEIGHT);
+        gDPPipeSync(db->p++);
         gDPSetPrimColor(db->p++, 0, 0, 255, 255, 255, alpha);
         text_print_size(db, subStringName, left, top, TEXT_WIDTH, TEXT_HEIGHT);
     }

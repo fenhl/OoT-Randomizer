@@ -43,7 +43,8 @@
         { "location": "Spirit Temple Adult Lower", "types": ["dual"] },
         { "location": "Shadow Temple Invisible Blades Chests", "types": ["dual"] },
         { "location": "Shadow Temple Spike Walls Room", "types": ["dual"] },
-        { "location": "Ganons Castle Spirit Trial Chests", "types": ["dual"] }
+        { "location": "Ganons Castle Spirit Trial Chests", "types": ["dual"] },
+        { "location": "Dodongos Cavern Upper Business Scrubs", "types": ["dual"] }
     ],
     "add_items":             [],
     "remove_items":          [
