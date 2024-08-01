@@ -38,6 +38,7 @@ void c_init() {
 }
 
 void before_game_state_update() {
+    rando_display_buffer_reset();
     everdrive_frame(true);
     handle_pending_items();
     handle_dpad();
@@ -49,49 +50,19 @@ void before_game_state_update() {
     display_misc_messages();
 }
 
-void close_rando_display_buffer() {
-    char error_msg[256];
-
-    OPEN_DISPS(z64_ctxt.gfx);
-
-#if DEBUG_MODE
-    if (((int) debug_db->p - (int) debug_db->buf) > debug_db->size) {
-        sprintf(error_msg, "size = %x\nmax = %x\np = %p\nbuf = %p\nd = %p", ((int) debug_db->p - (int) debug_db->buf),
-                debug_db->size, debug_db->p, debug_db->buf, debug_db->d);
-        Fault_AddHungupAndCrashImpl("Debug display buffer exceeded!", error_msg);
-    }
-
-    gSPEndDisplayList(debug_db->p++);
-    debug_db->p = &debug_db->buf[0];
-    gSPDisplayList(OVERLAY_DISP++, debug_db->buf);
-#endif
-
-    if (((int) rando_db->p - (int) rando_db->buf) > rando_db->size) {
-        sprintf(error_msg, "size = %x\nmax = %x\np = %p\nbuf = %p\nd = %p", ((int) rando_db->p - (int) rando_db->buf),
-                rando_db->size, rando_db->p, rando_db->buf, rando_db->d);
-        Fault_AddHungupAndCrashImpl("Randomizer display buffer exceeded!", error_msg);
-    }
-
-    gSPEndDisplayList(rando_db->p++);
-    rando_db->p = &rando_db->buf[0];
-    gSPDisplayList(OVERLAY_DISP++, rando_db->buf);
-
-    CLOSE_DISPS();
-}
-
 void after_game_state_update() {
     // Checks if the prerender screen is being drawn before drawing new HUD things.
     // Else this will cause graphical and/or lag issues on some emulators when pausing.
     if (R_PAUSE_BG_PRERENDER_STATE != PAUSE_BG_PRERENDER_PROCESS) {
-        draw_dungeon_info(rando_db);
-        draw_triforce_count(rando_db);
-        draw_boss_key(&z64_game, rando_db);
-        draw_silver_rupee_count(&z64_game, rando_db);
-        draw_illegal_model_text(rando_db);
-        draw_input_viewer(rando_db);
-        display_song_name(rando_db);
+        draw_dungeon_info(&rando_overlay_db);
+        draw_triforce_count(&rando_overlay_db);
+        draw_boss_key(&z64_game, &rando_overlay_db);
+        draw_silver_rupee_count(&z64_game, &rando_overlay_db);
+        draw_illegal_model_text(&rando_overlay_db);
+        draw_input_viewer(&rando_overlay_db);
+        display_song_name(&rando_overlay_db);
 #if DEBUG_MODE
-        debug_utilities(debug_db);
+        debug_utilities(&debug_db);
 #endif
     }
     close_rando_display_buffer();
