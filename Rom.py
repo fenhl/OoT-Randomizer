@@ -115,7 +115,7 @@ class Rom(BigStream):
             if platform.machine() in ('arm64', 'aarch64', 'aarch64_be', 'armv8b', 'armv8l'):
                 subcall = [sub_dir + "Decompress_ARM64", input_file, output_file]
             elif platform.machine() in ('arm', 'armv7l', 'armhf'):
-                subcall = [sub_dir + "Decompress_ARM32", input_file, output_file]
+                raise RuntimeError('Unsupported computer architecture for decompression. Please supply an already decompressed ROM.')
             else:
                 subcall = [sub_dir + "Decompress", input_file, output_file]
         elif platform.system() == 'Darwin':

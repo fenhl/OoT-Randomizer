@@ -1,0 +1,3 @@
+[submodule "OoT_Decompressor"]
+	path = bin/Decompress/src
+	url = https://github.com/fenhl/OoT_Decompressor.git
