@@ -4,7 +4,7 @@ default-members = ["."]
 resolver = "2"
 
 [workspace.package]
-version = "8.1.67-fenhl.1.riir.1"
+version = "8.1.67-fenhl.1.riir.2"
 edition = "2021"
 
 [workspace.lints.rust]
@@ -47,7 +47,7 @@ collect-mac = "0.1"
 futures = "0.3"
 iced = { version = "0.4", features = ["pure", "tokio"] }
 iced_native = "0.5"
-itertools = "0.12"
+itertools = "0.13"
 lazy-regex = "3"
 pyo3 = { version = "0.21", features = ["anyhow", "auto-initialize", "extension-module"] }
 rand = "0.8"
