@@ -668,7 +668,7 @@
         "length": 1
     },
     "PASSWORD": {
-        "address": "03481E41",
+        "address": "03481E40",
         "length": 6
     },
     "PAYLOAD_START": {
@@ -740,7 +740,7 @@
         "length": 1
     },
     "REWARDS_AS_ITEMS": {
-        "address": "03481E40",
+        "address": "03481E46",
         "length": 1
     },
     "RNG_SEED_INT": {

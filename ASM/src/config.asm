@@ -261,11 +261,11 @@ CFG_RANDO_VERSION_SUPPLEMENTARY:
 CFG_BIGOCTO_OVERRIDE_KEY:
 .word 0
 .word 0
-REWARDS_AS_ITEMS:
-.byte 0x00
 .area 6, 0x00
 PASSWORD:
 .endarea
+REWARDS_AS_ITEMS:
+.byte 0x00
 .align 4
 
 ; These configuration values are given fixed addresses to aid auto-trackers.

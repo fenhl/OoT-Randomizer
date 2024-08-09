@@ -81,7 +81,6 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
   * The Lens of Truth can be in a foolish area if Treasure Chest Game keys are shuffled and all relevant “lensless” tricks are enabled.
 * Bug fixes:
   * Missing info on randomized settings in spoilers is fixed ([#2256](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2256))
-  * Jumping over a blue warp no longer causes it to fail to activate ([#2251](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2251))
   * The randomizer no longer silently ignores the `Decompress` program failing ([#2229](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2229))
   * Areas where all locations are already hinted can once again no longer be hinted Barren ([#2220](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2220))
   * A trade item obtained from a skipped location is no longer lost upon obtaining a different item from the same trade quest ([#2217](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2217))
