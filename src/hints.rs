@@ -1,14 +1,7 @@
 use {
     std::{
         borrow::Cow,
-        collections::{
-            VecDeque,
-            hash_map::DefaultHasher,
-        },
-        hash::{
-            Hash as _,
-            Hasher as _,
-        },
+        collections::VecDeque,
         iter,
         mem,
     },
@@ -16,15 +9,13 @@ use {
         create_exception,
         exceptions::*,
         prelude::*,
-        pyclass::CompareOp,
-        types::PyBool,
     },
     crate::entrance_shuffle::EntranceKind,
 };
 
 macro_rules! hint_areas {
     ($($variant:ident, $vague:expr, $clear:expr, $display:expr, $short:expr, $color:expr, $dungeon:expr);* $(;)?) => {
-        #[pyclass]
+        #[pyclass(frozen, eq, hash)]
         #[allow(non_camel_case_types)] //TODO
         #[derive(Clone, Copy, PartialEq, Eq, Hash)]
         enum HintArea {
@@ -130,21 +121,6 @@ macro_rules! hint_areas {
                     $(stringify!($variant) => Ok(Self::$variant),)*
                     _ => Err(PyKeyError::new_err(format!("No such hint area: {s}"))),
                 }
-            }
-
-            // override since default impl raises on foreign rhs
-            fn __richcmp__(&self, py: Python<'_>, rhs: &Self, op: CompareOp) -> Py<PyAny> {
-                match op {
-                    CompareOp::Eq => PyBool::new_bound(py, self == rhs).to_owned().into_any().unbind(),
-                    CompareOp::Ne => PyBool::new_bound(py, self != rhs).to_owned().into_any().unbind(),
-                    _ => py.NotImplemented(),
-                }
-            }
-
-            fn __hash__(&self) -> isize {
-                let mut hasher = DefaultHasher::new();
-                self.hash(&mut hasher);
-                hasher.finish() as _
             }
 
             fn __str__(&self) -> &'static str {

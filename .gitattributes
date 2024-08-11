@@ -16,6 +16,5 @@
 /data/generated/* text -diff linguist-generated=true
 
 /bin/Compress/Compress*     binary
-/bin/Decompress/Decompress* binary
 /bin/gzinject/gzinject*     binary
 /bin/minibsdiff/minibsdiff* binary

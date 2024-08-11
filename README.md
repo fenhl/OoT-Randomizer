@@ -12,6 +12,7 @@ Differences between `riir` and [`dev-fenhl`](https://github.com/fenhl/OoT-Random
 
 * Additional setup required. For now, it is recommended to run the randomizer via the `test-rs.py` script.
 * Performance improvements.
+* Decompressing the base rom works on all platforms.
 
 Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [`Dev-R`](https://github.com/Roman971/OoT-Randomizer):
 

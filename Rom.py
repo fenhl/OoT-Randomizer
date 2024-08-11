@@ -8,6 +8,7 @@ from collections.abc import Iterator, Sequence
 from typing import Optional
 
 from Models import restrictiveBytes
+import rs.rom
 from Utils import is_bundled, subprocess_args, local_path, data_path, get_version_bytes
 from crc import calculate_crc
 from ntype import BigStream
@@ -112,31 +113,7 @@ class Rom(BigStream):
             pass
 
     def decompress_rom(self, input_file: str, output_file: str, verify_crc: bool = True, *, pal: bool = False) -> None:
-        sub_dir = "./" if is_bundled() else "bin/Decompress/"
-
-        if platform.system() == 'Windows':
-            if platform.machine() == 'AMD64':
-                subcall = [sub_dir + "Decompress.exe", input_file, output_file]
-            elif platform.machine() == 'ARM64':
-                subcall = [sub_dir + "Decompress_ARM64.exe", input_file, output_file]
-            else:
-                subcall = [sub_dir + "Decompress32.exe", input_file, output_file]
-        elif platform.system() == 'Linux':
-            if platform.machine() in ('arm64', 'aarch64', 'aarch64_be', 'armv8b', 'armv8l'):
-                subcall = [sub_dir + "Decompress_ARM64", input_file, output_file]
-            elif platform.machine() in ('arm', 'armv7l', 'armhf'):
-                subcall = [sub_dir + "Decompress_ARM32", input_file, output_file]
-            else:
-                subcall = [sub_dir + "Decompress", input_file, output_file]
-        elif platform.system() == 'Darwin':
-            if platform.machine() == 'arm64':
-                subcall = [sub_dir + "Decompress_ARM64.out", input_file, output_file]
-            else:
-                subcall = [sub_dir + "Decompress.out", input_file, output_file]
-        else:
-            raise RuntimeError('Unsupported operating system for decompression. Please supply an already decompressed ROM.')
-
-        subprocess.check_call(subcall, **subprocess_args())
+        rs.rom.decompress_rom(input_file, output_file)
         self.read_rom(output_file, verify_crc=verify_crc, pal=pal)
 
     def write_byte(self, address: int, value: int) -> None:

@@ -34,7 +34,13 @@ impl SearchCache {
         Ok(Self {
             child_queue: self.child_queue.iter().map(|elt| elt.clone_ref(py)).collect(),
             adult_queue: self.adult_queue.iter().map(|elt| elt.clone_ref(py)).collect(),
-            visited_locations: PySet::new_bound(py, PySetMethods::iter(self.visited_locations.bind(py)).map(|elt| elt.into_gil_ref()))?.unbind(),
+            visited_locations: {
+                let visited_locations = PySet::empty_bound(py)?;
+                for elt in self.visited_locations.bind(py).iter() {
+                    visited_locations.add(elt)?;
+                }
+                visited_locations.unbind()
+            },
             child_regions: PyDictMethods::iter(self.child_regions.bind(py)).into_py_dict_bound(py).unbind(),
             adult_regions: PyDictMethods::iter(self.adult_regions.bind(py)).into_py_dict_bound(py).unbind(),
         })

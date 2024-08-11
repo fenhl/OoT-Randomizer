@@ -4,7 +4,7 @@ default-members = ["."]
 resolver = "2"
 
 [workspace.package]
-version = "8.1.69-fenhl.1.riir.1"
+version = "8.1.69-fenhl.1.riir.2"
 edition = "2021"
 
 [workspace.lints.rust]
@@ -28,7 +28,7 @@ edition.workspace = true
 
 [lints.rust]
 rust_2018_idioms = "deny"
-unsafe_code = "forbid"
+#unsafe_code = "forbid" # PyO3 generates unsafe code
 unused = "deny"
 #unused_crate_dependencies = "deny" #TODO split binaries into separate crates
 unused_import_braces = "deny"
@@ -44,18 +44,19 @@ crate-type = ["cdylib"]
 anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 collect-mac = "0.1"
+decompress = { git = "https://github.com/fenhl/OoT_Decompressor", branch = "riir" }
 futures = "0.3"
 iced = { version = "0.4", features = ["pure", "tokio"] }
 iced_native = "0.5"
 itertools = "0.13"
 lazy-regex = "3"
-pyo3 = { version = "0.21", features = ["anyhow", "auto-initialize", "extension-module"] }
+pyo3 = { version = "0.22", features = ["anyhow", "auto-initialize", "extension-module"] }
 rand = "0.8"
 rfd = "0.14"
 semver = "1"
 thiserror = "1"
 tokio = { version = "1", features = ["rt-multi-thread"] }
-wheel = { git = "https://github.com/fenhl/wheel", branch = "main" }
+wheel = { git = "https://github.com/fenhl/wheel", branch = "main", features = ["pyo3"] }
 
 [build-dependencies]
 pyo3-build-config = "0.21.2"

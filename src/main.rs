@@ -24,8 +24,8 @@ enum LogLevel {
 }
 
 impl LogLevel {
-    fn try_into_py<'p>(&self, py: Python<'p>) -> PyResult<&'p PyAny> {
-        let logging = py.import("logging")?;
+    fn try_into_py<'p>(&self, py: Python<'p>) -> PyResult<Bound<'p, PyAny>> {
+        let logging = py.import_bound("logging")?;
         match self {
             Self::Error => logging.getattr("ERROR"),
             Self::Warning => logging.getattr("WARNING"),
@@ -73,8 +73,8 @@ enum Error {
     #[error(transparent)] Python(#[from] PyErr),
 }
 
-impl<'a> From<pyo3::PyDowncastError<'a>> for Error {
-    fn from(e: pyo3::PyDowncastError<'a>) -> Self {
+impl<'a, 'py> From<pyo3::DowncastError<'a, 'py>> for Error {
+    fn from(e: pyo3::DowncastError<'a, 'py>) -> Self {
         Self::Python(e.into())
     }
 }
@@ -82,16 +82,17 @@ impl<'a> From<pyo3::PyDowncastError<'a>> for Error {
 #[wheel::main]
 fn main(Args { log_level, settings_string, convert_settings, settings, settings_preset, seed, no_log, output_settings, diff_rom }: Args) -> Result<i32, Error> {
     match Python::with_gil(|py| {
-        let sys = py.import("sys")?;
+        let sys = py.import_bound("sys")?;
         sys.getattr("path")?.call_method1("append", (env!("CARGO_MANIFEST_DIR"),))?;
-        let json = py.import("json")?;
-        let settings_mod = py.import("Settings")?;
-        let utils = py.import("Utils")?;
+        let json = py.import_bound("json")?;
+        let settings_mod = py.import_bound("Settings")?;
+        let utils = py.import_bound("Utils")?;
         utils.call_method0("check_python_version")?;
-        let settings_base = PyDict::new(py);
+        let settings_base = PyDict::new_bound(py);
         if let Some(preset_name) = settings_preset {
             if let Some(preset) = settings_mod.call_method0("get_preset_files")?.iter()?.filter_map(|filename| filename.map_err(Error::from).and_then(|filename| {
-                let presets = json.call_method1("loads", (fs::read_to_string(filename.extract::<&str>()?)?,))?.downcast::<PyDict>()?;
+                let presets = json.call_method1("loads", (fs::read_to_string(filename.extract::<&str>()?)?,))?;
+                let presets = presets.downcast::<PyDict>()?;
                 presets.get_item(&preset_name).map_err(Error::from) //TODO deal with preset aliases
             }).transpose()).next() {
                 settings_base.call_method1("update", (preset?,))?;
@@ -103,7 +104,8 @@ fn main(Args { log_level, settings_string, convert_settings, settings, settings_
         if settings.as_ref().map_or(false, |settings| settings == Path::new("-")) {
             settings_base.call_method1("update", (json.call_method1("loads", (sys.getattr("stdin")?.call_method0("read")?,))?,))?;
         } else if settings.is_some() || settings_base.is_empty() { // avoid implicitly using settings.sav with presets
-            let settings_path = utils.call_method1("local_path", (settings.as_deref().unwrap_or(Path::new("settings.sav")),))?.extract::<&str>()?;
+            let settings_path = utils.call_method1("local_path", (settings.as_deref().unwrap_or(Path::new("settings.sav")),))?;
+            let settings_path = settings_path.extract::<&str>()?;
             if let Err(e) = fs::read_to_string(settings_path).map_err(Error::from).and_then(|settings| {
                 settings_base.call_method1("update", (json.call_method1("loads", (settings,))?,))?;
                 Ok(())
@@ -128,7 +130,7 @@ fn main(Args { log_level, settings_string, convert_settings, settings, settings_
             }
             return Ok(0)
         }
-        py.import("OoTRandomizer")?.call_method1("start", (settings, log_level.try_into_py(py)?, no_log, diff_rom))?;
+        py.import_bound("OoTRandomizer")?.call_method1("start", (settings, log_level.try_into_py(py)?, no_log, diff_rom))?;
         Ok(0)
     }) {
         Err(Error::Python(e)) => {
