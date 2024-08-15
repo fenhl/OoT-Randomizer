@@ -83,7 +83,6 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
 * Bug fixes:
   * Missing info on randomized settings in spoilers is fixed ([#2256](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2256))
   * The randomizer no longer silently ignores the `Decompress` program failing ([#2229](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2229))
-  * Areas where all locations are already hinted can once again no longer be hinted Barren ([#2220](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2220))
   * A trade item obtained from a skipped location is no longer lost upon obtaining a different item from the same trade quest ([#2217](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2217))
   * The ocarina buttons required to play the Song of Time are now included on the path of time ([#2203](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2203))
   * The heart piece in Gerudo Fortress now behaves correctly when already at 20 hearts, and is considered in glitched logic (part of [#2179](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2179))
@@ -239,6 +238,7 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * Fix inverted cursor in the pause menu when pausing while in first person with the `Uninvert Y-Axis in First Person Camera` cosmetic setting enabled.
 * Fix some inconsistent tags for wonderitem locations in the `Exclude Locations` list.
 * Fix swapped `Hideout Kitchen Wonderitem` and `Hideout Kitchen Stove Wonderitem` locations.
+* Fix a bug where a foolish hint could be generated for an area despite not having any shuffled item locations.
 
 #### New Speedups
 * Meg will now take less time before respawning after getting hurt.

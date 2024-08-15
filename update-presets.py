@@ -3,7 +3,7 @@
 Usage:
   update-presets.py [options]
   update-presets.py add <preset>
-  update-presets.py list-non-default <preset>
+  update-presets.py list-non-default [--rust] <preset>
   update-presets.py diff <left> <right>
   update-presets.py (-h | --help)
 
@@ -13,6 +13,7 @@ Options:
   --from=<rev>       update presets to match the given git commit
   --hook             run noninteractively for git pre-commit hook purposes
   --preset=<preset>  only update the named preset
+  --rust             list non-default settings in Rust syntax appropriate for the midos.house codebase
 """
 
 import sys
@@ -106,7 +107,15 @@ if __name__ == '__main__':
         if preset is None:
             preset = json.loads(subprocess.run([sys.executable, 'OoTRandomizer.py', '--convert_settings', '--settings_string', arguments['<preset>']], stdout=subprocess.PIPE, encoding='utf-8', check=True).stdout)
         non_default = {name: value for name, value in preset.items() if value != SETTINGS_DICT[name].default}
-        print(json.dumps(non_default, indent=4))
+        if arguments['--rust']:
+            print('collect![')
+            for name, value in non_default.items():
+                if name == 'aliases':
+                    continue
+                print('\n    '.join(f'    format!("{name}") => json!({json.dumps(value, indent=4)}),'.splitlines())) #TODO trailing commas in arrays/objects
+            print(']')
+        else:
+            print(json.dumps(non_default, indent=4))
     elif arguments['diff']:
         if arguments['<left>'] == 'default':
             left = {setting_name: setting.default for setting_name, setting in SETTINGS_DICT.items() if setting.shared or setting_name == 'aliases'}
