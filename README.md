@@ -223,6 +223,7 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * A boss key icon will now be displayed near the small key icon in dungeons where it has been obtained.
 * Fairy pots are now included in `Shuffle Pots`.
 * A message is shown the first time a seed with No Logic is generated, to warn the user that the seed may be unbeatable.
+* New hint distribution field `excluded_goal_categories` to disable specific goal categories.
 
 #### Bug Fixes
 * Goal hints can now hint items required to defeat Ganon even if they're not required for the rainbow bridge, Ganon's boss key, or the trials. These items will be hinted as being on the "path of the hero".
@@ -254,6 +255,7 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * Pause menu has been modified so that equip swap will work again.
 * Major items from pots, crates, etc now display above Link's head while the text box is open.
 * Gameplay is no longer interrupted if you receive a junk item from another player in multiworld.
+* Removed the potentially confusing Master Sword icon from the Rainbow Bridge page of the adult Temple of Time altar text.
 
 ### 8.1
 
