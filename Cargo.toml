@@ -4,7 +4,7 @@ default-members = ["."]
 resolver = "2"
 
 [workspace.package]
-version = "8.1.75-fenhl.1.riir.1"
+version = "8.1.75-fenhl.1.riir.2"
 edition = "2021"
 
 [workspace.lints.rust]
@@ -59,4 +59,4 @@ tokio = { version = "1", features = ["rt-multi-thread"] }
 wheel = { git = "https://github.com/fenhl/wheel", branch = "main", features = ["pyo3"] }
 
 [build-dependencies]
-pyo3-build-config = "0.21.2"
+pyo3-build-config = "0.22"
