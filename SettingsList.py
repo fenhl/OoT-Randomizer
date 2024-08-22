@@ -3918,7 +3918,16 @@ class SettingInfos:
             Only applied in the original version of the dungeon, since
             in Master Quest you don't need to bring Ruto up.
         ''',
-        default        = False,
+        shared         = True,
+    )
+
+    fast_shadow_boat = Checkbutton(
+        gui_text       = 'Fast Shadow Boat',
+        gui_tooltip    = '''\
+            The boat sequence in Shadow Temple will be massively sped up.
+            The two Stalfos will still fall on the boat, but you
+            won't have time to fight them.
+        ''',
         shared         = True,
     )
 
