@@ -68,7 +68,9 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
   * “SGL 2023 Tournament” is a game mode that was used for [a tournament at SpeedGaming Live 2023](https://midos.house/event/sgl/2023live) as well as [an online tournament](https://midos.house/event/sgl/2023onl), taken from [Elagatua's `feature/sgl-2023` branch](https://github.com/Elagatua/OoT-Randomizer/tree/feature/sgl-2023). Note that the tournament itself was played on that branch, not this one. See [the official document](https://docs.google.com/document/d/1EACqBl8ZOreD6xT5jQ2HrdLOnpBpKyjS3FUYK8XFeqg/edit) for details.
   * “SDG Bingo Tournament 3” is a variant of “Bingo” used for an ongoing tournament. Note that the tournament itself is being played on version 8.0 of the randomizer, not this branch. See [the official document](https://docs.google.com/document/d/1fpDPSBGH9YQeC9W3P1SMDE7FhoikVgbFTJapqKnMmL4/edit) for details.
 * Other changes:
+  * The cutscene that plays when defeating Morpha is shorter ([#2270](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2270))
   * The first text box from the carpenters in the Thieves' Hideout is skipped ([#2232](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2232))
+  * Biggoron's dialog after turning in eyedrops is less misleading ([#2180](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2180))
   * On Wii Virtual Console, additional information is displayed while the game is loading and when it crashes ([#2153](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2153))
   * The magic meter has a new model to prepare for shuffled magic refills ([#2081](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2081))
   * Plandos can specify different settings for each world ([#2055](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2055))
@@ -81,7 +83,6 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
   * The GUI tweaks made by [`Dev-R`](https://github.com/Roman971/OoT-Randomizer) are further adjusted to balance consistency with [main `Dev`](https://github.com/OoTRandomizer/OoT-Randomizer) and ease of use.
   * The Lens of Truth can be in a foolish area if Treasure Chest Game keys are shuffled and all relevant “lensless” tricks are enabled.
 * Bug fixes:
-  * Missing info on randomized settings in spoilers is fixed ([#2256](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2256))
   * The randomizer no longer silently ignores the `Decompress` program failing ([#2229](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2229))
   * A trade item obtained from a skipped location is no longer lost upon obtaining a different item from the same trade quest ([#2217](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2217))
   * The ocarina buttons required to play the Song of Time are now included on the path of time ([#2203](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2203))
@@ -240,6 +241,7 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * Fix some inconsistent tags for wonderitem locations in the `Exclude Locations` list.
 * Fix swapped `Hideout Kitchen Wonderitem` and `Hideout Kitchen Stove Wonderitem` locations.
 * Fix a bug where a foolish hint could be generated for an area despite not having any shuffled item locations.
+* Fix a bug where spoiler logs' `randomized_settings` fields could be incomplete.
 
 #### New Speedups
 * Meg will now take less time before respawning after getting hurt.
