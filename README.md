@@ -17,6 +17,7 @@ Differences between `riir` and [`dev-fenhl`](https://github.com/fenhl/OoT-Random
 Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [`Dev-R`](https://github.com/Roman971/OoT-Randomizer):
 
 * New settings and options:
+  * New “Fast Shadow Boat” setting to shorten the boat ride autoscroller in the Shadow temple ([#2239](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2239))
   * New “Shuffle Gerudo Fortress Heart Piece” setting to control the behavior of this check with “Shuffle Thieves' Hideout Entrances” ([#2179](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2179))
   * New “Frogs Ocarina Game” option for the “Randomize Ocarina Song Notes” setting ([#2064](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2064))
   * New “Shuffle Ganon's Tower Entrance” setting ([#2063](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2063))
