@@ -1426,6 +1426,7 @@
         "region_name": "Ganons Castle Grounds",
         "scene": "Castle Grounds",
         "hint": "OUTSIDE_GANONS_CASTLE",
+        "provides_time": "DAMPE",
         "locations": {
             "OGC GS": "True"
         },
@@ -1439,6 +1440,7 @@
         "region_name": "Ganons Castle Ledge",
         "scene": "Castle Grounds",
         "hint": "OUTSIDE_GANONS_CASTLE",
+        "provides_time": "DAMPE",
         "exits": {
             "Ganons Castle Grounds": "can_build_rainbow_bridge",
             "Ganons Castle Lobby": "at_dampe_time"
