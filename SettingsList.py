@@ -2785,6 +2785,11 @@ class SettingInfos:
             Randomize where the the blue warps that appear
             after defeating bosses lead to.
 
+            Note that unlike in the vanilla game, blue warps in the
+            randomizer set the time of day to noon (or morning in
+            Morpha's case) even on repeated use, and logic may
+            require you to take advantage of this.
+
             'Vanilla':
             The blue warps always lead to their vanilla locations,
             regardless of where the boss room is. For example, the
