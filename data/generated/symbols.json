@@ -32,7 +32,7 @@
         "length": 4
     },
     "AUDIO_THREAD_MEM_START": {
-        "address": "034F7940",
+        "address": "034F7A60",
         "length": 0
     },
     "AUTO_TRACKER_CONTEXT": {
