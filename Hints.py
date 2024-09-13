@@ -1557,7 +1557,7 @@ def build_gossip_hints(spoiler: Spoiler, worlds: list[World]) -> None:
     for world in worlds:
         for location in world.hinted_dungeon_reward_locations.values():
             if world.settings.enhance_map_compass:
-                if world.mixed_pools_bosses or world.settings.shuffle_dungeon_rewards not in ('vanilla', 'reward'):
+                if world.entrance_rando_reward_hints:
                     # In these settings, there is not necessarily one dungeon reward in each dungeon,
                     # so we instead have each compass hint the area of its dungeon's vanilla reward.
                     compass_locations = [

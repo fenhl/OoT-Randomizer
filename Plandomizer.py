@@ -1299,7 +1299,7 @@ class Distribution:
             ':enable_distribution_file': self.settings.enable_distribution_file,
         }
 
-        if not self.settings.password_lock:
+        if not self.settings.password_lock or not spoiler:
             self_dict.pop('password')
 
         world_dist_dicts = [world_dist.to_json() for world_dist in self.world_dists]

@@ -80,7 +80,7 @@ Differences between `dev-fenhl` and [`Dev-R`](https://github.com/Roman971/OoT-Ra
   * The GUI tweaks made by [`Dev-R`](https://github.com/Roman971/OoT-Randomizer) are further adjusted to balance consistency with [main `Dev`](https://github.com/OoTRandomizer/OoT-Randomizer) and ease of use.
   * The Lens of Truth can be in a foolish area if Treasure Chest Game keys are shuffled and all relevant “lensless” tricks are enabled.
 * Bug fixes:
-  * Blue warps now set time of day even on repeated use (based on [#2287](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2287))
+  * Blue warps setting time of day even on repeated use is now in logic (based on [#2287](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2287))
   * The randomizer no longer silently ignores the `Decompress` program failing ([#2229](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2229))
   * A trade item obtained from a skipped location is no longer lost upon obtaining a different item from the same trade quest ([#2217](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2217))
   * The ocarina buttons required to play the Song of Time are now included on the path of time ([#2203](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2203))
@@ -223,6 +223,7 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * Fairy pots are now included in `Shuffle Pots`.
 * A message is shown the first time a seed with No Logic is generated, to warn the user that the seed may be unbeatable.
 * New hint distribution field `excluded_goal_categories` to disable specific goal categories.
+* Pre-completed dungeons are crossed out in the dungeon overview menus (A or D-left on the inventory screen).
 
 #### Bug Fixes
 * Goal hints can now hint items required to defeat Ganon even if they're not required for the rainbow bridge, Ganon's boss key, or the trials. These items will be hinted as being on the "path of the hero".
@@ -257,6 +258,7 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * Major items from pots, crates, etc now display above Link's head while the text box is open.
 * Gameplay is no longer interrupted if you receive a junk item from another player in multiworld.
 * Removed the potentially confusing Master Sword icon from the Rainbow Bridge page of the adult Temple of Time altar text.
+* Blue warps now set time of day each time they're taken, fixing a potential softlock.
 
 ### 8.1
 
