@@ -61,7 +61,7 @@ seed_condition = lambda spoiler: True
 if not arguments['--no-rebuild']:
     subprocess.run(['rustup', 'update', 'nightly'], check=True)
     subprocess.run([sys.executable, 'crate/rust-n64-test/assets/build.py', *(['--release'] if arguments['--release'] else [])], check=True) #TODO --release flag doesn't do anything yet
-    subprocess.run(['cargo', 'build', '--lib', *(['--release'] if arguments['--release'] else [])], check=True)
+    subprocess.run(['cargo', 'build', *(['--release'] if arguments['--release'] else [])], check=True)
     shutil.copy(f'target/{"release" if arguments["--release"] else "debug"}/rs.dll', 'rs.pyd')
     if subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--', 'ASM']).returncode != 0: # any staged or unstaged changes to the ASM directory?
         subprocess.run(['wsl', 'ASM/build.py', '--compile-c'], check=True)

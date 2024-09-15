@@ -1,5 +1,3 @@
-#![allow(warnings)] //TODO
-
 use {
     std::{
         cmp::Ordering::*,

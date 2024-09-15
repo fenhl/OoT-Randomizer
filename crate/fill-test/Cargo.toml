@@ -1,21 +1,19 @@
 [package]
-name = "rust-n64-test"
+name = "fill-test"
 version.workspace = true
 edition.workspace = true
 
 [lints.rust]
 rust_2018_idioms = "deny"
-unexpected_cfgs = "allow" # custom target definition
-#unsafe_code = "forbid" # panic handler must be no_mangle
-unused = "deny"
+unsafe_code = "forbid"
+unused = "allow" #TODO
 unused_crate_dependencies = "deny"
 unused_import_braces = "deny"
 unused_lifetimes = "deny"
 unused_qualifications = "deny"
 warnings = "deny"
 
-[lib]
-crate-type = ["staticlib"]
-
-[build-dependencies]
-cbindgen = "0.27"
+[dependencies]
+collect-mac = "0.1"
+itertools = "0.13"
+rand = "0.8"

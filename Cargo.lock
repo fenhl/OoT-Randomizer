@@ -1148,6 +1148,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8c02a5121d4ea3eb16a80748c74f5549a5665e4c21333c6098f283870fbdea6"
 
 [[package]]
+name = "fill-test"
+version = "8.1.87-fenhl.1.riir.3"
+dependencies = [
+ "collect-mac",
+ "itertools",
+ "rand",
+]
+
+[[package]]
 name = "flate2"
 version = "1.0.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2410,25 +2419,38 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "33ea5043e58958ee56f3e15a90aee535795cd7dfd319846288d93c5b57d85cbe"
 
 [[package]]
-name = "ootr"
-version = "8.1.87-fenhl.1.riir.2"
+name = "ootr-cli"
+version = "8.1.87-fenhl.1.riir.3"
 dependencies = [
- "anyhow",
  "clap",
- "collect-mac",
- "decompress",
+ "pyo3",
+ "thiserror",
+ "wheel",
+]
+
+[[package]]
+name = "ootr-gui"
+version = "8.1.87-fenhl.1.riir.3"
+dependencies = [
  "futures",
  "iced",
  "iced_native",
- "itertools",
+ "pyo3",
+ "rfd",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
+name = "ootr-python"
+version = "8.1.87-fenhl.1.riir.3"
+dependencies = [
+ "anyhow",
+ "decompress",
  "lazy-regex",
  "pyo3",
  "pyo3-build-config",
- "rand",
- "rfd",
  "semver",
- "thiserror",
- "tokio",
  "wheel",
 ]
 
@@ -2927,7 +2949,7 @@ dependencies = [
 
 [[package]]
 name = "rust-n64-test"
-version = "8.1.87-fenhl.1.riir.2"
+version = "8.1.87-fenhl.1.riir.3"
 dependencies = [
  "cbindgen",
 ]

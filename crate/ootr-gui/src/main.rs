@@ -1,5 +1,3 @@
-#![allow(warnings)] //TODO
-
 use {
     std::sync::Arc,
     futures::future::FutureExt as _,
@@ -42,7 +40,7 @@ enum Error {
     #[error(transparent)] Task(#[from] tokio::task::JoinError),
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone /*TODO this requires PyO3's py-clone feature, remove*/)]
 enum Message {
     Done,
     Error(Arc<Error>),
@@ -78,19 +76,19 @@ impl Application for Gui {
                 //TODO if goal hints are used and there are more than 5 worlds, ask for confirmation due to long generation times
                 //TODO when generating a multiworld rom/wad, ask for the player number. The text field is initially blank
                 return Command::single(Action::Future(spawn_blocking(|| Python::with_gil(|py| {
-                    let sys = py.import("sys")?;
+                    let sys = py.import_bound("sys")?;
                     sys.getattr("path")?.call_method1("append", (env!("CARGO_MANIFEST_DIR"),))?;
-                    let settings = py.import("Settings")?.call_method1("Settings", (PyDict::new(py),))?; //TODO populate settings
+                    let settings = py.import_bound("Settings")?.call_method1("Settings", (PyDict::new_bound(py),))?; //TODO populate settings
                     let window = Window::new();
-                    py.import("HintList")?.call_method0("clearHintExclusionCache")?;
-                    let main = py.import("Main")?;
-                    let rom = main.call_method1("resolve_settings", (settings, window))?;
+                    py.import_bound("HintList")?.call_method0("clearHintExclusionCache")?;
+                    let main = py.import_bound("Main")?;
+                    let rom = main.call_method1("resolve_settings", (&settings, window))?;
                     let mut attempt = 0;
                     let spoiler = loop {
                         attempt += 1;
-                        match main.call_method1("generate", (settings, window)) {
+                        match main.call_method1("generate", (&settings, window)) {
                             Ok(spoiler) => break spoiler,
-                            Err(e) if e.is_instance(py, py.import("Fill")?.getattr("ShuffleError")?.downcast()?) => {
+                            Err(e) if e.is_instance_bound(py, py.import_bound("Fill")?.getattr("ShuffleError")?.downcast()?) => {
                                 if attempt == 10 { return Err(e) }
                             }
                             Err(e) => return Err(e),
@@ -108,7 +106,7 @@ impl Application for Gui {
                 if let Some(folder) = AsyncFileDialog::new().pick_folder().await {
                     spawn_blocking(move || Python::with_gil(move |py| {
                         settings.setattr(py, "output_dir", folder.path())?;
-                        py.import("Main")?.call_method1("patch_and_output", (settings, window, spoiler, rom))?;
+                        py.import_bound("Main")?.call_method1("patch_and_output", (settings, window, spoiler, rom))?;
                         PyResult::Ok(())
                     })).await??
                 }

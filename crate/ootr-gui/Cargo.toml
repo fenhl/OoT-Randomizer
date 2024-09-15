@@ -1,0 +1,26 @@
+[package]
+name = "ootr-gui"
+version.workspace = true
+edition.workspace = true
+
+[lints.rust]
+rust_2018_idioms = "deny"
+#unsafe_code = "forbid" # PyO3 generates unsafe code
+unused = "deny"
+unused_crate_dependencies = "deny"
+unused_import_braces = "deny"
+unused_lifetimes = "deny"
+unused_qualifications = "deny"
+warnings = "deny"
+
+[dependencies]
+futures = "0.3"
+iced = { version = "0.4", features = ["pure", "tokio"] }
+iced_native = "0.5"
+pyo3 = { version = "0.22", features = [
+    "auto-initialize",
+    "py-clone", #TODO remove
+] }
+rfd = "0.14"
+thiserror = "1"
+tokio = { version = "1", features = ["rt-multi-thread"] }

@@ -23,6 +23,6 @@ with open('Cargo.lock', encoding='utf-8') as f:
 if old_cargo_lock == new_cargo_lock: #TODO more precisely compare the version field
     sys.exit('Missing version bump in Cargo.lock')
 
-subprocess.run(['cargo', 'build', '--lib', '--release'], check=True)
-subprocess.run(['cargo', 'build', '--release', '--bin=ootr'], check=True)
+subprocess.run(['cargo', 'check', '--workspace', '--exclude=rust-n64-test'], check=True)
+subprocess.run(['cargo', 'build', '--release'], check=True)
 shutil.copyfile('target/release/rs.dll', 'rs.pyd')

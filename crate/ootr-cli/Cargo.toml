@@ -1,0 +1,13 @@
+[package]
+name = "ootr-cli"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+pyo3 = { version = "0.22", features = ["auto-initialize"] }
+thiserror = "1"
+wheel = { git = "https://github.com/fenhl/wheel", branch = "main", features = ["pyo3"] }
