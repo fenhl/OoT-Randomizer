@@ -117,7 +117,7 @@ void draw_flying_pot_hack(z64_actor_t* actor, z64_game_t* game) {
     draw_pot(actor, game);
 }
 
-void ObjTsubo_SpawnCollectible_Hack(z64_actor_t *this, z64_game_t *game) {
+void ObjTsubo_SpawnCollectible_Hack(z64_actor_t* this, z64_game_t* game) {
     // If the pot contains an override that hasn't been collected, always drop
     xflag_t* flag = &(Actor_GetAdditionalData(this)->flag);
     if (flag->all && !Get_NewFlag(flag)) {
