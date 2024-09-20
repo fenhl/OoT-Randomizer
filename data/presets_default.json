@@ -3837,14 +3837,14 @@
             "Claim Check"
         ]
     },
-    "Standard Weekly (2024-09-13)": {
+    "Standard Weekly (2024-09-20)": {
         "aliases": [
             "Standard Weekly (Latest)",
             "weekly"
         ],
         "language": "english",
         "show_seed_info": true,
-        "user_message": "Standard Weekly (2024-09-13)",
+        "user_message": "Standard Weekly (2024-09-20)",
         "world_count": 1,
         "create_spoiler": true,
         "password_lock": false,
@@ -3919,7 +3919,7 @@
         "shuffle_gerudo_valley_river_exit": "off",
         "owl_drops": "off",
         "warp_songs": "off",
-        "shuffle_child_spawn": "off",
+        "shuffle_child_spawn": "balanced",
         "shuffle_adult_spawn": "off",
         "blue_warps": "dungeon",
         "exclusive_one_ways": false,
