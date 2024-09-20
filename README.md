@@ -75,7 +75,6 @@ Differences between `dev-fenhl` and [`Dev-R`](https://github.com/Roman971/OoT-Ra
   * Support for multiworld on EverDrive ([#2042](https://github.com/OoTRandomizer/OoT-Randomizer/issues/2042))
   * Some settings have been renamed for clarity ([#1560](https://github.com/OoTRandomizer/OoT-Randomizer/pull/1560))
   * The conditions for forcing one-way entrances that lead to the Bolero, Nocturne, and Requiem warp pads have been adjusted to increase variety with some settings, such as “Guarantee Reachable Locations” set to “All Goals”, “Shuffle Dungeon Rewards”, or “Mix Entrance Pools” (based on [#1440](https://github.com/OoTRandomizer/OoT-Randomizer/pull/1440))
-  * New optional `one_hint_per_goal` hint distribution field which can be used to override the heuristic for how Goal hints are selected based on settings (based on [Elagatua's `feature/sgl-2023` branch](https://github.com/Elagatua/OoT-Randomizer/tree/feature/sgl-2023))
   * Gold skulltula tokens can be on excluded locations if there are no checks requiring them (such as in SAWS)
   * The GUI tweaks made by [`Dev-R`](https://github.com/Roman971/OoT-Randomizer) are further adjusted to balance consistency with [main `Dev`](https://github.com/OoTRandomizer/OoT-Randomizer) and ease of use.
   * The Lens of Truth can be in a foolish area if Treasure Chest Game keys are shuffled and all relevant “lensless” tricks are enabled.
@@ -224,6 +223,7 @@ issue. You should always Hard Reset to avoid this issue entirely.
 * A message is shown the first time a seed with No Logic is generated, to warn the user that the seed may be unbeatable.
 * New hint distribution field `excluded_goal_categories` to disable specific goal categories.
 * Pre-completed dungeons are crossed out in the dungeon overview menus (A or D-left on the inventory screen).
+* New hint distribution field `one_hint_per_goal` can be set to `true` or `false` to override the automatic settings-based behavior of how goal hints are selected.
 
 #### Bug Fixes
 * Goal hints can now hint items required to defeat Ganon even if they're not required for the rainbow bridge, Ganon's boss key, or the trials. These items will be hinted as being on the "path of the hero".
