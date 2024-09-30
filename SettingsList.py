@@ -23,6 +23,18 @@ from version import __version__
 if TYPE_CHECKING:
     from Entrance import Entrance
 
+# Old/New name of a setting
+class Setting_Info_Versioning:
+    def __init__(self, old_name, new_name):
+        self.old_name = old_name # old name of the setting
+        self.new_name = new_name # new name of the setting
+
+settings_versioning = [
+    Setting_Info_Versioning(
+        old_name       = '',
+        new_name       = '',
+    ),
+]
 
 class SettingInfos:
     # Internal & Non-GUI Settings
@@ -419,6 +431,15 @@ class SettingInfos:
         },
         gui_params = {
             "hide_when_disabled": True,
+        },
+    )
+
+    web_id = Numberinput(
+        gui_text         = "Web Seed ID",
+        shared           = False,
+        default          = 0,
+        gui_params       = {
+            'optional': True,
         },
     )
 
@@ -4278,6 +4299,7 @@ class SettingInfos:
     )
 
     hint_dist_user = SettingInfoDict(None, None, True, {})
+    plandomized_locations = SettingInfoDict("Plandomized Locations", None, True, {})
 
     misc_hints = MultipleSelect(
         gui_text        = 'Misc. Hints',
@@ -4511,11 +4533,13 @@ class SettingInfos:
         gui_text       = 'Ice Traps',
         default        = 'normal',
         choices        = {
-            'off':       'No Ice Traps',
-            'normal':    'Normal Ice Traps',
-            'on':        'Extra Ice Traps',
-            'mayhem':    'Ice Trap Mayhem',
-            'onslaught': 'Ice Trap Onslaught',
+            'off':            'No Ice Traps',
+            'normal':         'Normal Ice Traps',
+            'on':             'Extra Ice Traps',
+            'mayhem':         'Ice Trap Mayhem',
+            'onslaught':      'Ice Trap Onslaught',
+            'custom_count':   'Custom (count)',
+            'custom_percent': 'Custom (%)',
         },
         gui_tooltip    = '''\
             'Off': All Ice Traps are removed.
@@ -4532,8 +4556,54 @@ class SettingInfos:
             'Ice Trap Onslaught': All junk items will be
             replaced by Ice Traps, even those in the
             base pool.
+
+            'Custom (count)': Allows specifying a specific number of
+            "Junk items" to be converted to Ice Traps in the pool.
+
+            'Custom (%)': Allows specifiying a percentage of
+            "Junk" items to be converted to Ice Traps in the pool.
         ''',
         shared         = True,
+        disable        = {
+            'off' : {'settings': ['custom_ice_trap_percent', 'custom_ice_trap_count']},
+            'normal' : {'settings': ['custom_ice_trap_percent', 'custom_ice_trap_count']},
+            'on' : {'settings': ['custom_ice_trap_percent', 'custom_ice_trap_count']},
+            'mayhem' : {'settings': ['custom_ice_trap_percent', 'custom_ice_trap_count']},
+            'onslaught' : {'settings': ['custom_ice_trap_percent', 'custom_ice_trap_count']},
+            'custom_percent' : {'settings': ['custom_ice_trap_count']},
+            'custom_count' : {'settings': ['custom_ice_trap_percent']},
+        },
+    )
+
+    custom_ice_trap_percent = Scale(
+        gui_text       = 'Custom Ice Trap Percent',
+        default        = 50,
+        minimum        = 0,
+        maximum        = 100,
+        gui_tooltip    = '''\
+            Percentage of junk items that will be replaced
+            with Ice Traps when using 'Custom' Ice Traps setting.
+        ''',
+        shared         = True,
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+    )
+
+    custom_ice_trap_count = Scale(
+        gui_text       = 'Custom Ice Trap Count',
+        default        = 100,
+        minimum        = 0,
+        maximum        = 2000,
+        gui_tooltip    = '''\
+            Number of junk items that will be replaced
+            with Ice Traps when using 'Custom' Ice Traps setting.
+        ''',
+        shared         = True,
+        gui_params     = {
+            "hide_when_disabled": True,
+            "size": "medium",
+        },
     )
 
     ice_trap_appearance = Combobox(
