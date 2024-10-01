@@ -88,12 +88,12 @@ class Spoiler:
         for i in range(5):
             self.file_hash.append(random.randint(0, 31) if dist_file_hash[i] is None else HASH_ICONS.index(dist_file_hash[i]))
 
-    def build_password(self) -> None:
+    def build_password(self, password: bool = False) -> None:
         dist_password = self.settings.distribution.password
         if password and None in dist_password and not self.settings.create_spoiler:
             raise Exception('You must enable spoiler log or use plandomizer to define one to use the password feature.')
         for i in range(6):
-            if self.settings.password_lock:
+            if password:
                 self.password.append(random.randint(1, 5) if dist_password[i] is None else PASSWORD_NOTES.index(dist_password[i]) + 1)
             else:
                 self.password.append(0)
