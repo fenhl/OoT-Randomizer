@@ -17,7 +17,6 @@ Differences between `riir` and [`dev-fenhl`](https://github.com/fenhl/OoT-Random
 Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [`Dev-R`](https://github.com/Roman971/OoT-Randomizer):
 
 * New settings and options:
-  * New “Fast Shadow Boat” setting to shorten the boat ride autoscroller in the Shadow temple ([#2239](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2239))
   * New “Shuffle Gerudo Fortress Heart Piece” setting to control the behavior of this check with “Shuffle Thieves' Hideout Entrances” ([#2179](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2179))
   * New “Frogs Ocarina Game” option for the “Randomize Ocarina Song Notes” setting ([#2064](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2064))
   * New “Shuffle Ganon's Tower Entrance” setting ([#2063](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2063))
@@ -70,10 +69,8 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
   * “SDG Bingo Tournament 3” is a variant of “Bingo” used for an ongoing tournament. Note that the tournament itself is being played on version 8.0 of the randomizer, not this branch. See [the official document](https://docs.google.com/document/d/1fpDPSBGH9YQeC9W3P1SMDE7FhoikVgbFTJapqKnMmL4/edit) for details.
 * Other changes:
   * The cutscene that plays when defeating Morpha is shorter ([#2270](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2270))
-  * The first text box from the carpenters in the Thieves' Hideout is skipped ([#2232](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2232))
   * Biggoron's dialog after turning in eyedrops is less misleading ([#2180](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2180))
   * On Wii Virtual Console, additional information is displayed while the game is loading and when it crashes ([#2153](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2153))
-  * The magic meter has a new model to prepare for shuffled magic refills ([#2081](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2081))
   * Plandos can specify different settings for each world ([#2055](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2055))
   * The text box no longer shows the player's own gold skulltula token count when finding a token for another player (part of [#2055](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2055))
   * Support for multiworld on EverDrive ([#2042](https://github.com/OoTRandomizer/OoT-Randomizer/issues/2042))
@@ -83,7 +80,7 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
   * The GUI tweaks made by [`Dev-R`](https://github.com/Roman971/OoT-Randomizer) are further adjusted to balance consistency with [main `Dev`](https://github.com/OoTRandomizer/OoT-Randomizer) and ease of use.
   * The Lens of Truth can be in a foolish area if Treasure Chest Game keys are shuffled and all relevant “lensless” tricks are enabled.
 * Bug fixes:
-  * Blue warps setting time of day even on repeated use is now in logic (based on [#2287](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2287))
+  * Blue warps setting time of day even on repeated use is now in logic ([#2304](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2304))
   * The randomizer no longer silently ignores the `Decompress` program failing ([#2229](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2229))
   * A trade item obtained from a skipped location is no longer lost upon obtaining a different item from the same trade quest ([#2217](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2217))
   * The ocarina buttons required to play the Song of Time are now included on the path of time ([#2203](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2203))
@@ -104,6 +101,7 @@ Differences between [`Dev-R`](https://github.com/Roman971/OoT-Randomizer) and [`
   * [Settings](#settings)
   * [Known Issues](#known-issues)
 * [Changelog](#changelog)
+  * [8.2](#82)
   * [8.1](#81)
   * [8.0](#80)
   * [7.1](#71)
@@ -124,7 +122,7 @@ It is strongly suggested users use the web generator from here:
 
 If you wish to run the script raw, clone this repository and either run ```Gui.py``` for a
 graphical interface or ```OoTRandomizer.py``` for the command line version. They both require Python 3.8+.
-To use the GUI, [NodeJS](https://nodejs.org/download/release/v20.11.1/) (v20 LTS, with npm) will additionally need to be installed. NodeJS v14.14.0 and earlier are no longer supported.
+To use the GUI, [NodeJS](https://nodejs.org/download/release/v20.17.0/) (v20 LTS, with npm) will additionally need to be installed. NodeJS v14.14.0 and earlier are no longer supported.
 The first time ```Gui.py``` is run it will need to install necessary components, which could take a few minutes. Subsequent instances will run much quicker.
 Supported output formats are .z64 (N64/Emulator), .wad (Wii VC, channel IDs NICE/NRKE recommended), Uncompressed ROM (for developmental purposes, offline build only)
 and .zpf/.zpfz (patch files, for sharing seeds with others).
@@ -206,6 +204,17 @@ issue. You should always Hard Reset to avoid this issue entirely.
 ## Changelog
 
 ### Dev
+
+* New options `Custom (count)` and `Custom (%)` for the `Ice Traps` setting.
+* Now supports custom music written for the Majora's Mask Randomizer.
+* New Magic Meter item model to allow magic drops to be shuffled in the future.
+* New hidden `plandomized_locations` setting to allow presets to place specific items at specific locations.
+* The first text box from each carpenter in the Thieves' Hideout is skipped.
+* New setting to speed up the boat ride in the Shadow Temple.
+* Seeds rolled on ootrandomizer.com display their ID in the top left corner of the file select screen.
+* The `Other` tab of the generator has been rearranged for better grouping of settings, and the `One Major Item per Dungeon` setting has been moved there since it was causing frequent failures with `Randomize Main Rule Settings`.
+
+### 8.2
 
 #### New Settings and Options
 * New cosmetic option `Input Viewer` for showing control stick values and pressed buttons at the bottom of the screen.

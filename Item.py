@@ -2,7 +2,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable
 from typing import TYPE_CHECKING, Optional, Any, overload
 
-from ItemList import item_table
+from ItemList import GetItemId, item_table
 from RulesCommon import allowed_globals, escape_name
 
 if TYPE_CHECKING:
@@ -113,26 +113,40 @@ class Item:
             # Some shop items have the same item IDs as unrelated regular items. Make sure these don't get turned into nonsense.
             return idx
         # use different item IDs for items with conditional chest appearances so they appear according to the setting in the item's world, not the location's
-        if idx == 0x005B:
+        if idx == GetItemId.GI_SKULL_TOKEN:
             big_chest = self.world.settings.bridge == 'tokens' or self.world.settings.lacs_condition == 'tokens' or self.world.shuffle_ganon_bosskey == 'tokens'
             freeze_link = self.world.settings.tokensanity != 'off'
             return {
-                (False, False): 0x005B,
-                (False, True): 0x1007,
-                (True, False): 0x101A,
-                (True, True): 0x1008,
+                (False, False): GetItemId.GI_SKULL_TOKEN,
+                (False, True): GetItemId.GI_SKULL_TOKEN_NORMAL_TEXT,
+                (True, False): GetItemId.GI_SKULL_TOKEN_BIG_CHEST,
+                (True, True): GetItemId.GI_SKULL_TOKEN_BIG_CHEST_NORMAL_TEXT,
             }[big_chest, freeze_link]
-        if idx in (0x003D, 0x003E, 0x0076) and (self.world.settings.bridge == 'hearts' or self.world.settings.lacs_condition == 'hearts' or self.world.shuffle_ganon_bosskey == 'hearts'):
-            return {0x003D: 0x101B, 0x003E: 0x101C, 0x0076: 0x101D}[idx]
-        if idx in (0x0029, 0x002A) and 'shields' in self.world.settings.minor_items_as_major_chest:
-            return {0x0029: 0x101E, 0x002A: 0x101F}[idx]
-        if idx in (0x006A, 0x0003, 0x006B) and (self.world.settings.free_bombchu_drops or 'bombchus' in self.world.settings.minor_items_as_major_chest):
-            return {0x006A: 0x1020, 0x0003: 0x1021, 0x006B: 0x1022}[idx]
-        if idx in (0x0087, 0x0088) and 'capacity' in self.world.settings.minor_items_as_major_chest:
-            return {0x0087: 0x1023, 0x0088: 0x1024}[idx]
+        if idx in (GetItemId.GI_HEART_CONTAINER, GetItemId.GI_HEART_PIECE, GetItemId.GI_HEART_PIECE_WIN) and (self.world.settings.bridge == 'hearts' or self.world.settings.lacs_condition == 'hearts' or self.world.shuffle_ganon_bosskey == 'hearts'):
+            return {
+                GetItemId.GI_HEART_CONTAINER: GetItemId.GI_HEART_CONTAINER_BIG_CHEST,
+                GetItemId.GI_HEART_PIECE: GetItemId.GI_HEART_PIECE_BIG_CHEST,
+                GetItemId.GI_HEART_PIECE_WIN: GetItemId.GI_HEART_PIECE_WIN_BIG_CHEST,
+            }[idx]
+        if idx in (GetItemId.GI_SHIELD_DEKU, GetItemId.GI_SHIELD_HYLIAN) and 'shields' in self.world.settings.minor_items_as_major_chest:
+            return {
+                GetItemId.GI_SHIELD_DEKU: GetItemId.GI_SHIELD_DEKU_BIG_CHEST,
+                GetItemId.GI_SHIELD_HYLIAN: GetItemId.GI_SHIELD_HYLIAN_BIG_CHEST,
+            }[idx]
+        if idx in (GetItemId.GI_BOMBCHUS_5, GetItemId.GI_BOMBCHUS_10, GetItemId.GI_BOMBCHUS_20) and (self.world.settings.free_bombchu_drops or 'bombchus' in self.world.settings.minor_items_as_major_chest):
+            return {
+                GetItemId.GI_BOMBCHUS_5: GetItemId.GI_BOMBCHUS_5_BIG_CHEST,
+                GetItemId.GI_BOMBCHUS_10: GetItemId.GI_BOMBCHUS_10_BIG_CHEST,
+                GetItemId.GI_BOMBCHUS_20: GetItemId.GI_BOMBCHUS_20_BIG_CHEST,
+            }[idx]
+        if idx in (GetItemId.GI_PROGRESSIVE_NUT_CAPACITY, GetItemId.GI_PROGRESSIVE_STICK_CAPACITY) and 'capacity' in self.world.settings.minor_items_as_major_chest:
+            return {
+                GetItemId.GI_PROGRESSIVE_NUT_CAPACITY: GetItemId.GI_PROGRESSIVE_NUT_CAPACITY_BIG_CHEST,
+                GetItemId.GI_PROGRESSIVE_STICK_CAPACITY: GetItemId.GI_PROGRESSIVE_STICK_CAPACITY_BIG_CHEST,
+            }[idx]
         # use different item IDs for keyrings that include boss keys so the effect and text box displayed depend on the setting in the item's world, not the location's
-        if idx in range(0x00CB, 0x00D0) and self.world.settings.keyring_give_bk:
-            return idx + 0x1014 - 0x00CB
+        if GetItemId.GI_SMALL_KEY_RING_FOREST_TEMPLE <= idx <= GetItemId.GI_SMALL_KEY_RING_SHADOW_TEMPLE and self.world.settings.keyring_give_bk:
+            return idx + GetItemId.GI_SMALL_KEY_RING_FOREST_TEMPLE_WITH_BOSS_KEY - GetItemId.GI_SMALL_KEY_RING_FOREST_TEMPLE
         return idx
 
     @property
