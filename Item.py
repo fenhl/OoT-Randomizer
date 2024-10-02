@@ -109,6 +109,9 @@ class Item:
     @property
     def index(self) -> Optional[int]:
         idx = self.info.index
+        if idx is None:
+            # Don't try to compare GetItemId with NoneType
+            return None
         if self.type == 'Shop':
             # Some shop items have the same item IDs as unrelated regular items. Make sure these don't get turned into nonsense.
             return idx
