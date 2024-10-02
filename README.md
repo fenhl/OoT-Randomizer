@@ -69,7 +69,6 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
   * “SDG Bingo Tournament 3” is a variant of “Bingo” used for an ongoing tournament. Note that the tournament itself is being played on version 8.0 of the randomizer, not this branch. See [the official document](https://docs.google.com/document/d/1fpDPSBGH9YQeC9W3P1SMDE7FhoikVgbFTJapqKnMmL4/edit) for details.
 * Other changes:
   * The cutscene that plays when defeating Morpha is shorter ([#2270](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2270))
-  * Biggoron's dialog after turning in eyedrops is less misleading ([#2180](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2180))
   * On Wii Virtual Console, additional information is displayed while the game is loading and when it crashes ([#2153](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2153))
   * Plandos can specify different settings for each world ([#2055](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2055))
   * The text box no longer shows the player's own gold skulltula token count when finding a token for another player (part of [#2055](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2055))
@@ -205,14 +204,19 @@ issue. You should always Hard Reset to avoid this issue entirely.
 
 ### Dev
 
+#### New Settings and Options
 * New options `Custom (count)` and `Custom (%)` for the `Ice Traps` setting.
+* New hidden `plandomized_locations` setting to allow presets to place specific items at specific locations.
+* New setting to speed up the boat ride in the Shadow Temple.
+* New `Require Lens of Truth for Treasure Chest Game` setting.
+
+#### Other Changes
 * Now supports custom music written for the Majora's Mask Randomizer.
 * New Magic Meter item model to allow magic drops to be shuffled in the future.
-* New hidden `plandomized_locations` setting to allow presets to place specific items at specific locations.
 * The first text box from each carpenter in the Thieves' Hideout is skipped.
-* New setting to speed up the boat ride in the Shadow Temple.
 * Seeds rolled on ootrandomizer.com display their ID in the top left corner of the file select screen.
 * The `Other` tab of the generator has been rearranged for better grouping of settings, and the `One Major Item per Dungeon` setting has been moved there since it was causing frequent failures with `Randomize Main Rule Settings`.
+* Biggoron's text after turning in the Eyedrops has been changed to avoid potential confusion.
 
 ### 8.2
 

@@ -4,7 +4,7 @@ default-members = ["crate/ootr-python"]
 resolver = "2"
 
 [workspace.package]
-version = "8.2.13-fenhl.3.riir.3"
+version = "8.2.15-fenhl.1.riir.1"
 edition = "2021"
 
 [workspace.lints.rust]
