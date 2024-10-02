@@ -24,5 +24,5 @@ if old_cargo_lock == new_cargo_lock: #TODO more precisely compare the version fi
     sys.exit('Missing version bump in Cargo.lock')
 
 subprocess.run(['cargo', 'check', '--workspace', '--exclude=rust-n64-test'], check=True)
-subprocess.run(['cargo', 'build', '--release'], check=True)
+subprocess.run(['cargo', 'build', '--release', '--package=ootr-python', '--package=ootr-cli'], check=True) # ootr-python required for testing, ootr-cli required for creating git tag in post-commit hook
 shutil.copyfile('target/release/rs.dll', 'rs.pyd')
