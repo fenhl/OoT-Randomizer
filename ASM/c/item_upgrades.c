@@ -5,7 +5,8 @@
 #include "z64.h"
 
 extern uint32_t FREE_BOMBCHU_DROPS;
-
+extern uint8_t SHUFFLE_CHEST_GAME;
+extern uint8_t TCG_REQUIRES_LENS;
 
 // Co-op state
 extern uint8_t PLAYER_ID;
@@ -158,5 +159,20 @@ uint16_t bombchus_to_bag(z64_file_t* save, override_t override) {
     } else {
         // Subsequent chu packs stay as chu packs
         return override.value.base.item_id;
+    }
+}
+
+uint16_t tcg_key_to_rupee(z64_file_t* save, override_t override) {
+    uint16_t item_id = override.value.base.item_id;
+    // Force treasure chest game loss if the setting to require Lens of Truth
+    // is enabled. Room index is checked to avoid overriding the salesman's item.
+    if (item_id == GI_DOOR_KEY && !SHUFFLE_CHEST_GAME && TCG_REQUIRES_LENS
+        && override.value.base.player == PLAYER_ID
+        && save->items[Z64_SLOT_LENS] != Z64_ITEM_LENS
+        && z64_game.room_index != 0
+    ) {
+        return GI_RUPEE_GREEN_LOSE; // Green Rupee (Chest Game)
+    } else {
+        return item_id;
     }
 }

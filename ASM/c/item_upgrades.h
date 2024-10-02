@@ -23,6 +23,7 @@ uint16_t seeds_to_rupee(z64_file_t* save, override_t override);
 uint16_t letter_to_bottle(z64_file_t* save, override_t override);
 uint16_t health_upgrade_cap(z64_file_t* save, override_t override);
 uint16_t bombchus_to_bag(z64_file_t* save, override_t override);
+uint16_t tcg_key_to_rupee(z64_file_t* save, override_t override);
 
 // The layout of this struct is part of the definition of the co-op context.
 // If you change it, bump the co-op context version in coop_state.asm and update Notes/coop-ctx.md
