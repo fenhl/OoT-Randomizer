@@ -1149,7 +1149,7 @@ checksum = "e8c02a5121d4ea3eb16a80748c74f5549a5665e4c21333c6098f283870fbdea6"
 
 [[package]]
 name = "fill-test"
-version = "8.2.15-fenhl.1.riir.2"
+version = "8.2.18-fenhl.1.riir.1"
 dependencies = [
  "collect-mac",
  "itertools",
@@ -2420,7 +2420,7 @@ checksum = "33ea5043e58958ee56f3e15a90aee535795cd7dfd319846288d93c5b57d85cbe"
 
 [[package]]
 name = "ootr-cli"
-version = "8.2.15-fenhl.1.riir.2"
+version = "8.2.18-fenhl.1.riir.1"
 dependencies = [
  "clap",
  "pyo3",
@@ -2430,7 +2430,7 @@ dependencies = [
 
 [[package]]
 name = "ootr-gui"
-version = "8.2.15-fenhl.1.riir.2"
+version = "8.2.18-fenhl.1.riir.1"
 dependencies = [
  "futures",
  "iced",
@@ -2443,7 +2443,7 @@ dependencies = [
 
 [[package]]
 name = "ootr-python"
-version = "8.2.15-fenhl.1.riir.2"
+version = "8.2.18-fenhl.1.riir.1"
 dependencies = [
  "anyhow",
  "decompress",
@@ -2949,7 +2949,7 @@ dependencies = [
 
 [[package]]
 name = "rust-n64-test"
-version = "8.2.15-fenhl.1.riir.2"
+version = "8.2.18-fenhl.1.riir.1"
 dependencies = [
  "cbindgen",
 ]
