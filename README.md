@@ -78,6 +78,8 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
   * The GUI tweaks made by [`Dev-R`](https://github.com/Roman971/OoT-Randomizer) are further adjusted to balance consistency with [main `Dev`](https://github.com/OoTRandomizer/OoT-Randomizer) and ease of use.
   * The Lens of Truth can be in a foolish area if Treasure Chest Game keys are shuffled and all relevant “lensless” tricks are enabled.
 * Bug fixes:
+  * An inconsistency with how hints refer to key rings for the Thieves' Hideout and the treasure box shop is fixed ([#2320](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2320))
+  * The randomizer no longer generates unbeatable seeds due to counting copies of dungeon rewards or ocarina notes separately ([#2319](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2319))
   * Blue warps setting time of day even on repeated use is now in logic ([#2304](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2304))
   * The randomizer no longer silently ignores the `Decompress` program failing ([#2229](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2229))
   * A trade item obtained from a skipped location is no longer lost upon obtaining a different item from the same trade quest ([#2217](https://github.com/OoTRandomizer/OoT-Randomizer/pull/2217))
@@ -213,6 +215,7 @@ issue. You should always Hard Reset to avoid this issue entirely.
 
 * Ocarina buttons required to play the Song of Time are now part of the `path of time` goal.
 * The `Frogs Ocarina Game` misc. hint text box has been moved slightly so it no longer requires reloading the area to reread.
+* Fix key rings being hinted as small keys when keys are in their own dungeons.
 
 #### Other Changes
 * Now supports custom music written for the Majora's Mask Randomizer.
