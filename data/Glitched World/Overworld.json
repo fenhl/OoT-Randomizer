@@ -3,7 +3,7 @@
         "region_name": "Root",
         "hint": "ROOT",
         "locations": {
-            "Gift from Sages": "can_receive_ganon_bosskey"
+            "Gift from Sages": "True"
         },
         "exits": {
             "Root Exits": "is_starting_age or Time_Travel",
@@ -427,10 +427,11 @@
         "hint": "TEMPLE_OF_TIME",
         "events": {
             # used for the "path of time" goal
-            "Temple of Time Access": "True"
+            "Temple of Time Access": "True",
+            "Light Arrow Cutscene": "Shadow_Medallion and Spirit_Medallion"
         },
         "locations": {
-            "ToT Light Arrows Cutscene": "is_adult and can_trigger_lacs",
+            "ToT Light Arrows Cutscene": "is_adult and 'Light Arrow Cutscene'",
             "ToT Child Altar Hint": "is_child",
             "ToT Adult Altar Hint": "is_adult"
         },
@@ -504,13 +505,16 @@
     {
         "region_name": "Ganons Castle Grounds",
         "hint": "OUTSIDE_GANONS_CASTLE",
+        "events": {
+            "Rainbow Bridge": "Shadow_Medallion and Spirit_Medallion and Light_Arrows"
+        },
         "locations": {
             "OGC GS": "True"
         },
         "exits": {
             "Market": "True",
             "OGC Great Fairy Fountain": "can_use(Golden_Gauntlets) or (has_explosives and can_live_dmg(0.5)) or can_use(Hover_Boots)",
-            "Ganons Castle Ledge": "(can_isg and has_explosives) or can_build_rainbow_bridge"
+            "Ganons Castle Ledge": "(can_isg and has_explosives) or 'Rainbow Bridge'"
         }
     },
     {

@@ -1827,7 +1827,9 @@ def build_bridge_reqs_string(world: World) -> str:
     if world.settings.bridge == 'open':
         string = "The awakened ones will have #already created a bridge# to the castle where the evil dwells."
     else:
-        if world.settings.bridge == 'vanilla':
+        if world.settings.bridge == 'custom':
+            item_req_string = "#various items#" #TODO give item hint if custom with a single item
+        elif world.settings.bridge == 'vanilla':
             item_req_string = "the #Shadow and Spirit Medallions# as well as the #Light Arrows#"
         else:
             count, singular, plural = {
@@ -1850,8 +1852,12 @@ def build_ganon_boss_key_string(world: World) -> str:
     if world.shuffle_ganon_bosskey == 'remove':
         string += "And the door to the \x05\x41evil one\x05\x40's chamber will be left #unlocked#."
     else:
-        if world.shuffle_ganon_bosskey == 'on_lacs':
-            if world.settings.lacs_condition == 'vanilla':
+        if world.settings.shuffle_ganon_bosskey == 'custom':
+            bk_location_string = "automatically granted once #various items# are retrieved" #TODO give item hint if custom with a single item
+        elif world.shuffle_ganon_bosskey == 'on_lacs':
+            if world.settings.lacs_condition == 'custom':
+                item_req_string = "#various items#" #TODO give item hint if custom with a single item
+            elif world.settings.lacs_condition == 'vanilla':
                 item_req_string = "the #Shadow and Spirit Medallions#"
                 count = 2
             else:

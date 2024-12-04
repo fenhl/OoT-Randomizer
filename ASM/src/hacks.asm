@@ -1908,7 +1908,7 @@ skip_bombchu_bowling_prize_switch:
 
 .orga 0xE2B434
 .area 0x30, 0
-    jal     rainbow_bridge
+    jal     RAINBOW_BRIDGE_CONDITION
     nop
 .endarea
 
@@ -3032,7 +3032,7 @@ courtyard_guards_kill:
 ; Change the Light Arrow Cutscene trigger condition.
 ;==================================================================================================
 .orga 0xACCE18
-    jal     lacs_condition_check
+    jal     LACS_CONDITION
     lw      v0, 0x00A4(s0)
     beqz_a  v1, 0x00ACCE9C
     nop

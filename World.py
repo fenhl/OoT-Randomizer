@@ -8,6 +8,7 @@ from collections import OrderedDict, defaultdict
 from collections.abc import Iterable, Iterator
 from typing import Any, Optional
 
+from Conditions import Condition
 from Dungeon import Dungeon
 from Entrance import Entrance
 from Goals import Goal, GoalCategory
@@ -217,6 +218,47 @@ class World:
             warp='warp' in settings.ocarina_songs,
             frogs2='frogs2' in settings.ocarina_songs,
         )
+
+        self.conditions: dict[str, Condition] = {
+            name: Condition(self, rule_string)
+            for name, rule_string in self.distribution.conditions.items()
+        }
+        if 'Rainbow Bridge' not in self.conditions:
+            self.conditions['Rainbow Bridge'] = Condition(self, {
+                'open': 'True',
+                'vanilla': 'Shadow_Medallion and Spirit_Medallion and Light_Arrows',
+                'stones': 'has_stones(bridge_stones)',
+                'medallions': 'has_medallions(bridge_medallions)',
+                'dungeons': 'has_dungeon_rewards(bridge_rewards)',
+                'tokens': '(Gold_Skulltula_Token, bridge_tokens)',
+                'hearts': 'has_hearts(bridge_hearts)',
+            }[self.settings.bridge])
+        if 'Light Arrow Cutscene' not in self.conditions:
+            self.conditions['Light Arrow Cutscene'] = Condition(self, {
+                'vanilla': 'Shadow_Medallion and Spirit_Medallion',
+                'stones': 'has_stones(lacs_stones)',
+                'medallions': 'has_medallions(lacs_medallions)',
+                'dungeons': 'has_dungeon_rewards(lacs_rewards)',
+                'tokens': '(Gold_Skulltula_Token, lacs_tokens)',
+                'hearts': 'has_hearts(lacs_hearts)',
+            }[self.settings.lacs_condition])
+        if 'Gift from Sages' not in self.conditions:
+            self.conditions['Gift from Sages'] = Condition(self, {
+                'stones': 'has_stones(ganon_bosskey_stones)',
+                'medallions': 'has_medallions(ganon_bosskey_medallions)',
+                'dungeons': 'has_dungeon_rewards(ganon_bosskey_rewards)',
+                'tokens': '(Gold_Skulltula_Token, ganon_bosskey_tokens)',
+                'hearts': 'has_hearts(ganon_bosskey_hearts)',
+                # If the boss key is not on Gift from Sages, the item must still be logically accessible to satisfy reachability checks.
+                # Patches.py uses False instead so no actual item is given.
+                'remove': 'True',
+                'vanilla': 'True',
+                'dungeon': 'True',
+                'overworld': 'True',
+                'any_dungeon': 'True',
+                'keysanity': 'True',
+                'on_lacs': 'True',
+            }[self.settings.shuffle_ganon_bosskey])
 
         if len(settings.hint_dist_user) == 0:
             for d in hint_dist_files():
@@ -836,6 +878,17 @@ class World:
             hint_area = HintArea.at(boss)
             if hint_area.dungeon_name in self.precompleted_dungeons: # filter out side dungeons and overworld
                 self.precompleted_dungeons[hint_area.dungeon_name] = True
+
+    def win_conditions(self) -> dict[str, Condition]:
+        result = {}
+        if not self.settings.triforce_hunt:
+            if not self.shuffle_special_dungeon_entrances and not self.settings.shuffle_ganon_tower:
+                result['Rainbow Bridge'] = self.conditions['Rainbow Bridge']
+            if self.settings.shuffle_ganon_bosskey == 'on_lacs':
+                result['Light Arrow Cutscene'] = self.conditions['Light Arrow Cutscene']
+            if self.settings.shuffle_ganon_bosskey in ('stones', 'medallions', 'dungeons', 'tokens', 'hearts', 'custom'):
+                result['Gift from Sages'] = self.conditions['Gift from Sages']
+        return result
 
     def set_goals(self) -> None:
         # Default goals are divided into 3 primary categories:

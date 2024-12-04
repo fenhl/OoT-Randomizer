@@ -6,7 +6,7 @@
             "Kakariko Village Gate Open": "open_kakariko == 'open' or (open_kakariko == 'zelda' and Zeldas_Letter)"
         },
         "locations": {
-            "Gift from Sages": "can_receive_ganon_bosskey"
+            "Gift from Sages": "True"
         },
         "exits": {
             "Root Exits": "is_starting_age or Time_Travel",
@@ -1305,10 +1305,11 @@
         "hint": "TEMPLE_OF_TIME",
         "events": {
             # Used for the "path of time" goal
-            "Temple of Time Access": "True"
+            "Temple of Time Access": "True",
+            "Light Arrow Cutscene": "Shadow_Medallion and Spirit_Medallion"
         },
         "locations": {
-            "ToT Light Arrows Cutscene": "is_adult and can_trigger_lacs",
+            "ToT Light Arrows Cutscene": "is_adult and 'Light Arrow Cutscene'",
             "ToT Child Altar Hint": "is_child",
             "ToT Adult Altar Hint": "is_adult"
         },
@@ -1427,13 +1428,16 @@
         "scene": "Castle Grounds",
         "hint": "OUTSIDE_GANONS_CASTLE",
         "provides_time": "DAMPE",
+        "events": {
+            "Rainbow Bridge": "Shadow_Medallion and Spirit_Medallion and Light_Arrows"
+        },
         "locations": {
             "OGC GS": "True"
         },
         "exits": {
             "Castle Grounds": "True",
             "OGC Great Fairy Fountain": "can_use(Golden_Gauntlets) and at_dampe_time",
-            "Ganons Castle Ledge": "can_build_rainbow_bridge"
+            "Ganons Castle Ledge": "'Rainbow Bridge'"
         }
     },
     {
@@ -1441,8 +1445,11 @@
         "scene": "Castle Grounds",
         "hint": "OUTSIDE_GANONS_CASTLE",
         "provides_time": "DAMPE",
+        "events": {
+            "Rainbow Bridge": "Shadow_Medallion and Spirit_Medallion and Light_Arrows"
+        },
         "exits": {
-            "Ganons Castle Grounds": "can_build_rainbow_bridge",
+            "Ganons Castle Grounds": "'Rainbow Bridge'",
             "Ganons Castle Lobby": "at_dampe_time"
         }
     },

@@ -865,6 +865,7 @@ class SettingInfos:
             'dungeons':   "Dungeon Rewards",
             'tokens':     "Tokens",
             'hearts':     "Hearts",
+            'custom':     "Custom",
         },
         gui_tooltip    = '''\
             Sets the condition for the Light Arrow Cutscene
@@ -876,6 +877,7 @@ class SettingInfos:
             'Dungeon Rewards': A configurable amount of Dungeon Rewards.
             'Tokens': A configurable amount of Gold Skulltula Tokens.
             'Hearts': A configurable amount of hearts.
+            'Custom': Use plandomizer to configure LACS requirements.
         ''',
         shared         = True,
         disable        = {
@@ -995,7 +997,8 @@ class SettingInfos:
             'dungeons':   'Dungeon Rewards',
             'tokens':     'Gold Skulltula Tokens',
             'hearts':     'Hearts',
-            'random':     'Random'
+            'random':     'Random',
+            'custom':     'Custom',
         },
         gui_tooltip    = '''\
             'Always Open': Rainbow Bridge is always present.
@@ -1006,6 +1009,7 @@ class SettingInfos:
             'Gold Skulltula Tokens': A configurable amount of Gold Skulltula Tokens.
             'Hearts': A configurable amount of hearts.
             'Random': A random Rainbow Bridge requirement excluding Gold Skulltula Tokens.
+            'Custom': Use plandomizer to configure Rainbow Bridge requirements.
         ''',
         shared         = True,
         disable        = {
@@ -1160,6 +1164,7 @@ class SettingInfos:
             'dungeons':        "Dungeon Rewards",
             'tokens':          "Tokens",
             'hearts':          "Hearts",
+            'custom':          "Custom",
         },
         gui_tooltip      = '''\
             'Remove': Ganon's Castle Boss Key is removed
@@ -1201,6 +1206,9 @@ class SettingInfos:
 
             'Hearts': Ganon's Castle Boss Key will be awarded
             when reaching the target number of hearts.
+
+            'Custom': Ganon's Castle Boss Key will be awarded when
+            reaching requirements configured using plandomizer.
         ''',
         shared           = True,
         disable          = {

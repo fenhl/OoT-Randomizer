@@ -68,8 +68,6 @@ RANDO_CONTEXT:
 .include "fishing.asm"
 .include "bgs_fix.asm"
 .include "chus_in_logic.asm"
-.include "rainbow_bridge.asm"
-.include "lacs_condition.asm"
 .include "gossip_hints.asm"
 .include "potion_shop.asm"
 .include "jabu_elevator.asm"

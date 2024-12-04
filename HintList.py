@@ -174,51 +174,15 @@ def get_upgrade_hint_list(world: World, locations: list[str]) -> list[Hint]:
 # Helpers for conditional always hints
 # TODO: Make these properties of World or Settings.
 def stones_required_by_settings(world: World) -> int:
-    stones = 0
-    if world.settings.bridge == 'stones' and not world.shuffle_special_dungeon_entrances:
-        stones = max(stones, world.settings.bridge_stones)
-    if world.shuffle_ganon_bosskey == 'on_lacs' and world.settings.lacs_condition == 'stones':
-        stones = max(stones, world.settings.lacs_stones)
-    if world.shuffle_ganon_bosskey == 'stones':
-        stones = max(stones, world.settings.ganon_bosskey_stones)
-    if world.settings.bridge == 'dungeons' and not world.shuffle_special_dungeon_entrances:
-        stones = max(stones, world.settings.bridge_rewards - 6)
-    if world.shuffle_ganon_bosskey == 'on_lacs' and world.settings.lacs_condition == 'dungeons':
-        stones = max(stones, world.settings.lacs_rewards - 6)
-    if world.shuffle_ganon_bosskey == 'dungeons':
-        stones = max(stones, world.settings.ganon_bosskey_rewards - 6)
-
-    return stones
+    return max((condition.required_stones for condition in world.win_conditions().values()), default=0)
 
 
 def medallions_required_by_settings(world: World) -> int:
-    medallions = 0
-    if world.settings.bridge == 'medallions' and not world.shuffle_special_dungeon_entrances:
-        medallions = max(medallions, world.settings.bridge_medallions)
-    if world.shuffle_ganon_bosskey == 'on_lacs' and world.settings.lacs_condition == 'medallions':
-        medallions = max(medallions, world.settings.lacs_medallions)
-    if world.shuffle_ganon_bosskey == 'medallions':
-        medallions = max(medallions, world.settings.ganon_bosskey_medallions)
-    if world.settings.bridge == 'dungeons' and not world.shuffle_special_dungeon_entrances:
-        medallions = max(medallions, max(world.settings.bridge_rewards - 3, 0))
-    if world.shuffle_ganon_bosskey == 'on_lacs' and world.settings.lacs_condition == 'dungeons':
-        medallions = max(medallions, max(world.settings.lacs_rewards - 3, 0))
-    if world.shuffle_ganon_bosskey == 'dungeons':
-        medallions = max(medallions, max(world.settings.ganon_bosskey_rewards - 3, 0))
-
-    return medallions
+    return max((condition.required_medallions for condition in world.win_conditions().values()), default=0)
 
 
 def tokens_required_by_settings(world: World) -> int:
-    tokens = 0
-    if world.settings.bridge == 'tokens' and not world.shuffle_special_dungeon_entrances:
-        tokens = max(tokens, world.settings.bridge_tokens)
-    if world.shuffle_ganon_bosskey == 'on_lacs' and world.settings.lacs_condition == 'tokens':
-        tokens = max(tokens, world.settings.lacs_tokens)
-    if world.shuffle_ganon_bosskey == 'tokens':
-        tokens = max(tokens, world.settings.ganon_bosskey_tokens)
-
-    return tokens
+    return max((condition.required_tokens for condition in world.win_conditions().values()), default=0)
 
 
 # Hints required under certain settings

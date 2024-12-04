@@ -193,19 +193,16 @@ class Item:
     def majoritem(self) -> bool:
         if self.world is None:
             return False
-        if self.type == 'Token':
-            return (self.world.settings.bridge == 'tokens' or self.world.shuffle_ganon_bosskey == 'tokens' or
-                (self.world.shuffle_ganon_bosskey == 'on_lacs' and self.world.settings.lacs_condition == 'tokens'))
+
+        for condition in self.world.win_conditions().values():
+            if condition.may_require(self):
+                return True
 
         if self.type in ('Drop', 'Event', 'Shop') or not self.advancement:
             return False
 
         if self.name.startswith('Bombchus') and not self.world.settings.free_bombchu_drops:
             return False
-
-        if self.name == 'Heart Container' or self.name.startswith('Piece of Heart'):
-            return (self.world.settings.bridge == 'hearts' or self.world.shuffle_ganon_bosskey == 'hearts' or
-                (self.world.shuffle_ganon_bosskey == 'on_lacs' and self.world.settings.lacs_condition == 'hearts'))
 
         if self.map or self.compass:
             return False

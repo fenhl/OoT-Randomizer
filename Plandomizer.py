@@ -45,6 +45,7 @@ per_world_keys = (
     'empty_dungeons',
     'trials',
     'songs',
+    'conditions',
     'entrances',
     'locations',
     ':skipped_locations',
@@ -270,6 +271,7 @@ class WorldDistribution:
         self.empty_dungeons: Optional[dict[str, EmptyDungeonRecord]] = None
         self.trials: Optional[dict[str, TrialRecord]] = None
         self.songs: Optional[dict[str, SongRecord]] = None
+        self.conditions: Optional[dict[str, str]] = None
         self.item_pool: Optional[dict[str, ItemPoolRecord]] = None
         self.entrances: Optional[dict[str, EntranceRecord]] = None
         self.locations: Optional[dict[str, LocationRecord | list[LocationRecord]]] = None
@@ -298,6 +300,7 @@ class WorldDistribution:
             'empty_dungeons': {name: EmptyDungeonRecord(record) for (name, record) in src_dict.get('empty_dungeons', {}).items()},
             'trials': {name: TrialRecord(record) for (name, record) in src_dict.get('trials', {}).items()},
             'songs': {name: SongRecord(record) for (name, record) in src_dict.get('songs', {}).items()},
+            'conditions': {name: record for (name, record) in src_dict.get('conditions', {}).items()},
             'item_pool': {name: ItemPoolRecord(record) for (name, record) in src_dict.get('item_pool', {}).items()},
             'entrances': {name: EntranceRecord(record) for (name, record) in src_dict.get('entrances', {}).items()},
             'locations': {name: [LocationRecord(rec) for rec in record] if is_pattern(name) else LocationRecord(record) for (name, record) in src_dict.get('locations', {}).items() if not is_output_only(name)},
@@ -330,6 +333,7 @@ class WorldDistribution:
             'empty_dungeons': {name: record.to_json() for (name, record) in self.empty_dungeons.items()},
             'trials': {name: record.to_json() for (name, record) in self.trials.items()},
             'songs': {name: record.to_json() for (name, record) in self.songs.items()},
+            'conditions': {name: record for (name, record) in self.conditions.items()},
             'item_pool': SortedDict({name: record.to_json() for (name, record) in self.item_pool.items()}),
             'entrances': {name: record.to_json() for (name, record) in self.entrances.items()},
             'locations': {name: [rec.to_json() for rec in record] if is_pattern(name) else record.to_json() for (name, record) in self.locations.items()},
@@ -1366,8 +1370,8 @@ class Distribution:
             world_dist.dungeons = {name: DungeonRecord({ 'mq': is_mq }) for name, is_mq in world.dungeon_mq.items()}
             world_dist.empty_dungeons = {name: EmptyDungeonRecord({ 'empty': is_precompleted }) for name, is_precompleted in world.precompleted_dungeons.items()}
             world_dist.trials = {trial: TrialRecord({ 'active': not world.skipped_trials[trial] }) for trial in world.skipped_trials}
-            if hasattr(world, 'song_notes'):
-                world_dist.songs = {song: SongRecord({ 'notes': str(world.song_notes[song]) }) for song in world.song_notes}
+            world_dist.songs = {song: SongRecord({ 'notes': str(world.song_notes[song]) }) for song in world.song_notes}
+            world_dist.conditions = {name: str(condition) for (name, condition) in world.conditions.items()}
             world_dist.entrances = {ent.name: EntranceRecord.from_entrance(ent) for ent in spoiler.entrances[world.id]}
             world_dist.locations = {loc: LocationRecord.from_item(item) for (loc, item) in spoiler.locations[world.id].items()}
             world_dist.woth_locations = {loc.name: LocationRecord.from_item(loc.item) for loc in spoiler.required_locations[world.id]}

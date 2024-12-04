@@ -1206,28 +1206,12 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     rom.write_byte(rom.sym('FAST_CHESTS'), int(world.settings.fast_chests))
 
     # Set up Rainbow Bridge conditions
-    symbol = rom.sym('RAINBOW_BRIDGE_CONDITION')
-    count_symbol = rom.sym('RAINBOW_BRIDGE_COUNT')
-    if world.settings.bridge == 'open':
-        rom.write_int32(symbol, 0)
+    condition = world.conditions['Rainbow Bridge']
+    if condition.is_met_by_starting_items():
         save_context.write_bits(0xEDC, 0x20)  # "Rainbow Bridge Built by Sages"
-    elif world.settings.bridge == 'medallions':
-        rom.write_int32(symbol, 1)
-        rom.write_int16(count_symbol, world.settings.bridge_medallions)
-    elif world.settings.bridge == 'dungeons':
-        rom.write_int32(symbol, 2)
-        rom.write_int16(count_symbol, world.settings.bridge_rewards)
-    elif world.settings.bridge == 'stones':
-        rom.write_int32(symbol, 3)
-        rom.write_int16(count_symbol, world.settings.bridge_stones)
-    elif world.settings.bridge == 'vanilla':
-        rom.write_int32(symbol, 4)
-    elif world.settings.bridge == 'tokens':
-        rom.write_int32(symbol, 5)
-        rom.write_int16(count_symbol, world.settings.bridge_tokens)
-    elif world.settings.bridge == 'hearts':
-        rom.write_int32(symbol, 6)
-        rom.write_int16(count_symbol, world.settings.bridge_hearts * 0x10)
+    else:
+        symbol = rom.sym('RAINBOW_BRIDGE_CONDITION')
+        condition.compile(rom, symbol)
 
     if world.settings.triforce_hunt:
         rom.write_int16(rom.sym('TRIFORCE_PIECES_REQUIRED'), world.triforce_goal)
@@ -1241,46 +1225,16 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
 
     # Set up Ganon's Boss Key conditions.
     symbol = rom.sym('GANON_BOSS_KEY_CONDITION')
-    count_symbol = rom.sym('GANON_BOSS_KEY_CONDITION_COUNT')
-    if world.shuffle_ganon_bosskey == 'medallions':
-        rom.write_byte(symbol, 1)
-        rom.write_int16(count_symbol, world.settings.ganon_bosskey_medallions)
-    elif world.shuffle_ganon_bosskey == 'dungeons':
-        rom.write_byte(symbol, 2)
-        rom.write_int16(count_symbol, world.settings.ganon_bosskey_rewards)
-    elif world.shuffle_ganon_bosskey == 'stones':
-        rom.write_byte(symbol, 3)
-        rom.write_int16(count_symbol, world.settings.ganon_bosskey_stones)
-    elif world.shuffle_ganon_bosskey == 'tokens':
-        rom.write_byte(symbol, 4)
-        rom.write_int16(count_symbol, world.settings.ganon_bosskey_tokens)
-    elif world.shuffle_ganon_bosskey == 'hearts':
-        rom.write_byte(symbol, 5)
-        rom.write_int16(count_symbol, world.settings.ganon_bosskey_hearts * 0x10)
+    if world.settings.shuffle_ganon_bosskey in ('stones', 'medallions', 'dungeons', 'tokens', 'hearts', 'custom'):
+        condition = world.conditions['Gift from Sages']
+        condition.compile(rom, symbol)
     else:
-        rom.write_byte(symbol, 0)
-        rom.write_int16(count_symbol, 0)
+        raise NotImplementedError() #TODO compile False
 
     # Set up LACS conditions.
+    condition = world.conditions['Light Arrow Cutscene']
     symbol = rom.sym('LACS_CONDITION')
-    count_symbol = rom.sym('LACS_CONDITION_COUNT')
-    if world.settings.lacs_condition == 'medallions':
-        rom.write_int32(symbol, 1)
-        rom.write_int16(count_symbol, world.settings.lacs_medallions)
-    elif world.settings.lacs_condition == 'dungeons':
-        rom.write_int32(symbol, 2)
-        rom.write_int16(count_symbol, world.settings.lacs_rewards)
-    elif world.settings.lacs_condition == 'stones':
-        rom.write_int32(symbol, 3)
-        rom.write_int16(count_symbol, world.settings.lacs_stones)
-    elif world.settings.lacs_condition == 'tokens':
-        rom.write_int32(symbol, 4)
-        rom.write_int16(count_symbol, world.settings.lacs_tokens)
-    elif world.settings.lacs_condition == 'hearts':
-        rom.write_int32(symbol, 5)
-        rom.write_int16(count_symbol, world.settings.lacs_hearts * 0x10)
-    else:
-        rom.write_int32(symbol, 0)
+    condition.compile(rom, symbol)
 
     if world.settings.open_deku:
         save_context.write_bits(0xED5, 0x10)  # "Showed Mido Sword & Shield"
