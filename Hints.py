@@ -29,7 +29,6 @@ else:
 
 if TYPE_CHECKING:
     from Dungeon import Dungeon
-    from Entrance import Entrance
     from Goals import GoalCategory
     from Location import Location
     from Spoiler import Spoiler

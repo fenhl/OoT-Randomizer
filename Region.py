@@ -6,7 +6,6 @@ from ItemList import REWARD_COLORS
 
 if TYPE_CHECKING:
     from Dungeon import Dungeon
-    from Entrance import Entrance
     from Hints import HintArea
     from Item import Item
     from Location import Location

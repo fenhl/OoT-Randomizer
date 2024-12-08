@@ -126,7 +126,6 @@ def build_world_graphs(settings: Settings) -> list[World]:
     for i in range(0, settings.world_count):
         worlds.append(World(i, settings.copy()))
 
-    savewarps_to_connect = []
     for id, world in enumerate(worlds):
         logger.info('Generating World %d.' % (id + 1))
         logger.info('Creating Overworld')
@@ -139,15 +138,20 @@ def build_world_graphs(settings: Settings) -> list[World]:
         path = data_path(path)
 
         for filename in ('Overworld.json', 'Bosses.json'):
-            savewarps_to_connect += world.load_regions_from_json(os.path.join(path, filename))
+            world.load_regions_from_json(os.path.join(path, filename))
 
         # Compile the json rules based on settings
-        savewarps_to_connect += world.create_dungeons()
+        world.create_dungeons()
         world.create_internal_locations()
 
         if settings.shopsanity != 'off':
             world.random_shop_prices()
         world.set_scrub_prices()
+
+        # now that all regions are defined, change region names to Region objects
+        for region in world.regions:
+            for exit in region.exits:
+                exit.source_target = world.get_region(exit.source_target)
 
         logger.info('Calculating Access Rules.')
         set_rules(world)
@@ -166,7 +170,7 @@ def build_world_graphs(settings: Settings) -> list[World]:
         settings.distribution.configure_triforce_hunt(worlds)
 
     logger.info('Setting Entrances.')
-    set_entrances(worlds, savewarps_to_connect)
+    set_entrances(worlds)
     return worlds
 
 

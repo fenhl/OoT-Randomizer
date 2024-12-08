@@ -10,7 +10,6 @@ from functools import reduce
 from typing import TYPE_CHECKING, Any, Optional
 
 import StartingItems
-from Entrance import Entrance
 from EntranceShuffle import EntranceShuffleError, change_connections, confirm_replacement, validate_world, check_entrances_compatibility
 from Fill import FillError
 from Hints import HintArea, gossipLocations, GossipText
@@ -25,6 +24,7 @@ from Spoiler import Spoiler, HASH_ICONS, PASSWORD_NOTES
 from version import __version__
 
 if TYPE_CHECKING:
+    from NewEntrance import NewEntrance
     from SaveContext import SaveContext
     from Settings import Settings
     from State import State
@@ -651,8 +651,13 @@ class WorldDistribution:
                 return ItemFactory(get_junk_item(1))[0]
         return random.choice(list(ItemIterator(item_matcher, worlds[player_id])))
 
-    def set_shuffled_entrances(self, worlds: list[World], entrance_pools: dict[str, list[Entrance]], target_entrance_pools: dict[str, list[Entrance]],
-                               locations_to_ensure_reachable: Iterable[Location], itempool: list[Item]) -> None:
+    def set_shuffled_entrances(
+        self,
+        worlds: list[World],
+        entrance_pools: dict[str, list[NewEntrance]],
+        target_entrance_pools: dict[str, list[NewEntrance]],
+        itempool: list[Item],
+    ) -> None:
         for (name, record) in self.entrances.items():
             if record.region is None:
                 continue
@@ -670,7 +675,7 @@ class WorldDistribution:
                     continue
 
                 entrance_found = True
-                if matched_entrance.connected_region is not None:
+                if matched_entrance.target_target is not None:
                     if matched_entrance.type == 'Overworld':
                         continue
                     else:
@@ -678,8 +683,11 @@ class WorldDistribution:
 
                 target_region = record.region
 
-                matched_targets_to_region = list(filter(lambda target: target.connected_region and target.connected_region.name == target_region,
-                                                        target_entrance_pools[pool_type]))
+                matched_targets_to_region = [
+                    target
+                    for target in target_entrance_pools[pool_type]
+                    if target.source_target.name == target_region
+                ]
                 if not matched_targets_to_region:
                     raise RuntimeError('No entrance found to replace with %s that leads to %s in world %d' %
                                                 (matched_entrance, target_region, self.id + 1))
@@ -687,7 +695,12 @@ class WorldDistribution:
                 if record.origin:
                     target_parent = record.origin
                     try:
-                        matched_target = next(filter(lambda target: target.replaces.parent_region.name == target_parent, matched_targets_to_region))
+                        matched_target = next(
+                            filter(
+                                lambda target: target.source_source.name == target_parent,
+                                matched_targets_to_region,
+                            )
+                        )
                     except StopIteration:
                         raise RuntimeError('No entrance found to replace with %s that leads to %s from %s in world %d' %
                                                 (matched_entrance, target_region, target_parent, self.id + 1))

@@ -10,7 +10,6 @@ from Search import Search
 from State import State
 
 if TYPE_CHECKING:
-    from Entrance import Entrance
     from Item import Item
     from World import World
 

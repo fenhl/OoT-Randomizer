@@ -6,10 +6,10 @@ import os
 import random
 from collections import OrderedDict, defaultdict
 from collections.abc import Iterable, Iterator
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from Dungeon import Dungeon
-from Entrance import Entrance
+from NewEntrance import NewEntrance
 from Goals import Goal, GoalCategory
 from HintList import get_required_hints, misc_item_hint_table, misc_location_hint_table
 from Hints import HintArea, hint_dist_keys, hint_dist_files
@@ -28,6 +28,9 @@ from Spoiler import Spoiler
 from State import State
 from Utils import data_path, read_logic_file
 
+if TYPE_CHECKING:
+    from NewEntrance import EntranceKind
+
 
 class World:
     def __init__(self, world_id: int, settings: Settings, resolve_randomized_settings: bool = True) -> None:
@@ -36,7 +39,7 @@ class World:
         self.regions: list[Region] = []
         self.itempool: list[Item] = []
         self._cached_locations: list[Location] = []
-        self._entrance_cache: dict[str, Entrance] = {}
+        self._entrance_cache: dict[str, NewEntrance] = {}
         self._region_cache: dict[str, Region] = {}
         self._location_cache: dict[str, Location] = {}
         self.shop_prices: dict[str, int] = {}
@@ -382,12 +385,11 @@ class World:
         new_world.distribution = self.distribution
 
         new_world.dungeons = [dungeon for dungeon in self.dungeons]
-        new_world.regions = [region for region in self.regions]
+        new_world.regions = [region for region in self.regions] #TODO fix exits
         new_world.itempool = [item for item in self.itempool]
         new_world.state = self.state.copy(new_world)
 
-        # TODO: Why is this necessary over copying region.entrances on region copy?
-        # new_world.initialize_entrances()
+        #TODO fix region references in entrances
 
         # copy any randomized settings to match the original copy
         new_world.randomized_list = list(self.randomized_list)
@@ -577,9 +579,8 @@ class World:
         elif self.settings.silver_rupee_pouches_choice == 'all':
             self.settings.silver_rupee_pouches = self.silver_rupee_puzzles()
 
-    def load_regions_from_json(self, file_path: str) -> list[tuple[Entrance, str]]:
+    def load_regions_from_json(self, file_path: str) -> None:
         region_json = read_logic_file(file_path)
-        savewarps_to_connect = []
 
         for region in region_json:
             new_region = Region(self, region['region_name'])
@@ -626,43 +627,30 @@ class World:
                         make_event_item(event, new_location)
             if 'exits' in region:
                 for exit, rule in region['exits'].items():
-                    new_exit = Entrance('%s -> %s' % (new_region.name, exit), new_region)
-                    new_exit.connected_region = exit
-                    new_exit.rule_string = rule
+                    new_exit = NewEntrance(new_region, exit, rule)
                     if self.settings.logic_rules != 'none':
                         self.parser.parse_spot_rule(new_exit)
                     new_region.exits.append(new_exit)
             if 'savewarp' in region:
                 savewarp_target = region['savewarp'].split(' -> ')[1]
-                new_exit = Entrance(f'{new_region.name} -> {savewarp_target}', new_region)
-                new_exit.connected_region = savewarp_target
+                new_exit = NewEntrance(new_region, savewarp_target, 'True')
+                if self.settings.logic_rules != 'none':
+                    self.parser.parse_spot_rule(new_exit)
                 new_region.exits.append(new_exit)
                 new_region.savewarp = new_exit
-                # the replaced entrance may not exist yet so we connect it after all region files have been read
-                savewarps_to_connect.append((new_exit, region['savewarp']))
             self.regions.append(new_region)
-        return savewarps_to_connect
 
-    def create_dungeons(self) -> list[tuple[Entrance, str]]:
-        savewarps_to_connect = []
+    def create_dungeons(self) -> None:
         for hint_area in HintArea:
             if (name := hint_area.dungeon_name) is not None:
                 logic_folder = 'Glitched World' if self.settings.logic_rules == 'glitched' else 'World'
                 file_name = name + (' MQ.json' if self.dungeon_mq[name] else '.json')
-                savewarps_to_connect += self.load_regions_from_json(os.path.join(data_path(logic_folder), file_name))
+                self.load_regions_from_json(os.path.join(data_path(logic_folder), file_name))
                 self.dungeons.append(Dungeon(self, name, hint_area))
-        return savewarps_to_connect
 
     def create_internal_locations(self) -> None:
         self.parser.create_delayed_rules()
         assert self.parser.events <= self.event_items, 'Parse error: undefined items %r' % (self.parser.events - self.event_items)
-
-    def initialize_entrances(self) -> None:
-        for region in self.regions:
-            for exit in region.exits:
-                if exit.connected_region:
-                    exit.connect(self.get_region(exit.connected_region))
-                exit.world = self
 
     def initialize_regions(self) -> None:
         for region in self.regions:
@@ -1092,8 +1080,8 @@ class World:
             return region
         raise KeyError('No such region %s' % region_name)
 
-    def get_entrance(self, entrance_name: str | Entrance) -> Entrance:
-        if isinstance(entrance_name, Entrance):
+    def get_entrance(self, entrance_name: str | NewEntrance) -> NewEntrance:
+        if isinstance(entrance_name, NewEntrance):
             return entrance_name
         if (entrance := self._entrance_cache.get(entrance_name, None)) is not None:
             return entrance
@@ -1236,13 +1224,13 @@ class World:
     def get_progression_locations(self) -> Iterable[Location]:
         return filter(Location.has_progression_item, self.get_locations())
 
-    def get_entrances(self) -> list[Entrance]:
+    def get_entrances(self) -> list[NewEntrance]:
         return [exit for region in self.regions for exit in region.exits]
 
-    def get_shufflable_entrances(self, type=None, only_primary=False) -> list[Entrance]:
-        return [entrance for entrance in self.get_entrances() if (type is None or entrance.type == type) and (not only_primary or entrance.primary)]
+    def get_shufflable_entrances(self, type: Optional[EntranceKind] = None, only_primary: bool = False) -> list[NewEntrance]:
+        return [entrance for entrance in self.get_entrances() if (type is None or entrance.entrance_kind == type) and (not only_primary or entrance.primary)]
 
-    def get_shuffled_entrances(self, type=None, only_primary=False) -> list[Entrance]:
+    def get_shuffled_entrances(self, type: Optional[EntranceKind] = None, only_primary: bool = False) -> list[NewEntrance]:
         return [entrance for entrance in self.get_shufflable_entrances(type=type, only_primary=only_primary) if entrance.shuffled]
 
     def region_has_shortcuts(self, region_name: str) -> bool:

@@ -18,9 +18,6 @@ import Sounds
 import StartingItems
 from Utils import data_path
 
-if TYPE_CHECKING:
-    from Entrance import Entrance
-
 # Old/New name of a setting
 class Setting_Info_Versioning:
     def __init__(self, old_name, new_name):

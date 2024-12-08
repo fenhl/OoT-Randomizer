@@ -10,7 +10,6 @@ from collections.abc import Callable, Iterable
 from typing import Optional, Any
 
 from Cutscenes import patch_cutscenes, patch_wondertalk2
-from Entrance import Entrance
 from HintList import get_hint
 from Hints import GossipText, HintArea, write_gossip_stone_hints, build_altar_hints, \
         build_ganon_text, build_misc_item_hints, build_misc_location_hints, get_simple_hint_no_prefix, get_item_generic_name

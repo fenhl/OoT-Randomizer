@@ -15,7 +15,6 @@ else:
     TypeAlias = str
 
 if TYPE_CHECKING:
-    from Entrance import Entrance
     from Item import Item
     from Location import Location
     from Goals import GoalCategory
@@ -129,20 +128,23 @@ class Search:
     def _expand_regions(self, exit_queue: list[Entrance], regions: dict[Region, int], age: Optional[str]) -> list[Entrance]:
         failed = []
         for exit in exit_queue:
-            if exit.world and exit.connected_region and exit.connected_region not in regions:
-                # Evaluate the access rule directly, without tod
-                if exit.access_rule(self.state_list[exit.world.id], spot=exit, age=age):
-                    # If it found a new tod, make sure we try other entrances again.
-                    # Probably would take too long and not be worth it if we only grabbed the exits
-                    # for the given world...
-                    if exit.connected_region.provides_time and ~regions[exit.world.get_region('Root')] & exit.connected_region.provides_time:
-                        exit_queue.extend(failed)
-                        failed = []
-                        regions[exit.world.get_region('Root')] |= exit.connected_region.provides_time
-                    regions[exit.connected_region] = exit.connected_region.provides_time
-                    exit_queue.extend(exit.connected_region.exits)
-                else:
-                    failed.append(exit)
+            if exit.target_target is None:
+                pass #TODO consider all possible targets for this exit reachable
+            else:
+                if exit.target_target not in regions:
+                    # Evaluate the access rule directly, without tod
+                    if exit.access_rule(self.state_list[exit.inferred_world.id], spot=exit, age=age):
+                        # If it found a new tod, make sure we try other entrances again.
+                        # Probably would take too long and not be worth it if we only grabbed the exits
+                        # for the given world...
+                        if exit.target_target.provides_time and ~regions[root := exit.inferred_world.get_region('Root')] & exit.target_target.provides_time:
+                            exit_queue.extend(failed)
+                            failed = []
+                            regions[root] |= exit.target_target.provides_time
+                        regions[exit.target_target] = exit.target_target.provides_time
+                        exit_queue.extend(exit.target_target.exits)
+                    else:
+                        failed.append(exit)
         return failed
 
     def _expand_tod_regions(self, regions: dict[Region, int], goal_region: Region, age: Optional[str], tod: int) -> bool:
@@ -152,13 +154,16 @@ class Search:
         exit_queue = list(itertools.chain.from_iterable(region.exits for region, _ in filter(has_tod_world, regions.items())))
         for exit in exit_queue:
             # We don't look for new regions, just spreading the tod to our existing regions
-            if exit.connected_region in regions and tod & ~regions[exit.connected_region]:
-                # Evaluate the access rule directly
-                if exit.access_rule(self.state_list[exit.world.id], spot=exit, age=age, tod=tod):
-                    regions[exit.connected_region] |= tod
-                    if exit.connected_region == goal_region:
-                        return True
-                    exit_queue.extend(exit.connected_region.exits)
+            if exit.target_target is None:
+                pass #TODO consider all possible targets for this exit reachable
+            else:
+                if exit.target_target in regions and tod & ~regions[exit.target_target]:
+                    # Evaluate the access rule directly
+                    if exit.access_rule(self.state_list[exit.inferred_world.id], spot=exit, age=age, tod=tod):
+                        regions[exit.target_target] |= tod
+                        if exit.target_target == goal_region:
+                            return True
+                        exit_queue.extend(exit.target_target.exits)
         return False
 
     # Explores available exits, updating relevant entries in the cache in-place.

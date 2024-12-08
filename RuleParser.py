@@ -5,7 +5,6 @@ import re
 from collections import defaultdict
 from typing import TYPE_CHECKING, Optional, Any
 
-from Entrance import Entrance
 from Item import ItemInfo, Item, make_event_item
 from Location import Location
 from Region import TimeOfDay

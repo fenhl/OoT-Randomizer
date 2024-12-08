@@ -11,7 +11,6 @@ from Search import Search, RewindableSearch
 
 if TYPE_CHECKING:
     from Dungeon import Dungeon
-    from Entrance import Entrance
     from Goals import GoalCategory
     from Hints import GossipText
     from Location import Location
@@ -389,8 +388,5 @@ class Copier:
             item.world = self.worlds.get(id(item.world), item.world)
             item.location = self.locations.get(id(item.location), item.location)
             item.looks_like_item = self.items.get(id(item.looks_like_item), item.looks_like_item)
-
-        for world in self.worlds.values():
-            world.initialize_entrances()
 
         return list(self.worlds.values())
