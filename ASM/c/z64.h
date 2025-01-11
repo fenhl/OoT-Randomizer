@@ -771,36 +771,43 @@ typedef struct {
   uint8_t         envHazardTextTriggerFlags;/* 0x13C6 */
   uint8_t         showTitleCard;            /* 0x13C7 */
   uint16_t        nayrus_love_timer;        /* 0x13C8 */
-  char            unk_13_[0x0004];          /* 0x13CA */
+  char            unk_11_[0x0004];          /* 0x13CA */
   int16_t         timer_1_state;            /* 0x13CE */
   int16_t         timer_1_value;            /* 0x13D0 */
   int16_t         timer_2_state;            /* 0x13D2 */
   int16_t         timer_2_value;            /* 0x13D4 */
-  char            unk_14_[0x000A];          /* 0x13D6 */
+  char            unk_12_[0x000A];          /* 0x13D6 */
   int8_t          seq_index;                /* 0x13E0 */
   int8_t          night_sfx;                /* 0x13E1 */
-  char            unk_15_[0x0012];          /* 0x13E2 */
+  int8_t          buttonStatus[0x0005];     /* 0x13E2 */
+  int8_t          forceRisingButtonAlphas;  /* 0x13E7 */
+  int16_t         nextHudVisibilityMode;    /* 0x13E8 */
+  int16_t         hudVisibilityMode;        /* 0x13EA */
+  int16_t         hudVisibilityModeTimer;   /* 0x13EC */
+  int16_t         prevHudVisibilityMode;    /* 0x13EE */
+  uint16_t        magicState;               /* 0x13F0 */
+  uint16_t        prevMagicState;           /* 0x13F2 */
   uint16_t        magic_meter_size;         /* 0x13F4 */
-  char            unk_16_[0x0004];          /* 0x13F6 */
+  char            unk_13_[0x0004];          /* 0x13F6 */
   uint16_t        event_inf[4];             /* 0x13FA */
-  char            unk_17_[0x0001];          /* 0x1402 */
+  char            unk_14_[0x0001];          /* 0x1402 */
   uint8_t         minimap_index;            /* 0x1403 */
   int16_t         minigame_state;           /* 0x1404 */
-  char            unk_18_[0x0003];          /* 0x1406 */
+  char            unk_15_[0x0003];          /* 0x1406 */
   uint8_t         language;                 /* 0x1409 */
-  char            unk_19_[0x0002];          /* 0x140A */
+  char            unk_16_[0x0002];          /* 0x140A */
   uint8_t         z_targeting;              /* 0x140C */
-  char            unk_1A_[0x0001];          /* 0x140D */
+  char            unk_17_[0x0001];          /* 0x140D */
   uint16_t        disable_music_flag;       /* 0x140E */
-  char            unk_1B_[0x0002];          /* 0x1410 */
+  char            unk_18_[0x0002];          /* 0x1410 */
   uint16_t        cutscene_next;            /* 0x1412 */
-  char            unk_1C_[0x0006];          /* 0x1414 */
+  char            unk_19_[0x0006];          /* 0x1414 */
   uint16_t        skybox_time;              /* 0x141A */
-  char            unk_1D_[0x0008];          /* 0x141C */
+  char            unk_1A_[0x0008];          /* 0x141C */
   uint16_t        refill_hearts;            /* 0x1424 */
-  char            unk_1E_[0x000A];          /* 0x1426 */
+  char            unk_1B_[0x000A];          /* 0x1426 */
   z64_gameinfo_t* gameinfo;                 /* 0x1430 */
-  char            unk_1F_[0x001C];          /* 0x1434 */
+  char            unk_1C_[0x001C];          /* 0x1434 */
                                             /* 0x1450 */
 } z64_file_t;
 
