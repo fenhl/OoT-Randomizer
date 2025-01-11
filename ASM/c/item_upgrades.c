@@ -2,6 +2,7 @@
 
 #include "get_items.h"
 #include "item_table.h"
+#include "save.h"
 #include "z64.h"
 
 extern uint32_t FREE_BOMBCHU_DROPS;
@@ -66,8 +67,9 @@ uint16_t wallet_upgrade(z64_file_t* save, override_t override) {
 }
 
 uint16_t scale_upgrade(z64_file_t* save, override_t override) {
-    switch ((override.value.base.player == PLAYER_ID || !MW_PROGRESSIVE_ITEMS_ENABLE) ? save->diving_upgrade : MW_PROGRESSIVE_ITEMS_STATE[override.value.base.player].scale) {
-        case 0: return GI_SCALE_SILVER; // Silver Scale
+    switch ((override.value.base.player == PLAYER_ID || !MW_PROGRESSIVE_ITEMS_ENABLE) ? extended_savectx.extended_scale : MW_PROGRESSIVE_ITEMS_STATE[override.value.base.player].scale) {
+        case 0: return GI_SCALE_BRONZE; // Bronze Scale
+        case 1: return GI_SCALE_SILVER; // Silver Scale
         default: return GI_SCALE_GOLDEN; // Gold Scale
     }
 }

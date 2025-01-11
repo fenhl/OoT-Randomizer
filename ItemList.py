@@ -320,6 +320,8 @@ class GetItemId(IntEnum):
     GI_SHADOW_MEDALLION = 0x012E
     GI_SPIRIT_MEDALLION = 0x012F
 
+    GI_SCALE_BRONZE = 0x0130
+
     # New items in dev-fenhl which are not in main Dev
     # Some previously used IDs may be skipped, to simplify auto-tracker support
 
@@ -470,7 +472,7 @@ item_table: dict[str, tuple[str, Optional[bool], Optional[int], Optional[dict[st
     'Slingshot':                                       ('Item',     True,  GetItemId.GI_PROGRESSIVE_SLINGSHOT, None),
     'Deku Seed Bag':                                   ('Item',     True,  GetItemId.GI_PROGRESSIVE_SLINGSHOT, {'alias': ('Slingshot', 1)}),
     'Progressive Wallet':                              ('Item',     True,  GetItemId.GI_PROGRESSIVE_WALLET, {'progressive': 3}),
-    'Progressive Scale':                               ('Item',     True,  GetItemId.GI_PROGRESSIVE_SCALE, {'progressive': 2}),
+    'Progressive Scale':                               ('Item',     True,  GetItemId.GI_PROGRESSIVE_SCALE, {'progressive': 3}),
     'Deku Nut Capacity':                               ('Item',     None,  GetItemId.GI_PROGRESSIVE_NUT_CAPACITY, None),
     'Deku Stick Capacity':                             ('Item',     None,  GetItemId.GI_PROGRESSIVE_STICK_CAPACITY, None),
     'Bombchus':                                        ('Item',     True,  GetItemId.GI_PROGRESSIVE_BOMBCHUS, None),

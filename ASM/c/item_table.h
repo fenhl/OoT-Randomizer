@@ -341,6 +341,8 @@ typedef enum GetItemID {
     /* 0x012E */ GI_SHADOW_MEDALLION,
     /* 0x012F */ GI_SPIRIT_MEDALLION,
 
+    /* 0x0130 */ GI_SCALE_BRONZE,
+
     // New items in dev-fenhl which are not in main Dev
     // The ID range is shared with Elagatua's Dev branch, avoid overlap to make multiworld and auto-trackers work
     // Similarly, don't reuse previously used IDs

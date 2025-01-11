@@ -2955,6 +2955,22 @@ class SettingInfos:
         },
     )
 
+    add_bronze_scale = Checkbutton(
+        gui_text       = 'Add Bronze Scale',
+        gui_tooltip    = '''\
+            Adds a new item : the Bronze Scale.
+            Until finding this item, Link won't be able to float
+            at all in water, and will void out and respawn at a nearby shore.
+            Exception for the Water Temple entrance small pool
+            to avoid softlocks.
+        ''',
+        default        = False,
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    )
+
     shuffle_base_item_pool = Checkbutton(
         gui_text       = 'Shuffle Other Items',
         gui_tooltip    = '''\
