@@ -596,7 +596,23 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
 
         # Shops
         elif location.type == "Shop":
-            if world.settings.shopsanity == 'off':
+            if world.settings.triforce_blitz_hint_shop:
+                tfb_hint_shop_location_and_items = {
+                    "Market Bazaar Item 5": "Bow Hint",
+                    "Market Bazaar Item 6": "Silver Scale Hint",
+                    "Market Bazaar Item 7": "Bomb Bag Hint",
+                    "Market Bazaar Item 8": "Wallet Hint",
+                    "Market Potion Shop Item 5": "Goron Bracelet Hint",
+                    "Market Potion Shop Item 6": "Magic Hint",
+                    "Market Potion Shop Item 7": "Silver Gauntlets Hint",
+                    "Market Potion Shop Item 8": "Hookshot Hint",
+                }
+                remain_shop_items.append(item)
+                if location.name in tfb_hint_shop_location_and_items.keys():
+                    world.distribution.add_location(location.name, tfb_hint_shop_location_and_items[location.name])
+                else:
+                    shuffle_item = False
+            elif world.settings.shopsanity == 'off':
                 shuffle_item = False
             else:
                 remain_shop_items.append(item)
