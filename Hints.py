@@ -772,10 +772,26 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
 
     prioritize_dungeon_hints = 'prioritize_dungeons' in world.hint_dist_user and world.hint_dist_user['prioritize_dungeons']
     dungeon_goal_locations = list(filter(lambda location: HintArea.at(location).is_dungeon, goal_locations))
-    if prioritize_dungeon_hints and len(dungeon_goal_locations) > 0:
-        location = random.choice(dungeon_goal_locations)
+    
+    if world.settings.triforce_blitz_hint_shop:
+        hinted_shop_hint_locations = reduce(lambda acc, shop_hints: acc + reduce(lambda acc, gossip_text: acc + gossip_text.hinted_locations, shop_hints.values(), []), spoiler.shop_hints.values(), [])
+        unhinted_dungeon_goal_locations = list(filter(lambda location: location.name not in hinted_shop_hint_locations, dungeon_goal_locations))
+        unhinted_goal_locations = list(filter(lambda location: location.name not in hinted_shop_hint_locations, goal_locations))
     else:
-        location = random.choice(goal_locations)
+        hinted_shop_hint_locations = []
+        unhinted_dungeon_goal_locations = []
+        unhinted_goal_locations = []
+
+    if prioritize_dungeon_hints and len(dungeon_goal_locations) > 0:
+        if len(unhinted_dungeon_goal_locations) > 0:
+            location = random.choice(unhinted_dungeon_goal_locations)
+        else:
+            location = random.choice(dungeon_goal_locations)
+    else:
+        if len(unhinted_dungeon_goal_locations) > 0:
+            location = random.choice(unhinted_goal_locations)
+        else:
+            location = random.choice(goal_locations)
 
     checked.add(location.worldAndName)
 

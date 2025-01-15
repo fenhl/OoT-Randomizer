@@ -194,11 +194,11 @@ def make_spoiler(settings: Settings, worlds: list[World]) -> Spoiler:
         logger.info('Calculating hint data.')
         update_goal_items(spoiler)
         calculate_playthrough_locations(spoiler)
+        if settings.triforce_blitz_hint_shop:
+            build_hint_shop_hints(spoiler, worlds)
         build_gossip_hints(spoiler, worlds)
     elif any(world.dungeon_rewards_hinted for world in worlds) or any(hint_type in settings.misc_hints for hint_type in misc_item_hint_table) or any(hint_type in settings.misc_hints for hint_type in misc_location_hint_table):
         spoiler.find_misc_hint_items()
-    if settings.triforce_blitz_hint_shop:
-        build_hint_shop_hints(spoiler, worlds)
     spoiler.build_file_hash()
     spoiler.build_password(settings.password_lock)
     return spoiler
