@@ -1059,7 +1059,7 @@
         "shuffle_hideout_entrances": false,
         "shuffle_gerudo_fortress_heart_piece": "remove",
         "shuffle_grotto_entrances": false,
-        "shuffle_dungeon_entrances": "off",
+        "shuffle_dungeon_entrances": "tfbs4",
         "shuffle_bosses": "off",
         "shuffle_ganon_tower": false,
         "shuffle_overworld_entrances": false,

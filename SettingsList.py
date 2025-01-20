@@ -1893,6 +1893,7 @@ class SettingInfos:
         choices        = {
             'off':       'Off',
             'simple':    'Dungeon',
+            'tfbs4':     'Triforce Blitz S4',
             'all':       'Dungeon and Ganon',
         },
         gui_tooltip    = '''\
@@ -1904,6 +1905,8 @@ class SettingInfos:
 
             With Dungeon and Ganon selected, all dungeons including Ganon's
             castle will be shuffled.
+
+            Triforce Blitz S4 shuffles all stone and medallion dungeons in separate pools.
 
             Thieves' Hideout is controlled by a separate setting.
         ''',

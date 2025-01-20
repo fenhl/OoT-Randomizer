@@ -2254,7 +2254,7 @@ def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set
         item_importance_color = 'Yellow'
         hinted_location = playthrough_items[upgrade_level - 1]
     else:
-        item_importance_text = 'foolish'
+        item_importance_text = 'neglected'
         item_importance_color = 'Pink'
         hinted_location = random.choice(foolish_world_items)
     

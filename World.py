@@ -72,7 +72,7 @@ class World:
         self.shuffle_interior_entrances: bool = settings.shuffle_interior_entrances in ('simple', 'all')
 
         self.shuffle_special_dungeon_entrances: bool = settings.shuffle_dungeon_entrances == 'all'
-        self.shuffle_dungeon_entrances: bool = settings.shuffle_dungeon_entrances in ('simple', 'all')
+        self.shuffle_dungeon_entrances: bool = settings.shuffle_dungeon_entrances in ('simple', 'tfbs4', 'all')
 
         self.entrance_shuffle: bool = bool(
             self.shuffle_interior_entrances or settings.shuffle_grotto_entrances or self.shuffle_dungeon_entrances
