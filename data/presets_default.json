@@ -1387,7 +1387,7 @@
         "big_poe_count": 1,
         "clearer_hints": true,
         "hints": "always",
-        "hint_dist": "triforce-blitz-s4",
+        "hint_dist": "triforce-blitz-s4-coop",
         "item_hints": [],
         "hint_dist_user": {},
         "plandomized_locations": {

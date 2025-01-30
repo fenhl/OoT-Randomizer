@@ -2234,11 +2234,19 @@ def build_misc_location_hints(world: World, messages: list[Message]) -> None:
         update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), 0x23)
 
 def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set[Location], spoiler: Spoiler, world: World, worlds: list[World]) -> GossipText:
+    
+    # For TFB S4 Co-op, hint shop sells hints for the other world's items
+    tfb_s4_coop_hints = 'tfb_s4_coop_hints' in world.hint_dist_user and world.hint_dist_user['tfb_s4_coop_hints']
+    if tfb_s4_coop_hints:
+        hinted_world = worlds[(world.id + 1) % 2]
+    else:
+        hinted_world = world
+    
     all_path_items = reduce(lambda acc, locations: acc + locations, list(map(lambda world: spoiler.required_locations[world.id], worlds)), [])
-    path_items = [location for location in all_path_items if location.item.name == item_name and location.item.world.id == world.id]
-    playthrough_items = [location for location in spoiler.playthrough_locations if location.item.name == item_name and location.item.world.id == world.id]
+    path_items = [location for location in all_path_items if location.item.name == item_name and location.item.world.id == hinted_world.id]
+    playthrough_items = [location for location in spoiler.playthrough_locations if location.item.name == item_name and location.item.world.id == hinted_world.id]
     all_world_items = reduce(lambda acc, locations: acc + locations, list(map(lambda world:  world.find_items(item_name), worlds)), [])
-    world_items = list(filter(lambda location: location.item.world.id == world.id, all_world_items))
+    world_items = list(filter(lambda location: location.item.world.id == hinted_world.id, all_world_items))
 
     foolish_world_items = [location for location in world_items if 
                            location.worldAndName not in [location.worldAndName for location in path_items] and 
