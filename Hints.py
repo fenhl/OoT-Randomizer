@@ -720,7 +720,9 @@ def get_echo_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintRetu
                colors, list(hint_tuple[0].hinted_locations), list(hint_tuple[0].hinted_items), "They #echo# that"), None)
 
 def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], custom_prefix: str = "They say that ") -> HintReturn:
-    goal_category = get_goal_category(spoiler, world, world.goal_categories)
+
+    hinted_world = get_hinted_world(world, spoiler.worlds)
+    goal_category = get_goal_category(spoiler, hinted_world, hinted_world.goal_categories)
 
     # check if no goals were generated (and thus no categories available)
     if not goal_category:
@@ -735,8 +737,8 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
     # If all locations for all goal categories are hinted, return no hint.
     while not goal_locations:
         if not goals:
-            del world.goal_categories[goal_category.name]
-            goal_category = get_goal_category(spoiler, world, world.goal_categories)
+            del hinted_world.goal_categories[goal_category.name]
+            goal_category = get_goal_category(spoiler, hinted_world, hinted_world.goal_categories)
             if not goal_category:
                 return None
             else:
@@ -754,12 +756,12 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
         else:
             goal = random.choices(goals, weights=weights)[0]
 
-        required_locations = reduce(lambda acc, locations: acc + locations, spoiler.goal_locations[world.id][goal_category.name][goal.name].values(), [])
+        required_locations = reduce(lambda acc, locations: acc + locations, spoiler.goal_locations[hinted_world.id][goal_category.name][goal.name].values(), [])
         goal_locations = list(filter(lambda location:
             location.worldAndName not in checked
-            and location.name not in world.hint_exclusions
-            and location.name not in world.hint_type_overrides['goal']
-            and location.item.name not in world.item_hint_type_overrides['goal']
+            and location.name not in hinted_world.hint_exclusions
+            and location.name not in hinted_world.hint_type_overrides['goal']
+            and location.item.name not in hinted_world.item_hint_type_overrides['goal']
             and location.item.name not in unHintableWothItems,
             required_locations))
 
@@ -920,7 +922,7 @@ def get_goal_count_hint(spoiler, world, checked):
                 goals = goal_category.goals
 
         unchecked_goals = list(filter(lambda goal:
-            goal.name not in checked,
+            goal.worldAndName not in checked,
             goals
         ))
 
@@ -941,7 +943,7 @@ def get_goal_count_hint(spoiler, world, checked):
         else:
             goal = random.choices(unchecked_goals, weights=weights)[0]
 
-    checked.add(goal.name)
+    checked.add(goal.worldAndName)
     item_count = reduce(lambda acc, locations: acc + len(locations), spoiler.goal_locations[world.id][goal_category.name][goal.name].values(), 0)
     item_text = 'step' if item_count == 1 else 'steps'
 
@@ -1601,6 +1603,13 @@ hint_func: dict[str, HintFunc | BarrenFunc] = {
 
 hint_dist_keys: set[str] = set(hint_func)
 
+def get_hinted_world(world: World, worlds: list[World]) -> World:
+    # For TFB S4 Co-op, hint shop sells hints for the other world's items
+    tfb_s4_coop_hints = 'tfb_s4_coop_hints' in world.hint_dist_user and world.hint_dist_user['tfb_s4_coop_hints']
+    if tfb_s4_coop_hints:
+        return worlds[(world.id + 1) % 2]
+    else:
+        return world
 
 def build_bingo_hint_list(board_url: str) -> list[str]:
     try:
@@ -2235,13 +2244,7 @@ def build_misc_location_hints(world: World, messages: list[Message]) -> None:
 
 def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set[Location], spoiler: Spoiler, world: World, worlds: list[World]) -> GossipText:
     
-    # For TFB S4 Co-op, hint shop sells hints for the other world's items
-    tfb_s4_coop_hints = 'tfb_s4_coop_hints' in world.hint_dist_user and world.hint_dist_user['tfb_s4_coop_hints']
-    if tfb_s4_coop_hints:
-        hinted_world = worlds[(world.id + 1) % 2]
-    else:
-        hinted_world = world
-    
+    hinted_world = get_hinted_world(world, worlds)
     all_path_items = reduce(lambda acc, locations: acc + locations, list(map(lambda world: spoiler.required_locations[world.id], worlds)), [])
     path_items = [location for location in all_path_items if location.item.name == item_name and location.item.world.id == hinted_world.id]
     playthrough_items = [location for location in spoiler.playthrough_locations if location.item.name == item_name and location.item.world.id == hinted_world.id]

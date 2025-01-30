@@ -84,6 +84,13 @@ class Goal:
 
     def __repr__(self) -> str:
         return f"{self.world.__repr__()} {self.name}: {self.hint_text}"
+    
+    @property
+    def worldAndName(self) -> str:
+        if self.world is not None:
+            return "W" + str(self.world.id) + ":" + self.name
+        else:
+            return self.name
 
 
 class GoalCategory:
