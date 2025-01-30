@@ -728,7 +728,7 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
     if not goal_category:
         return None
     
-    goals = goal_category.goals
+    goals = [goal for goal in goal_category.goals]
     goal_locations = []
 
     # Choose random goal and check if any locations are already hinted.
@@ -742,7 +742,7 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
             if not goal_category:
                 return None
             else:
-                goals = goal_category.goals
+                goals = [goal for goal in goal_category.goals]
 
         weights = []
         zero_weights = True
