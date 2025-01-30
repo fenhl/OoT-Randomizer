@@ -16,6 +16,7 @@
     "use_default_goals":     false,
     "prioritize_dungeons":   true,
     "tfb_s4_coop_hints":     true,
+    "share_checked_locations_across_worlds": true,
     "custom_goals":          [{
         "category":          "triforce_hunt",
         "priority":          30,

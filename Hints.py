@@ -721,7 +721,7 @@ def get_echo_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintRetu
 
 def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], custom_prefix: str = "They say that ") -> HintReturn:
 
-    hinted_world = get_hinted_world(world, spoiler.worlds)
+    hinted_world = get_hinted_world(world, spoiler.worlds, 'goal')
     goal_category = get_goal_category(spoiler, hinted_world, hinted_world.goal_categories)
 
     # check if no goals were generated (and thus no categories available)
@@ -1014,12 +1014,13 @@ def get_unlock_playthrough_hint(spoiler, world, checked):
 
 def get_unlock_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type: str):
 
+    hinted_world = get_hinted_world(world, spoiler.worlds, hint_type)
     if hint_type == 'unlock-playthrough':
         requirements = spoiler.playthrough_location_requirements
         required_locations = {
-            location: list(filter(lambda required_location: required_location.item.name not in world.item_hint_type_overrides[hint_type] 
-                                and required_location.world.id == world.id, required_locations)) 
-            for location, required_locations in requirements[world.id].items()
+            location: list(filter(lambda required_location: required_location.item.name not in hinted_world.item_hint_type_overrides[hint_type] 
+                                and required_location.world.id == hinted_world.id, required_locations)) 
+            for location, required_locations in requirements[hinted_world.id].items()
         }
     else:
         requirements = spoiler.required_location_requirements
@@ -1028,29 +1029,29 @@ def get_unlock_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type
             all_world_requirements.update(world_reqs)
         
         world_path_locations: set[Location] = set()
-        for name, category in world.goal_categories.items():
+        for name, category in hinted_world.goal_categories.items():
             for goal in category.goals:
-                path_locations = reduce(lambda acc, locations: acc + locations, spoiler.goal_locations[world.id][category.name][goal.name].values(), [])
+                path_locations = reduce(lambda acc, locations: acc + locations, spoiler.goal_locations[hinted_world.id][category.name][goal.name].values(), [])
                 world_path_locations.update(path_locations)
 
         world_path_requirements = {k:v for (k,v) in all_world_requirements.items() if k in world_path_locations}
 
         required_locations = {
-            location: list(filter(lambda required_location: required_location.item.name not in world.item_hint_type_overrides[hint_type], required_locations)) 
+            location: list(filter(lambda required_location: required_location.item.name not in hinted_world.item_hint_type_overrides[hint_type], required_locations)) 
             for location, required_locations in world_path_requirements.items()
         }
 
     hintable_locations = list(filter(lambda location:
         len(required_locations[location]) > 0
         and (location.worldAndName + ' - unlock') not in checked
-        and location.name not in world.hint_exclusions
-        and location.name not in world.hint_type_overrides[hint_type]
-        and location.item.name not in world.item_hint_type_overrides[hint_type]
+        and location.name not in hinted_world.hint_exclusions
+        and location.name not in hinted_world.hint_type_overrides[hint_type]
+        and location.item.name not in hinted_world.item_hint_type_overrides[hint_type]
         and location.item.type != "Song",
         required_locations))
 
     if hint_type == 'unlock-playthrough':
-        required_location_names = list(map(lambda location: location.name, spoiler.required_locations[world.id]))
+        required_location_names = list(map(lambda location: location.name, spoiler.required_locations[hinted_world.id]))
         hintable_locations = list(filter(lambda location:
             location.name not in required_location_names,
             hintable_locations))
@@ -1064,8 +1065,8 @@ def get_unlock_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type
     required_location = random.choices(required_locations[location], required_location_weights)[0]
     checked.add(location.worldAndName + ' - unlock')
 
-    item_text = get_hint(get_item_generic_name(location.item), world.settings.clearer_hints).text
-    required_item_text = get_hint(get_item_generic_name(required_location.item), world.settings.clearer_hints).text
+    item_text = get_hint(get_item_generic_name(location.item), hinted_world.settings.clearer_hints).text
+    required_item_text = get_hint(get_item_generic_name(required_location.item), hinted_world.settings.clearer_hints).text
 
     if location.item.world.id == world.id:
         item_player_text = ''
@@ -1603,7 +1604,7 @@ hint_func: dict[str, HintFunc | BarrenFunc] = {
 
 hint_dist_keys: set[str] = set(hint_func)
 
-def get_hinted_world(world: World, worlds: list[World]) -> World:
+def get_hinted_world(world: World, worlds: list[World], hint_type: str = None) -> World:
     # For TFB S4 Co-op, hint shop sells hints for the other world's items
     tfb_s4_coop_hints = 'tfb_s4_coop_hints' in world.hint_dist_user and world.hint_dist_user['tfb_s4_coop_hints']
     if tfb_s4_coop_hints:
@@ -1734,10 +1735,16 @@ def build_gossip_hints(spoiler: Spoiler, worlds: list[World]) -> None:
                         precompleted_locations = list(map(lambda location: location.worldAndName, region.locations))
                         checked_locations[world.id].update(precompleted_locations)
 
+    share_checked_locations = 'share_checked_locations_across_worlds' in world.hint_dist_user and world.hint_dist_user['share_checked_locations_across_worlds']
+
     # Build all the hints.
     for world in worlds:
         world.update_useless_areas(spoiler)
-        build_world_gossip_hints(spoiler, world, checked_locations.pop(world.id, None))
+        if share_checked_locations:
+            world_checked_locations = reduce(lambda acc, locations: acc.union(locations), checked_locations.values(), set())
+        else:
+            world_checked_locations = checked_locations.pop(world.id, None)
+        build_world_gossip_hints(spoiler, world, world_checked_locations)
 
 
 # builds out general hints based on location and whether an item is required or not
@@ -2244,7 +2251,7 @@ def build_misc_location_hints(world: World, messages: list[Message]) -> None:
 
 def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set[Location], spoiler: Spoiler, world: World, worlds: list[World]) -> GossipText:
     
-    hinted_world = get_hinted_world(world, worlds)
+    hinted_world = get_hinted_world(world, worlds, 'tfb_shop')
     all_path_items = reduce(lambda acc, locations: acc + locations, list(map(lambda world: spoiler.required_locations[world.id], worlds)), [])
     path_items = [location for location in all_path_items if location.item.name == item_name and location.item.world.id == hinted_world.id]
     playthrough_items = [location for location in spoiler.playthrough_locations if location.item.name == item_name and location.item.world.id == hinted_world.id]
