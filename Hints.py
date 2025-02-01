@@ -1902,21 +1902,29 @@ def build_world_gossip_hints(spoiler: Spoiler, world: World, checked_locations: 
 
     # Add required location hints, only if hint copies > 0
     if hint_dist['always'][1] > 0:
-        always_locations = list(filter(lambda hint: is_not_checked([world.get_location(hint.name)], checked_always_locations),
-                                       get_hint_group('always', world)))
+        hinted_world = get_hinted_world(world, spoiler.worlds, 'always')
+        always_locations = list(filter(lambda hint: is_not_checked([hinted_world.get_location(hint.name)], checked_always_locations),
+                                       get_hint_group('always', hinted_world)))
         for hint in always_locations:
-            location = world.get_location(hint.name)
+            location = hinted_world.get_location(hint.name)
             checked_always_locations.add(location.worldAndName)
 
-            always_named_item(world, [location])
+            always_named_item(hinted_world, [location])
 
-            if location.name in world.hint_text_overrides:
-                location_text = world.hint_text_overrides[location.name]
+            if location.name in hinted_world.hint_text_overrides:
+                location_text = hinted_world.hint_text_overrides[location.name]
             else:
-                location_text = get_hint(location.name, world.settings.clearer_hints).text
+                location_text = get_hint(location.name, hinted_world.settings.clearer_hints).text
             if '#' not in location_text:
                 location_text = '#%s#' % location_text
-            item_text = get_hint(get_item_generic_name(location.item), world.settings.clearer_hints).text
+            item_text = get_hint(get_item_generic_name(location.item), hinted_world.settings.clearer_hints).text
+
+            if hinted_world.id != world.id:
+                chunks = location_text.split('#')
+                world_location_text = ("world %s's " % (hinted_world.id + 1)) + chunks.pop(1)
+                chunks.insert(1, world_location_text)
+                location_text = '#'.join(chunks)
+
             add_hint(spoiler, world, stone_groups, GossipText('%s #%s#.' % (location_text, item_text), ['Red', 'Green'], [location.name], [location.item.name]), hint_dist['always'][1], [location], force_reachable=True, hint_type='always')
             logging.getLogger('').debug('Placed always hint for %s.', location.name)
 
