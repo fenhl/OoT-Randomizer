@@ -1088,66 +1088,69 @@ def get_unlock_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type
     return (GossipText(gossip_text % (required_item_player_text, required_item_text, item_player_text, item_text), gossip_colors, [required_location.name, location.name], [required_location.item.name, location.item.name]), [required_location, location])
 
 def get_barren_hint(spoiler: Spoiler, world: World, checked: set[str], all_checked: set[str]) -> HintReturn:
-    if not hasattr(world, 'get_barren_hint_prev'):
-        world.get_barren_hint_prev = RegionRestriction.NONE
+    hinted_world = hinted_world = get_hinted_world(world, spoiler.worlds, 'barren')
 
-    checked_areas = get_checked_areas(world, checked)
+    if not hasattr(hinted_world, 'get_barren_hint_prev'):
+        hinted_world.get_barren_hint_prev = RegionRestriction.NONE
+
+    checked_areas = get_checked_areas(hinted_world, checked)
     areas = list(filter(lambda area:
         area not in checked_areas
-        and str(area) not in world.hint_type_overrides['barren']
-        and not (world.barren_dungeon >= world.hint_dist_user['dungeons_barren_limit'] and world.empty_areas[area]['dungeon'])
+        and str(area) not in hinted_world.hint_type_overrides['barren']
+        and not (hinted_world.barren_dungeon >= hinted_world.hint_dist_user['dungeons_barren_limit'] and hinted_world.empty_areas[area]['dungeon'])
         and any(
             location.name not in all_checked
-            and location.name not in world.hint_exclusions
-            and location.name not in hint_exclusions(world)
+            and location.name not in hinted_world.hint_exclusions
+            and location.name not in hint_exclusions(hinted_world)
             and HintArea.at(location) == area
-            for location in world.get_filled_locations()
+            for location in hinted_world.get_filled_locations()
         ),
-        world.empty_areas))
+        hinted_world.empty_areas))
 
     if not areas:
         return None
 
     # Randomly choose between overworld or dungeon
-    dungeon_areas = list(filter(lambda area: world.empty_areas[area]['dungeon'], areas))
-    overworld_areas = list(filter(lambda area: not world.empty_areas[area]['dungeon'], areas))
+    dungeon_areas = list(filter(lambda area: hinted_world.empty_areas[area]['dungeon'], areas))
+    overworld_areas = list(filter(lambda area: not hinted_world.empty_areas[area]['dungeon'], areas))
 
-    prioritize_dungeon_hints = 'prioritize_dungeons' in world.hint_dist_user and world.hint_dist_user['prioritize_dungeons']
+    prioritize_dungeon_hints = 'prioritize_dungeons' in hinted_world.hint_dist_user and hinted_world.hint_dist_user['prioritize_dungeons']
     if prioritize_dungeon_hints and len(dungeon_areas) > 0:
-        world.get_barren_hint_prev = RegionRestriction.DUNGEON
+        hinted_world.get_barren_hint_prev = RegionRestriction.DUNGEON
     elif not dungeon_areas:
         # no dungeons left, default to overworld
-        world.get_barren_hint_prev = RegionRestriction.OVERWORLD
+        hinted_world.get_barren_hint_prev = RegionRestriction.OVERWORLD
     elif not overworld_areas:
         # no overworld left, default to dungeons
-        world.get_barren_hint_prev = RegionRestriction.DUNGEON
+        hinted_world.get_barren_hint_prev = RegionRestriction.DUNGEON
     else:
-        if world.get_barren_hint_prev == RegionRestriction.NONE:
+        if hinted_world.get_barren_hint_prev == RegionRestriction.NONE:
             # 50/50 draw on the first hint
-            world.get_barren_hint_prev = random.choices([RegionRestriction.DUNGEON, RegionRestriction.OVERWORLD], [0.5, 0.5])[0]
-        elif world.get_barren_hint_prev == RegionRestriction.DUNGEON:
+            hinted_world.get_barren_hint_prev = random.choices([RegionRestriction.DUNGEON, RegionRestriction.OVERWORLD], [0.5, 0.5])[0]
+        elif hinted_world.get_barren_hint_prev == RegionRestriction.DUNGEON:
             # weights 75% against drawing dungeon again
-            world.get_barren_hint_prev = random.choices([RegionRestriction.DUNGEON, RegionRestriction.OVERWORLD], [0.25, 0.75])[0]
-        elif world.get_barren_hint_prev == RegionRestriction.OVERWORLD:
+            hinted_world.get_barren_hint_prev = random.choices([RegionRestriction.DUNGEON, RegionRestriction.OVERWORLD], [0.25, 0.75])[0]
+        elif hinted_world.get_barren_hint_prev == RegionRestriction.OVERWORLD:
             # weights 75% against drawing overworld again
-            world.get_barren_hint_prev = random.choices([RegionRestriction.DUNGEON, RegionRestriction.OVERWORLD], [0.75, 0.25])[0]
+            hinted_world.get_barren_hint_prev = random.choices([RegionRestriction.DUNGEON, RegionRestriction.OVERWORLD], [0.75, 0.25])[0]
 
-    if world.get_barren_hint_prev == RegionRestriction.DUNGEON:
+    if hinted_world.get_barren_hint_prev == RegionRestriction.DUNGEON:
         areas = dungeon_areas
     else:
         areas = overworld_areas
     if not areas:
         return None
 
-    area_weights = [world.empty_areas[area]['weight'] for area in areas]
+    area_weights = [hinted_world.empty_areas[area]['weight'] for area in areas]
 
     area = random.choices(areas, weights=area_weights)[0]
-    if world.empty_areas[area]['dungeon']:
-        world.barren_dungeon += 1
+    if hinted_world.empty_areas[area]['dungeon']:
+        hinted_world.barren_dungeon += 1
 
     checked.add(area)
 
-    return GossipText("plundering %s is a foolish choice." % area.text(world.settings.clearer_hints), ['Pink']), None
+    area_text = area.text(world.settings.clearer_hints, world=None if hinted_world.id == world.id else hinted_world.id + 1)
+    return GossipText("plundering %s is a foolish choice." % area_text, ['Pink']), None
 
 
 def is_not_checked(locations: Iterable[Location], checked: set[HintArea | str]) -> bool:
@@ -1740,6 +1743,8 @@ def build_gossip_hints(spoiler: Spoiler, worlds: list[World]) -> None:
     # Build all the hints.
     for world in worlds:
         world.update_useless_areas(spoiler)
+    
+    for world in worlds:
         if share_checked_locations:
             world_checked_locations = reduce(lambda acc, locations: acc.union(locations), checked_locations.values(), set())
         else:
