@@ -947,7 +947,9 @@ def get_goal_count_hint(spoiler, world, checked):
     item_count = reduce(lambda acc, locations: acc + len(locations), spoiler.goal_locations[world.id][goal_category.name][goal.name].values(), 0)
     item_text = 'step' if item_count == 1 else 'steps'
 
-    return (GossipText('the %s requires #%d# %s.' % (goal.hint_text, item_count, item_text), [goal.color, 'Light Blue']), None)
+    prefix = 'the' if len(spoiler.worlds) == 1 else 'your'
+
+    return (GossipText('%s %s requires #%d# %s.' % (prefix, goal.hint_text, item_count, item_text), [goal.color, 'Light Blue']), None)
 
 def get_area_woth_count_hint(spoiler, world, checked) -> HintReturn:
     stone_dungeons = world.escape_from_kak_data['boss_dungeons']

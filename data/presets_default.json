@@ -1141,7 +1141,8 @@
         ],
         "starting_inventory": [
             "ocarina",
-            "zeldas_letter"
+            "zeldas_letter",
+            "farores_wind"
         ],
         "starting_songs": [],
         "start_with_consumables": true,
@@ -1359,7 +1360,8 @@
         ],
         "starting_inventory": [
             "ocarina",
-            "zeldas_letter"
+            "zeldas_letter",
+            "farores_wind"
         ],
         "starting_songs": [],
         "start_with_consumables": true,
