@@ -1106,7 +1106,7 @@
         "shuffle_silver_rupees": "vanilla",
         "silver_rupee_pouches_choice": "off",
         "silver_rupee_pouches": [],
-        "enhance_map_compass": false,
+        "enhance_map_compass": true,
         "logic_no_night_tokens_without_suns_song": false,
         "disabled_locations": [
             "Deku Theater Skull Mask",
@@ -1325,7 +1325,7 @@
         "shuffle_silver_rupees": "vanilla",
         "silver_rupee_pouches_choice": "off",
         "silver_rupee_pouches": [],
-        "enhance_map_compass": false,
+        "enhance_map_compass": true,
         "logic_no_night_tokens_without_suns_song": false,
         "disabled_locations": [
             "Deku Theater Skull Mask",
