@@ -240,10 +240,9 @@ class Settings(SettingInfos):
         self.numeric_seed = self.get_numeric_seed()
 
     def get_numeric_seed(self) -> int:
-        # salt seed with the settings, and hash to get a numeric seed
-        distribution = json.dumps(self.distribution.to_json(include_output=False), sort_keys=True)
-        full_string = self.settings_string + distribution + __version__ + self.seed
-        return int(hashlib.sha256(full_string.encode('utf-8')).hexdigest(), 16)
+        # hash seed to get a numeric seed
+        # for benchmarking purposes, don't salt with version or settings
+        return int(hashlib.sha256(self.seed.encode('utf-8')).hexdigest(), 16)
 
     def sanitize_seed(self) -> None:
         # leave only alphanumeric and some punctuation
