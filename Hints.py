@@ -799,7 +799,8 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
 
     location_text = HintArea.at(location).text(world.settings.clearer_hints, world=None if location.world.id == world.id else location.world.id + 1)
 
-    goal_text = "the " + goal.hint_text
+    goal_text_prefix = "the " if location.world.id == world.id else "their "
+    goal_text = goal_text_prefix + goal.hint_text
 
     # Disable hint accessibility checks in multiworld.  Hinting locations in other worlds might be breaking this.
     if world.settings.world_count == 1:
