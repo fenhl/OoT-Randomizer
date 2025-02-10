@@ -1217,7 +1217,8 @@
     },
     "Triforce Blitz S4 Co-op": {
         "aliases": [
-            "tfbs4-coop"
+            "tfbs4-coop",
+            "tfb"
         ],
         "show_seed_info": true,
         "user_message": "Triforce Blitz S4 Co-op",
