@@ -1150,7 +1150,7 @@ def make_player_message(text: str) -> str:
 def update_item_messages(messages: list[Message], world: World) -> None:
     new_item_messages = ITEM_MESSAGES + KEYSANITY_MESSAGES
     for id, text in new_item_messages:
-        if world.settings.world_count > 1:
+        if world.settings.world_count > 1 and not world.settings.triforce_blitz_s4_coop:
             update_message_by_id(messages, id, make_player_message(text), 0x23)
         else:
             update_message_by_id(messages, id, text, 0x23)

@@ -1225,7 +1225,7 @@ class Distribution:
             world.total_starting_triforce_count = total_starting_count # used later in Rules.py
 
 
-    def configure_triforce_blitz(self, worlds) -> None:
+    def configure_triforce_blitz(self, worlds: list[World]) -> None:
 
         for world in worlds:
             total_count = 0
@@ -1233,7 +1233,10 @@ class Distribution:
                 total_count += world.distribution.item_pool[item].count 
             
             world.triforce_count = total_count
-            world.triforce_goal = total_count * len(worlds)
+            if world.settings.triforce_blitz_s4_coop:
+                world.triforce_goal = total_count
+            else:
+                world.triforce_goal = total_count * len(worlds)
 
     def configure_escape_from_kak(self, world: World) -> None:    
         all_boss_dungeons = [dungeon for dungeon in world.dungeons if dungeon.vanilla_boss_name]

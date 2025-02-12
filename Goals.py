@@ -84,6 +84,13 @@ class Goal:
 
     def __repr__(self) -> str:
         return f"{self.world.__repr__()} {self.name}: {self.hint_text}"
+    
+    @property
+    def worldAndName(self) -> str:
+        if self.world is not None:
+            return "W" + str(self.world.id) + ":" + self.name
+        else:
+            return self.name
 
 
 class GoalCategory:
@@ -251,6 +258,13 @@ def update_goal_items(spoiler: Spoiler) -> None:
     woth_locations = list(required_locations['way of the hero'])
     del required_locations['way of the hero']
 
+    # Update category and goal weights that have required locations
+    for category_name, goals in required_locations.items():
+        for goal_name, goal_worlds in goals.items():
+            for world_id, locations in goal_worlds.items():
+                worlds[world_id].goal_categories[category_name].weight = 1
+                worlds[world_id].goal_categories[category_name].get_goal(goal_name).weight = 1
+
     # Generate location requirements for each WOTH location
     requirements_by_world = {}
     requirements = search_required_locations(woth_locations, woth_locations, worlds)
@@ -391,8 +405,7 @@ def search_goals(categories: dict[str, GoalCategory], reachable_goals: ValidGoal
                                     else:
                                         location_weights = (location, 1, 1)
                                     required_locations[category.name][goal.name][world_id].append(location_weights)
-                                goal.weight = 1
-                                category.weight = 1
+
                                 # Locations added to goal exclusion for future categories
                                 # Main use is to split goals between before/after rainbow bridge
                                 # Requires goal categories to be sorted by priority!

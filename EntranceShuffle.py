@@ -537,14 +537,26 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                 entrance_pools['ChildBoss'].remove(world.get_entrance('Deku Tree Before Boss -> Queen Gohma Boss Room'))
 
         if worlds[0].shuffle_dungeon_entrances:
-            entrance_pools['Dungeon'] = world.get_shufflable_entrances(type='Dungeon', only_primary=True)
-            # The fill algorithm will already make sure gohma is reachable, however it can end up putting
-            # a forest escape via the hands of spirit on Deku leading to Deku on spirit in logic. This is
-            # not really a closed forest anymore, so specifically remove Deku Tree from closed forest.
-            if worlds[0].settings.open_forest == 'closed':
-                entrance_pools['Dungeon'].remove(world.get_entrance('KF Outside Deku Tree -> Deku Tree Lobby'))
-            if worlds[0].shuffle_special_dungeon_entrances:
-                entrance_pools['Dungeon'] += world.get_shufflable_entrances(type='DungeonSpecial', only_primary=True)
+            if worlds[0].settings.shuffle_dungeon_entrances == 'tfbs4':
+                all_boss_dungeons = [dungeon for dungeon in world.dungeons if dungeon.vanilla_boss_name]
+                all_medallion_dungeon_names = [dungeon.name for dungeon in all_boss_dungeons if 'Medallion' in dungeon.vanilla_reward]
+                all_stone_dungeons_names = [dungeon.name for dungeon in all_boss_dungeons if 'Medallion' not in dungeon.vanilla_reward]
+
+                all_dungeons_entrances = world.get_shufflable_entrances(type='Dungeon', only_primary=True)
+                all_medallion_dungeon_entrances = list(filter(lambda entrance: entrance.connected_region.dungeon_name in all_medallion_dungeon_names, all_dungeons_entrances))
+                all_stone_dungeon_entrances = list(filter(lambda entrance: entrance.connected_region.dungeon_name in all_stone_dungeons_names, all_dungeons_entrances))
+
+                entrance_pools['DungeonMedallion'] = all_medallion_dungeon_entrances
+                entrance_pools['DungeonStone'] = all_stone_dungeon_entrances
+            else:
+                entrance_pools['Dungeon'] = world.get_shufflable_entrances(type='Dungeon', only_primary=True)
+                # The fill algorithm will already make sure gohma is reachable, however it can end up putting
+                # a forest escape via the hands of spirit on Deku leading to Deku on spirit in logic. This is
+                # not really a closed forest anymore, so specifically remove Deku Tree from closed forest.
+                if worlds[0].settings.open_forest == 'closed':
+                    entrance_pools['Dungeon'].remove(world.get_entrance('KF Outside Deku Tree -> Deku Tree Lobby'))
+                if worlds[0].shuffle_special_dungeon_entrances:
+                    entrance_pools['Dungeon'] += world.get_shufflable_entrances(type='DungeonSpecial', only_primary=True)
 
         if worlds[0].shuffle_interior_entrances:
             entrance_pools['Interior'] = world.get_shufflable_entrances(type='Interior', only_primary=True)

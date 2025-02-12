@@ -173,12 +173,18 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
                     restdungeon.append(item)
                 else:
                     restother.append(item)
-            fast_fill(empty_locations, restother)
+            if worlds[0].settings.triforce_blitz_s4_coop:
+                fast_ownworld_fill(worlds, empty_locations, restother)
+            else:
+                fast_fill(empty_locations, restother)
             restitempool = restdungeon + restother
             random.shuffle(restitempool)
         else:
             # We don't have to worry about this if dungeon items stay in their own dungeons
-            fast_fill(empty_locations, restitempool)
+            if worlds[0].settings.triforce_blitz_s4_coop:
+                fast_ownworld_fill(worlds, empty_locations, restitempool)
+            else:
+                fast_fill(empty_locations, restitempool)
 
     # places the songs into the world
     # Currently places songs only at song locations. if there's an option
@@ -217,7 +223,10 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
     # No restrictions at all. Places them completely randomly. Since they
     # cannot affect the beatability, we don't need to check them
     logger.info('Placing the rest of the items.')
-    fast_fill(fill_locations, restitempool)
+    if worlds[0].settings.triforce_blitz_s4_coop:
+        fast_ownworld_fill(worlds, fill_locations, restitempool)
+    else:
+        fast_fill(fill_locations, restitempool)
 
     # Log unplaced item/location warnings
     for item in progitempool + prioitempool + restitempool:
@@ -440,6 +449,11 @@ def fill_restrictive(worlds: list[World], base_search: Search, locations: list[L
             l2cations = [l for l in locations if not l.minor_only]
         else:
             l2cations = locations
+
+        # In TFB S4 Co-op, only place items in their own world
+        if worlds[0].settings.triforce_blitz_s4_coop:
+            l2cations = [l for l in l2cations if item_to_place.world.id == l.world.id]
+            
         random.shuffle(l2cations)
 
         # generate the max search with every remaining item
@@ -623,7 +637,8 @@ def fill_restrictive_fast(worlds: list[World], locations: list[Location], itempo
         # get location that allows this item
         spot_to_fill = None
         for location in locations:
-            if location.can_fill_fast(item_to_place):
+            tfbs4_coop_valid_location = not (worlds[0].settings.triforce_blitz_s4_coop and location.world.id != item_to_place.world.id)
+            if location.can_fill_fast(item_to_place) and tfbs4_coop_valid_location:
                 spot_to_fill = location
                 break
 
@@ -649,3 +664,16 @@ def fast_fill(locations: list[Location], itempool: list[Item]) -> None:
         spot_to_fill = locations.pop()
         item_to_place = itempool.pop()
         spot_to_fill.world.push_item(spot_to_fill, item_to_place)
+
+# this behaves like fast_fill, except items only get placed in their own world
+def fast_ownworld_fill(worlds: list[World], locations: list[Location], itempool: list[Item]) -> None:
+    for world in worlds:
+        world_locations = [l for l in locations if l.world.id == world.id]
+        world_itempool = [i for i in itempool if i.world.id == world.id]
+        random.shuffle(world_locations)
+        while world_itempool and world_locations:
+            spot_to_fill = world_locations.pop()
+            item_to_place = world_itempool.pop()
+            locations.remove(spot_to_fill)
+            itempool.remove(item_to_place)
+            spot_to_fill.world.push_item(spot_to_fill, item_to_place)

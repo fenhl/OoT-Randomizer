@@ -1146,6 +1146,18 @@ class SettingInfos:
         }
     )
 
+    triforce_blitz_s4_coop = Checkbutton(
+        gui_text       = 'Triforce Blitz Season 4 Co-op Mode',
+        gui_tooltip    = '''\
+            Forces a world's items to always be placed in that player's world.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+            'hide_when_disabled': True,
+        }
+    )
+
     triforce_blitz_mw_linked_tf_pieces = Checkbutton(
         gui_text       = 'Triforce Blitz Multiworld Linked Triforce Pieces',
         gui_tooltip    = '''\
@@ -1893,6 +1905,7 @@ class SettingInfos:
         choices        = {
             'off':       'Off',
             'simple':    'Dungeon',
+            'tfbs4':     'Triforce Blitz S4',
             'all':       'Dungeon and Ganon',
         },
         gui_tooltip    = '''\
@@ -1904,6 +1917,8 @@ class SettingInfos:
 
             With Dungeon and Ganon selected, all dungeons including Ganon's
             castle will be shuffled.
+
+            Triforce Blitz S4 shuffles all stone and medallion dungeons in separate pools.
 
             Thieves' Hideout is controlled by a separate setting.
         ''',
