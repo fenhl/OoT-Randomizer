@@ -686,7 +686,7 @@ def get_goal_category(spoiler: Spoiler, world: World, goal_categories: dict[str,
             #   2. All goals in all categories have been hinted at least once
             if (not world.one_hint_per_goal or
                len([goal for goal in category.goals if goal.weight > 0]) > 0 or
-               len([goal for cat in world.goal_categories.values() for goal in cat.goals if goal.weight == 0]) == len([goal for cat in world.goal_categories.values() for goal in cat.goals])):
+               len([goal for cat in goal_categories.values() for goal in cat.goals if goal.weight == 0]) == len([goal for cat in goal_categories.values() for goal in cat.goals])):
                 cat_sizes.append(category.weight)
                 cat_names.append(category.name)
             # Depends on category order to choose next in the priority list
@@ -722,7 +722,8 @@ def get_echo_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintRetu
 def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], custom_prefix: str = "They say that ") -> HintReturn:
 
     hinted_world = get_hinted_world(world, spoiler.worlds, 'goal')
-    goal_category = get_goal_category(spoiler, hinted_world, hinted_world.goal_categories)
+    goal_categories = hinted_world.goal_categories.copy()
+    goal_category = get_goal_category(spoiler, hinted_world, goal_categories)
 
     # check if no goals were generated (and thus no categories available)
     if not goal_category:
@@ -737,8 +738,8 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
     # If all locations for all goal categories are hinted, return no hint.
     while not goal_locations:
         if not goals:
-            del hinted_world.goal_categories[goal_category.name]
-            goal_category = get_goal_category(spoiler, hinted_world, hinted_world.goal_categories)
+            del goal_categories[goal_category.name]
+            goal_category = get_goal_category(spoiler, hinted_world, goal_categories)
             if not goal_category:
                 return None
             else:
@@ -900,7 +901,8 @@ def get_goal_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintRetu
     return GossipText('%s is on %s %s.' % (location_text, player_text, goal_text), ['Light Blue', goal.color], [location.name], [location.item.name]), [location]
 
 def get_goal_count_hint(spoiler, world, checked):
-    goal_category = get_goal_category(spoiler, world, world.goal_categories, skip_empty=False)
+    goal_categories = world.goal_categories.copy()
+    goal_category = get_goal_category(spoiler, world, goal_categories, skip_empty=False)
 
     # check if no goals were generated (and thus no categories available)
     if not goal_category:
@@ -915,8 +917,8 @@ def get_goal_count_hint(spoiler, world, checked):
     # If all locations for all goal categories are hinted, return no hint.
     while not goal:
         if not goals:
-            del world.goal_categories[goal_category.name]
-            goal_category = get_goal_category(spoiler, world, world.goal_categories)
+            del goal_categories[goal_category.name]
+            goal_category = get_goal_category(spoiler, world, goal_categories)
             if not goal_category:
                 return None
             else:
