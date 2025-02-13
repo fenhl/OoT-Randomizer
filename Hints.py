@@ -791,7 +791,7 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
         else:
             location = random.choice(dungeon_goal_locations)
     else:
-        if len(unhinted_dungeon_goal_locations) > 0:
+        if len(unhinted_goal_locations) > 0:
             location = random.choice(unhinted_goal_locations)
         else:
             location = random.choice(goal_locations)
