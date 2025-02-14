@@ -2,7 +2,7 @@
   "version": "8.2.46-blitz-0.83",
   "presets": {
     "default": {
-      "preset": "Triforce Blitz S4"
+      "preset": "tfb"
     },
     "triforce-blitz-s4-coop": {
       "preset": "Triforce Blitz S4 Co-op",
