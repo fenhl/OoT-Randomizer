@@ -2055,7 +2055,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     rom.write_int16(0xB6D57E, 0x0003)
     rom.write_int16(0xB6EC52, 999)
     tycoon_message = "\x08\x13\x57You got a \x05\x43Tycoon's Wallet\x05\x40!\x01Now you can hold\x01up to \x05\x46999\x05\x40 \x05\x46Rupees\x05\x40."
-    if world.settings.world_count > 1:
+    if world.settings.world_count > 1  and not world.settings.triforce_blitz_s4_coop:
         tycoon_message = make_player_message(tycoon_message)
     update_message_by_id(messages, 0x00F8, tycoon_message, 0x23)
 
@@ -2098,7 +2098,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
         rom.write_byte(0xDB3927, 0x5A)
 
         bfa_message = "\x08\x13\x0CYou got the \x05\x43Blue Fire Arrow\x05\x40!\x01This is a cool arrow you can\x01use on red ice."
-        if world.settings.world_count > 1:
+        if world.settings.world_count > 1 and not world.settings.triforce_blitz_s4_coop:
             bfa_message = make_player_message(bfa_message)
         update_message_by_id(messages, 0x0071, bfa_message, 0x23, allow_duplicates=True)
 
