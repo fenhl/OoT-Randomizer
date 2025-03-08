@@ -986,11 +986,12 @@ def get_wanderer_hint(spoiler, world, checked):
 
 def get_playthrough_location_hint(spoiler, world, checked):
 
+    hinted_world = get_hinted_world(world, spoiler.worlds, 'playthrough-location')
     locations = dict(filter(lambda locations: 
-        locations[0].world.id == world.id, 
+        locations[0].world.id == hinted_world.id, 
         spoiler.playthrough_locations.items()))
 
-    required_location_names = list(map(lambda location: location.name, spoiler.required_locations[world.id]))
+    required_location_names = list(map(lambda location: location.name, spoiler.required_locations[hinted_world.id]))
 
     locations = list(filter(lambda location:
         location.worldAndName not in checked
@@ -1007,7 +1008,7 @@ def get_playthrough_location_hint(spoiler, world, checked):
     checked.add(location.worldAndName)
 
     hint_area = HintArea.at(location)
-    location_text = hint_area.text(world.settings.clearer_hints)
+    location_text = hint_area.text(world.settings.clearer_hints, world=hinted_world.id + 1)
 
     return (GossipText('%s is on the way of the #wanderer#.' % location_text, ['Light Blue', 'Yellow'], [location.name], [location.item.name]), [location])
 
