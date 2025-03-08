@@ -1019,7 +1019,7 @@
         "triforce_blitz_jabus_revenge": false,
         "triforce_blitz_hint_shop": true,
         "triforce_blitz_s4_coop": true,
-        "triforce_blitz_mw_duality_tf_pieces": true,
+        "triforce_blitz_mw_linked_tf_pieces": "duality",
         "lacs_condition": "vanilla",
         "lacs_medallions": 6,
         "lacs_stones": 3,

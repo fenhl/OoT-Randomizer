@@ -1158,43 +1158,25 @@ class SettingInfos:
         }
     )
 
-    triforce_blitz_mw_linked_tf_pieces = Checkbutton(
+    triforce_blitz_mw_linked_tf_pieces = Combobox(
         gui_text       = 'Triforce Blitz Multiworld Linked Triforce Pieces',
+        default        = 'off',
+        choices        = {
+            'off':        'Off',
+            'linked':     'Linked',
+            'duality':    'Duality',
+            'trinity':    'Trinity'
+        },
         gui_tooltip    = '''\
-            A world's Triforce of Power location will be shared with world n-1's Triforce of Courage, 
-            and every world's Triforce of Courage location will be shared with world n+1's Triforce of Power.
-
+            'Off': Normal Triforce Piece fill behavior.
+            'Linked': A world's Triforce of Power location will be shared with world n-1's Triforce of Courage, and every world's Triforce of Courage location will be shared with world n+1's Triforce of Power.  
             Only active when the world count is greater than 1.
-        ''',
-        shared         = True,
-        gui_params     = {
-            'randomize_key': 'randomize_settings',
-            'hide_when_disabled': True,
-        }
-    )
-
-    triforce_blitz_mw_duality_tf_pieces = Checkbutton(
-        gui_text       = 'Triforce Blitz Multiworld Duality Triforce Pieces',
-        gui_tooltip    = '''\
-            A random triforce piece will have its location shared between both worlds.
-
+            'Duality': A random triforce piece will have its location shared between both worlds.  
             Only active when the world count is exactly 2.
-        ''',
-        shared         = True,
-        gui_params     = {
-            'randomize_key': 'randomize_settings',
-            'hide_when_disabled': True,
-        }
-    )
-
-    triforce_blitz_mw_trinity_tf_pieces = Checkbutton(
-        gui_text       = 'Triforce Blitz Multiworld Trinity Triforce Pieces',
-        gui_tooltip    = '''\
-            Certain triforce pieces will have their locations shared:
+            'Trinity': Certain triforce pieces will have their locations shared:
             - World 1's Triforce of Wisdom and World 2's Triforce of Power
             - World 2's Triforce of Courage and World 3's Triforce of Wisdom
             - World 3's Triforce of Power and World 1's Triforce of Courage
-
             Only active when the world count is exactly 3.
         ''',
         shared         = True,

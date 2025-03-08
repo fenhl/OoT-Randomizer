@@ -543,12 +543,12 @@ def fill_restrictive(worlds: list[World], base_search: Search, locations: list[L
 
         if item_to_place.name in triforce_blitz_items:
             logger.debug('Placed %s (%d) at %s', item_to_place.name, item_to_place.world.id, spot_to_fill.worldAndName)
-            if worlds[0].settings.triforce_blitz_mw_duality_tf_pieces and not chose_tfb_duality_piece and len(worlds) == 2:
+            if worlds[0].settings.triforce_blitz_mw_linked_tf_pieces == 'duality' and not chose_tfb_duality_piece and len(worlds) == 2:
                 linked_item = get_duality_item(item_to_place, itempool, len(worlds))
                 chose_tfb_duality_piece = True
-            elif worlds[0].settings.triforce_blitz_mw_trinity_tf_pieces and len(worlds) == 3:
+            elif worlds[0].settings.triforce_blitz_mw_linked_tf_pieces == 'trinity' and len(worlds) == 3:
                 linked_item = get_trinity_item(item_to_place, itempool, len(worlds))
-            elif worlds[0].settings.triforce_blitz_mw_linked_tf_pieces and len(worlds) > 1:
+            elif worlds[0].settings.triforce_blitz_mw_linked_tf_pieces == 'linked' and len(worlds) > 1:
                 linked_item = get_linked_item(item_to_place, itempool, len(worlds))
             else:
                 linked_item = None
