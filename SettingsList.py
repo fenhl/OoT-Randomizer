@@ -1703,7 +1703,9 @@ class SettingInfos:
             randomly rolled with no major items, but their dungeon rewards won't
             be given for free.
             - 'Specific Dungeons': Choose which specific dungeons will be pre-completed.
-            - 'Specific Rewards': Choose which specific dungeon rewards will be in pre-completed dungeons. Not compatible with shuffled dungeon rewards.
+            - 'Specific Rewards': Choose which specific dungeon rewards will be in
+            pre-completed dungeons. If dungeon rewards are shuffled, rewards in side
+            dungeons or the overworld will have no effect on pre-completion.
             - 'Count': Choose how many pre-completed dungeons will be randomly chosen.
 
             A same dungeon won't be both MQ and pre-completed unless it has been
@@ -1727,7 +1729,6 @@ class SettingInfos:
             '!specific': {'settings': ['empty_dungeons_specific']},
             '!rewards':  {'settings': ['empty_dungeons_rewards']},
             '!count':    {'settings': ['empty_dungeons_count']},
-            'rewards':   {'settings': ['shuffle_dungeon_rewards']},
         },
         gui_params     = {
             'distribution':  [
@@ -4089,7 +4090,8 @@ class SettingInfos:
         gui_tooltip    = '''\
             Force the player to always lose the
             treasure chest game in the first room
-            unless they have the Lens of Truth.
+            unless they have the Lens of Truth and
+            a Magic Meter.
             Does not function if Treasure Chest Game
             small keys are shuffled.
         ''',

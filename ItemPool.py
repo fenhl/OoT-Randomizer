@@ -923,7 +923,7 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
                     world.state.collect(ItemFactory(item, world))
                     item = get_junk_item()[0]
                     shuffle_item = True
-                elif shuffle_setting in ('any_dungeon', 'overworld', 'keysanity', 'regional', 'anywhere') and not world.empty_dungeons[dungeon.name].empty:
+                elif shuffle_setting in ('any_dungeon', 'overworld', 'keysanity', 'regional', 'anywhere') and not world.precompleted_dungeons.get(dungeon.name, False):
                     shuffle_item = True
                 elif shuffle_item is None:
                     dungeon_collection.append(ItemFactory(item, world))
@@ -946,7 +946,7 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
         if shuffle_item and world.settings.escape_from_kak \
             and (location.type in ('Crate', 'SmallCrate', 'Pot', 'FlyingPot', 'Scrub', 'GrottoScrub', 'Freestanding') or location.vanilla_item == 'Gold Skulltula Token') \
             and (not (location.dungeon is not None or (location.parent_region is not None and location.parent_region.is_boss_room)) \
-                 or (location.dungeon and world.empty_dungeons[location.dungeon.name].empty)):
+                 or (location.dungeon and world.precompleted_dungeons[location.dungeon.name])):
             shuffle_item = False
             location.disabled = DisableType.DISABLED
 
@@ -1003,8 +1003,10 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
             world.state.collect(ItemFactory('Small Key (Shadow Temple)', world))
             world.state.collect(ItemFactory('Small Key (Shadow Temple)', world))
 
-    if (not world.keysanity or (world.empty_dungeons['Fire Temple'].empty and world.settings.shuffle_smallkeys != 'remove'))\
-        and not world.dungeon_mq['Fire Temple']:
+    if (
+        (not world.keysanity or (world.precompleted_dungeons['Fire Temple'] and world.settings.shuffle_smallkeys != 'remove'))
+        and not world.dungeon_mq['Fire Temple']
+    ):
         world.state.collect(ItemFactory('Small Key (Fire Temple)', world))
 
     if world.settings.shuffle_ganon_bosskey == 'on_lacs':

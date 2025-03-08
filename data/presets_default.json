@@ -2065,13 +2065,13 @@
         "custom_ice_trap_count": 100,
         "ice_trap_appearance": "junk_only"
     },
-    "Multiworld Tournament Season 4": {
+    "Multiworld Tournament Season 5": {
         "aliases": [
             "mw",
-            "mw_s4"
+            "mw_s5"
         ],
         "show_seed_info": true,
-        "user_message": "Multiworld Tournament Season 4",
+        "user_message": "Multiworld Tournament Season 5",
         "world_count": 3,
         "create_spoiler": true,
         "password_lock": false,
@@ -2079,8 +2079,8 @@
         "logic_rules": "glitchless",
         "reachable_locations": "all",
         "triforce_hunt": false,
-        "triforce_count_per_world": 30,
-        "triforce_goal_per_world": 25,
+        "triforce_count_per_world": 28,
+        "triforce_goal_per_world": 24,
         "lacs_condition": "vanilla",
         "lacs_medallions": 6,
         "lacs_stones": 3,
@@ -2132,7 +2132,7 @@
         "shuffle_song_items": "song",
         "shopsanity": "4",
         "shopsanity_prices": "random",
-        "tokensanity": "off",
+        "tokensanity": "dungeons",
         "shuffle_scrubs": "low",
         "shuffle_child_trade": [],
         "adult_trade_shuffle": false,
@@ -2221,7 +2221,7 @@
         "easier_fire_arrow_entry": false,
         "fae_torch_count": 3,
         "ruto_already_f1_jabu": true,
-        "fast_shadow_boat": false,
+        "fast_shadow_boat": true,
         "chicken_count_random": false,
         "chicken_count": 3,
         "big_poe_count_random": false,
@@ -2234,14 +2234,14 @@
         "plandomized_locations": {},
         "misc_hints": [
             "altar",
+            "dampe_diary",
             "ganondorf",
             "warp_songs_and_owls",
             "20_skulltulas",
             "30_skulltulas",
-            "unique_merchants",
             "frogs2"
         ],
-        "correct_chest_appearances": "textures",
+        "correct_chest_appearances": "both",
         "chest_textures_specific": [
             "major",
             "bosskeys",
@@ -2269,7 +2269,7 @@
         "starting_tod": "default",
         "blue_fire_arrows": true,
         "fix_broken_drops": false,
-        "tcg_requires_lens": false,
+        "tcg_requires_lens": true,
         "no_collectible_hearts": false,
         "one_item_per_dungeon": false,
         "item_pool_value": "balanced",
