@@ -420,6 +420,9 @@ class SettingInfos:
         default        = 1,
         minimum        = 1,
         maximum        = 255,
+        disable        = {
+            1: {'settings': ['cross_world_songs', 'cross_world_rewards']},
+        },
         gui_params     = {
             'no_line_break':     True,
             'web:max':           15,
@@ -1989,6 +1992,26 @@ class SettingInfos:
         shared         = True,
     )
 
+    cross_world_songs = Checkbutton(
+        gui_text       = 'Shuffle Songs Across Worlds',
+        gui_tooltip    = '''\
+            Allow songs to appear in any player's world.
+
+            If this is off, each player's songs will only
+            appear in their own world.
+
+            Regardless of the value of this setting, the
+            locations within each world where songs may
+            appear is controlled by the "Shuffle Songs"
+            setting.
+        ''',
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+            'hide_when_disabled': True,
+        },
+        shared         = True,
+    )
+
     shopsanity = Combobox(
         gui_text       = 'Shopsanity',
         default        = 'off',
@@ -2583,6 +2606,27 @@ class SettingInfos:
         ''',
         gui_params     = {
             'randomize_key': 'randomize_settings',
+        },
+        shared         = True,
+    )
+
+    cross_world_rewards = Checkbutton(
+        gui_text       = 'Shuffle Dungeon Rewards Across Worlds',
+        gui_tooltip    = '''\
+            Allow dungeon rewards (Medallions and Spiritual
+            Stones) to appear in any player's world.
+
+            If this is off, each player's dungeon rewards
+            will only appear in their own world.
+
+            Regardless of the value of this setting, the
+            locations within each world where dungeon
+            rewards may appear is controlled by the
+            "Shuffle Dungeon Rewards" setting.
+        ''',
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+            'hide_when_disabled': True,
         },
         shared         = True,
     )

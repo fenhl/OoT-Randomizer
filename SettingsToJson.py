@@ -13,7 +13,13 @@ from Utils import data_path
 tab_keys: list[str] = ['text', 'app_type', 'footer']
 section_keys: list[str] = ['text', 'app_type', 'is_colors', 'is_sfx', 'col_span', 'row_span', 'subheader']
 setting_keys: list[str] = ['hide_when_disabled', 'min', 'max', 'size', 'max_length', 'file_types', 'no_line_break', 'function', 'option_remove', 'dynamic']
-types_with_options: list[str] = ['Checkbutton', 'Radiobutton', 'Combobox', 'SearchBox', 'MultipleSelect']
+
+
+def has_options(setting_json: dict[str, Any]) -> bool:
+    return (
+        setting_json['type'] in ('Checkbutton', 'Radiobutton', 'Combobox', 'SearchBox', 'MultipleSelect')
+        or (setting_json['type'] == 'Numberinput' and 'min' in setting_json and 'max' in setting_json)
+    )
 
 
 def remove_trailing_lines(text: str) -> str:
@@ -119,7 +125,7 @@ def get_setting_json(setting: str, web_version: bool, as_array: bool = False) ->
                             raise ValueError(f'Cannot disable setting {s} in {tab}. Disabling "shared" settings in the gui_params is forbidden. Use the non gui_param version of disable instead.')
             deep_update(setting_disable, value)
 
-    if setting_json['type'] in types_with_options:
+    if has_options(setting_json):
         if as_array:
             setting_json['options'] = []
         else:

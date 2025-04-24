@@ -326,8 +326,14 @@ class Numberinput(SettingInfoInt):
             gui_params['min'] = minimum
         if maximum is not None:
             gui_params['max'] = maximum
+        if minimum is not None and maximum is not None:
+            choices = {
+                i: str(i) for i in range(minimum, maximum+1)
+            }
+        else:
+            choices = None
 
-        super().__init__(gui_text=gui_text, gui_type='Numberinput', shared=shared, choices=None, default=default,
+        super().__init__(gui_text=gui_text, gui_type='Numberinput', shared=shared, choices=choices, default=default,
                          disabled_default=disabled_default, disable=disable, gui_tooltip=gui_tooltip,
                          gui_params=gui_params, cosmetic=cosmetic)
 
