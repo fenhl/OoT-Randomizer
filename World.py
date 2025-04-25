@@ -115,7 +115,7 @@ class World:
             self.mix_entrance_pools = set()
         self.mixed_pools_bosses: bool = 'Boss' in self.mix_entrance_pools
         self.dungeon_back_access: bool = settings.dungeon_back_access and (
-            self.full_one_ways or (
+            self.full_one_ways or settings.shuffle_colossus_hands or (
                 self.mixed_pools_bosses and (
                     self.settings.decouple_entrances
                     or 'Overworld' in self.mix_entrance_pools
@@ -130,6 +130,27 @@ class World:
                             or self.shuffle_special_interior_entrances
                             or self.settings.shuffle_hideout_entrances != 'off'
                         )
+                    )
+                )
+            )
+        )
+        self.spirit_hand_access: bool = (
+            settings.dungeon_back_access
+            and self.full_one_ways
+        ) or (
+            settings.shuffle_colossus_hands and self.mixed_pools_bosses and (
+                self.settings.decouple_entrances
+                or 'Overworld' in self.mix_entrance_pools
+                or (
+                    'GrottoGrave' in self.mix_entrance_pools
+                    and self.one_ways
+                )
+                or (
+                    'Interior' in self.mix_entrance_pools
+                    and (
+                        self.one_ways
+                        or self.shuffle_special_interior_entrances
+                        or self.settings.shuffle_hideout_entrances != 'off'
                     )
                 )
             )
@@ -709,7 +730,7 @@ class World:
         for hint_area in HintArea:
             if (name := hint_area.dungeon_name) is not None:
                 logic_folder = 'Glitched World' if self.settings.logic_rules == 'glitched' else 'World'
-                file_name = name + (' ER' if name == 'Spirit Temple' and self.settings.shuffle_colossus_hands else '') + (' MQ.json' if self.dungeon_mq[name] else '.json')
+                file_name = name + (' ER' if name == 'Spirit Temple' and self.spirit_hand_access else '') + (' MQ.json' if self.dungeon_mq[name] else '.json')
                 savewarps_to_connect += self.load_regions_from_json(os.path.join(data_path(logic_folder), file_name))
                 self.dungeons.append(Dungeon(self, name, hint_area))
         return savewarps_to_connect
