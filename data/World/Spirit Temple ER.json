@@ -1,3 +1,4 @@
+#TODO rewrite the logic to be safe for access from colossus hands and boss door
 [
     {
         "region_name": "Spirit Temple Lobby",
@@ -135,6 +136,7 @@
     {
         "region_name": "Spirit Temple Central Chamber",
         "dungeon": "Spirit Temple",
+        "savewarp": "Desert Colossus -> Spirit Temple Lobby",
         "locations": {
             "Spirit Temple Map Chest": "
                 (is_child and Sticks and
@@ -156,9 +158,6 @@
             # main body of the dungeon, this route is able to be age-unknown, where child can be
             # expected to reach it as long as adult cannot enter. Because we cannot truly know
             # whether adult can enter, child must still possess the items that adult would use.
-            "Spirit Temple Silver Gauntlets Chest": "
-                (Small_Key_Spirit_Temple, 5) or global_vanilla_progression or
-                (has_explosives and Longshot and (Small_Key_Spirit_Temple, 3))",
             "Spirit Temple Central Chamber Pot 1": "
                 'Spirit Central Chamber as Adult' or
                 has_explosives or ((Small_Key_Spirit_Temple, 2) and free_bombchu_drops)",
@@ -227,11 +226,7 @@
             "Spirit Temple Before Boss": "
                 is_adult and spirit_temple_shortcuts and
                 (Longshot or (logic_spirit_platform_hookshot and Hookshot))",
-            # Age-unknown logic is incompatible with the rest of the world.
-            # Because adult might unlock all doors, child must require all 5 keys to pass.
-            "Desert Colossus Hands": "
-                (Small_Key_Spirit_Temple, 5) or global_vanilla_progression or
-                (is_adult and has_explosives and (Small_Key_Spirit_Temple, 3))"
+            "Desert Colossus Right Hand": "(Small_Key_Spirit_Temple, 5)" #TODO verify logic
         }
     },
     {
@@ -270,13 +265,16 @@
     {
         "region_name": "Spirit Temple Beyond Anubis Room",
         "dungeon": "Spirit Temple",
+        "savewarp": "Desert Colossus -> Spirit Temple Lobby",
         "locations": {
             "Spirit Temple Near Four Armos Chest": "Mirror_Shield",
             "Spirit Temple Hallway Left Invisible Chest": "
                 logic_lens_spirit or can_use(Lens_of_Truth)",
             "Spirit Temple Hallway Right Invisible Chest": "
-                logic_lens_spirit or can_use(Lens_of_Truth)",
-            "Spirit Temple Mirror Shield Chest": "True"
+                logic_lens_spirit or can_use(Lens_of_Truth)"
+        },
+        "exits": {
+            "Desert Colossus Left Hand": "(Small_Key_Spirit_Temple, 5)" #TODO verify logic
         }
     },
     {
@@ -314,11 +312,28 @@
         }
     },
     {
-        "region_name": "Desert Colossus Hands",
+        "region_name": "Desert Colossus Right Hand",
         "scene": "Desert Colossus",
         "time_passes": true,
-        "savewarp": "Desert Colossus -> Spirit Temple Lobby",
+        "locations": {
+            "Spirit Temple Silver Gauntlets Chest": "True"
+        },
         "exits": {
+            "Spirit Temple Central Chamber": "True",
+            "Desert Colossus Left Hand": "at('Desert Colossus Left Hand', True) and can_use(Longshot)",
+            "Desert Colossus": "True"
+        }
+    },
+    {
+        "region_name": "Desert Colossus Left Hand",
+        "scene": "Desert Colossus",
+        "time_passes": true,
+        "locations": {
+            "Spirit Temple Mirror Shield Chest": "True"
+        },
+        "exits": {
+            "Spirit Temple Beyond Anubis Room": "True",
+            "Desert Colossus Right Hand": "can_use(Longshot)",
             "Desert Colossus": "True"
         }
     }

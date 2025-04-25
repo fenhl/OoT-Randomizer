@@ -179,6 +179,7 @@
             "shuffle_dungeon_entrances",
             "shuffle_bosses",
             "shuffle_ganon_tower",
+            "shuffle_colossus_hands",
             "shuffle_overworld_entrances",
             "mix_entrance_pools",
             "decouple_entrances",

@@ -719,7 +719,7 @@ class SettingInfos:
                     'dungeon_shortcuts', 'trials_random', 'trials',
                     'starting_age', 'shuffle_interior_entrances', 'shuffle_hideout_entrances', 'shuffle_gerudo_fortress_heart_piece',
                     'shuffle_grotto_entrances', 'shuffle_dungeon_entrances',
-                    'shuffle_bosses', 'shuffle_ganon_tower', 'shuffle_overworld_entrances', 'shuffle_gerudo_valley_river_exit', 'owl_drops', 'warp_songs', 'blue_warps', 'shuffle_child_spawn', 'shuffle_adult_spawn',
+                    'shuffle_bosses', 'shuffle_ganon_tower', 'shuffle_colossus_hands', 'shuffle_overworld_entrances', 'shuffle_gerudo_valley_river_exit', 'owl_drops', 'warp_songs', 'blue_warps', 'shuffle_child_spawn', 'shuffle_adult_spawn',
                     'mix_entrance_pools', 'decouple_entrances', 'exclusive_one_ways',
                     'triforce_hunt', 'triforce_hunt_mode', 'triforce_count_per_world', 'triforce_goal_per_world', 'free_bombchu_drops', 'one_item_per_dungeon',
                     'shuffle_mapcompass', 'shuffle_smallkeys', 'shuffle_hideoutkeys', 'shuffle_tcgkeys', 'key_rings_choice', 'key_rings',
@@ -758,7 +758,7 @@ class SettingInfos:
             'glitched':   {'settings': ['allowed_tricks', 'shuffle_interior_entrances', 'shuffle_hideout_entrances', 'shuffle_gerudo_fortress_heart_piece', 'shuffle_grotto_entrances',
                                          'shuffle_dungeon_entrances', 'shuffle_overworld_entrances', 'shuffle_gerudo_valley_river_exit', 'owl_drops',
                                          'warp_songs', 'blue_warps', 'shuffle_child_spawn', 'shuffle_adult_spawn', 'mq_dungeons_mode', 'mq_dungeons_specific',
-                                         'mq_dungeons_count', 'shuffle_bosses', 'shuffle_ganon_tower', 'dungeon_shortcuts', 'deadly_bonks',
+                                         'mq_dungeons_count', 'shuffle_bosses', 'shuffle_ganon_tower', 'shuffle_colossus_hands', 'dungeon_shortcuts', 'deadly_bonks',
                                          'shuffle_freestanding_items', 'shuffle_pots', 'shuffle_empty_pots', 'shuffle_crates', 'shuffle_empty_crates', 'shuffle_beehives', 'shuffle_silver_rupees', 'shuffle_wonderitems',
                                          'mix_entrance_pools', 'decouple_entrances', 'logic_water_gold_scale_no_entry']},
             'none':       {'settings': ['dungeon_back_access', 'allowed_tricks', 'logic_no_night_tokens_without_suns_song', 'logic_water_gold_scale_no_entry', 'reachable_locations']},
@@ -1944,7 +1944,7 @@ class SettingInfos:
             'full':      'Full',
         },
         disable        = {
-            'off' : {'settings': ['shuffle_ganon_tower']},
+            'off' : {'settings': ['shuffle_ganon_tower', 'shuffle_colossus_hands']},
         },
         shared         = True,
         gui_params     = {
@@ -1963,6 +1963,25 @@ class SettingInfos:
 
             The entrance from Ganon's Tower to Ganondorf's
             boss room is never shuffled.
+        ''',
+        default        = False,
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    )
+
+    shuffle_colossus_hands = Checkbutton(
+        gui_text       = "Shuffle Desert Colossus Hands",
+        gui_tooltip    = '''\
+            Shuffle the exits from the Spirit Temple to
+            the Desert Colossus hands into the boss
+            entrance pool.
+
+            If "Shuffle Boss Entrances" is set to
+            "Age-Restricted", the right hand is shuffled
+            into the child boss entrance pool and the left
+            hand into the adult boss entrance pool.
         ''',
         default        = False,
         shared         = True,

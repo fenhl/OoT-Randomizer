@@ -135,7 +135,7 @@ class World:
             )
         )
         # in these settings, there's not necessarily one dungeon reward in each main dungeon, so compasses and the pause menu switch to a different behavior
-        self.entrance_rando_reward_hints = self.mixed_pools_bosses or self.settings.shuffle_ganon_tower or self.settings.shuffle_dungeon_rewards not in ('vanilla', 'reward')
+        self.entrance_rando_reward_hints = self.mixed_pools_bosses or self.settings.shuffle_ganon_tower or self.settings.shuffle_colossus_hands or self.settings.shuffle_dungeon_rewards not in ('vanilla', 'reward')
 
         self.ensure_tod_access: bool = bool(self.shuffle_interior_entrances or settings.shuffle_overworld_entrances or self.spawn_positions)
         self.disable_trade_revert: bool = self.shuffle_interior_entrances or settings.shuffle_overworld_entrances or settings.adult_trade_shuffle
@@ -709,7 +709,7 @@ class World:
         for hint_area in HintArea:
             if (name := hint_area.dungeon_name) is not None:
                 logic_folder = 'Glitched World' if self.settings.logic_rules == 'glitched' else 'World'
-                file_name = name + (' MQ.json' if self.dungeon_mq[name] else '.json')
+                file_name = name + (' ER' if name == 'Spirit Temple' and self.settings.shuffle_colossus_hands else '') + (' MQ.json' if self.dungeon_mq[name] else '.json')
                 savewarps_to_connect += self.load_regions_from_json(os.path.join(data_path(logic_folder), file_name))
                 self.dungeons.append(Dungeon(self, name, hint_area))
         return savewarps_to_connect

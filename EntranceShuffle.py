@@ -141,6 +141,11 @@ entrance_shuffle_table = [
     ('SpecialBoss',     ('Ganons Castle Main -> Ganons Castle Tower',                       { 'index': 0x041B }),
                         ('Ganons Castle Tower -> Ganons Castle Main',                       { 'index': 0x0534 })),
 
+    ('ChildHand',       ('Spirit Temple Central Chamber -> Desert Colossus Right Hand',     { 'index': 0x01E5 }),
+                        ('Desert Colossus Right Hand -> Spirit Temple Central Chamber',     { 'index': 0x03F0 })),
+    ('AdultHand',       ('Spirit Temple Beyond Anubis Room -> Desert Colossus Left Hand',   { 'index': 0x01E9 }),
+                        ('Desert Colossus Left Hand -> Spirit Temple Beyond Anubis Room',   { 'index': 0x03F4 })),
+
     ('Interior',        ('Kokiri Forest -> KF Midos House',                                 { 'index': 0x0433, 'forest': True }),
                         ('KF Midos House -> Kokiri Forest',                                 { 'index': 0x0443, 'forest': True })),
     ('Interior',        ('Kokiri Forest -> KF Sarias House',                                { 'index': 0x0437, 'forest': True }),
@@ -540,6 +545,9 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
             entrance_pools['Boss'] += world.get_shufflable_entrances(type='AdultBoss', only_primary=True)
             if world.settings.shuffle_ganon_tower:
                 entrance_pools['Boss'] += world.get_shufflable_entrances(type='SpecialBoss', only_primary=True)
+            if world.settings.shuffle_colossus_hands:
+                entrance_pools['Boss'] += world.get_shufflable_entrances(type='ChildHand', only_primary=True)
+                entrance_pools['Boss'] += world.get_shufflable_entrances(type='AdultHand', only_primary=True)
             if world.settings.require_gohma and not world.settings.open_deku:
                 # With both Require Gohma and Closed Deku, we want to require sword and shield to enter Gohma's room.
                 entrance_pools['Boss'].remove(world.get_entrance('Deku Tree Before Boss -> Queen Gohma Boss Room'))
@@ -550,6 +558,9 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
             entrance_pools['AdultBoss'] = world.get_shufflable_entrances(type='AdultBoss', only_primary=True)
             if world.settings.shuffle_ganon_tower:
                 entrance_pools['AdultBoss'] += world.get_shufflable_entrances(type='SpecialBoss', only_primary=True)
+            if world.settings.shuffle_colossus_hands:
+                entrance_pools['ChildBoss'] += world.get_shufflable_entrances(type='ChildHand', only_primary=True)
+                entrance_pools['AdultBoss'] += world.get_shufflable_entrances(type='AdultHand', only_primary=True)
             if world.settings.require_gohma and not world.settings.open_deku:
                 # With both Require Gohma and Closed Deku, we want to require sword and shield to enter Gohma's room.
                 entrance_pools['ChildBoss'].remove(world.get_entrance('Deku Tree Before Boss -> Queen Gohma Boss Room'))
@@ -616,8 +627,8 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                     valid_target_types = ('ChildSpawn', 'AdultSpawn', 'Dungeon', 'DungeonSpecial', 'Interior', 'SpecialInterior', 'Hideout', 'Grotto', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types_reverse)
                     if world.dungeon_back_access:
-                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
+                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
                 else:
                     exclude.append('Prelude of Light Warp -> Temple of Time')
                 one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse, exclude=exclude)
@@ -629,8 +640,8 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                     valid_target_types = ('ChildSpawn', 'AdultSpawn', 'Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Dungeon', 'DungeonSpecial', 'Interior', 'SpecialInterior', 'Hideout', 'Grotto', 'Grave', *valid_target_types_reverse)
                     if world.dungeon_back_access:
-                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
+                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
                 else:
                     exclude.append('Prelude of Light Warp -> Temple of Time')
                 one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse, exclude=exclude)
@@ -645,8 +656,8 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                     valid_target_types = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grave', *valid_target_types_reverse)
                     if world.dungeon_back_access:
-                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
+                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
                 else:
                     # Restrict spawn entrances from linking to regions with no or extremely specific glitchless itemless escapes.
                     exclude.extend(('Volvagia Blue Warp -> DMC Central Local', 'Bolero of Fire Warp -> DMC Central Local', 'Queen Gohma Blue Warp -> KF Outside Deku Tree'))
@@ -660,8 +671,8 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                     valid_target_types = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grave', *valid_target_types_reverse)
                     if world.dungeon_back_access:
-                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
+                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
                 else:
                     # Restrict spawn entrances from linking to regions with no or extremely specific glitchless itemless escapes.
                     exclude.extend(('Volvagia Blue Warp -> DMC Central Local', 'Bolero of Fire Warp -> DMC Central Local', 'Queen Gohma Blue Warp -> KF Outside Deku Tree'))
@@ -673,8 +684,8 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                     valid_target_types = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types_reverse)
                     if world.dungeon_back_access:
-                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
+                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
                 one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse)
             elif pool_type == 'BlueWarp':
                 valid_target_types = ('ChildSpawn', 'AdultSpawn', 'WarpSong', 'BlueWarp', 'OwlDrop', 'OverworldOneWay', 'Extra')
@@ -683,8 +694,8 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                     valid_target_types = ('Overworld', 'Interior', 'SpecialInterior', 'Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Overworld', 'Interior', 'SpecialInterior', 'Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types_reverse)
                     if world.dungeon_back_access:
-                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
+                        valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
                 one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse)
             # Ensure that when trying to place the last entrance of a one way pool, we don't assume the rest of the targets are reachable
             for target in one_way_target_entrance_pools[pool_type]:

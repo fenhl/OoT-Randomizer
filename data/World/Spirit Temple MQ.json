@@ -251,5 +251,14 @@
             "Adult Spirit Temple": "is_adult",
             "Twinrova Boss Room": "Boss_Key_Spirit_Temple"
         }
+    },
+    {
+        "region_name": "Desert Colossus Hands",
+        "scene": "Desert Colossus",
+        "time_passes": true,
+        "savewarp": "Desert Colossus -> Spirit Temple Lobby",
+        "exits": {
+            "Desert Colossus": "True"
+        }
     }
 ]
