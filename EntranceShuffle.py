@@ -626,9 +626,11 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                 if world.settings.shuffle_gerudo_valley_river_exit == 'full':
                     valid_target_types = ('ChildSpawn', 'AdultSpawn', 'Dungeon', 'DungeonSpecial', 'Interior', 'SpecialInterior', 'Hideout', 'Grotto', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types_reverse)
+                    if world.settings.shuffle_colossus_hands or world.dungeon_back_access:
+                        valid_target_types_reverse = ('ChildHand', 'AdultHand', *valid_target_types_reverse)
                     if world.dungeon_back_access:
                         valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
                 else:
                     exclude.append('Prelude of Light Warp -> Temple of Time')
                 one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse, exclude=exclude)
@@ -639,9 +641,11 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                 if world.settings.owl_drops == 'full':
                     valid_target_types = ('ChildSpawn', 'AdultSpawn', 'Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Dungeon', 'DungeonSpecial', 'Interior', 'SpecialInterior', 'Hideout', 'Grotto', 'Grave', *valid_target_types_reverse)
+                    if world.settings.shuffle_colossus_hands or world.dungeon_back_access:
+                        valid_target_types_reverse = ('ChildHand', 'AdultHand', *valid_target_types_reverse)
                     if world.dungeon_back_access:
                         valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
                 else:
                     exclude.append('Prelude of Light Warp -> Temple of Time')
                 one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse, exclude=exclude)
@@ -655,9 +659,11 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                     # grotto entrances don't work properly (they cause a black screen on file load)
                     valid_target_types = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grave', *valid_target_types_reverse)
+                    if world.settings.shuffle_colossus_hands or world.dungeon_back_access:
+                        valid_target_types_reverse = ('ChildHand', 'AdultHand', *valid_target_types_reverse)
                     if world.dungeon_back_access:
                         valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
                 else:
                     # Restrict spawn entrances from linking to regions with no or extremely specific glitchless itemless escapes.
                     exclude.extend(('Volvagia Blue Warp -> DMC Central Local', 'Bolero of Fire Warp -> DMC Central Local', 'Queen Gohma Blue Warp -> KF Outside Deku Tree'))
@@ -670,9 +676,11 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                     # grotto entrances don't work properly (they cause a black screen on file load)
                     valid_target_types = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grave', *valid_target_types_reverse)
+                    if world.settings.shuffle_colossus_hands or world.dungeon_back_access:
+                        valid_target_types_reverse = ('ChildHand', 'AdultHand', *valid_target_types_reverse)
                     if world.dungeon_back_access:
                         valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
                 else:
                     # Restrict spawn entrances from linking to regions with no or extremely specific glitchless itemless escapes.
                     exclude.extend(('Volvagia Blue Warp -> DMC Central Local', 'Bolero of Fire Warp -> DMC Central Local', 'Queen Gohma Blue Warp -> KF Outside Deku Tree'))
@@ -683,9 +691,11 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                 if world.settings.warp_songs == 'full':
                     valid_target_types = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types_reverse)
+                    if world.settings.shuffle_colossus_hands or world.dungeon_back_access:
+                        valid_target_types_reverse = ('ChildHand', 'AdultHand', *valid_target_types_reverse)
                     if world.dungeon_back_access:
                         valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
                 one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse)
             elif pool_type == 'BlueWarp':
                 valid_target_types = ('ChildSpawn', 'AdultSpawn', 'WarpSong', 'BlueWarp', 'OwlDrop', 'OverworldOneWay', 'Extra')
@@ -693,9 +703,11 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                 if world.settings.blue_warps == 'full':
                     valid_target_types = ('Overworld', 'Interior', 'SpecialInterior', 'Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types)
                     valid_target_types_reverse = ('Overworld', 'Interior', 'SpecialInterior', 'Dungeon', 'DungeonSpecial', 'Hideout', 'Grotto', 'Grave', *valid_target_types_reverse)
+                    if world.settings.shuffle_colossus_hands or world.dungeon_back_access:
+                        valid_target_types_reverse = ('ChildHand', 'AdultHand', *valid_target_types_reverse)
                     if world.dungeon_back_access:
                         valid_target_types = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types)
-                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', 'ChildHand', 'AdultHand', *valid_target_types_reverse)
+                        valid_target_types_reverse = ('ChildBoss', 'AdultBoss', 'SpecialBoss', *valid_target_types_reverse)
                 one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, valid_target_types_reverse)
             # Ensure that when trying to place the last entrance of a one way pool, we don't assume the rest of the targets are reachable
             for target in one_way_target_entrance_pools[pool_type]:
@@ -1169,8 +1181,11 @@ def validate_world(world: World, worlds: list[World], entrance_placed: Optional[
         # Logic for back access to Shadow and Spirit temples is experimental
         # See https://github.com/OoTRandomizer/OoT-Randomizer/pull/1820#issuecomment-1408443498 for context on Shadow
         # and https://github.com/OoTRandomizer/OoT-Randomizer/pull/1820#issuecomment-1407314635 for context on Spirit
-        CHILD_FORBIDDEN += ('Bongo Bongo Boss Room -> Shadow Temple Before Boss', 'Twinrova Boss Room -> Spirit Temple Before Boss')
-        ADULT_FORBIDDEN += ('Bongo Bongo Boss Room -> Shadow Temple Before Boss', 'Twinrova Boss Room -> Spirit Temple Before Boss')
+        CHILD_FORBIDDEN += ('Bongo Bongo Boss Room -> Shadow Temple Before Boss')
+        ADULT_FORBIDDEN += ('Bongo Bongo Boss Room -> Shadow Temple Before Boss')
+        if not world.settings.shuffle_colossus_hands:
+            CHILD_FORBIDDEN += ('Twinrova Boss Room -> Spirit Temple Before Boss',)
+            ADULT_FORBIDDEN += ('Twinrova Boss Room -> Spirit Temple Before Boss',)
         if world.dungeon_mq['Forest Temple'] and 'Forest Temple' in world.settings.dungeon_shortcuts:
             CHILD_FORBIDDEN += ('Phantom Ganon Boss Room -> Forest Temple Before Boss',)
             ADULT_FORBIDDEN += ('Phantom Ganon Boss Room -> Forest Temple Before Boss',)

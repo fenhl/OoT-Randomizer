@@ -2323,6 +2323,9 @@ class SettingInfos:
             impossible seeds!
 
             This setting is always enabled if Logic Rules are set to No Logic.
+            Additionally, access to the Spirit Temple from the boss door is allowed
+            if "Shuffle Desert Colossus Hands" is enabled, since that setting
+            replaces the Spirit Temple logic anyway.
         ''',
         default        = False,
         disabled_default = True,
