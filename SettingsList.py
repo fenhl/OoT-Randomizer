@@ -623,17 +623,7 @@ class SettingInfos:
         default        = False,
         disable        = {
             True: {
-                'sections': ['shuffle_section'],
-                'settings': [
-                    'open_forest', 'open_kakariko', 'open_door_of_time', 'zora_fountain', 'gerudo_fortress', 'dungeon_shortcuts_choice',
-                    'dungeon_shortcuts', 'trials_random', 'trials',
-                    'starting_age', 'shuffle_interior_entrances', 'shuffle_hideout_entrances', 'shuffle_gerudo_fortress_heart_piece',
-                    'shuffle_grotto_entrances', 'shuffle_dungeon_entrances',
-                    'shuffle_bosses', 'shuffle_overworld_entrances', 'shuffle_gerudo_valley_river_exit', 'owl_drops', 'warp_songs', 'spawn_positions',
-                    'triforce_hunt', 'triforce_count_per_world', 'triforce_goal_per_world', 'free_bombchu_drops', 'one_item_per_dungeon',
-                    'shuffle_mapcompass', 'shuffle_smallkeys', 'shuffle_hideoutkeys', 'shuffle_tcgkeys', 'key_rings_choice', 'key_rings',
-                    'shuffle_silver_rupees', 'silver_rupee_pouches_choice', 'silver_rupee_pouches', 'shuffle_bosskeys', 'enhance_map_compass',
-                ],
+                'sections': ['open_section', 'world_section', 'shuffle_section', 'shuffle_dungeon_section'],
             },
         },
         shared         = True,
@@ -1550,7 +1540,9 @@ class SettingInfos:
             randomly rolled with no major items, but their dungeon rewards won't
             be given for free.
             - 'Specific Dungeons': Choose which specific dungeons will be pre-completed.
-            - 'Specific Rewards': Choose which specific dungeon rewards will be in pre-completed dungeons. Not compatible with shuffled dungeon rewards.
+            - 'Specific Rewards': Choose which specific dungeon rewards will be in
+            pre-completed dungeons. If dungeon rewards are shuffled, rewards in side
+            dungeons or the overworld will have no effect on pre-completion.
             - 'Count': Choose how many pre-completed dungeons will be randomly chosen.
 
             A same dungeon won't be both MQ and pre-completed unless it has been
@@ -1574,7 +1566,6 @@ class SettingInfos:
             '!specific': {'settings': ['empty_dungeons_specific']},
             '!rewards':  {'settings': ['empty_dungeons_rewards']},
             '!count':    {'settings': ['empty_dungeons_count']},
-            'rewards':   {'settings': ['shuffle_dungeon_rewards']},
         },
         gui_params     = {
             'distribution':  [
@@ -3910,7 +3901,8 @@ class SettingInfos:
         gui_tooltip    = '''\
             Force the player to always lose the
             treasure chest game in the first room
-            unless they have the Lens of Truth.
+            unless they have the Lens of Truth and
+            a Magic Meter.
             Does not function if Treasure Chest Game
             small keys are shuffled.
         ''',
@@ -3967,9 +3959,6 @@ class SettingInfos:
             fail to generate, consider turning this option off.
         ''',
         shared         = True,
-        gui_params     = {
-            'randomize_key': 'randomize_settings',
-        },
     )
 
     item_pool_value = Combobox(

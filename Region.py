@@ -96,11 +96,11 @@ class Region:
 
         if not manual and self.world.settings.empty_dungeons_mode != 'none' and item.dungeonitem:
             # An empty dungeon can only store its own dungeon items
-            if self.dungeon and self.dungeon.world.empty_dungeons[self.dungeon.name].empty:
+            if self.dungeon and self.dungeon.world.precompleted_dungeons.get(self.dungeon.name, False):
                 return self.dungeon.is_dungeon_item(item) and item.world.id == self.world.id
             # Items from empty dungeons can only be in their own dungeons
             for dungeon in item.world.dungeons:
-                if item.world.empty_dungeons[dungeon.name].empty and dungeon.is_dungeon_item(item):
+                if item.world.precompleted_dungeons.get(dungeon.name, False) and dungeon.is_dungeon_item(item):
                     return False
 
         is_self_dungeon_restricted = False

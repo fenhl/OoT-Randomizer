@@ -1778,7 +1778,7 @@ multiTable: dict[str, list[str]] = {
     'Graveyard Dampe Race Rewards':                             ['Graveyard Dampe Race Hookshot Chest', 'Graveyard Dampe Race Freestanding PoH'],
     'Graveyard Royal Family Tomb Contents':                     ['Graveyard Royal Familys Tomb Chest', 'Song from Royal Familys Tomb'],
     'DMC Child Upper Checks':                                   ['DMC GS Crate', 'DMC Deku Scrub'],
-    'Haunted Wasteland Checks':                                 ['Wasteland Chest', 'Wasteland GS'],
+    'Haunted Wasteland Checks':                                 ['Wasteland GS', 'Wasteland Chest'],
     'Castle Fairy Checks':                                      ['HC Great Fairy Reward', 'OGC Great Fairy Reward'],
     'King Zora Items':                                          ['ZD King Zora Thawed', 'ZD Trade Prescription'],
 

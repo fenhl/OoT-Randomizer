@@ -877,7 +877,7 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
                     world.state.collect(ItemFactory(item, world))
                     item = get_junk_item()[0]
                     shuffle_item = True
-                elif shuffle_setting in ('any_dungeon', 'overworld', 'keysanity', 'regional', 'anywhere') and not world.empty_dungeons[dungeon.name].empty:
+                elif shuffle_setting in ('any_dungeon', 'overworld', 'keysanity', 'regional', 'anywhere') and not world.precompleted_dungeons.get(dungeon.name, False):
                     shuffle_item = True
                 elif shuffle_item is None:
                     dungeon_collection.append(ItemFactory(item, world))
@@ -936,8 +936,10 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
             world.state.collect(ItemFactory('Small Key (Shadow Temple)', world))
             world.state.collect(ItemFactory('Small Key (Shadow Temple)', world))
 
-    if (not world.keysanity or (world.empty_dungeons['Fire Temple'].empty and world.settings.shuffle_smallkeys != 'remove'))\
-        and not world.dungeon_mq['Fire Temple']:
+    if (
+        (not world.keysanity or (world.precompleted_dungeons['Fire Temple'] and world.settings.shuffle_smallkeys != 'remove'))
+        and not world.dungeon_mq['Fire Temple']
+    ):
         world.state.collect(ItemFactory('Small Key (Fire Temple)', world))
 
     if world.settings.shuffle_ganon_bosskey == 'on_lacs':

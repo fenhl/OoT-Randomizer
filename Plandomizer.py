@@ -420,7 +420,7 @@ class WorldDistribution:
                 raise KeyError('Cannot add location that already exists')
         self.locations[new_location] = LocationRecord(new_item)
 
-    def configure_dungeons(self, world: World, mq_dungeon_pool: list[str], empty_dungeon_pool: list[str]) -> tuple[int, int]:
+    def configure_dungeons(self, world: World, mq_dungeon_pool: list[str], precompleted_dungeon_pool: list[str]) -> tuple[int, int]:
         dist_num_mq, dist_num_empty = 0, 0
         for (name, record) in self.dungeons.items():
             if record.mq is not None:
@@ -430,10 +430,10 @@ class WorldDistribution:
                     world.dungeon_mq[name] = True
         for (name, record) in self.empty_dungeons.items():
             if record.empty is not None:
-                empty_dungeon_pool.remove(name)
+                precompleted_dungeon_pool.remove(name)
                 if record.empty:
                     dist_num_empty += 1
-                    world.empty_dungeons[name].empty = True
+                    world.precompleted_dungeons[name] = True
         return dist_num_mq, dist_num_empty
 
     def configure_trials(self, trial_pool: list[str]) -> list[str]:
@@ -1099,7 +1099,7 @@ class WorldDistribution:
                 for location in skipped_locations_from_dungeons:
                     if location.item is not None and world.id == location.item.world.id:
                         hint_area = HintArea.at(location)
-                        if hint_area.is_dungeon and iter_world.empty_dungeons[hint_area.dungeon_name].empty:
+                        if hint_area.is_dungeon and iter_world.precompleted_dungeons.get(hint_area.dungeon_name, False):
                             skipped_locations.append(location)
                             world.item_added_hint_types['barren'].append(location.item.name)
             for location in skipped_locations:
@@ -1349,8 +1349,8 @@ class Distribution:
         for world in spoiler.worlds:
             world_dist = self.world_dists[world.id]
             world_dist.randomized_settings = {randomized_item: getattr(world.settings, randomized_item) for randomized_item in world.randomized_list}
-            world_dist.dungeons = {dung: DungeonRecord({ 'mq': world.dungeon_mq[dung] }) for dung in world.dungeon_mq}
-            world_dist.empty_dungeons = {dung: EmptyDungeonRecord({ 'empty': world.empty_dungeons[dung].empty }) for dung in world.empty_dungeons}
+            world_dist.dungeons = {name: DungeonRecord({ 'mq': is_mq }) for name, is_mq in world.dungeon_mq.items()}
+            world_dist.empty_dungeons = {name: EmptyDungeonRecord({ 'empty': is_precompleted }) for name, is_precompleted in world.precompleted_dungeons.items()}
             world_dist.trials = {trial: TrialRecord({ 'active': not world.skipped_trials[trial] }) for trial in world.skipped_trials}
             if hasattr(world, 'song_notes'):
                 world_dist.songs = {song: SongRecord({ 'notes': str(world.song_notes[song]) }) for song in world.song_notes}

@@ -123,33 +123,17 @@ class World:
             'Forest': False,
         }
 
-        # empty dungeons will be decided later
-        class EmptyDungeons(dict):
-            class EmptyDungeonInfo:
-                def __init__(self, boss_name: Optional[str]) -> None:
-                    self.empty: bool = False
-                    self.boss_name: Optional[str] = boss_name
-                    self.hint_name: Optional[HintArea] = None
-
-            def __init__(self):
-                super().__init__()
-                self['Deku Tree'] = self.EmptyDungeonInfo('Queen Gohma')
-                self['Dodongos Cavern'] = self.EmptyDungeonInfo('King Dodongo')
-                self['Jabu Jabus Belly'] = self.EmptyDungeonInfo('Barinade')
-                self['Forest Temple'] = self.EmptyDungeonInfo('Phantom Ganon')
-                self['Fire Temple'] = self.EmptyDungeonInfo('Volvagia')
-                self['Water Temple'] = self.EmptyDungeonInfo('Morpha')
-                self['Spirit Temple'] = self.EmptyDungeonInfo('Twinrova')
-                self['Shadow Temple'] = self.EmptyDungeonInfo('Bongo Bongo')
-
-                for area in HintArea:
-                    if area.is_dungeon and area.dungeon_name in self:
-                        self[area.dungeon_name].hint_name = area
-
-            def __missing__(self, dungeon_name: str) -> EmptyDungeonInfo:
-                return self.EmptyDungeonInfo(None)
-
-        self.empty_dungeons: dict[str, EmptyDungeons.EmptyDungeonInfo] = EmptyDungeons()
+        # precompleted dungeons will be decided later
+        self.precompleted_dungeons: dict[str, bool] = {
+            'Deku Tree': False,
+            'Dodongos Cavern': False,
+            'Jabu Jabus Belly': False,
+            'Forest Temple': False,
+            'Fire Temple': False,
+            'Water Temple': False,
+            'Spirit Temple': False,
+            'Shadow Temple': False,
+        }
 
         # dungeon forms will be decided later
         self.dungeon_mq: dict[str, bool] = {
@@ -240,12 +224,6 @@ class World:
             for i in self.hint_dist_user['remove_items']:
                 if dist in i['types']:
                     self.item_hint_type_overrides[dist].append(i['item'])
-
-        # Make empty dungeons non-hintable as barren dungeons
-        if settings.empty_dungeons_mode != 'none':
-            for info in self.empty_dungeons.values():
-                if info.empty:
-                    self.hint_type_overrides['barren'].append(str(info.hint_name))
 
         self.hint_text_overrides: dict[str, str] = {}
         for loc in self.hint_dist_user['add_locations']:
@@ -373,7 +351,7 @@ class World:
 
         new_world.skipped_trials = copy.copy(self.skipped_trials)
         new_world.dungeon_mq = copy.copy(self.dungeon_mq)
-        new_world.empty_dungeons = copy.copy(self.empty_dungeons)
+        new_world.precompleted_dungeons = copy.copy(self.precompleted_dungeons)
         new_world.shop_prices = copy.copy(self.shop_prices)
         new_world.triforce_goal = self.triforce_goal
         new_world.triforce_count = self.triforce_count
@@ -508,14 +486,14 @@ class World:
             if trial not in chosen_trials and trial not in dist_chosen:
                 self.skipped_trials[trial] = True
 
-        # Determine empty and MQ Dungeons (avoid having both empty & MQ dungeons unless necessary)
+        # Determine precompleted and MQ Dungeons (avoid having an MQ dungeon be precompleted unless necessary)
         mq_dungeon_pool = list(self.dungeon_mq)
-        empty_dungeon_pool = list(self.empty_dungeons)
-        dist_num_mq, dist_num_empty = self.distribution.configure_dungeons(self, mq_dungeon_pool, empty_dungeon_pool)
+        precompleted_dungeon_pool = list(self.precompleted_dungeons)
+        dist_num_mq, dist_num_empty = self.distribution.configure_dungeons(self, mq_dungeon_pool, precompleted_dungeon_pool)
 
         if self.settings.empty_dungeons_mode == 'specific':
             for dung in self.settings.empty_dungeons_specific:
-                self.empty_dungeons[dung].empty = True
+                self.precompleted_dungeons[dung] = True
 
         if self.settings.mq_dungeons_mode == 'specific':
             for dung in self.settings.mq_dungeons_specific:
@@ -525,20 +503,20 @@ class World:
             nb_to_pick = self.settings.empty_dungeons_count - dist_num_empty
             if nb_to_pick < 0:
                 raise RuntimeError(f"{dist_num_empty} dungeons are set to empty on world {self.id+1}, but only {self.settings.empty_dungeons_count} empty dungeons allowed")
-            if len(empty_dungeon_pool) < nb_to_pick:
-                non_empty = 8 - dist_num_empty - len(empty_dungeon_pool)
+            if len(precompleted_dungeon_pool) < nb_to_pick:
+                non_empty = 8 - dist_num_empty - len(precompleted_dungeon_pool)
                 raise RuntimeError(f"On world {self.id+1}, {dist_num_empty} dungeons are set to empty and {non_empty} to non-empty. Can't reach {self.settings.empty_dungeons_count} empty dungeons.")
 
             # Prioritize non-MQ dungeons
             non_mq, mq = [], []
-            for dung in empty_dungeon_pool:
+            for dung in precompleted_dungeon_pool:
                 (mq if self.dungeon_mq[dung] else non_mq).append(dung)
             for dung in random.sample(non_mq, min(nb_to_pick, len(non_mq))):
-                self.empty_dungeons[dung].empty = True
+                self.precompleted_dungeons[dung] = True
                 nb_to_pick -= 1
             if nb_to_pick > 0:
                 for dung in random.sample(mq, nb_to_pick):
-                    self.empty_dungeons[dung].empty = True
+                    self.precompleted_dungeons[dung] = True
 
         if self.settings.mq_dungeons_mode == 'random' and 'mq_dungeons_count' not in dist_keys:
             for dungeon in mq_dungeon_pool:
@@ -558,7 +536,7 @@ class World:
             # Prioritize non-empty dungeons
             non_empty, empty = [], []
             for dung in mq_dungeon_pool:
-                (empty if self.empty_dungeons[dung].empty else non_empty).append(dung)
+                (empty if self.precompleted_dungeons.get(dung, False) else non_empty).append(dung)
             for dung in random.sample(non_empty, min(nb_to_pick, len(non_empty))):
                 self.dungeon_mq[dung] = True
                 nb_to_pick -= 1
@@ -780,12 +758,11 @@ class World:
             self.push_item(loc, item)
 
     def set_empty_dungeon_rewards(self, empty_rewards: list[str] = []) -> None:
-        empty_dungeon_bosses = list(map(lambda reward: self.find_items(reward)[0].name, empty_rewards))
+        empty_dungeon_bosses = list(map(lambda reward: self.find_items(reward)[0], empty_rewards))
         for boss in empty_dungeon_bosses:
-            for dungeon_item in self.empty_dungeons.items():
-                if dungeon_item[1].boss_name == boss:
-                    dungeon_item[1].empty = True
-                    self.hint_type_overrides['barren'].append(dungeon_item[1].hint_name)
+            hint_area = HintArea.at(boss)
+            if hint_area.dungeon_name in self.precompleted_dungeons: # filter out side dungeons and overworld
+                self.precompleted_dungeons[hint_area.dungeon_name] = True
 
     def set_goals(self) -> None:
         # Default goals are divided into 3 primary categories:
@@ -1046,32 +1023,39 @@ class World:
 
             # To avoid too many goals in the hint selection phase,
             # trials are reduced to one goal with six items to obtain.
-            if not self.skipped_trials['Forest']:
-                trial_goal.items.append({'name': 'Forest Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
-                trials.goal_count += 1
-            if not self.skipped_trials['Fire']:
-                trial_goal.items.append({'name': 'Fire Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
-                trials.goal_count += 1
-            if not self.skipped_trials['Water']:
-                trial_goal.items.append({'name': 'Water Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
-                trials.goal_count += 1
-            if not self.skipped_trials['Shadow']:
-                trial_goal.items.append({'name': 'Shadow Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
-                trials.goal_count += 1
-            if not self.skipped_trials['Spirit']:
-                trial_goal.items.append({'name': 'Spirit Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
-                trials.goal_count += 1
-            if not self.skipped_trials['Light']:
-                trial_goal.items.append({'name': 'Light Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+            if self.settings.shuffle_ganon_tower:
+                trial_goal.items.append({'name': 'Ganons Tower Access', 'quantity': 1, 'minimum': 1, 'hintable': True})
                 trials.goal_count += 1
 
-            # Trials category is finalized and saved only if at least one trial is on
-            # If random trials are on and one world in multiworld gets 0 trials, still
-            # add the goal to prevent key errors. Since no items fulfill the goal, it
-            # will always be invalid for that world and not generate hints.
-            if self.settings.trials > 0 or self.settings.trials_random:
                 trials.add_goal(trial_goal)
                 self.goal_categories[trials.name] = trials
+            else:
+                if not self.skipped_trials['Forest']:
+                    trial_goal.items.append({'name': 'Forest Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                    trials.goal_count += 1
+                if not self.skipped_trials['Fire']:
+                    trial_goal.items.append({'name': 'Fire Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                    trials.goal_count += 1
+                if not self.skipped_trials['Water']:
+                    trial_goal.items.append({'name': 'Water Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                    trials.goal_count += 1
+                if not self.skipped_trials['Shadow']:
+                    trial_goal.items.append({'name': 'Shadow Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                    trials.goal_count += 1
+                if not self.skipped_trials['Spirit']:
+                    trial_goal.items.append({'name': 'Spirit Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                    trials.goal_count += 1
+                if not self.skipped_trials['Light']:
+                    trial_goal.items.append({'name': 'Light Trial Clear', 'quantity': 1, 'minimum': 1, 'hintable': True})
+                    trials.goal_count += 1
+
+                # Trials category is finalized and saved only if at least one trial is on
+                # If random trials are on and one world in multiworld gets 0 trials, still
+                # add the goal to prevent key errors. Since no items fulfill the goal, it
+                # will always be invalid for that world and not generate hints.
+                if self.settings.trials > 0 or self.settings.trials_random:
+                    trials.add_goal(trial_goal)
+                    self.goal_categories[trials.name] = trials
 
             # In glitched logic or if trials are off, it's possible that some items required to beat the game
             # (such as bow, magic, light arrows, or anything required to reach Ganon's Castle)
