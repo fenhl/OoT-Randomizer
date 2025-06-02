@@ -26,7 +26,7 @@ from Messages import read_messages, update_message_by_id, read_shop_items, updat
 from OcarinaSongs import patch_songs
 from MQ import patch_files, File, update_dmadata, insert_space, add_relocations
 from Rom import Rom
-from SaveContext import SaveContext, Scenes, FlagType
+from SaveContext import SaveContext, Scenes, FlagType, write_settings_dependent_save_context_flags
 from SceneFlags import build_xflag_tables, build_xflags_from_world, get_alt_list_bytes
 from Sounds import move_audiobank_table
 from Spoiler import Spoiler
@@ -91,6 +91,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
         ('object_gi_cbutton',     data_path('items/C_Button_Horizontal.zobj'), 0x1A9),  # C button Horizontal
         ('object_gi_cbutton',     data_path('items/C_Button_Vertical.zobj'),   0x1AA),  # C button Vertical
         ('object_gi_magic_meter', data_path('items/MagicMeter.zobj'),          0x1B4),  # Magic Scroll
+        ('object_gi_magic_meter', data_path('items/MagicMeter2.zobj'),         0x1B5),  # Magic Scroll 2
     )
 
     if world.settings.key_appearance_match_dungeon:
@@ -848,161 +849,9 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     rom.write_bytes(rom.sym('PASSWORD'), spoiler.password)
 
     # Initial Save Data
-    if not world.settings.useful_cutscenes and 'Forest Temple' not in world.settings.dungeon_shortcuts:
-        save_context.write_bits(0x00D4 + 0x03 * 0x1C + 0x04 + 0x0, 0x08)  # Forest Temple switch flag (Poe Sisters cutscene)
-
-    if 'Deku Tree' in world.settings.dungeon_shortcuts:
-        # Deku Tree, flags are the same between vanilla/MQ
-        save_context.write_permanent_flag(Scenes.DEKU_TREE, FlagType.SWITCH, 0x1, 0x01)  # Deku Block down
-        save_context.write_permanent_flag(Scenes.DEKU_TREE, FlagType.CLEAR,  0x2, 0x02)  # Deku 231/312
-        save_context.write_permanent_flag(Scenes.DEKU_TREE, FlagType.SWITCH, 0x3, 0x20)  # Deku 1st Web
-        save_context.write_permanent_flag(Scenes.DEKU_TREE, FlagType.SWITCH, 0x3, 0x40)  # Deku 2nd Web
-
-    if 'Dodongos Cavern' in world.settings.dungeon_shortcuts:
-        # Dodongo's Cavern, flags are the same between vanilla/MQ
-        save_context.write_permanent_flag(Scenes.DODONGOS_CAVERN, FlagType.SWITCH, 0x3, 0x80)  # DC Entrance Mud Wall
-        save_context.write_permanent_flag(Scenes.DODONGOS_CAVERN, FlagType.SWITCH, 0x0, 0x04)  # DC Mouth
-        # Extra permanent flag in MQ for the child route
-        if world.dungeon_mq['Dodongos Cavern']:
-            save_context.write_permanent_flag(Scenes.DODONGOS_CAVERN, FlagType.SWITCH, 0x0, 0x02)  # Armos wall switch
-
-    if 'Jabu Jabus Belly' in world.settings.dungeon_shortcuts:
-        # Jabu
-        if not world.dungeon_mq['Jabu Jabus Belly']:
-            save_context.write_permanent_flag(Scenes.JABU_JABU, FlagType.SWITCH, 0x0, 0x20)  # Jabu Pathway down
-        else:
-            save_context.write_permanent_flag(Scenes.JABU_JABU, FlagType.SWITCH, 0x1, 0x20)  # Jabu Lobby Slingshot Door open
-            save_context.write_permanent_flag(Scenes.JABU_JABU, FlagType.SWITCH, 0x0, 0x20)  # Jabu Pathway down
-            save_context.write_permanent_flag(Scenes.JABU_JABU, FlagType.CLEAR,  0x2, 0x01)  # Jabu Red Slimy Thing defeated
-            save_context.write_permanent_flag(Scenes.JABU_JABU, FlagType.SWITCH, 0x2, 0x08)  # Jabu Red Slimy Thing not in front of boss lobby
-            save_context.write_permanent_flag(Scenes.JABU_JABU, FlagType.SWITCH, 0x1, 0x10)  # Jabu Boss Door Switch Activated
-
-    if 'Forest Temple' in world.settings.dungeon_shortcuts:
-        # Forest, flags are the same between vanilla/MQ
-        save_context.write_permanent_flag(Scenes.FOREST_TEMPLE, FlagType.SWITCH, 0x0, 0x10)  # Forest Elevator up
-        save_context.write_permanent_flag(Scenes.FOREST_TEMPLE, FlagType.SWITCH, 0x1, 0x01 + 0x02 + 0x04)  # Forest Basement Puzzle Done
-
-    if 'Fire Temple' in world.settings.dungeon_shortcuts:
-        # Fire, flags are the same between vanilla/MQ
-        save_context.write_permanent_flag(Scenes.FIRE_TEMPLE, FlagType.SWITCH, 0x2, 0x40)  # Fire Pillar down
-
-    if 'Spirit Temple' in world.settings.dungeon_shortcuts:
-        # Spirit
-        if not world.dungeon_mq['Spirit Temple']:
-            save_context.write_permanent_flag(Scenes.SPIRIT_TEMPLE, FlagType.SWITCH, 0x1, 0x80)  # Spirit Chains
-            save_context.write_permanent_flag(Scenes.SPIRIT_TEMPLE, FlagType.SWITCH, 0x2, 0x02 + 0x08 + 0x10)  # Spirit main room elevator (N block, Rusted Switch, E block)
-            save_context.write_permanent_flag(Scenes.SPIRIT_TEMPLE, FlagType.SWITCH, 0x3, 0x10)  # Spirit Face
-        else:
-            save_context.write_permanent_flag(Scenes.SPIRIT_TEMPLE, FlagType.SWITCH, 0x2, 0x10)  # Spirit Bombchu Boulder
-            save_context.write_permanent_flag(Scenes.SPIRIT_TEMPLE, FlagType.SWITCH, 0x2, 0x02)  # Spirit Silver Block
-            save_context.write_permanent_flag(Scenes.SPIRIT_TEMPLE, FlagType.SWITCH, 0x1, 0x80)  # Spirit Chains
-            save_context.write_permanent_flag(Scenes.SPIRIT_TEMPLE, FlagType.SWITCH, 0x3, 0x10)  # Spirit Face
-
-    if 'Shadow Temple' in world.settings.dungeon_shortcuts:
-        # Shadow
-        if not world.dungeon_mq['Shadow Temple']:
-            save_context.write_permanent_flag(Scenes.SHADOW_TEMPLE, FlagType.SWITCH, 0x0, 0x08)  # Shadow Truthspinner
-            save_context.write_permanent_flag(Scenes.SHADOW_TEMPLE, FlagType.SWITCH, 0x0, 0x20)  # Shadow Boat Block
-            save_context.write_permanent_flag(Scenes.SHADOW_TEMPLE, FlagType.SWITCH, 0x1, 0x01)  # Shadow Bird Bridge
-        else:
-            save_context.write_permanent_flag(Scenes.SHADOW_TEMPLE, FlagType.SWITCH, 0x2, 0x08)  # Shadow Truthspinner
-            save_context.write_permanent_flag(Scenes.SHADOW_TEMPLE, FlagType.SWITCH, 0x3, 0x20)  # Shadow Fire Arrow Platform
-            save_context.write_permanent_flag(Scenes.SHADOW_TEMPLE, FlagType.SWITCH, 0x3, 0x80)  # Shadow Spinning Blades room Skulltulas defeated
-            save_context.write_permanent_flag(Scenes.SHADOW_TEMPLE, FlagType.CLEAR,  0x3, 0x40)  # Shadow Spinning Blades room Skulltulas defeated
-            save_context.write_permanent_flag(Scenes.SHADOW_TEMPLE, FlagType.SWITCH, 0x0, 0x20)  # Shadow Boat Block
-            save_context.write_permanent_flag(Scenes.SHADOW_TEMPLE, FlagType.SWITCH, 0x1, 0x01)  # Shadow Bird Bridge
-
-    if world.region_has_shortcuts('King Dodongo Boss Room'):
-        save_context.write_permanent_flag(Scenes.KING_DODONGO_LOBBY, FlagType.SWITCH, 0x3, 0x02)  # DC Boss Floor
-
+    save_context.write_qol_save_context_flags()
+    write_settings_dependent_save_context_flags(save_context, world)
     set_spirit_shortcut_actors(rom) # Change elevator starting position to avoid waiting a half cycle from the temple entrance
-
-    if world.settings.plant_beans:
-        save_context.write_permanent_flag(Scenes.GRAVEYARD, FlagType.SWITCH, 0x3, 0x08)  # Plant Graveyard bean
-        save_context.write_permanent_flag(Scenes.ZORAS_RIVER, FlagType.SWITCH, 0x3, 0x08)  # Plant Zora's River bean
-        save_context.write_permanent_flag(Scenes.KOKIRI_FOREST, FlagType.SWITCH, 0x2, 0x02)  # Plant Kokiri Forest bean
-        save_context.write_permanent_flag(Scenes.LAKE_HYLIA, FlagType.SWITCH, 0x3, 0x02)  # Plant Lake Hylia bean
-        save_context.write_permanent_flag(Scenes.GERUDO_VALLEY, FlagType.SWITCH, 0x3, 0x08)  # Plant Gerudo Valley bean
-        save_context.write_permanent_flag(Scenes.LOST_WOODS, FlagType.SWITCH, 0x3, 0x10)  # Plant Lost Woods bridge bean
-        save_context.write_permanent_flag(Scenes.LOST_WOODS, FlagType.SWITCH, 0x1, 0x04)  # Plant Lost Woods theater bean
-        save_context.write_permanent_flag(Scenes.DESERT_COLOSSUS, FlagType.SWITCH, 0x0, 0x1)  # Plant Desert Colossus bean
-        save_context.write_permanent_flag(Scenes.DEATH_MOUNTAIN_TRAIL, FlagType.SWITCH, 0x3, 0x40)  # Plant Death Mountain Trail bean
-        save_context.write_permanent_flag(Scenes.DEATH_MOUNTAIN_CRATER, FlagType.SWITCH, 0x3, 0x08)  # Plant Death Mountain Crater bean
-
-    save_context.write_bits(0x00D4 + 0x05 * 0x1C + 0x04 + 0x1, 0x01) # Water temple switch flag (Ruto)
-    save_context.write_bits(0x00D4 + 0x51 * 0x1C + 0x04 + 0x2, 0x08) # Hyrule Field switch flag (Owl)
-    save_context.write_bits(0x00D4 + 0x55 * 0x1C + 0x04 + 0x0, 0x80) # Kokiri Forest switch flag (Owl)
-    save_context.write_bits(0x00D4 + 0x56 * 0x1C + 0x04 + 0x2, 0x40) # Sacred Forest Meadow switch flag (Owl)
-    save_context.write_bits(0x00D4 + 0x5B * 0x1C + 0x04 + 0x2, 0x01) # Lost Woods switch flag (Owl)
-    save_context.write_bits(0x00D4 + 0x5B * 0x1C + 0x04 + 0x3, 0x80) # Lost Woods switch flag (Owl)
-    save_context.write_bits(0x00D4 + 0x5C * 0x1C + 0x04 + 0x0, 0x80) # Desert Colossus switch flag (Owl)
-    save_context.write_bits(0x00D4 + 0x5F * 0x1C + 0x04 + 0x3, 0x20) # Hyrule Castle switch flag (Owl)
-    save_context.write_bits(0x0F2B, 0x20) # Spoke to Lake Hylia Owl once
-
-    save_context.write_bits(0x0ED4, 0x10)  # "Met Deku Tree"
-    save_context.write_bits(0x0ED5, 0x20)  # "Deku Tree Opened Mouth"
-    save_context.write_bits(0x0ED6, 0x08)  # "Rented Horse From Ingo"
-    save_context.write_bits(0x0ED6, 0x10)  # "Spoke to Mido After Deku Tree's Death"
-    save_context.write_bits(0x0EDA, 0x08)  # "Began Nabooru Battle"
-    save_context.write_bits(0x0EDC, 0x80)  # "Entered the Master Sword Chamber"
-    if world.settings.skip_reward_from_rauru:
-        save_context.write_bits(0x0EDD, 0x20)  # "Pulled Master Sword from Pedestal"
-    save_context.write_bits(0x0EE0, 0x80)  # "Spoke to Kaepora Gaebora by Lost Woods"
-    save_context.write_bits(0x0EE7, 0x20)  # "Nabooru Captured by Twinrova"
-    save_context.write_bits(0x0EE7, 0x10)  # "Spoke to Nabooru in Spirit Temple"
-    save_context.write_bits(0x0EED, 0x20)  # "Sheik, Spawned at Master Sword Pedestal as Adult"
-    save_context.write_bits(0x0EED, 0x01)  # "Nabooru Ordered to Fight by Twinrova"
-    save_context.write_bits(0x0EED, 0x80)  # "Watched Ganon's Tower Collapse / Caught by Gerudo"
-    save_context.write_bits(0x0EF9, 0x01)  # "Greeted by Saria"
-    save_context.write_bits(0x0F0A, 0x04)  # "Spoke to Ingo Once as Adult"
-    save_context.write_bits(0x0F0F, 0x40)  # "Met Poe Collector in Ruined Market"
-    if not world.settings.useful_cutscenes:
-        save_context.write_bits(0x0F1A, 0x04)  # "Met Darunia in Fire Temple"
-
-    save_context.write_bits(0x0ED7, 0x01)  # "Spoke to Child Malon at Castle or Market"
-    save_context.write_bits(0x0ED7, 0x20)  # "Spoke to Child Malon at Ranch"
-    save_context.write_bits(0x0ED7, 0x40)  # "Invited to Sing With Child Malon"
-    save_context.write_bits(0x0F09, 0x10)  # "Met Child Malon at Castle or Market"
-    save_context.write_bits(0x0F09, 0x20)  # "Child Malon Said Epona Was Scared of You"
-
-    save_context.write_bits(0x0F21, 0x04) # "Ruto in JJ (M3) Talk First Time"
-    save_context.write_bits(0x0F21, 0x02) # "Ruto in JJ (M2) Meet Ruto"
-    if world.settings.ruto_already_f1_jabu and not world.dungeon_mq['Jabu Jabus Belly']:
-        save_context.write_bits(0x0F21, 0x80) # Ruto in JJ, Spawns on F1 instead of B1
-
-    save_context.write_bits(0x0EE2, 0x01)  # "Began Ganondorf Battle"
-    save_context.write_bits(0x0EE3, 0x80)  # "Began Bongo Bongo Battle"
-    save_context.write_bits(0x0EE3, 0x40)  # "Began Barinade Battle"
-    save_context.write_bits(0x0EE3, 0x20)  # "Began Twinrova Battle"
-    save_context.write_bits(0x0EE3, 0x10)  # "Began Morpha Battle"
-    save_context.write_bits(0x0EE3, 0x08)  # "Began Volvagia Battle"
-    save_context.write_bits(0x0EE3, 0x04)  # "Began Phantom Ganon Battle"
-    save_context.write_bits(0x0EE3, 0x02)  # "Began King Dodongo Battle"
-    save_context.write_bits(0x0EE3, 0x01)  # "Began Gohma Battle"
-
-    save_context.write_bits(0x0EE8, 0x01)  # "Entered Deku Tree"
-    save_context.write_bits(0x0EE9, 0x80)  # "Entered Temple of Time"
-    save_context.write_bits(0x0EE9, 0x40)  # "Entered Goron City"
-    save_context.write_bits(0x0EE9, 0x20)  # "Entered Hyrule Castle"
-    save_context.write_bits(0x0EE9, 0x10)  # "Entered Zora's Domain"
-    save_context.write_bits(0x0EE9, 0x08)  # "Entered Kakariko Village"
-    save_context.write_bits(0x0EE9, 0x02)  # "Entered Death Mountain Trail"
-    save_context.write_bits(0x0EE9, 0x01)  # "Entered Hyrule Field"
-    save_context.write_bits(0x0EEA, 0x04)  # "Entered Ganon's Castle (Exterior)"
-    save_context.write_bits(0x0EEA, 0x02)  # "Entered Death Mountain Crater"
-    save_context.write_bits(0x0EEA, 0x01)  # "Entered Desert Colossus"
-    save_context.write_bits(0x0EEB, 0x80)  # "Entered Zora's Fountain"
-    save_context.write_bits(0x0EEB, 0x40)  # "Entered Graveyard"
-    save_context.write_bits(0x0EEB, 0x20)  # "Entered Jabu-Jabu's Belly"
-    save_context.write_bits(0x0EEB, 0x10)  # "Entered Lon Lon Ranch"
-    save_context.write_bits(0x0EEB, 0x08)  # "Entered Gerudo's Fortress"
-    save_context.write_bits(0x0EEB, 0x04)  # "Entered Gerudo Valley"
-    save_context.write_bits(0x0EEB, 0x02)  # "Entered Lake Hylia"
-    save_context.write_bits(0x0EEB, 0x01)  # "Entered Dodongo's Cavern"
-    save_context.write_bits(0x0F08, 0x08)  # "Entered Hyrule Castle"
-
-    if world.dungeon_mq['Shadow Temple']:
-        save_context.write_bits(0x019F, 0x80)  # "Turn On Clear Wall Blocking Hover Boots Room"
 
     # Set the number of chickens to collect
     rom.write_byte(0x00E1E523, world.settings.chicken_count)
@@ -1051,22 +900,6 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
 
     if world.settings.complete_mask_quest:
         rom.write_byte(rom.sym('COMPLETE_MASK_QUEST'), 1)
-
-    if world.skip_child_zelda:
-        if all(trade_item not in world.settings.shuffle_child_trade for trade_item in ('Weird Egg', 'Chicken')):
-            save_context.write_bits(0x0ED7, 0x04) # "Obtained Malon's Item"
-        save_context.write_bits(0x0ED7, 0x08) # "Woke Talon in castle"
-        save_context.write_bits(0x0ED7, 0x10) # "Talon has fled castle"
-        save_context.write_bits(0x0EDD, 0x01) # "Obtained Zelda's Letter"
-        save_context.write_bits(0x0EDE, 0x02) # "Learned Zelda's Lullaby"
-        save_context.write_bits(0x00D4 + 0x5F * 0x1C + 0x04 + 0x3, 0x10) # "Moved crates to access the courtyard"
-    if 'Zeldas Letter' in world.distribution.starting_items:
-        if world.settings.open_kakariko != 'closed':
-            save_context.write_bits(0x0F07, 0x40)  # "Spoke to Gate Guard About Mask Shop"
-        if world.settings.complete_mask_quest:
-            save_context.write_bits(0x0F07, 0x80)  # "Soldier Wears Keaton Mask"
-            save_context.write_bits(0x0EF6, 0x8F)  # "Sold Masks & Unlocked Masks" / "Obtained Mask of Truth"
-            save_context.write_bits(0x0EE4, 0xF0)  # "Paid Back Mask Fees"
 
     if world.settings.zora_fountain == 'open':
         save_context.write_bits(0x0EDB, 0x08)  # "Moved King Zora"
@@ -1155,12 +988,6 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     else:
         rom.write_int32(symbol, 0)
 
-    if world.settings.open_forest == 'open':
-        save_context.write_bits(0xED5, 0x10)  # "Showed Mido Sword & Shield"
-
-    if world.settings.open_door_of_time:
-        save_context.write_bits(0xEDC, 0x08)  # "Opened the Door of Time"
-
     # "fast-ganon" stuff
     symbol = rom.sym('NO_ESCAPE_SEQUENCE')
     if world.settings.no_escape_sequence:
@@ -1169,36 +996,6 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
         rom.write_byte(symbol, 0x01)
     else:
         rom.write_byte(symbol, 0x00)
-    if world.skipped_trials['Forest']:
-        save_context.write_bits(0x0EEA, 0x08)  # "Completed Forest Trial"
-    if world.skipped_trials['Fire']:
-        save_context.write_bits(0x0EEA, 0x40)  # "Completed Fire Trial"
-    if world.skipped_trials['Water']:
-        save_context.write_bits(0x0EEA, 0x10)  # "Completed Water Trial"
-    if world.skipped_trials['Spirit']:
-        save_context.write_bits(0x0EE8, 0x20)  # "Completed Spirit Trial"
-    if world.skipped_trials['Shadow']:
-        save_context.write_bits(0x0EEA, 0x20)  # "Completed Shadow Trial"
-    if world.skipped_trials['Light']:
-        save_context.write_bits(0x0EEA, 0x80)  # "Completed Light Trial"
-    if world.settings.trials == 0:
-        save_context.write_bits(0x0EED, 0x08)  # "Dispelled Ganon's Tower Barrier"
-
-    # open gerudo fortress
-    if world.settings.gerudo_fortress == 'open':
-        if not world.settings.shuffle_gerudo_card:
-            save_context.write_bits(0x00A5, 0x40)  # Give Gerudo Card
-        save_context.write_bits(0x0EE7, 0x0F)  # Free all 4 carpenters
-        save_context.write_bits(0x00D4 + 0x0C * 0x1C + 0x04 + 0x1, 0x0F)  # Thieves' Hideout switch flags (started all fights)
-        save_context.write_bits(0x00D4 + 0x0C * 0x1C + 0x04 + 0x2, 0x01)  # Thieves' Hideout switch flags (heard yells/unlocked doors)
-        save_context.write_bits(0x00D4 + 0x0C * 0x1C + 0x04 + 0x3, 0xFE)  # Thieves' Hideout switch flags (heard yells/unlocked doors)
-        save_context.write_bits(0x00D4 + 0x0C * 0x1C + 0x0C + 0x2, 0xD4)  # Thieves' Hideout collection flags (picked up keys, marks fights finished as well)
-    elif world.settings.gerudo_fortress == 'fast':
-        save_context.write_bits(0x0EE7, 0x0E)  # Free 3 carpenters
-        save_context.write_bits(0x00D4 + 0x0C * 0x1C + 0x04 + 0x1, 0x0D)  # Thieves' Hideout switch flags (started all fights)
-        save_context.write_bits(0x00D4 + 0x0C * 0x1C + 0x04 + 0x2, 0x01)  # Thieves' Hideout switch flags (heard yells/unlocked doors)
-        save_context.write_bits(0x00D4 + 0x0C * 0x1C + 0x04 + 0x3, 0xDC)  # Thieves' Hideout switch flags (heard yells/unlocked doors)
-        save_context.write_bits(0x00D4 + 0x0C * 0x1C + 0x0C + 0x2, 0xC4)  # Thieves' Hideout collection flags (picked up keys, marks fights finished as well)
 
     # Add a gate opening guard on the Wasteland side of the Gerudo Fortress' gate
     # Overrides the generic guard at the bottom of the ladder in Gerudo Fortress
@@ -1405,7 +1202,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
         rom.write_byte(symbol, 0x01)
 
     if world.settings.skip_some_minigame_phases:
-        save_context.write_bits(0x00D4 + 0x48 * 0x1C + 0x08 + 0x3, 0x10)  # Beat First Dampe Race (& Chest Spawned)
+        save_context.write_permanent_flag(Scenes.WINDMILL, FlagType.CLEAR, 0x3, 0x10) # Beat First Dampe Race (& Chest Spawned)
         rom.write_byte(rom.sym('CHAIN_HBA_REWARDS'), 1)
         # Update the first horseback archery text to make it clear both rewards are available from the start
         update_message_by_id(messages, 0x6040, "Hey newcomer, you have a fine \x01horse!\x04I don't know where you stole \x01it from, but...\x04OK, how about challenging this \x01\x05\x41horseback archery\x05\x40?\x04Once the horse starts galloping,\x01shoot the targets with your\x01arrows. \x04Let's see how many points you \x01can score. You get 20 arrows.\x04If you can score \x05\x411,000 points\x05\x40, I will \x01give you something good! And even \x01more if you score \x05\x411,500 points\x05\x40!\x0B\x02")
@@ -2116,9 +1913,10 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     #        f.write("\t0x%04X: \"%s\",\n" % (m.id, m.get_python_string()))
     #     f.write('}\n')
 
-    if world.settings.free_scarecrow:
-        # Played song as adult
-        save_context.write_bits(0x0EE6, 0x10)
+    if world.settings.scarecrow_behavior != 'vanilla':
+        if world.settings.scarecrow_behavior == 'free':
+            # Played song as adult
+            save_context.write_bits(0x0EE6, 0x10)
         # Direct scarecrow behavior
         symbol = rom.sym('FREE_SCARECROW_ENABLED')
         rom.write_byte(symbol, 0x01)

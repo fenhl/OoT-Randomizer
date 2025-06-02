@@ -38,7 +38,7 @@
     "no_epona_race": false,
     "useful_cutscenes": true,
     "fast_chests": true,
-    "free_scarecrow": false,
+    "scarecrow_behavior": "vanilla",
     "start_with_rupees": false,
     "start_with_consumables": false,
     "plant_beans": false,
