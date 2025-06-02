@@ -190,7 +190,7 @@ class State:
     def has_all_notes_for_song(self, song: str) -> bool:
         # Scarecrow needs 2 different notes
         if song == 'Scarecrow Song':
-            return self.world.settings.free_scarecrow or self.has_ocarina_buttons(2)
+            return self.world.settings.scarecrow_behavior == 'free' or self.has_ocarina_buttons(2)
 
         notes = str(self.world.song_notes[song])
         if 'A' in notes:

@@ -232,7 +232,7 @@
             "Bonooru": "is_child and Ocarina and has_all_notes_for_song(Scarecrow_Song)"
         },
         "locations": {
-            "Pierre": "is_adult and Bonooru and not free_scarecrow",
+            "Pierre": "is_adult and Bonooru and scarecrow_behavior != 'free'",
             "LH Underwater Item": "is_child and can_dive",
             "LH Sun": "
                 is_adult and
@@ -1094,7 +1094,8 @@
             "ZR Frogs Ocarina Game": "
                 is_child and can_play(Zeldas_Lullaby) and can_play(Sarias_Song) and
                 can_play(Suns_Song) and can_play(Eponas_Song) and
-                can_play(Song_of_Time) and can_play(Song_of_Storms)",
+                can_play(Song_of_Time) and can_play(Song_of_Storms) and
+                has_all_notes_for_song('ZR Frogs Ocarina Game')",
             "ZR Frogs Zeldas Lullaby": "is_child and can_play(Zeldas_Lullaby)",
             "ZR Frogs Eponas Song": "is_child and can_play(Eponas_Song)",
             "ZR Frogs Sarias Song": "is_child and can_play(Sarias_Song)",
@@ -1108,7 +1109,7 @@
             "ZR GS Above Bridge": "can_use(Hookshot) and at_night",
             "ZR Near Grottos Gossip Stone": "True",
             "ZR Near Domain Gossip Stone": "True",
-            "ZR Frogs Ocarina Minigame Hint": "True"
+            "ZR Frogs Ocarina Minigame Hint": "is_child"
         },
         "exits": {
             "ZR Front": "True",
@@ -1234,6 +1235,10 @@
     {
         "region_name": "Ganons Castle Tower",
         "dungeon": "Ganons Castle",
+        "events": {
+            # Used for the "path to the tower" goal
+            "Ganons Tower Access": "is_adult"
+        },
         "locations": {
             "Ganons Tower Boss Key Chest": "True",
             "Ganondorf Hint": "Boss_Key_Ganons_Castle",

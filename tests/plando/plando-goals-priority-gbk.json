@@ -26,7 +26,7 @@
     "complete_mask_quest":                     false,
     "fast_chests":                             true,
     "logic_no_night_tokens_without_suns_song": false,
-    "free_scarecrow":                          false,
+    "scarecrow_behavior":                      "vanilla",
     "fast_bunny_hood":                         true,
     "start_with_rupees":                       false,
     "start_with_consumables":                  true,

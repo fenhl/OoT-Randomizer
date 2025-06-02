@@ -802,7 +802,11 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
             elif world.settings.shuffle_pots == 'overworld' and not (location.dungeon is not None or (location.parent_region is not None and location.parent_region.is_boss_room)):
                 shuffle_item = True
 
-            if shuffle_item and (location.vanilla_item != 'Nothing' or world.settings.shuffle_empty_pots):
+            if shuffle_item and (not world.settings.fix_broken_drops and location.vanilla_item == 'Deku Shield'):
+                # Special case for Deku Shield.
+                item = 'Nothing'
+                shuffle_item = world.settings.shuffle_empty_pots
+            elif shuffle_item and (location.vanilla_item != 'Nothing' or world.settings.shuffle_empty_pots):
                 shuffle_item = True
             else:
                 shuffle_item = False
@@ -982,7 +986,7 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
     if world.settings.triforce_blitz_hint_shop:
         pending_junk_pool.extend(triforce_blitz_hint_shop_items)
 
-    if world.settings.free_scarecrow:
+    if world.settings.scarecrow_behavior == 'free':
         world.state.collect(ItemFactory('Scarecrow Song', world))
 
     if world.settings.no_epona_race:
