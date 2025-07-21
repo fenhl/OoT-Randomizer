@@ -61,6 +61,8 @@ defaultHintDists: list[str] = [
     'scrubs.json',
     'sgl2025.json',
     'strong.json',
+    'triforce_blitz_s4_coop.json',
+    'triforce_blitz_s4.json',
     'tournament.json',
     'useless.json',
     'very_strong.json',
