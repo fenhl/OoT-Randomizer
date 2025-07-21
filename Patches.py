@@ -261,7 +261,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
         (27, 'texture_pot_top_heart',       0x01739000,    None,            256,    rgba16_patch,               'textures/pot/pot_top_heart_rgba16_patch.bin'),
         (28, 'texture_crate_heart',         0x18B6020,     0x018B6000,      4096,   ci4_rgba16patch_to_ci8,     'textures/crate/crate_heart_rgba16_patch.bin'),
         (29, 'texture_smallcrate_heart',    0xF7ECA0,      None,            2048,   rgba16_patch,               'textures/crate/smallcrate_heart_rgba16_patch.bin'),
-        
+
         (42, "texture_chest_front_bombchu", 0xFEC798,      None,            4096,   rgba16_patch,               'textures/chest/chest_front_bombchu_rgba16_patch.bin'),
         (43, "texture_chest_base_bombchu",  0xFED798,      None,            2048,   rgba16_patch,               'textures/chest/chest_base_bombchu_rgba16_patch.bin'),
     ]
@@ -1226,7 +1226,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
             rom.write_int32(symbol, 2)
         else:
             rom.write_int32(symbol, 1)
-    
+
     if world.settings.triforce_blitz_hint_shop:
         write_hint_shop_hints(spoiler, world, messages)
 
@@ -1978,7 +1978,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     if world.settings.lock_reverse_shadow:
         actor = 0x027a7190 # transition actor for Shadow Temple door between rooms 20 aand 21
         rom.write_byte(actor, 0x14) # Flip the loading zones between rooms 20 and 21
-        rom.write_byte(actor + 2, 0x15) 
+        rom.write_byte(actor + 2, 0x15)
         rom.write_int16(actor + 4, 0x002E) # Change actor type from door to shutter
         rom.write_int16(actor + 12, 0x8000) # Rotate door so front and back sides of the door flip
         rom.write_int16(actor + 14, 0x00D5) # Back side permanently locked

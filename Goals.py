@@ -84,7 +84,7 @@ class Goal:
 
     def __repr__(self) -> str:
         return f"{self.world.__repr__()} {self.name}: {self.hint_text}"
-    
+
     @property
     def worldAndName(self) -> str:
         if self.world is not None:
@@ -335,10 +335,10 @@ def update_goal_items(spoiler: Spoiler) -> None:
                     path_sum += path_count
                     if path_count == 0:
                         empty_paths += 1
-        
+
             if path_sum < minimum:
                 raise FillError(f'Minimum path sum of {minimum} was not reached, re-rolling...')
-            
+
             if empty_paths > maximum_empty:
                 raise FillError(f'Maximum empty paths of {maximum_empty} was exceeded, re-rolling...')
 
@@ -426,15 +426,15 @@ def calculate_playthrough_locations(spoiler):
 
     playthrough_locations = {}
     for sphere, sphere_locations in spoiler.playthrough.items():
-        locations = dict(filter(lambda locations: 
-            locations[1].name in item_groups["MajorItem"], 
+        locations = dict(filter(lambda locations:
+            locations[1].name in item_groups["MajorItem"],
             sphere_locations.items()))
         playthrough_locations.update(locations)
-    
+
     spoiler.playthrough_locations = playthrough_locations
 
     search_locations = list(map(lambda location: spoiler.worlds[location.world.id].get_location(location.name), playthrough_locations.keys()))
-    
+
     # Generate location requirements for each playthrough location
     requirements_by_world = {}
     requirements = search_required_locations(search_locations, search_locations, spoiler.worlds)

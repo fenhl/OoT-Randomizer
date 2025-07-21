@@ -221,7 +221,7 @@ xflag_t resolve_alternative_flag(xflag_t* flag) {
 }
 
 bool is_triforce_piece(uint16_t item_id) {
-    return item_id == GI_TRIFORCE_PIECE || 
+    return item_id == GI_TRIFORCE_PIECE ||
         item_id == GI_TRIFORCE_OF_POWER ||
         item_id == GI_TRIFORCE_OF_WISDOM ||
         item_id == GI_TRIFORCE_OF_COURAGE;

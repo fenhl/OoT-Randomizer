@@ -289,7 +289,7 @@ class World:
                 (self.hint_dist_user['distribution']['goal']['fixed'] != 0 or
                  self.hint_dist_user['distribution']['goal']['weight'] != 0)):
             self.enable_goal_hints = True
-        
+
         if ('distribution' in self.hint_dist_user and
            'goal-legacy' in self.hint_dist_user['distribution'] and
            (self.hint_dist_user['distribution']['goal-legacy']['fixed'] != 0 or

@@ -600,9 +600,9 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
             entrance_pools['EscapeKakLock2'] = [world.get_entrance('Kak Impas House -> Kakariko Village'),
                                                 world.get_entrance('ToT Entrance -> Temple of Time')]
             if chosen_side_dungeon.name != 'Bottom of the Well':
-                entrance_pools['EscapeKakLock3'] = [world.get_entrance('Kakariko Village -> Bottom of the Well'), 
+                entrance_pools['EscapeKakLock3'] = [world.get_entrance('Kakariko Village -> Bottom of the Well'),
                                                     world.get_entrance('Kokiri Forest -> KF House of Twins')]
-            entrance_pools['EscapeKakLock4'] = [world.get_entrance('Kakariko Village -> Kak House of Skulltula'), 
+            entrance_pools['EscapeKakLock4'] = [world.get_entrance('Kakariko Village -> Kak House of Skulltula'),
                                                 world.get_entrance('Market Entrance -> Market Guard House')]
 
         # Set shuffled entrances as such
@@ -646,8 +646,8 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                 boss_name = dungeon_entrance.connected_region.dungeon.vanilla_boss_name
                 dungeon_blue_warp = next(filter(lambda exit: boss_name in exit.name, blue_warps))
                 one_way_entrance_pools[f'EscapeKakBlueWarp{index}'] = [dungeon_blue_warp]
-                one_way_target_entrance_pools[f'EscapeKakBlueWarp{index}'] = [world.get_entrance(escape_from_kak_entrances[index]).reverse.get_new_target()]       
-        
+                one_way_target_entrance_pools[f'EscapeKakBlueWarp{index}'] = [world.get_entrance(escape_from_kak_entrances[index]).reverse.get_new_target()]
+
         # Disconnect all one way entrances at this point (they need to be connected during all of the above process)
         for entrance in chain.from_iterable(one_way_entrance_pools.values()):
             entrance.disconnect()

@@ -310,11 +310,11 @@ class Search:
         for state in self.state_list:
             # In Triforce Blitz, we want the starting song to be included in the path count
             if not state.world.settings.triforce_blitz:
-	            for location in state.world.distribution.skipped_locations:
-	                # We need to use the locations in the current world
-	                location = state.world.get_location(location.name)
-	                self._cache.visited_locations.add(location)
-	                yield location
+                for location in state.world.distribution.skipped_locations:
+                    # We need to use the locations in the current world
+                    location = state.world.get_location(location.name)
+                    self._cache.visited_locations.add(location)
+                    yield location
 
     def collect_pseudo_starting_items(self) -> None:
         for location in self.iter_pseudo_starting_locations():

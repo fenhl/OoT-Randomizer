@@ -197,7 +197,7 @@ def make_spoiler(settings: Settings, worlds: list[World]) -> Spoiler:
     if settings.create_spoiler or settings.hints != 'none':
         logger.info('Calculating playthrough.')
         spoiler.create_playthrough()
-        
+
         logger.info('Calculating hint data.')
         update_goal_items(spoiler)
         calculate_playthrough_locations(spoiler)

@@ -1230,15 +1230,15 @@ class Distribution:
         for world in worlds:
             total_count = 0
             for item in triforce_blitz_items:
-                total_count += world.distribution.item_pool[item].count 
-            
+                total_count += world.distribution.item_pool[item].count
+
             world.triforce_count = total_count
             if world.settings.triforce_blitz_s4_coop:
                 world.triforce_goal = total_count
             else:
                 world.triforce_goal = total_count * len(worlds)
 
-    def configure_escape_from_kak(self, world: World) -> None:    
+    def configure_escape_from_kak(self, world: World) -> None:
         all_boss_dungeons = [dungeon for dungeon in world.dungeons if dungeon.vanilla_boss_name]
         all_side_dungeons = [dungeon for dungeon in world.dungeons if not dungeon.vanilla_boss_name and dungeon.name != 'Ganons Castle']
 
@@ -1264,7 +1264,7 @@ class Distribution:
             and not location.locked \
             and ('Kak' not in location.name or location.type not in ['Collectable', 'NPC', 'Chest']):
                 disabled_locations.add(location)
-        
+
         world.escape_from_kak_data['disabled_locations'] = disabled_locations
         for location in disabled_locations:
             location.disabled = DisableType.DISABLED
@@ -1369,7 +1369,7 @@ class Distribution:
                     })
                     for (sphere_nr, sphere) in self.playthrough.items()
                 }, depth=2)
-            
+
             if self.playthrough_locations is not None:
                 self_dict[':playthrough_locations'] = {
                     name: [rec.to_json() for rec in record] if is_pattern(name) else record.to_json() for (name, record) in self.playthrough_locations.items()

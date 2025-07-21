@@ -1066,12 +1066,12 @@ class SettingInfos:
             'randomize_key': 'randomize_settings',
         },
         disable        = {
-            True  : {'settings' : ['shuffle_ganon_bosskey', 'ganon_bosskey_stones', 'ganon_bosskey_medallions', 
+            True  : {'settings' : ['shuffle_ganon_bosskey', 'ganon_bosskey_stones', 'ganon_bosskey_medallions',
                                    'ganon_bosskey_rewards', 'ganon_bosskey_tokens', 'triforce_hunt', 'triforce_goal_per_world']},
             False : {'settings' : ['triforce_blitz_jabus_revenge', 'triforce_blitz_minimum_path_count']}
         },
     )
-    
+
     triforce_blitz_minimum_path_count = Scale(
         gui_text       = 'Triforce Blitz Minimum Path Count Sum',
         default        = 0,
@@ -1159,9 +1159,9 @@ class SettingInfos:
         },
         gui_tooltip    = '''\
             'Off': Normal Triforce Piece fill behavior.
-            'Linked': A world's Triforce of Power location will be shared with world n-1's Triforce of Courage, and every world's Triforce of Courage location will be shared with world n+1's Triforce of Power.  
+            'Linked': A world's Triforce of Power location will be shared with world n-1's Triforce of Courage, and every world's Triforce of Courage location will be shared with world n+1's Triforce of Power.
             Only active when the world count is greater than 1.
-            'Duality': A random triforce piece will have its location shared between both worlds.  
+            'Duality': A random triforce piece will have its location shared between both worlds.
             Only active when the world count is exactly 2.
             'Trinity': Certain triforce pieces will have their locations shared:
             - World 1's Triforce of Wisdom and World 2's Triforce of Power

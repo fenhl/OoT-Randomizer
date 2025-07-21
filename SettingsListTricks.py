@@ -417,12 +417,12 @@ logic_tricks: dict[str, dict[str, str | tuple[str, ...]]] = {
                     with only the reach of the Hookshot.
                     '''},
     'Water Temple Disable Entry With Gold Scale': {
-	    'name'    : 'logic_water_gold_scale_no_entry',
-	    'tags'    : ("Lake Hylia",),
-	    'tooltip' : '''\
-	                Require Iron Boots for entering the Water Temple
-	                instead of using Gold Scale with the Longshot.
-                	'''},
+        'name'    : 'logic_water_gold_scale_no_entry',
+        'tags'    : ("Lake Hylia",),
+        'tooltip' : '''\
+                    Require Iron Boots for entering the Water Temple
+                    instead of using Gold Scale with the Longshot.
+                    '''},
     'Gerudo Valley Crate PoH as Adult with Hover Boots': {
         'name'    : 'logic_valley_crate_hovers',
         'tags'    : ("Gerudo Valley", "Overworld", "Adult",),

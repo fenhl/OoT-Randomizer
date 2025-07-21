@@ -247,15 +247,15 @@ item_difficulty_max: dict[str, dict[str, int]] = {
 }
 
 triforce_items: list[str] = ([
-    'Triforce Piece', 
-    'Triforce of Power', 
-    'Triforce of Wisdom', 
+    'Triforce Piece',
+    'Triforce of Power',
+    'Triforce of Wisdom',
     'Triforce of Courage'
 ])
 
 triforce_blitz_items: list[str] = ([
-    'Triforce of Power', 
-    'Triforce of Wisdom', 
+    'Triforce of Power',
+    'Triforce of Wisdom',
     'Triforce of Courage'
 ])
 
