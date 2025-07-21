@@ -27,7 +27,7 @@ class Scenes(IntEnum):
     WATER_TEMPLE = 0x05
     SPIRIT_TEMPLE = 0x06
     SHADOW_TEMPLE = 0x07
-    THIEVES_HIDEOUT = 0x0F
+    THIEVES_HIDEOUT = 0x0C
     # Various overworld scenes
     WINDMILL = 0x48
     HYRULE_FIELD = 0x51

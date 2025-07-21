@@ -13,7 +13,7 @@ from Cutscenes import patch_cutscenes, patch_wondertalk2
 from Entrance import Entrance
 from HintList import get_hint
 from Hints import GossipText, HintArea, write_gossip_stone_hints, write_hint_shop_hints, build_altar_hints, \
-        build_ganon_text, build_misc_item_hints, build_misc_location_hints, get_simple_hint_no_prefix, get_item_generic_name
+        build_ganon_text, build_misc_item_hints, build_misc_location_hints, build_misc_dual_hints, get_simple_hint_no_prefix, get_item_generic_name
 from Item import Item
 from ItemList import REWARD_COLORS
 from ItemPool import reward_list, song_list, trade_items, child_trade_items
@@ -771,7 +771,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     if world.settings.adult_trade_shuffle or world.settings.item_pool_value in ('plentiful', 'ludicrous'):
         rom.write_byte(rom.sym('CFG_ADULT_TRADE_SHUFFLE'), 0x01)
         move_fado_in_lost_woods(rom)
-    if world.settings.shuffle_child_trade or world.settings.logic_rules == 'glitched':
+    if world.settings.shuffle_child_trade or world.settings.logic_rules == 'advanced':
         rom.write_byte(rom.sym('CFG_CHILD_TRADE_SHUFFLE'), 0x01)
 
     if world.settings.shuffle_overworld_entrances:
@@ -1240,22 +1240,16 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     # build misc. location hints
     build_misc_location_hints(world, messages)
 
+    #build misc. dual hints
+    build_misc_dual_hints(world, messages)
+
     if 'mask_shop' in world.settings.misc_hints:
         rom.write_int32(rom.sym('CFG_MASK_SHOP_HINT'), 1)
 
     # Make the cursed skulltula people come down instantly when entering if skull hints are on.
     # Change  lui     $at, 0x4320 to  lui     $at, 0x44C8
-    if any(hint_type in world.settings.misc_hints for hint_type in ('10_skulltulas', '20_skulltulas', '30_skulltulas', '40_skulltulas', '50_skulltulas')):
+    if any(hint_type in world.settings.misc_hints for hint_type in ('10_skulltulas', '20_skulltulas', '30_skulltulas', '40_skulltulas', '50_skulltulas', '100_skulltulas')):
         rom.write_int16(0xEA185A, 0x44C8)
-
-    # Patch freestanding items
-    if world.settings.shuffle_freestanding_items:
-        # Get freestanding item locations
-        actor_override_locations = [location for location in world.get_locations() if location.disabled == DisableType.ENABLED and location.type == 'ActorOverride']
-        rupeetower_locations = [location for location in world.get_locations() if location.disabled == DisableType.ENABLED and location.type == 'RupeeTower']
-
-        for location in actor_override_locations:
-            patch_actor_override(location, rom)
 
     if world.shuffle_silver_rupees:
         rom.write_byte(rom.sym('SHUFFLE_SILVER_RUPEES'), 1)
@@ -1649,6 +1643,9 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     if world.settings.tcg_requires_lens:
         rom.write_byte(rom.sym('TCG_REQUIRES_LENS'), 0x01)
 
+    if world.settings.shuffle_100_skulltula_rupee: # Set flag for recieving 100 skulltula reward if the setting is on
+        rom.write_int16(0xEA7164, 0x8000)
+
     if world.settings.shuffle_pots != 'off': # Update the first BK door in ganon's castle to use a separate flag so it can be unlocked to get to the pots
         patch_ganons_tower_bk_door(rom, 0x15) # Using flag 0x15 for the door. GBK doors normally use 0x14.
     locked_doors = get_doors_to_unlock(rom, world)
@@ -1817,10 +1814,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
                     area = GossipText(area.text(world.settings.clearer_hints, preposition=True, use_2nd_person=True), [area.color], prefix='', capitalize=False)
                     compass_message = f"\x13\x75\x08You found the \x05\x41Compass\x05\x40\x01for {dungeon_name}\x05\x40!\x01The {vanilla_reward} can be found\x01{area}!\x09"
                 else:
-                    if world.settings.logic_rules == 'glitched':
-                        boss_location = world.get_location(dungeon.vanilla_boss_name)
-                    else:
-                        boss_location = next(filter(lambda loc: loc.type == 'Boss', world.get_entrance(f'{dungeon} Before Boss -> {dungeon.vanilla_boss_name} Boss Room').connected_region.locations))
+                    boss_location = next(filter(lambda loc: loc.type == 'Boss', world.get_entrance(f'{dungeon} Before Boss -> {dungeon.vanilla_boss_name} Boss Room').connected_region.locations))
                     dungeon_reward = boss_location.item.name
                     compass_message = f"\x13\x75\x08You found the \x05\x41Compass\x05\x40\x01for {dungeon_name}\x05\x40!\x01It holds the \x05{COLOR_MAP[REWARD_COLORS[dungeon_reward]]}{dungeon_reward}\x05\x40!\x09"
                 if world.settings.shuffle_dungeon_rewards != 'dungeon':
@@ -2163,8 +2157,8 @@ def get_override_entry(location: Location) -> Optional[OverrideEntry]:
     if None in (scene, default, item_id):
         return None
 
-    # Don't add freestanding items, pots/crates, beehives to the override table if they're disabled. We use this check to determine how to draw and interact with them
-    if location.type in ('ActorOverride', 'Freestanding', 'RupeeTower', 'Pot', 'Crate', 'FlyingPot', 'SmallCrate', 'Beehive', 'Wonderitem') and location.disabled != DisableType.ENABLED:
+    # Don't add freestanding items, pots/crates, beehives to the override table if they're locked (unshuffled). We use this check to determine how to draw and interact with them
+    if location.type in ('ActorOverride', 'Freestanding', 'RupeeTower', 'Pot', 'Crate', 'FlyingPot', 'SmallCrate', 'Beehive', 'Wonderitem') and location.locked:
         return None
 
     player_id = location.item.world.id + 1
@@ -2654,15 +2648,6 @@ def configure_dungeon_info(rom: Rom, world: World) -> None:
     rom.write_byte(rom.sym('CFG_DUNGEON_INFO_REWARD_WORLDS_ENABLE'), int(world.settings.world_count > 1 and world.settings.shuffle_dungeon_rewards in ('regional', 'overworld', 'any_dungeon', 'anywhere')))
     rom.write_bytes(rom.sym('CFG_DUNGEON_REWARD_WORLDS'), dungeon_reward_worlds)
     rom.write_bytes(rom.sym('CFG_DUNGEON_PRECOMPLETED'), dungeon_precompleted)
-
-
-# Overwrite an actor in rom w/ the actor data from LocationList
-def patch_actor_override(location: Location, rom: Rom) -> None:
-    addresses = location.address
-    patch = location.address2
-    if addresses is not None and patch is not None:
-        for address in addresses:
-            rom.write_bytes(address, patch)
 
 
 # Patch rupee towers (circular patterns of rupees) to include their flag in their actor initialization data z rotation.

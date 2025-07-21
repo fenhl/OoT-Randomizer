@@ -704,6 +704,10 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
         elif location.scene == 0x54 and location.vanilla_item == 'Rupees (50)':
             shuffle_item = world.settings.shuffle_frog_song_rupees
 
+        #100 Gold Skulltula Reward
+        elif location.scene == 0x50 and location.vanilla_item == 'Rupees (200)':
+            shuffle_item = world.settings.shuffle_100_skulltula_rupee
+
         # Hyrule Loach Reward
         elif location.scene == 0x49 and location.vanilla_item == 'Rupees (50)':
             shuffle_item = world.settings.shuffle_loach_reward != 'off'
@@ -749,7 +753,7 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
         # Gerudo Fortress Freestanding Heart Piece
         elif location.vanilla_item == 'Piece of Heart (Out of Logic)':
             shuffle_item = world.settings.shuffle_gerudo_fortress_heart_piece == 'shuffle'
-            if world.settings.shuffle_hideout_entrances or world.settings.logic_rules == 'glitched':
+            if world.settings.shuffle_hideout_entrances or world.settings.logic_rules == 'advanced':
                 if world.settings.shuffle_hideout_entrances and world.settings.shuffle_gerudo_fortress_heart_piece == 'remove':
                     item = IGNORE_LOCATION
                 else:
