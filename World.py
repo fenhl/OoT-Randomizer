@@ -11,7 +11,7 @@ from typing import Any, Optional
 from Dungeon import Dungeon
 from Entrance import Entrance
 from Goals import Goal, GoalCategory
-from HintList import get_required_hints, misc_item_hint_table, misc_location_hint_table
+from HintList import get_required_hints, misc_item_hint_table, misc_location_hint_table, misc_dual_hint_table
 from Hints import HintArea, hint_dist_keys, hint_dist_files
 from Item import Item, ItemFactory, ItemInfo, make_event_item
 from ItemList import REWARD_COLORS
@@ -246,7 +246,6 @@ class World:
         self.dungeon_rewards_hinted: bool = settings.shuffle_mapcompass != 'remove' if settings.enhance_map_compass else 'altar' in settings.misc_hints
         self.misc_hint_items: dict[str, str] = {hint_type: self.hint_dist_user.get('misc_hint_items', {}).get(hint_type, data['default_item']) for hint_type, data in misc_item_hint_table.items()}
         self.misc_hint_locations: dict[str, str] = {hint_type: self.hint_dist_user.get('misc_hint_locations', {}).get(hint_type, data['item_location']) for hint_type, data in misc_location_hint_table.items()}
-
         self.state: State = State(self)
 
         # Allows us to cut down on checking whether some items are required
@@ -259,6 +258,8 @@ class World:
         if self.settings.shuffle_ganon_bosskey == 'tokens':
             max_tokens = max(max_tokens, self.settings.ganon_bosskey_tokens)
         tokens = [50, 40, 30, 20, 10]
+        if self.settings.shuffle_100_skulltula_rupee:
+            tokens = [100, 50, 40, 30, 20, 10]
         for t in tokens:
             if f'Kak {t} Gold Skulltula Reward' not in self.settings.disabled_locations:
                 max_tokens = max(max_tokens, t)
@@ -288,7 +289,7 @@ class World:
                 (self.hint_dist_user['distribution']['goal']['fixed'] != 0 or
                  self.hint_dist_user['distribution']['goal']['weight'] != 0)):
             self.enable_goal_hints = True
-        
+
         if ('distribution' in self.hint_dist_user and
            'goal-legacy' in self.hint_dist_user['distribution'] and
            (self.hint_dist_user['distribution']['goal-legacy']['fixed'] != 0 or
@@ -414,7 +415,6 @@ class World:
             dist_keys = self.distribution.distribution.src_dict['_settings'].keys()
         if self.settings.randomize_settings:
             setting_info = SettingInfos.setting_infos['randomize_settings']
-            self.randomized_list.extend(setting_info.disable[True]['settings'])
             for section in setting_info.disable[True]['sections']:
                 self.randomized_list.extend(get_settings_from_section(section))
                 # Remove settings specified in the distribution
@@ -589,8 +589,8 @@ class World:
             if 'time_passes' in region:
                 new_region.time_passes = region['time_passes']
                 new_region.provides_time = TimeOfDay.ALL
-            if new_region.name == 'Ganons Castle Grounds':
-                new_region.provides_time = TimeOfDay.DAMPE
+            if 'provides_time' in region:
+                new_region.provides_time = getattr(TimeOfDay, region['provides_time'])
             if 'locations' in region:
                 for location, rule in region['locations'].items():
                     new_location = LocationFactory(location)
@@ -640,7 +640,7 @@ class World:
         savewarps_to_connect = []
         for hint_area in HintArea:
             if (name := hint_area.dungeon_name) is not None:
-                logic_folder = 'Glitched World' if self.settings.logic_rules == 'glitched' else 'World'
+                logic_folder = 'Glitched World' if self.settings.logic_rules == 'advanced' else 'World'
                 file_name = name + (' MQ.json' if self.dungeon_mq[name] else '.json')
                 savewarps_to_connect += self.load_regions_from_json(os.path.join(data_path(logic_folder), file_name))
                 self.dungeons.append(Dungeon(self, name, hint_area))
@@ -819,7 +819,7 @@ class World:
         # requesting X copies within the goal, so minimum goals has to
         # be 1 for these.
         dot = GoalCategory('door_of_time', 5, lock_entrances=['Temple of Time -> Beyond Door of Time'], minimum_goals=1)
-        b = GoalCategory('rainbow_bridge', 10, lock_entrances=['Ganons Castle Grounds -> Ganons Castle Lobby'])
+        b = GoalCategory('rainbow_bridge', 10, lock_entrances=['Ganons Castle Ledge -> Ganons Castle Lobby'])
         gbk = GoalCategory('ganon_bosskey', 20)
         trials = GoalCategory('trials', 30, minimum_goals=1)
         th = GoalCategory('triforce_hunt', 30, goal_count=round(self.settings.triforce_goal_per_world / 10), minimum_goals=1)
@@ -1162,7 +1162,7 @@ class World:
         if self.cached_bigocto_location is not None:
             return self.cached_bigocto_location
         # Find an item location behind the Jabu boss door by searching regions breadth-first without going back into Jabu proper
-        if self.settings.logic_rules == 'glitched':
+        if self.settings.logic_rules == 'advanced':
             location = self.get_location('Barinade')
         else:
             jabu_reward_regions = {self.get_entrance('Jabu Jabus Belly Before Boss -> Barinade Boss Room').connected_region}
@@ -1352,7 +1352,7 @@ class World:
             self.settings.shuffle_scrubs == 'off' and not self.settings.shuffle_grotto_entrances):
             # nayru's love may be required to prevent forced damage
             exclude_item_list.append('Nayrus Love')
-        if ('logic_grottos_without_agony' in self.settings.allowed_tricks or self.settings.logic_rules != 'glitchless') and self.settings.hints != 'agony':
+        if ('logic_grottos_without_agony' in self.settings.allowed_tricks) and self.settings.hints != 'agony':
             # Stone of Agony skippable if not used for hints or grottos
             exclude_item_list.append('Stone of Agony')
         if not self.shuffle_special_interior_entrances and not self.settings.shuffle_overworld_entrances and not self.settings.warp_songs:

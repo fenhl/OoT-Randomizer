@@ -221,7 +221,7 @@ xflag_t resolve_alternative_flag(xflag_t* flag) {
 }
 
 bool is_triforce_piece(uint16_t item_id) {
-    return item_id == GI_TRIFORCE_PIECE || 
+    return item_id == GI_TRIFORCE_PIECE ||
         item_id == GI_TRIFORCE_OF_POWER ||
         item_id == GI_TRIFORCE_OF_WISDOM ||
         item_id == GI_TRIFORCE_OF_COURAGE;
@@ -944,6 +944,11 @@ uint8_t item_give_collectible(uint8_t item, z64_link_t* link, z64_actor_t* from_
         uint16_t item_id = collectible_override.value.base.item_id;
         uint16_t resolved_item_id = resolve_upgrades(collectible_override);
         item_row_t* item_row = get_item_row(resolved_item_id);
+
+        // If we picked an ice trap, show the ice model instead of the fake item model.
+        if (item_id == GI_ICE_TRAP) {
+            pItem->model.graphic_id = 0xA4;
+        }
 
         // Set the collectible flag
         Set_NewFlag(&flag);

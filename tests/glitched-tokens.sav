@@ -17,7 +17,7 @@
 "zora_fountain": "open",
 "gerudo_fortress": "fast",
 "bridge": "tokens",
-"logic_rules": "glitched",
+"logic_rules": "advanced",
 "reachable_locations": "all",
 "one_item_per_dungeon": false,
 "trials_random": false,

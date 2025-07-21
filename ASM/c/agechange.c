@@ -10,7 +10,7 @@ void Ocarina_HandleLastPlayedSong(z64_game_t* play, z64_link_t* player, int16_t 
     }
     if (lastPlayedSong == 10) { // OCARINA_SONG_TIME
 
-        if (!SONG_OF_TIME_CHANGES_AGE) 
+        if (!SONG_OF_TIME_CHANGES_AGE)
         {
             return;
         }

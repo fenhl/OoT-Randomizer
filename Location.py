@@ -71,7 +71,7 @@ class Location:
     @property
     def dungeon(self) -> Optional[Dungeon]:
         return self.parent_region.dungeon if self.parent_region is not None else None
-    
+
     @property
     def worldAndName(self) -> str:
         if self.world is not None:

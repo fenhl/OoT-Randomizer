@@ -142,7 +142,7 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
         for triforce in triforcepool:
             tokenpool.pop()
         progitempool = list(filter(lambda item: item not in triforcepool and item not in tokenpool, progitempool))
-        
+
         skull_locations = list(filter(lambda loc: loc.type == 'GS Token', fill_locations))
         fill_locations = list(filter(lambda loc: loc not in skull_locations, fill_locations))
         fill_restrictive_fast(worlds, skull_locations, triforcepool)
@@ -466,7 +466,7 @@ def fill_restrictive(worlds: list[World], base_search: Search, locations: list[L
         # In TFB S4 Co-op, only place items in their own world
         if worlds[0].settings.triforce_blitz_s4_coop:
             l2cations = [l for l in l2cations if item_to_place.world.id == l.world.id]
-            
+
         random.shuffle(l2cations)
 
         # generate the max search with every remaining item
@@ -568,13 +568,13 @@ def fill_restrictive(worlds: list[World], base_search: Search, locations: list[L
                 linked_item.world.push_item(linked_spot, linked_item)
                 logger.debug('Trinity of piece %s (%d) is %s (%d)', item_to_place.name, item_to_place.world.id, linked_item.name, linked_item.world.id)
                 logger.debug('Placed %s (%d) at %s', linked_item.name, linked_item.world.id, linked_spot.worldAndName)
-                
+
                 itempool.remove(linked_item)
                 if linked_spot in locations:
                     locations.remove(linked_spot)
                 else:
                     raise FillError(f'Generation failed: Trinity {item_to_place} [World {item_to_place.world.id + 1}] could not be placed at {linked_spot.worldAndName} because the location is already filled')
-                
+
                 count -= 1
 
     # assert that the specified number of items were placed
@@ -596,14 +596,14 @@ def get_linked_item(item: Item, itempool: list[Item], world_count: int) -> Optio
             target_world_id = ((item.world.id - 1 + world_count) % world_count)
             if target_world_id == unplaced_item.world.id and unplaced_item.name == triforce_blitz_items[(triforce_piece_count - 1)]:
                 return unplaced_item
-    
+
     # Get the next world's Triforce of Power
     if tf_index == (triforce_piece_count - 1):
         for _, unplaced_item in enumerate(itempool):
             target_world_id = ((item.world.id + 1) % world_count)
             if target_world_id == unplaced_item.world.id and unplaced_item.name == triforce_blitz_items[0]:
                 return unplaced_item
-            
+
     return None
 
 def get_duality_item(item: Item, itempool: list[Item], world_count: int) -> Optional[Item]:
@@ -615,7 +615,7 @@ def get_duality_item(item: Item, itempool: list[Item], world_count: int) -> Opti
         target_world_id = ((item.world.id + 1) % world_count)
         if target_world_id == unplaced_item.world.id and unplaced_item.name == triforce_blitz_items[tf_index]:
             return unplaced_item
-            
+
     return None
 
 def get_trinity_item(item: Item, itempool: list[Item], world_count: int) -> Optional[Item]:
@@ -629,14 +629,14 @@ def get_trinity_item(item: Item, itempool: list[Item], world_count: int) -> Opti
             target_world_id = ((item.world.id + 1) % world_count)
             if target_world_id == unplaced_item.world.id and unplaced_item.name == triforce_blitz_items[((item.world.id) % triforce_piece_count)]:
                 return unplaced_item
-    
+
     # Get the previous world's matching Triforce piece
     if tf_index == ((item.world.id - 1 + triforce_piece_count) % triforce_piece_count):
         for _, unplaced_item in enumerate(itempool):
             target_world_id = ((item.world.id - 1 + world_count) % world_count)
             if target_world_id == unplaced_item.world.id and unplaced_item.name == triforce_blitz_items[item.world.id % triforce_piece_count]:
                 return unplaced_item
-            
+
     return None
 
 # This places items in the itempool into the locations

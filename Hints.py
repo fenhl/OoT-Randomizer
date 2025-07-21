@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Optional
 from urllib.error import URLError, HTTPError
 
 from HintList import Hint, get_hint, get_multi, get_hint_group, get_upgrade_hint_list, hint_exclusions, \
-    misc_item_hint_table, misc_location_hint_table
+    misc_item_hint_table, misc_location_hint_table, misc_dual_hint_table
 from Item import Item, make_event_item
 from ItemList import REWARD_COLORS
 from Messages import Message, COLOR_MAP, update_message_by_id
@@ -59,7 +59,10 @@ defaultHintDists: list[str] = [
     'mw_path.json',
     'mw_woth.json',
     'scrubs.json',
+    'sgl2025.json',
     'strong.json',
+    'triforce_blitz_s4_coop.json',
+    'triforce_blitz_s4.json',
     'tournament.json',
     'useless.json',
     'very_strong.json',
@@ -317,7 +320,7 @@ def add_hint(spoiler: Spoiler, world: World, groups: list[list[int]], gossip_tex
             # Failure
             success = False
             break
-    
+
     if success and hint_type in ['goal-legacy', 'goal-legacy-single']:
         spoiler.echo_hint_pool[world.id].append((gossip_text, locations))
 
@@ -577,7 +580,7 @@ def get_blitz_percent_hint(spoiler, world, checked):
         hint = get_goal_hint(spoiler, world, checked)
     if not hint:
         hint = get_playthrough_location_hint(spoiler, world, checked)
-    
+
     return hint
 
 def get_woth_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintReturn:
@@ -643,7 +646,7 @@ def get_dual_woth_hint(spoiler, world, checked):
     location_item_names = list(map(lambda location: location.item.name, selected))
     location_colors = list(map(lambda location: 'Light Blue', selected))
 
-    return (GossipText('%s and %s are on the way of the hero.' % tuple(location_texts), 
+    return (GossipText('%s and %s are on the way of the hero.' % tuple(location_texts),
         location_colors, location_names, location_item_names), selected)
 
 def get_woth_count_hint(spoiler, world, checked):
@@ -709,14 +712,14 @@ def get_echo_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintRetu
     hint_pool = spoiler.echo_hint_pool[world.id]
     if len(hint_pool) == 0:
         return None
-    
+
     hint_tuple = random.choice(hint_pool)
     colors = list(hint_tuple[0].colors)
     colors.insert(0, "Yellow")
 
     # We deliberately omit the location to prevent an issue where the generator could get stuck in an infinite loop trying to ensure
     # that the echo hint was reachable, even though we don't care about reachability at all
-    return (GossipText(hint_tuple[0].text.replace("They say that", ""), 
+    return (GossipText(hint_tuple[0].text.replace("They say that", ""),
                colors, list(hint_tuple[0].hinted_locations), list(hint_tuple[0].hinted_items), "They #echo# that"), None)
 
 def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], custom_prefix: str = "They say that ") -> HintReturn:
@@ -728,7 +731,7 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
     # check if no goals were generated (and thus no categories available)
     if not goal_category:
         return None
-    
+
     goals = [goal for goal in goal_category.goals]
     goal_locations = []
 
@@ -775,7 +778,7 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
 
     prioritize_dungeon_hints = 'prioritize_dungeons' in world.hint_dist_user and world.hint_dist_user['prioritize_dungeons']
     dungeon_goal_locations = list(filter(lambda location: HintArea.at(location).is_dungeon, goal_locations))
-    
+
     if world.settings.triforce_blitz_hint_shop:
         hinted_shop_hint_locations = reduce(lambda acc, shop_hints: acc + reduce(lambda acc, gossip_text: acc + gossip_text.hinted_locations, shop_hints.values(), []), spoiler.shop_hints.values(), [])
         unhinted_dungeon_goal_locations = list(filter(lambda location: location.name not in hinted_shop_hint_locations, dungeon_goal_locations))
@@ -957,14 +960,14 @@ def get_goal_count_hint(spoiler, world, checked):
 def get_area_woth_count_hint(spoiler, world, checked) -> HintReturn:
     stone_dungeons = world.escape_from_kak_data['boss_dungeons']
     side_dungeon = world.escape_from_kak_data['side_dungeon']
-    
+
     dungeon_to_hint = next(filter(lambda dungeon: dungeon.worldAndName not in checked, stone_dungeons), side_dungeon)
     if not dungeon_to_hint:
         return None
-    
+
     hint_area = HintArea.at(dungeon_to_hint.regions[0])
     location_text = hint_area.text(world.settings.clearer_hints)
-    item_count = len(list(filter(lambda location: 
+    item_count = len(list(filter(lambda location:
                                  (location.dungeon and location.dungeon.name == dungeon_to_hint.name) or (dungeon_to_hint.name in location.name), # hack for boss rooms not having a "dungeon"
                                  spoiler.required_locations[world.id])))
     item_text = 'step' if item_count == 1 else 'steps'
@@ -987,8 +990,8 @@ def get_wanderer_hint(spoiler, world, checked):
 def get_playthrough_location_hint(spoiler, world, checked):
 
     hinted_world = get_hinted_world(world, spoiler.worlds, 'playthrough-location')
-    locations = dict(filter(lambda locations: 
-        locations[0].world.id == hinted_world.id, 
+    locations = dict(filter(lambda locations:
+        locations[0].world.id == hinted_world.id,
         spoiler.playthrough_locations.items()))
 
     required_location_names = list(map(lambda location: location.name, spoiler.required_locations[hinted_world.id]))
@@ -1024,8 +1027,8 @@ def get_unlock_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type
     if hint_type == 'unlock-playthrough':
         requirements = spoiler.playthrough_location_requirements
         required_locations = {
-            location: list(filter(lambda required_location: required_location.item.name not in hinted_world.item_hint_type_overrides[hint_type] 
-                                and required_location.world.id == hinted_world.id, required_locations)) 
+            location: list(filter(lambda required_location: required_location.item.name not in hinted_world.item_hint_type_overrides[hint_type]
+                                and required_location.world.id == hinted_world.id, required_locations))
             for location, required_locations in requirements[hinted_world.id].items()
         }
     else:
@@ -1033,7 +1036,7 @@ def get_unlock_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type
         all_world_requirements = {}
         for world_reqs in requirements.values():
             all_world_requirements.update(world_reqs)
-        
+
         world_path_locations: set[Location] = set()
         for name, category in hinted_world.goal_categories.items():
             for goal in category.goals:
@@ -1043,7 +1046,7 @@ def get_unlock_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type
         world_path_requirements = {k:v for (k,v) in all_world_requirements.items() if k in world_path_locations}
 
         required_locations = {
-            location: list(filter(lambda required_location: required_location.item.name not in hinted_world.item_hint_type_overrides[hint_type], required_locations)) 
+            location: list(filter(lambda required_location: required_location.item.name not in hinted_world.item_hint_type_overrides[hint_type], required_locations))
             for location, required_locations in world_path_requirements.items()
         }
 
@@ -1751,7 +1754,7 @@ def build_gossip_hints(spoiler: Spoiler, worlds: list[World]) -> None:
     # Build all the hints.
     for world in worlds:
         world.update_useless_areas(spoiler)
-    
+
     for world in worlds:
         if share_checked_locations:
             world_checked_locations = reduce(lambda acc, locations: acc.union(locations), checked_locations.values(), set())
@@ -2252,29 +2255,57 @@ def build_misc_item_hints(world: World, messages: list[Message], allow_duplicate
 
 def build_misc_location_hints(world: World, messages: list[Message]) -> None:
     for hint_type, data in misc_location_hint_table.items():
+        if any(hint_type in hint_types for hint_types in misc_dual_hint_table):
+            continue # handled in build_misc_dual_hints
         text = data['location_fallback']
         # Special cased because we need to insert the big poes number.
         if hint_type == 'big_poes':
             poe_points = world.settings.big_poe_count * 100
             if hint_type in world.misc_hint_location_items and hint_type in world.settings.misc_hints:
                 item = world.misc_hint_location_items[hint_type]
-                text = data['location_text'].format(item=get_hint(get_item_generic_name(item),
-                                                                    world.settings.clearer_hints).text, poe_points=poe_points)
+                text = data['location_text'].format(
+                    item=get_hint(get_item_generic_name(item), world.settings.clearer_hints).text,
+                    poe_points=poe_points,
+                )
             else:
                 text = data['location_fallback'].format(poe_points=poe_points)
-            update_message_by_id(messages, data['id'], text)
+            update_message_by_id(messages, data['id'], text, data['text_style'])
             return
         else:
             if hint_type in world.settings.misc_hints:
                 if hint_type in world.misc_hint_location_items:
                     item = world.misc_hint_location_items[hint_type]
-                    text = data['location_text'].format(item=get_hint(get_item_generic_name(item),
-                                                                        world.settings.clearer_hints).text)
+                    text = data['location_text'].format(
+                        item=get_hint(get_item_generic_name(item), world.settings.clearer_hints).text,
+                    )
+            update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), data['text_style'])
 
-        update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), 0x23)
+
+def build_misc_dual_hints(world: World, messages: list[Message]) -> None:
+    for (hint_type1, hint_type2), data in misc_dual_hint_table.items():
+        item_1 = world.misc_hint_location_items[hint_type1]
+        item_2 = world.misc_hint_location_items[hint_type2]
+        if hint_type1 in world.settings.misc_hints and hint_type1 in world.misc_hint_location_items:
+            if hint_type2 in world.settings.misc_hints and hint_type2 in world.misc_hint_location_items:
+                text = data['location_text'].format(
+                    item_1=get_hint(get_item_generic_name(item_1), world.settings.clearer_hints).text,
+                    item_2=get_hint(get_item_generic_name(item_2), world.settings.clearer_hints).text,
+                )
+            else:
+                text = misc_location_hint_table[hint_type1]['location_text'].format(
+                    item=get_hint(get_item_generic_name(item_1), world.settings.clearer_hints).text,
+                )
+        else:
+            if hint_type2 in world.settings.misc_hints and hint_type2 in world.misc_hint_location_items:
+                text = misc_location_hint_table[hint_type2]['location_text'].format(
+                    item=get_hint(get_item_generic_name(item_2), world.settings.clearer_hints).text,
+                )
+            else:
+                text = data['location_fallback']
+    update_message_by_id(messages, data['id'], str(GossipText(text, ['Green'], prefix='')), data['text_style'])
 
 def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set[Location], spoiler: Spoiler, world: World, worlds: list[World]) -> GossipText:
-    
+
     hinted_world = get_hinted_world(world, worlds, 'tfb_shop')
     all_path_items = reduce(lambda acc, locations: acc + locations, list(map(lambda world: spoiler.required_locations[world.id], worlds)), [])
     path_items = [location for location in all_path_items if location.item.name == item_name and location.item.world.id == hinted_world.id]
@@ -2282,11 +2313,11 @@ def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set
     all_world_items = reduce(lambda acc, locations: acc + locations, list(map(lambda world:  world.find_items(item_name), worlds)), [])
     world_items = list(filter(lambda location: location.item.world.id == hinted_world.id, all_world_items))
 
-    foolish_world_items = [location for location in world_items if 
-                           location.worldAndName not in [location.worldAndName for location in path_items] and 
+    foolish_world_items = [location for location in world_items if
+                           location.worldAndName not in [location.worldAndName for location in path_items] and
                            location.worldAndName not in [location.worldAndName for location in playthrough_items] and
                            location.worldAndName not in [location.worldAndName for location in hinted_locations]]
-    
+
     if (len(path_items) >= upgrade_level):
         item_importance_text = 'path'
         item_importance_color = 'Green'
@@ -2299,7 +2330,7 @@ def get_hint_shop_hint(item_name: str, upgrade_level: int, hinted_locations: set
         item_importance_text = 'neglected'
         item_importance_color = 'Pink'
         hinted_location = random.choice(foolish_world_items)
-    
+
     hint_area = HintArea.at(hinted_location)
     location_text = hint_area.text(world.settings.clearer_hints, world=None if hinted_location.world.id == world.id else hinted_location.world.id + 1)
     hinted_locations.add(hinted_location)

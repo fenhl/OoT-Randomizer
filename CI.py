@@ -95,6 +95,7 @@ def check_presets_formatting(fix_errors: bool = False) -> None:
 
 def check_hell_mode_tricks(fix_errors: bool = False) -> None:
     # Check for tricks missing from Hell Mode preset.
+    # Not checking for advanced logic tricks since hellmode is still glitchless logic
     with open(data_path('presets_default.json'), encoding='utf-8') as f:
         presets = json.load(f)
 
