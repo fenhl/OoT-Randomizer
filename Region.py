@@ -3,6 +3,8 @@ from enum import Enum, unique
 from ItemPool import triforce_items
 from typing import TYPE_CHECKING, Optional, Any
 
+from ItemList import REWARD_COLORS
+
 if TYPE_CHECKING:
     from Dungeon import Dungeon
     from Entrance import Entrance
@@ -95,11 +97,11 @@ class Region:
 
         if not manual and self.world.settings.empty_dungeons_mode != 'none' and item.dungeonitem:
             # An empty dungeon can only store its own dungeon items
-            if self.dungeon and self.dungeon.world.empty_dungeons[self.dungeon.name].empty:
+            if self.dungeon and self.dungeon.world.precompleted_dungeons.get(self.dungeon.name, False):
                 return self.dungeon.is_dungeon_item(item) and item.world.id == self.world.id
             # Items from empty dungeons can only be in their own dungeons
             for dungeon in item.world.dungeons:
-                if item.world.empty_dungeons[dungeon.name].empty and dungeon.is_dungeon_item(item):
+                if item.world.precompleted_dungeons.get(dungeon.name, False) and dungeon.is_dungeon_item(item):
                     return False
 
         is_self_dungeon_restricted = False
@@ -108,27 +110,34 @@ class Region:
         is_dungeon_restricted = False
         is_overworld_restricted = False
 
-        if item.type in ('Map', 'Compass', 'SmallKey', 'HideoutSmallKey', 'TCGSmallKey', 'BossKey', 'GanonBossKey', 'SilverRupee'):
+        if item.type in ('Map', 'Compass', 'SmallKey', 'HideoutSmallKey', 'TCGSmallKey', 'SmallKeyRing', 'HideoutSmallKeyRing', 'TCGSmallKeyRing', 'BossKey', 'GanonBossKey', 'SilverRupee', 'DungeonReward'):
             shuffle_setting = (
                 self.world.settings.shuffle_mapcompass if item.type in ('Map', 'Compass') else
-                self.world.settings.shuffle_smallkeys if item.type == 'SmallKey' else
-                self.world.settings.shuffle_hideoutkeys if item.type == 'HideoutSmallKey' else
-                self.world.settings.shuffle_tcgkeys if item.type == 'TCGSmallKey' else
+                self.world.settings.shuffle_smallkeys if item.type in ('SmallKey', 'SmallKeyRing') else
+                self.world.settings.shuffle_hideoutkeys if item.type in ('HideoutSmallKey', 'HideoutSmallKeyRing') else
+                self.world.settings.shuffle_tcgkeys if item.type in ('TCGSmallKey', 'TCGSmallKeyRing') else
                 self.world.settings.shuffle_bosskeys if item.type == 'BossKey' else
                 self.world.settings.shuffle_ganon_bosskey if item.type == 'GanonBossKey' else
                 self.world.settings.shuffle_silver_rupees if item.type == 'SilverRupee' else
+                self.world.settings.shuffle_dungeon_rewards if item.type == 'DungeonReward' else
                 None
             )
 
-            is_self_dungeon_restricted = shuffle_setting in ('dungeon', 'vanilla') and item.type not in ('HideoutSmallKey', 'TCGSmallKey')
+            is_self_dungeon_restricted = (shuffle_setting == 'dungeon' or (shuffle_setting == 'vanilla' and item.type != 'DungeonReward')) and item.type not in ('HideoutSmallKey', 'TCGSmallKey', 'HideoutSmallKeyRing', 'TCGSmallKeyRing')
             is_self_region_restricted = [HintArea.GERUDO_FORTRESS, HintArea.THIEVES_HIDEOUT] if shuffle_setting == 'fortress' else None
-            is_hint_color_restricted = [HintArea.for_dungeon(item.name).color] if shuffle_setting == 'regional' else None
+            if item.name in REWARD_COLORS:
+                is_hint_color_restricted = [REWARD_COLORS[item.name]] if shuffle_setting == 'regional' else None
+            else:
+                is_hint_color_restricted = [HintArea.for_dungeon(item.name).color] if shuffle_setting == 'regional' else None
             is_dungeon_restricted = shuffle_setting == 'any_dungeon'
             is_overworld_restricted = shuffle_setting == 'overworld'
 
         if is_self_dungeon_restricted and not manual:
             hint_area = HintArea.at(self)
-            return hint_area.is_dungeon and hint_area.is_dungeon_item(item) and item.world.id == self.world.id
+            if item.name == 'Light Medallion':
+                return hint_area in (HintArea.ROOT, HintArea.TEMPLE_OF_TIME) and item.world.id == self.world.id
+            else:
+                return hint_area.is_dungeon and hint_area.is_dungeon_item(item) and item.world.id == self.world.id
 
         if is_self_region_restricted and not manual:
             return HintArea.at(self) in is_self_region_restricted and item.world.id == self.world.id

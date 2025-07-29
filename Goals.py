@@ -5,7 +5,7 @@ from collections.abc import Iterable, Collection
 from typing import TYPE_CHECKING, Optional, Any
 from functools import reduce
 
-from HintList import goalTable, get_hint_group, hint_exclusions
+from HintList import BOSS_GOAL_TABLE, REWARD_GOAL_TABLE, get_hint_group, hint_exclusions
 from ItemList import item_table
 from ItemPool import item_groups, triforce_items
 from RulesCommon import AccessRule
@@ -85,6 +85,13 @@ class Goal:
     def __repr__(self) -> str:
         return f"{self.world.__repr__()} {self.name}: {self.hint_text}"
 
+    @property
+    def worldAndName(self) -> str:
+        if self.world is not None:
+            return "W" + str(self.world.id) + ":" + self.name
+        else:
+            return self.name
+
 
 class GoalCategory:
     def __init__(self, name: str, priority: int, goal_count: int = 0, minimum_goals: int = 0,
@@ -121,7 +128,7 @@ class GoalCategory:
         raise KeyError('No such goal %r' % goal)
 
     def is_beaten(self, search: Search) -> bool:
-        # if the category requirements are already satisfied by starting items (such as Links Pocket),
+        # if the category requirements are already satisfied by starting items (including skipped locations),
         # do not generate hints for other goals in the category
         starting_goals = search.beatable_goals_fast({ self.name: self })
         return all(map(lambda s: len(starting_goals[self.name]['stateReverse'][s.world.id]) >= self.minimum_goals, search.state_list))
@@ -151,19 +158,34 @@ class GoalCategory:
 
 def replace_goal_names(worlds: list[World]) -> None:
     for world in worlds:
-        bosses = [location for location in world.get_filled_locations() if location.item.type == 'DungeonReward']
-        for cat_name, category in world.goal_categories.items():
-            for goal in category.goals:
-                if isinstance(goal.hint_text, dict):
-                    for boss in bosses:
-                        if boss.item.name == goal.hint_text['replace']:
-                            flavorText, clearText, color = goalTable[boss.name]
-                            if world.settings.clearer_hints:
-                                goal.hint_text = clearText
-                            else:
-                                goal.hint_text = flavorText
-                            goal.color = color
-                            break
+        if world.settings.shuffle_dungeon_rewards in ('vanilla', 'reward'):
+            bosses = [
+                location
+                for location in world.get_filled_locations()
+                if location.type == 'Boss'
+                and (location.name != 'ToT Reward from Rauru' or not world.settings.skip_reward_from_rauru)
+            ]
+            for category in world.goal_categories.values():
+                for goal in category.goals:
+                    if isinstance(goal.hint_text, dict):
+                        for boss in bosses:
+                            if boss.item.name == goal.hint_text['replace']:
+                                flavor_text, clear_text, color = BOSS_GOAL_TABLE[boss.name]
+                                if world.settings.clearer_hints:
+                                    goal.hint_text = clear_text
+                                else:
+                                    goal.hint_text = flavor_text
+                                goal.color = color
+                                break
+        else:
+            for category in world.goal_categories.values():
+                for goal in category.goals:
+                    if isinstance(goal.hint_text, dict):
+                        flavor_text, clear_text = REWARD_GOAL_TABLE[goal.hint_text['replace']]
+                        if world.settings.clearer_hints:
+                            goal.hint_text = clear_text
+                        else:
+                            goal.hint_text = flavor_text
 
 
 def update_goal_items(spoiler: Spoiler) -> None:
@@ -236,6 +258,13 @@ def update_goal_items(spoiler: Spoiler) -> None:
     woth_locations = list(required_locations['way of the hero'])
     del required_locations['way of the hero']
 
+    # Update category and goal weights that have required locations
+    for category_name, goals in required_locations.items():
+        for goal_name, goal_worlds in goals.items():
+            for world_id, locations in goal_worlds.items():
+                worlds[world_id].goal_categories[category_name].weight = 1
+                worlds[world_id].goal_categories[category_name].get_goal(goal_name).weight = 1
+
     # Generate location requirements for each WOTH location
     requirements_by_world = {}
     requirements = search_required_locations(woth_locations, woth_locations, worlds)
@@ -306,10 +335,10 @@ def update_goal_items(spoiler: Spoiler) -> None:
                     path_sum += path_count
                     if path_count == 0:
                         empty_paths += 1
-        
+
             if path_sum < minimum:
                 raise FillError(f'Minimum path sum of {minimum} was not reached, re-rolling...')
-            
+
             if empty_paths > maximum_empty:
                 raise FillError(f'Maximum empty paths of {maximum_empty} was exceeded, re-rolling...')
 
@@ -376,8 +405,7 @@ def search_goals(categories: dict[str, GoalCategory], reachable_goals: ValidGoal
                                     else:
                                         location_weights = (location, 1, 1)
                                     required_locations[category.name][goal.name][world_id].append(location_weights)
-                                goal.weight = 1
-                                category.weight = 1
+
                                 # Locations added to goal exclusion for future categories
                                 # Main use is to split goals between before/after rainbow bridge
                                 # Requires goal categories to be sorted by priority!
@@ -398,15 +426,15 @@ def calculate_playthrough_locations(spoiler):
 
     playthrough_locations = {}
     for sphere, sphere_locations in spoiler.playthrough.items():
-        locations = dict(filter(lambda locations: 
-            locations[1].name in item_groups["MajorItem"], 
+        locations = dict(filter(lambda locations:
+            locations[1].name in item_groups["MajorItem"],
             sphere_locations.items()))
         playthrough_locations.update(locations)
-    
+
     spoiler.playthrough_locations = playthrough_locations
 
     search_locations = list(map(lambda location: spoiler.worlds[location.world.id].get_location(location.name), playthrough_locations.keys()))
-    
+
     # Generate location requirements for each playthrough location
     requirements_by_world = {}
     requirements = search_required_locations(search_locations, search_locations, spoiler.worlds)

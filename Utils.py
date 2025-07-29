@@ -125,10 +125,10 @@ class VersionError(Exception):
 
 def check_version(checked_version: str) -> None:
     if not hasattr(check_version, "base_regex"):
-        check_version.base_regex = re.compile("""^[ \t]*__version__ = ['"](.+)['"]""", re.MULTILINE)
-        check_version.supplementary_regex = re.compile(r"^[ \t]*supplementary_version = (\d+)$", re.MULTILINE)
-        check_version.full_regex = re.compile("""^[ \t]*__version__ = f['"]*(.+)['"]""", re.MULTILINE)
-        check_version.url_regex = re.compile("""^[ \t]*branch_url = ['"](.+)['"]""", re.MULTILINE)
+        check_version.base_regex = re.compile("""^[ \t]*__version__ = ['"](.+)['"]""", flags=re.MULTILINE)
+        check_version.supplementary_regex = re.compile(r"^[ \t]*supplementary_version = (\d+)$", flags=re.MULTILINE)
+        check_version.full_regex = re.compile("""^[ \t]*__version__ = f['"]*(.+)['"]""", flags=re.MULTILINE)
+        check_version.url_regex = re.compile("""^[ \t]*branch_url = ['"](.+)['"]""", flags=re.MULTILINE)
 
     if compare_version(checked_version, __version__) < 0:
         try:
@@ -199,23 +199,20 @@ def subprocess_args(include_stdout: bool = True) -> dict[str, Any]:
     return ret
 
 
-def run_process(logger: logging.Logger, args: Sequence[str], stdin: Optional[AnyStr] = None) -> None:
+def run_process(logger: logging.Logger, args: Sequence[str], stdin: Optional[AnyStr] = None, *, check: bool = False) -> None:
     process = subprocess.Popen(args, bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-    filecount = None
     if stdin is not None:
         process.communicate(input=stdin)
     else:
         while True:
             line = process.stdout.readline()
             if line != b'':
-                find_index = line.find(b'files remaining')
-                if find_index > -1:
-                    files = int(line[:find_index].strip())
-                    if filecount is None:
-                        filecount = files
                 logger.info(line.decode('utf-8').strip('\n'))
             else:
                 break
+        process.communicate()
+    if check and process.returncode != 0:
+        raise subprocess.CalledProcessError(process.returncode, args)
 
 
 # https://stackoverflow.com/a/23146126

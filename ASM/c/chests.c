@@ -113,12 +113,12 @@ void set_chest_texture(z64_gfx_t* gfx, uint8_t chest_type, Gfx** opa_ptr) {
                     break;
 
                 case BOMBCHU_CHEST_SMALL:
-		        case BOMBCHU_CHEST_BIG:
+                case BOMBCHU_CHEST_BIG:
                     if (CHEST_BOMBCHU_TEXTURE) {
                         frontTexture = get_texture(TEXTURE_ID_CHEST_FRONT_BOMBCHU);
                         baseTexture = get_texture(TEXTURE_ID_CHEST_BASE_BOMBCHU);
                     }
-	                break;
+                    break;
 
                 default:
                     break;

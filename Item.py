@@ -114,7 +114,7 @@ class Item:
 
     @property
     def smallkey(self) -> bool:
-        return self.type == 'SmallKey' or self.type == 'HideoutSmallKey' or  self.type == 'TCGSmallKey'
+        return self.type in ('SmallKey', 'HideoutSmallKey', 'TCGSmallKey', 'SmallKeyRing', 'HideoutSmallKeyRing','TCGSmallKeyRing')
 
     @property
     def bosskey(self) -> bool:
@@ -131,7 +131,7 @@ class Item:
     @property
     def dungeonitem(self) -> bool:
         return self.smallkey or self.bosskey or self.map or self.compass or self.type == 'SilverRupee'
-    
+
     @property
     def hint(self) -> bool:
         return self.type == 'Hint'
@@ -140,13 +140,14 @@ class Item:
     def unshuffled_dungeon_item(self) -> bool:
         if self.world is None:
             return False
-        return ((self.type == 'SmallKey' and self.world.settings.shuffle_smallkeys in ('remove', 'vanilla', 'dungeon')) or
-                (self.type == 'HideoutSmallKey' and self.world.settings.shuffle_hideoutkeys == 'vanilla') or
-                (self.type == 'TCGSmallKey' and self.world.settings.shuffle_tcgkeys in ('remove', 'vanilla')) or
+        return ((self.type in ('SmallKey', 'SmallKeyRing') and self.world.settings.shuffle_smallkeys in ('remove', 'vanilla', 'dungeon')) or
+                (self.type in ('HideoutSmallKey', 'HideoutSmallKeyRing') and self.world.settings.shuffle_hideoutkeys == 'vanilla') or
+                (self.type in ('TCGSmallKey', 'TCGSmallKeyRing') and self.world.settings.shuffle_tcgkeys in ('remove', 'vanilla')) or
                 (self.type == 'BossKey' and self.world.settings.shuffle_bosskeys in ('remove', 'vanilla', 'dungeon')) or
                 (self.type == 'GanonBossKey' and self.world.settings.shuffle_ganon_bosskey in ('remove', 'vanilla', 'dungeon')) or
                 ((self.map or self.compass) and (self.world.settings.shuffle_mapcompass in ('remove', 'startwith', 'vanilla', 'dungeon'))) or
-                (self.type == 'SilverRupee' and self.world.settings.shuffle_silver_rupees in ('remove','vanilla','dungeon')))
+                (self.type == 'SilverRupee' and self.world.settings.shuffle_silver_rupees in ('remove','vanilla','dungeon')) or
+                (self.type == 'DungeonReward' and self.world.settings.shuffle_dungeon_rewards in ('vanilla', 'reward', 'dungeon')))
 
     @property
     def majoritem(self) -> bool:
@@ -156,7 +157,7 @@ class Item:
             return (self.world.settings.bridge == 'tokens' or self.world.settings.shuffle_ganon_bosskey == 'tokens' or
                 (self.world.settings.shuffle_ganon_bosskey == 'on_lacs' and self.world.settings.lacs_condition == 'tokens'))
 
-        if self.type in ('Drop', 'Event', 'Shop', 'DungeonReward') or not self.advancement:
+        if self.type in ('Drop', 'Event', 'Shop') or not self.advancement:
             return False
 
         if self.name.startswith('Bombchus') and not self.world.settings.free_bombchu_drops:
@@ -168,11 +169,13 @@ class Item:
 
         if self.map or self.compass:
             return False
-        if self.type == 'SmallKey' and self.world.settings.shuffle_smallkeys in ('dungeon', 'vanilla'):
+        if self.type == 'DungeonReward' and self.world.settings.shuffle_dungeon_rewards in ('vanilla', 'reward', 'dungeon'):
             return False
-        if self.type == 'HideoutSmallKey' and self.world.settings.shuffle_hideoutkeys == 'vanilla':
+        if self.type in ('SmallKey', 'SmallKeyRing') and self.world.settings.shuffle_smallkeys in ('dungeon', 'vanilla'):
             return False
-        if self.type == 'TCGSmallKey' and self.world.settings.shuffle_tcgkeys == 'vanilla':
+        if self.type in ('HideoutSmallKey', 'HideoutSmallKeyRing') and self.world.settings.shuffle_hideoutkeys == 'vanilla':
+            return False
+        if self.type in ('TCGSmallKey','TCGSmallKeyRing') and self.world.settings.shuffle_tcgkeys == 'vanilla':
             return False
         if self.type == 'BossKey' and self.world.settings.shuffle_bosskeys in ('dungeon', 'vanilla'):
             return False

@@ -10,7 +10,7 @@ from Item import ItemInfo
 from Location import LocationIterator
 from LocationList import location_table
 from Models import get_model_choices
-from SettingsListTricks import logic_tricks
+from SettingsListTricks import logic_tricks, advanced_logic_tricks
 from SettingTypes import SettingInfo, SettingInfoStr, SettingInfoList, SettingInfoDict, Textbox, Button, Checkbutton, \
     Combobox, Radiobutton, Fileinput, Directoryinput, Textinput, ComboboxInt, Scale, Numberinput, MultipleSelect, \
     SearchBox
@@ -21,6 +21,18 @@ from Utils import data_path
 if TYPE_CHECKING:
     from Entrance import Entrance
 
+# Old/New name of a setting
+class Setting_Info_Versioning:
+    def __init__(self, old_name, new_name):
+        self.old_name = old_name # old name of the setting
+        self.new_name = new_name # new name of the setting
+
+settings_versioning = [
+    Setting_Info_Versioning(
+        old_name       = '',
+        new_name       = '',
+    ),
+]
 
 class SettingInfos:
     # Internal & Non-GUI Settings
@@ -356,6 +368,15 @@ class SettingInfos:
         },
     )
 
+    web_id = Numberinput(
+        gui_text         = "Web Seed ID",
+        shared           = False,
+        default          = 0,
+        gui_params       = {
+            'optional': True,
+        },
+    )
+
     user_message = Textinput(
         gui_text       = "User-Configurable Message",
         shared         = True,
@@ -571,6 +592,18 @@ class SettingInfos:
             ''',
     )
 
+    password_lock = Checkbutton(
+        gui_text         = "Lock Seed Behind Password",
+        gui_tooltip      = '''\
+            Starting the seed will be locked behind a password provided in the spoiler log.
+            The password is a sequence of 6 button presses (A and C).
+        ''',
+        shared           = True,
+        gui_params       = {
+            'optional': True,
+        },
+    )
+
     # Main Rules (and "Guarantee Reachable Locations")
 
     randomize_settings = Checkbutton(
@@ -590,17 +623,7 @@ class SettingInfos:
         default        = False,
         disable        = {
             True: {
-                'sections': ['shuffle_section'],
-                'settings': [
-                    'open_forest', 'open_kakariko', 'open_door_of_time', 'zora_fountain', 'gerudo_fortress', 'dungeon_shortcuts_choice',
-                    'dungeon_shortcuts', 'trials_random', 'trials',
-                    'starting_age', 'shuffle_interior_entrances', 'shuffle_hideout_entrances',
-                    'shuffle_grotto_entrances', 'shuffle_dungeon_entrances',
-                    'shuffle_bosses', 'shuffle_overworld_entrances', 'shuffle_gerudo_valley_river_exit', 'owl_drops', 'warp_songs', 'spawn_positions',
-                    'triforce_hunt', 'triforce_count_per_world', 'triforce_goal_per_world', 'free_bombchu_drops', 'one_item_per_dungeon',
-                    'shuffle_mapcompass', 'shuffle_smallkeys', 'shuffle_hideoutkeys', 'shuffle_tcgkeys', 'key_rings_choice', 'key_rings',
-                    'shuffle_silver_rupees', 'silver_rupee_pouches_choice', 'silver_rupee_pouches', 'shuffle_bosskeys', 'enhance_map_compass',
-                ],
+                'sections': ['open_section', 'world_section', 'shuffle_section', 'shuffle_dungeon_section'],
             },
         },
         shared         = True,
@@ -611,7 +634,7 @@ class SettingInfos:
         default        = 'glitchless',
         choices        = {
             'glitchless': 'Glitchless',
-            'glitched':   'Glitched',
+            'advanced':   'Advanced',
             'none':       'No Logic',
         },
         gui_tooltip    = '''\
@@ -623,20 +646,20 @@ class SettingInfos:
             some minor tricks. Add minor tricks to consider for logic
             in the 'Detailed Logic' tab.
 
-            'Glitched': Movement-oriented glitches are likely required.
-            No locations excluded.
+            'Advanced': More Glitchless tricks and toggleable
+            glitches for accessability to curate the overall difficulty
+            level for every skill level.
 
             'No Logic': Maximize randomization, All locations are
             considered available. MAY BE IMPOSSIBLE TO BEAT.
         ''',
         disable        = {
-            'glitchless': {'settings': ['tricks_list_msg']},
-            'glitched':   {'settings': ['allowed_tricks', 'shuffle_interior_entrances', 'shuffle_hideout_entrances', 'shuffle_grotto_entrances',
-                                         'shuffle_dungeon_entrances', 'shuffle_overworld_entrances', 'shuffle_gerudo_valley_river_exit', 'owl_drops',
-                                         'warp_songs', 'spawn_positions', 'mq_dungeons_mode', 'mq_dungeons_specific',
-                                         'mq_dungeons_count', 'shuffle_bosses', 'dungeon_shortcuts', 'deadly_bonks',
-                                         'shuffle_freestanding_items', 'shuffle_pots', 'shuffle_crates', 'shuffle_beehives', 'shuffle_silver_rupees', 'shuffle_wonderitems']},
-            'none':       {'settings': ['allowed_tricks', 'logic_no_night_tokens_without_suns_song', 'reachable_locations']},
+            'glitchless': {'settings': ['tricks_list_msg', 'advanced_allowed_tricks']},
+            # Forcing blue fire arrows to be on, and the tcg lens setting to be off as we can do it without the lens logically
+            # and don't care if people do 1/32
+            'advanced':   {'settings': ['tricks_list_msg', 'blue_fire_arrows', 'tcg_requires_lens'
+                                ]},
+            'none':       {'settings': ['allowed_tricks', 'advanced_allowed_tricks', 'logic_no_night_tokens_without_suns_song', 'reachable_locations']},
         },
         shared         = True,
     )
@@ -663,10 +686,25 @@ class SettingInfos:
 
             'Required Only': Only items and locations required to beat the game will be guaranteed reachable.
         ''',
-        gui_params={
+        gui_params     = {
             "hide_when_disabled": True,
         },
         shared         = True,
+    )
+
+    escape_from_kak = Checkbutton(
+        gui_text       = 'Escape from Kakariko',
+        gui_tooltip    = '''\
+            Enables Escape from the Kakariko game mode.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+        disable        = {
+            True:  {'settings': []},
+            False: {'settings': []},
+        },
     )
 
     triforce_hunt = Checkbutton(
@@ -738,7 +776,7 @@ class SettingInfos:
             'vanilla':    "Vanilla",
             'stones':     "Stones",
             'medallions': "Medallions",
-            'dungeons':   "Dungeons",
+            'dungeons':   "Dungeon Rewards",
             'tokens':     "Tokens",
             'hearts':     "Hearts",
         },
@@ -749,7 +787,7 @@ class SettingInfos:
             'Vanilla': Shadow and Spirit Medallions.
             'Stones': A configurable amount of Spiritual Stones.
             'Medallions': A configurable amount of Medallions.
-            'Dungeons': A configurable amount of Dungeon Rewards.
+            'Dungeon Rewards': A configurable amount of Dungeon Rewards.
             'Tokens': A configurable amount of Gold Skulltula Tokens.
             'Hearts': A configurable amount of hearts.
         ''',
@@ -868,7 +906,7 @@ class SettingInfos:
             'vanilla':    'Vanilla Requirements',
             'stones':     'Spiritual Stones',
             'medallions': 'Medallions',
-            'dungeons':   'Dungeons',
+            'dungeons':   'Dungeon Rewards',
             'tokens':     'Gold Skulltula Tokens',
             'hearts':     'Hearts',
             'random':     'Random'
@@ -878,7 +916,7 @@ class SettingInfos:
             'Vanilla Requirements': Spirit/Shadow Medallions and Light Arrows.
             'Spiritual Stones': A configurable amount of Spiritual Stones.
             'Medallions': A configurable amount of Medallions.
-            'Dungeons': A configurable amount of Dungeon Rewards.
+            'Dungeon Rewards': A configurable amount of Dungeon Rewards.
             'Gold Skulltula Tokens': A configurable amount of Gold Skulltula Tokens.
             'Hearts': A configurable amount of hearts.
             'Random': A random Rainbow Bridge requirement excluding Gold Skulltula Tokens.
@@ -1028,12 +1066,12 @@ class SettingInfos:
             'randomize_key': 'randomize_settings',
         },
         disable        = {
-            True  : {'settings' : ['shuffle_ganon_bosskey', 'ganon_bosskey_stones', 'ganon_bosskey_medallions', 
+            True  : {'settings' : ['shuffle_ganon_bosskey', 'ganon_bosskey_stones', 'ganon_bosskey_medallions',
                                    'ganon_bosskey_rewards', 'ganon_bosskey_tokens', 'triforce_hunt', 'triforce_goal_per_world']},
             False : {'settings' : ['triforce_blitz_jabus_revenge', 'triforce_blitz_minimum_path_count']}
         },
     )
-    
+
     triforce_blitz_minimum_path_count = Scale(
         gui_text       = 'Triforce Blitz Minimum Path Count Sum',
         default        = 0,
@@ -1097,7 +1135,47 @@ class SettingInfos:
             'hide_when_disabled': True,
         }
     )
-    
+
+    triforce_blitz_s4_coop = Checkbutton(
+        gui_text       = 'Triforce Blitz Season 4 Co-op Mode',
+        gui_tooltip    = '''\
+            Forces a world's items to always be placed in that player's world.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+            'hide_when_disabled': True,
+        }
+    )
+
+    triforce_blitz_mw_linked_tf_pieces = Combobox(
+        gui_text       = 'Triforce Blitz Multiworld Linked Triforce Pieces',
+        default        = 'off',
+        choices        = {
+            'off':        'Off',
+            'linked':     'Linked',
+            'duality':    'Duality',
+            'trinity':    'Trinity'
+        },
+        gui_tooltip    = '''\
+            'Off': Normal Triforce Piece fill behavior.
+            'Linked': A world's Triforce of Power location will be shared with world n-1's Triforce of Courage, and every world's Triforce of Courage location will be shared with world n+1's Triforce of Power.
+            Only active when the world count is greater than 1.
+            'Duality': A random triforce piece will have its location shared between both worlds.
+            Only active when the world count is exactly 2.
+            'Trinity': Certain triforce pieces will have their locations shared:
+            - World 1's Triforce of Wisdom and World 2's Triforce of Power
+            - World 2's Triforce of Courage and World 3's Triforce of Wisdom
+            - World 3's Triforce of Power and World 1's Triforce of Courage
+            Only active when the world count is exactly 3.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+            'hide_when_disabled': True,
+        }
+    )
+
     shuffle_ganon_bosskey = Combobox(
         gui_text         = "Ganon's Boss Key",
         default          = 'dungeon',
@@ -1113,7 +1191,7 @@ class SettingInfos:
             'on_lacs':         "Light Arrow Cutscene",
             'stones':          "Stones",
             'medallions':      "Medallions",
-            'dungeons':        "Dungeons",
+            'dungeons':        "Dungeon Rewards",
             'tokens':          "Tokens",
             'hearts':          "Hearts",
         },
@@ -1149,7 +1227,7 @@ class SettingInfos:
             'Medallions': Ganon's Castle Boss Key will be awarded
             when reaching the target number of Medallions.
 
-            'Dungeons': Ganon's Castle Boss Key will be awarded
+            'Dungeon Rewards': Ganon's Castle Boss Key will be awarded
             when reaching the target number of Dungeon Rewards.
 
             'Tokens': Ganon's Castle Boss Key will be awarded
@@ -1261,478 +1339,6 @@ class SettingInfos:
         disabled_default = 0,
         gui_params       = {
             "hide_when_disabled": True,
-        },
-    )
-
-    shuffle_bosskeys = Combobox(
-        gui_text       = 'Boss Keys',
-        default        = 'dungeon',
-        choices        = {
-            'remove':      'Remove (Keysy)',
-            'vanilla':     'Vanilla Locations',
-            'dungeon':     'Own Dungeon',
-            'regional':    'Regional',
-            'overworld':   'Overworld Only',
-            'any_dungeon': 'Any Dungeon',
-            'keysanity':   'Anywhere (Keysanity)',
-        },
-        gui_tooltip    = '''\
-            'Remove': Boss Keys are removed. All locked
-            doors in dungeons will be unlocked. An easier
-            mode.
-
-            'Vanilla': Boss Keys will appear in their
-            vanilla locations.
-
-            'Own Dungeon': Boss Keys can only appear in their
-            respective dungeon.
-
-            'Regional': Boss Keys can only appear in regions
-            near the original dungeon (including the dungeon
-            itself or other dungeons in the region).
-            <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
-
-            'Overworld Only': Boss Keys can only appear outside
-            of dungeons. You may need to enter a dungeon without
-            the boss key to get items required to find the key
-            in the overworld.
-
-            'Any Dungeon': Boss Keys can only appear inside
-            of any dungeon, but won't necessarily be in the
-            dungeon that the key is for. A difficult mode since
-            it is more likely to need to enter a dungeon
-            multiple times.
-
-            'Anywhere': Boss Keys can appear
-            anywhere in the world. A difficult mode since
-            it is more likely to need to enter a dungeon
-            multiple times.
-
-            Try different combinations out, such as:
-            'Small Keys: Dungeon' + 'Boss Keys: Anywhere'
-            for a milder Keysanity experience.
-
-            Regardless of the selected option, boss keys from
-            pre-completed dungeons won't be placed outside their
-            respective dungeons and boss keys from other dungeons
-            won't be placed inside pre-completed dungeons.
-        ''',
-        shared         = True,
-        gui_params     = {
-            'randomize_key': 'randomize_settings',
-        },
-    )
-
-    shuffle_smallkeys = Combobox(
-        gui_text       = 'Small Keys',
-        default        = 'dungeon',
-        choices        = {
-            'remove':      'Remove (Keysy)',
-            'vanilla':     'Vanilla Locations',
-            'dungeon':     'Own Dungeon',
-            'regional':    'Regional',
-            'overworld':   'Overworld Only',
-            'any_dungeon': 'Any Dungeon',
-            'keysanity':   'Anywhere (Keysanity)',
-        },
-        gui_tooltip    = '''\
-            'Remove': Small Keys are removed. All locked doors in dungeons
-            will be unlocked. An easier mode.
-
-            'Vanilla': Small Keys will appear in their vanilla locations. You start
-            with 3 keys in Spirit Temple MQ because the vanilla key layout is
-            not beatable in logic. You start with 2 keys in Vanilla/MQ Shadow
-            Temple with its dungeon shortcut enabled to prevent softlocks.
-
-            'Own Dungeon': Small Keys can only appear in their respective
-            dungeon. If Fire Temple is not a Master Quest dungeon, the door to
-            the Boss Key chest will be unlocked.
-
-            'Regional': Small Keys can only appear
-            in regions near the original dungeon (including
-            the dungeon itself or other dungeons in the region).
-            <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
-
-            'Overworld Only': Small Keys can only appear outside
-            of dungeons. You may need to enter a dungeon multiple
-            times to gain items to access the overworld locations
-            with the keys required to finish a dungeon.
-
-            'Any Dungeon': Small Keys can only appear inside of any dungeon, but
-            won't necessarily be in the dungeon that the key is for. A difficult mode
-            since it is more likely to need to enter a dungeon multiple times.
-
-            'Anywhere': Small Keys can appear anywhere in the world. A difficult
-            mode since it is more likely to need to enter a dungeon multiple times.
-
-            Try different combination out, such as:
-            'Small Keys: Dungeon' + 'Boss Keys: Anywhere'
-            for a milder Keysanity experience.
-
-            Regardless of the selected option, small keys from pre-completed dungeons
-            won't be placed outside their respective dungeons and small keys from
-            other dungeons won't be placed inside pre-completed dungeons.
-        ''',
-        disable        = {
-            'any_dungeon': {'settings': ['one_item_per_dungeon']}
-        },
-        shared         = True,
-        gui_params     = {
-            'randomize_key': 'randomize_settings',
-        },
-    )
-
-    shuffle_hideoutkeys = Combobox(
-        gui_text       = "Thieves' Hideout Keys",
-        default        = 'vanilla',
-        disabled_default = 'remove',
-        choices        = {
-            'vanilla':     "Vanilla Locations",
-            'fortress':    "Gerudo Fortress Region",
-            'regional':    "Regional",
-            'overworld':   "Overworld Only",
-            'any_dungeon': "Any Dungeon",
-            'keysanity':   "Anywhere (Keysanity)",
-        },
-        gui_tooltip    = '''\
-            "Vanilla": Thieves' Hideout Keys will appear in their
-            vanilla location, dropping from fighting Gerudo guards
-            that attack when trying to free the jailed carpenters.
-
-            "Gerudo Fortress Region": Thieves' Hideout Keys can only
-            appear in Gerudo Fortress or Thieves' Hideout.
-
-            "Regional": Thieves' Hideout Keys can only appear in
-            Gerudo Valley, Gerudo Fortress, Thieves' Hideout, Gerudo
-            Training Ground, Haunted Wasteland, Desert Colossus, or
-            Spirit Temple.
-
-            "Overworld Only": Thieves' Hideout Keys can only appear
-            outside of dungeons.
-
-            "Any Dungeon": Thieves' Hideout Keys can only appear
-            inside of dungeons.
-
-            "Anywhere": Thieves' Hideout Keys can appear anywhere
-            in the world.
-        ''',
-        shared         = True,
-        gui_params     = {
-            'randomize_key': 'randomize_settings',
-            'option_remove': ['fortress'],
-        },
-    )
-
-    shuffle_tcgkeys = Combobox(
-        gui_text       = 'Treasure Chest Game Keys',
-        default        = 'vanilla',
-        choices        = {
-            'remove':      "Remove (Keysy)",
-            'vanilla':     "Vanilla Locations",
-            'regional':    "Regional",
-            'overworld':   "Overworld Only",
-            'any_dungeon': "Any Dungeon",
-            'keysanity':   "Anywhere (Keysanity)",
-        },
-        gui_tooltip    = '''\
-            'Remove': All Treasure Chest Game keys will be removed
-            and all doors will remained unlocked.
-
-            'Vanilla': Treasure Chest Game keys will have vanilla
-            behavior (one random per room). The minigame will
-            also have vanilla behavior.
-
-            'Regional': Treasure Chest Game keys can only appear
-            in Hyrule Field, Lon Lon Ranch, the Market, the Temple
-            of Time, Hyrule Castle, outside Ganon's Castle, or
-            inside Ganon's Castle.
-
-            'Overworld Only': Treasure Chest Game keys can only appear
-            outside of dungeons.
-
-            'Any Dungeon': Treasure Chest Game keys can only appear
-            inside of dungeons.
-
-            'Anywhere': Treasure Chest Game keys can appear anywhere
-            in the world.
-        ''',
-        shared         = True,
-        gui_params     = {
-            'randomize_key': 'randomize_settings',
-        },
-    )
-
-    key_rings_choice = Combobox(
-        gui_text       = 'Key Rings Mode',
-        default        = 'off',
-        choices        = {
-            'off':       'Off',
-            'choice':    'Choose Dungeons',
-            'all':       'All Dungeons',
-            'random':    'Random Selection'
-        },
-        gui_tooltip     = '''\
-            Selected dungeons will have all of their keys found
-            at once in a ring rather than individually.
-
-            For example, instead of shuffling 5 Forest Temple
-            small keys into the pool, you will find a single
-            key ring which will give you all 5 keys at once.
-
-            Selecting key ring for dungeons will have no effect
-            if Small Keys are set to Remove or Vanilla.
-
-            Selecting key ring for Thieves' Hideout will have
-            no effect if Thieves' Hideout keys are in vanilla
-            locations or Gerudo's Fortress is set to Rescue
-            One Carpenter.
-
-            Similarly, selecting Treasure Chest Game will have
-            no effect if the keys aren't shuffled. Treasure Chest
-            Game will be considered when selecting 'All dungeons'
-            or 'Random selection'.
-        ''',
-        shared         = True,
-        disable={
-            'off':    {'settings': ['key_rings', 'keyring_give_bk']},
-            'all':    {'settings': ['key_rings']},
-            'random': {'settings': ['key_rings']},
-        },
-    )
-
-    key_rings = MultipleSelect(
-        gui_text        = 'Key Rings',
-        choices         = {
-            'Thieves Hideout':        "Thieves' Hideout",
-            'Treasure Chest Game':    "Treasure Chest Game",
-            'Forest Temple':          "Forest Temple",
-            'Fire Temple':            "Fire Temple",
-            'Water Temple':           "Water Temple",
-            'Shadow Temple':          "Shadow Temple",
-            'Spirit Temple':          "Spirit Temple",
-            'Bottom of the Well':     "Bottom of the Well",
-            'Gerudo Training Ground': "Gerudo Training Ground",
-            'Ganons Castle':          "Ganon's Castle"
-        },
-        default         = [],
-        gui_params     = {
-            "hide_when_disabled": True,
-        },
-        gui_tooltip    = '''\
-            Select areas with keyring instead of multiple keys
-        ''',
-        shared          = True,
-    )
-
-    keyring_give_bk = Checkbutton(
-        gui_text       = 'Key Rings give Boss Keys',
-        gui_tooltip    = '''\
-            Boss Keys will be included in the Key Ring for the specific dungeon.
-            This does not apply to the Ganon's Castle Boss Key.
-        ''',
-        default        = False,
-        shared         = True,
-        gui_params     = {
-            "hide_when_disabled": True,
-        },
-    )
-
-    shuffle_silver_rupees = Combobox(
-        gui_text       = 'Shuffle Silver Rupees',
-        default        = 'vanilla',
-        choices        = {
-            'remove':      'Remove',
-            'vanilla':     'Vanilla Locations',
-            'dungeon':     'Own Dungeon',
-            'regional':    'Regional',
-            'overworld':   'Overworld Only',
-            'any_dungeon': 'Any Dungeon',
-            'anywhere':    'Anywhere',
-        },
-        gui_tooltip    = '''\
-            Enabling this shuffles the Silver Rupee puzzles into to the
-            item pool.
-
-            Silver Rupees are grouped into sets of 5 (except for some
-            Master Quest dungeons, which have sets of other amounts), each
-            of which permanently unlocks something in a dungeon once all
-            the rupees in that set are collected. Hints will only tell you
-            the dungeon a Silver Rupee corresponds to, but upon collecting
-            it, you will be told the exact room.
-            The vanilla locations of Silver Rupees hold shuffled items.
-
-            'Remove': Silver Rupees are removed and the puzzles are
-            solved. This will add a small amount of money and
-            refill items to the pool.
-
-            'Vanilla': Silver Rupees will appear in their vanilla
-            locations. You will have to collect all of a set in one go to
-            to solve a puzzle.
-
-            'Own Dungeon': Silver Rupees can only appear
-            in their respective dungeon.
-
-            'Regional': Silver Rupees can only appear in regions
-            near the original dungeon (including the dungeon
-            itself or other dungeons in the region).
-            <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
-
-            'Overworld Only': Silver Rupees can only appear
-            outside of dungeons.
-
-            'Any Dungeon': Silver Rupees can only appear in a
-            dungeon, but not necessarily the dungeon they are for.
-
-            'Anywhere': Silver Rupees can appear
-            anywhere in the world.
-        ''',
-        shared         = True,
-        disable        = {
-            'remove':  {'settings': ['silver_rupee_pouches_choice', 'silver_rupee_pouches']},
-            'vanilla': {'settings': ['silver_rupee_pouches_choice', 'silver_rupee_pouches']},
-        },
-        gui_params     = {
-            'randomize_key': 'randomize_settings',
-        },
-    )
-
-    silver_rupee_pouches_choice = Combobox(
-        gui_text       = 'Silver Rupee Pouches Mode',
-        default        = 'off',
-        choices        = {
-            'off':       'Off',
-            'choice':    'Choose Puzzles',
-            'all':       'All Puzzles',
-            'random':    'Random Puzzles'
-        },
-        gui_tooltip     = '''\
-            Selected silver rupee puzzles will have all of
-            their silver rupees found at once in a pouch
-            rather than individually.
-
-            For example, instead of shuffling 5 silver
-            rupees for the Fire Trial in Ganon's Castle
-            into the pool, you will find a single pouch
-            which will give you all 5 of them at once.
-        ''',
-        shared         = True,
-        disable        = {
-            'off':    {'settings' : ['silver_rupee_pouches']},
-            'all':    {'settings' : ['silver_rupee_pouches']},
-            'random': {'settings' : ['silver_rupee_pouches']},
-        },
-        gui_params     = {
-            "hide_when_disabled": True,
-        },
-    )
-
-    silver_rupee_pouches = MultipleSelect(
-        gui_text        = 'Silver Rupee Pouches',
-        choices         = {
-            'Dodongos Cavern Staircase': "Dodongo's Cavern Staircase",
-            'Ice Cavern Spinning Scythe': "Ice Cavern Spinning Scythe",
-            'Ice Cavern Push Block': "Ice Cavern Push Block",
-            'Bottom of the Well Basement': "Bottom of the Well Basement",
-            'Shadow Temple Scythe Shortcut': "Shadow Temple Scythe Shortcut",
-            'Shadow Temple Invisible Blades': "Shadow Temple Invisible Blades",
-            'Shadow Temple Huge Pit': "Shadow Temple Huge Pit",
-            'Shadow Temple Invisible Spikes': "Shadow Temple Invisible Spikes",
-            'Gerudo Training Ground Slopes': "Gerudo Training Ground Slopes",
-            'Gerudo Training Ground Lava': "Gerudo Training Ground Lava",
-            'Gerudo Training Ground Water': "Gerudo Training Ground Water",
-            'Spirit Temple Child Early Torches': "Spirit Temple Child Early Torches",
-            'Spirit Temple Adult Boulders': "Spirit Temple Adult Boulders",
-            'Spirit Temple Lobby and Lower Adult': "Spirit Temple Lobby and Lower Adult",
-            'Spirit Temple Sun Block': "Spirit Temple Sun Block",
-            'Spirit Temple Adult Climb': "Spirit Temple Adult Climb",
-            'Ganons Castle Spirit Trial': "Ganon's Castle Spirit Trial",
-            'Ganons Castle Light Trial': "Ganon's Castle Light Trial",
-            'Ganons Castle Fire Trial': "Ganon's Castle Fire Trial",
-            'Ganons Castle Shadow Trial': "Ganon's Castle Shadow Trial",
-            'Ganons Castle Water Trial': "Ganon's Castle Water Trial",
-            'Ganons Castle Forest Trial': "Ganon's Castle Forest Trial",
-        },
-        gui_tooltip    = '''\
-            Select puzzles with silver rupee pouches
-            instead of individual silver rupees.
-        ''',
-        default         = [],
-        gui_params     = {
-            "hide_when_disabled": True,
-        },
-        shared          = True,
-    )
-
-    shuffle_mapcompass = Combobox(
-        gui_text       = 'Maps & Compasses',
-        default        = 'dungeon',
-        choices        = {
-            'remove':      'Remove',
-            'startwith':   'Start With',
-            'vanilla':     'Vanilla Locations',
-            'dungeon':     'Own Dungeon',
-            'regional':    'Regional',
-            'overworld':   'Overworld Only',
-            'any_dungeon': 'Any Dungeon',
-            'keysanity':   'Anywhere',
-        },
-        gui_tooltip    = '''\
-            'Remove': Maps and Compasses are removed.
-            This will add a small amount of money and refill items to the pool.
-
-            'Start With': Maps and Compasses are given to you from the start.
-            This will add a small amount of money and refill items to the pool.
-
-            'Vanilla': Maps and Compasses will appear in their vanilla locations.
-
-            'Own Dungeon': Maps and Compasses can only appear in their respective
-            dungeon.
-
-            'Regional': Maps and Compasses can only appear in regions near the
-            original dungeon (including the dungeon itself or other dungeons in
-            the region). <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
-
-            'Overworld Only': Maps and Compasses can only appear
-            outside of dungeons.
-
-            'Any Dungeon': Maps and Compasses can only appear in a dungeon, but
-            not necessarily the dungeon they are for.
-
-            'Anywhere': Maps and Compasses can appear anywhere in the world.
-
-            Setting 'Remove', 'Start With', 'Overworld', or 'Anywhere' will add 2
-            more possible locations to each Dungeons. This makes dungeons more
-            profitable, especially Ice Cavern, Water Temple, and Jabu Jabu's Belly.
-
-            Regardless of the selected option, maps and compasses from pre-completed
-            dungeons won't be placed outside their respective dungeons and maps and
-            compasses from other dungeons won't be placed inside pre-completed dungeons.
-        ''',
-        shared         = True,
-        gui_params     = {
-            'randomize_key': 'randomize_settings',
-        },
-    )
-
-    enhance_map_compass = Checkbutton(
-        gui_text       = 'Maps and Compasses Give Information',
-        gui_tooltip    = '''\
-            Gives the Map and Compass extra functionality.
-            Map will tell if a dungeon is vanilla or Master Quest.
-            Compass will tell what medallion or stone is within.
-            The Temple of Time Altar will no longer provide
-            information on the location of medallions and stones.
-
-            'Maps/Compasses: Remove': The dungeon information is
-            not available anywhere in the game.
-
-            'Maps/Compasses: Start With': The dungeon information
-            is available immediately from the dungeon menu.
-        ''',
-        default        = False,
-        shared         = True,
-        gui_params     = {
-            'randomize_key': 'randomize_settings',
         },
     )
 
@@ -2056,6 +1662,7 @@ class SettingInfos:
         choices        = {
             'none':       'Off',
             'specific':   'Specific Dungeons',
+            'rewards':    'Specific Rewards',
             'count':      'Count',
         },
         gui_tooltip    = '''\
@@ -2068,6 +1675,9 @@ class SettingInfos:
             randomly rolled with no major items, but their dungeon rewards won't
             be given for free.
             - 'Specific Dungeons': Choose which specific dungeons will be pre-completed.
+            - 'Specific Rewards': Choose which specific dungeon rewards will be in
+            pre-completed dungeons. If dungeon rewards are shuffled, rewards in side
+            dungeons or the overworld will have no effect on pre-completion.
             - 'Count': Choose how many pre-completed dungeons will be randomly chosen.
 
             A same dungeon won't be both MQ and pre-completed unless it has been
@@ -2089,7 +1699,8 @@ class SettingInfos:
         shared         = True,
         disable        = {
             '!specific': {'settings': ['empty_dungeons_specific']},
-            '!count':    {'settings': ['empty_dungeons_count']}
+            '!rewards':  {'settings': ['empty_dungeons_rewards']},
+            '!count':    {'settings': ['empty_dungeons_count']},
         },
         gui_params     = {
             'distribution':  [
@@ -2117,6 +1728,30 @@ class SettingInfos:
         ''',
         shared          = True,
         gui_params     = {
+            "hide_when_disabled": True,
+        },
+    )
+
+    empty_dungeons_rewards = MultipleSelect(
+        gui_text        = 'Pre-completed Dungeon Rewards',
+        choices         = {
+            'Kokiri Emerald':   "Kokiri Emerald",
+            'Goron Ruby':       "Goron Ruby",
+            'Zora Sapphire':    "Zora Sapphire",
+            'Light Medallion':  "Light Medallion",
+            'Forest Medallion': "Forest Medallion",
+            'Fire Medallion':   "Fire Medallion",
+            'Water Medallion':  "Water Medallion",
+            'Shadow Medallion': "Shadow Medallion",
+            'Spirit Medallion': "Spirit Medallion",
+        },
+        default         = [],
+        gui_tooltip     = '''\
+            Select the specific dungeons rewards whose
+            dungeons you would like to be pre-completed.
+        ''',
+        shared          = True,
+        gui_params      = {
             "hide_when_disabled": True,
         },
     )
@@ -2158,7 +1793,7 @@ class SettingInfos:
         ''',
         shared         = True,
         disable        = {
-            'off': {'settings': ['shuffle_hideout_entrances']},
+            'off': {'settings': ['shuffle_hideout_entrances', 'shuffle_gerudo_fortress_heart_piece']},
         },
         gui_params     = {
             'randomize_key': 'randomize_settings',
@@ -2178,15 +1813,49 @@ class SettingInfos:
 
             Note that savewarping in any room of Thieves' Hideout
             always takes you to the first room (with 1 torch).
-
-            There is an extra heart piece on the balcony above the jail in
-            Gerudo's Fortress if accessed as child. This is not shuffled
-            and not considered in logic.
         ''',
         default        = False,
         shared         = True,
+        disable        = {
+            False: {'settings': ['shuffle_gerudo_fortress_heart_piece']},
+        },
         gui_params     = {
             'randomize_key': 'randomize_settings',
+        },
+    )
+
+    shuffle_gerudo_fortress_heart_piece = Combobox(
+        gui_text       = 'Shuffle Gerudo Fortress Heart Piece',
+        default        = 'remove',
+        choices        = {
+            'remove':  'Remove',
+            'vanilla': 'Vanilla',
+            'shuffle': 'Shuffle',
+        },
+        gui_tooltip    = '''\
+            There is an extra heart piece on the balcony above the jail in
+            Gerudo's Fortress if accessed as child. Normally, this is not
+            reachable without glitches, so it's not shuffled and not
+            considered in logic. With the Thieves' Hideout entrances
+            shuffled, it becomes reachable, so use this setting to decide
+            how to handle that.
+
+            'Remove':
+            The heart piece is completely removed from the game. There is
+            no freestanding item to collect above the jail.
+
+            'Vanilla':
+            The heart piece exists as an unshuffled heart piece. It is
+            considered in logic for the purpose of heart win conditions.
+
+            'Shuffle':
+            There is a shuffled item above the jail and the extra heart
+            piece is shuffled into the item pool. Both are considered in
+            logic.
+        ''',
+        shared         = True,
+        gui_params     = {
+            "hide_when_disabled": True,
         },
     )
 
@@ -2209,6 +1878,7 @@ class SettingInfos:
         choices        = {
             'off':       'Off',
             'simple':    'Dungeon',
+            'tfbs4':     'Triforce Blitz S4',
             'all':       'Dungeon and Ganon',
         },
         gui_tooltip    = '''\
@@ -2220,6 +1890,8 @@ class SettingInfos:
 
             With Dungeon and Ganon selected, all dungeons including Ganon's
             castle will be shuffled.
+
+            Triforce Blitz S4 shuffles all stone and medallion dungeons in separate pools.
 
             Thieves' Hideout is controlled by a separate setting.
         ''',
@@ -2251,6 +1923,28 @@ class SettingInfos:
             'limited':   'Age-Restricted',
             'full':      'Full',
         },
+        disable        = {
+            'off' : {'settings': ['shuffle_ganon_tower']},
+        },
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    )
+
+    shuffle_ganon_tower = Checkbutton(
+        gui_text       = "Shuffle Ganon's Tower Entrance",
+        gui_tooltip    = '''\
+            Shuffle the entrance from Ganon's Castle to
+            Ganon's Tower, just behind the trials barrier,
+            into the adult boss entrance pool if "Shuffle
+            Boss Entrances" is set to "Age-Restricted", or
+            the boss entrance pool if it's set to "Full".
+
+            The entrance from Ganon's Tower to Ganondorf's
+            boss room is never shuffled.
+        ''',
+        default        = False,
         shared         = True,
         gui_params     = {
             'randomize_key': 'randomize_settings',
@@ -2382,49 +2076,6 @@ class SettingInfos:
         },
     )
 
-    one_item_per_dungeon = Checkbutton(
-        gui_text       = 'Dungeons Have One Major Item',
-        gui_tooltip    = '''\
-            Dungeons have exactly one major item.
-            This naturally makes each dungeon similar in value
-            rather than vary based on shuffled locations.
-
-            Spirit Temple Colossus hands count as part
-            of the dungeon. Spirit Temple has TWO items
-            to match vanilla distribution.
-
-            Boss Keys and Fortress Keys only count as
-            major items if they are shuffled Anywhere
-            (Keysanity) or in Any Dungeon, and Small
-            Keys only count as major items if they are
-            shuffled Anywhere (Keysanity). This setting
-            is disabled if Small Keys are shuffled in
-            Any Dungeon.
-
-            GS Tokens only count as major items if the
-            bridge or Ganon Boss Key requirements are
-            set to "GS Tokens".
-
-            Heart Containers and Pieces of Heart only
-            count as major items if the bridge or Ganon
-            Boss Key requirements are set to "Hearts".
-
-            Bombchus only count as major items if they
-            are considered in logic.
-
-            Pre-completed dungeons (if any) won't have
-            a major item.
-
-            This setting has potential to conflict with
-            other randomizer settings. Should seeds continuously
-            fail to generate, consider turning this option off.
-        ''',
-        shared         = True,
-        gui_params     = {
-            'randomize_key': 'randomize_settings',
-        },
-    )
-
     shuffle_song_items = Combobox(
         gui_text       = 'Shuffle Songs',
         default        = 'song',
@@ -2479,8 +2130,8 @@ class SettingInfos:
             'random': 'Random # of Items Per Shop',
         },
         disable        = {
-            'off':  {'settings': ['shopsanity_prices']},
-            '0':    {'settings': ['shopsanity_prices']},
+            'off':  {'settings': ['special_deal_price_distribution', 'special_deal_price_min', 'special_deal_price_max']},
+            '0':    {'settings': ['special_deal_price_distribution', 'special_deal_price_min', 'special_deal_price_max']},
         },
         gui_tooltip    = '''\
             Randomizes Shop contents.
@@ -2521,36 +2172,73 @@ class SettingInfos:
         },
     )
 
-    shopsanity_prices = Combobox(
-        gui_text         = 'Shopsanity Prices',
-        default          = 'random',
+    special_deal_price_distribution = Combobox(
+        gui_text         = 'Special Deal Prices',
+        default          = 'betavariate',
         choices          = {
-            'random':          "Random",
-            'random_starting': "Starting Wallet",
-            'random_adult':    "Adult's Wallet",
-            'random_giant':    "Giant's Wallet",
-            'random_tycoon':   "Tycoon's Wallet",
-            'affordable':      "Affordable",
+            'vanilla':     'Vanilla',
+            'betavariate': 'Weighted',
+            'uniform':     'Uniform',
+        },
+        disable          = {
+            'vanilla': {'settings': ['special_deal_price_min', 'special_deal_price_max']},
         },
         gui_tooltip      = '''\
-            Controls the randomization of prices for shopsanity items.
-            For more control, utilize the plandomizer.
+            Controls how the prices for Special Deal items in shops are
+            selected. For more control, utilize the plandomizer.
 
-            'Random': The default randomization. Shop prices for
-            shopsanity items will range between 0 to 300 rupees,
-            with a bias towards values slightly below the middle of the
-            range, in multiples of 5.
+            'Vanilla': Each item will be sold for the price of the item
+            that appears in its slot in the vanilla game.
 
-            'X Wallet': Shop prices for shopsanity items will range
-            between 0 and the specified wallet's maximum capacity,
-            in multiples of 5.
+            'Weighted': Shop prices will be biased towards slightly below
+            the middle of the selected range, with very low or very high
+            prices only appearing rarely.
 
-            'Affordable': Shop prices for shopsanity items will be
-            fixed to 10 rupees.
+            'Uniform': Each price value in the selected range is equally
+            likely.
         ''',
-        disabled_default =  'random',
         shared           = True,
         gui_params       = {
+            "hide_when_disabled": True,
+        },
+    )
+
+    special_deal_price_min = Scale(
+        gui_text       = 'Minimum Special Deal Price',
+        default        = 0,
+        minimum        = 0,
+        maximum        = 995,
+        step           = 5,
+        shared         = True,
+        gui_tooltip    = '''\
+            Select the minimum price in rupees for Special Deal
+            items in shops. Prices will be selected randomly in
+            multiples of 5 according to the "Special Deal Price
+            Distribution" setting. Set this setting and "Maximum
+            Special Deal Price" to the same value to give all
+            Special Deals a fixed price.
+        ''',
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+    )
+
+    special_deal_price_max = Scale(
+        gui_text       = 'Maximum Special Deal Price',
+        default        = 300,
+        minimum        = 0,
+        maximum        = 995,
+        step           = 5,
+        shared         = True,
+        gui_tooltip    = '''\
+            Select the maximum price in rupees for Special Deal
+            items in shops. Prices will be selected randomly in
+            multiples of 5 according to the "Special Deal Price
+            Distribution" setting. Set this setting and "Minimum
+            Special Deal Price" to the same value to give all
+            Special Deals a fixed price.
+        ''',
+        gui_params     = {
             "hide_when_disabled": True,
         },
     )
@@ -2624,7 +2312,7 @@ class SettingInfos:
     )
 
     shuffle_child_trade = MultipleSelect(
-        gui_text       = 'Shuffled Child Trade Sequence Items',
+        gui_text       = 'Shuffle Child Trade Sequence Items',
         default        = [],
         choices        = {
             'Weird Egg':     'Weird Egg',
@@ -2644,6 +2332,52 @@ class SettingInfos:
 
             To skip Child Zelda, do not shuffle Zelda's Letter and
             add it as a starting item.
+        ''',
+        shared         = True,
+    )
+
+    adult_trade_shuffle = Checkbutton(
+        gui_text       = 'Shuffle All Selected Adult Trade Items',
+        gui_tooltip    = '''\
+            Enable to shuffle every selected Adult Trade Item.
+
+            If disabled and at least one of "Shuffle Adult Trade
+            Sequence Items" is selected, Anju will always give
+            a shuffled item even if Pocket Egg has not been shuffled.
+        ''',
+        shared         = True,
+        default        = False,
+    )
+
+    adult_trade_start = MultipleSelect(
+        gui_text       = 'Shuffle Adult Trade Sequence Items',
+        default        = ['Pocket Egg', 'Pocket Cucco', 'Cojiro', 'Odd Mushroom', 'Odd Potion', 'Poachers Saw',
+                          'Broken Sword', 'Prescription', 'Eyeball Frog', 'Eyedrops', 'Claim Check'],
+        choices        = {
+            'Pocket Egg':   'Pocket Egg',
+            'Pocket Cucco': 'Pocket Cucco',
+            'Cojiro':       'Cojiro',
+            'Odd Mushroom': 'Odd Mushroom',
+            'Odd Potion':   'Odd Potion',
+            'Poachers Saw': "Poacher's Saw",
+            'Broken Sword': 'Broken Sword',
+            'Prescription': 'Prescription',
+            'Eyeball Frog': 'Eyeball Frog',
+            'Eyedrops':     'Eyedrops',
+            'Claim Check':  'Claim Check',
+        },
+        gui_tooltip    = '''\
+            Select the Adult Trade Sequence items to shuffle.
+
+            If "Shuffle All Selected Adult Trade Items" is
+            enabled, every selected item will be shuffled.
+
+            If "Shuffle All Selected Adult Trade Items" is
+            disabled, only one of the selected items will be
+            shuffled. If the Odd Mushroom, Eyeball Frog, or
+            Eyedrops is removed from the player's inventory due
+            to an expired timer or game reset, that item can
+            be reacquired from its <i>non-shuffled</i> location.
         ''',
         shared         = True,
     )
@@ -2690,9 +2424,6 @@ class SettingInfos:
             Overworld Only: Only overworld pots/flying pots are shuffled.
             Dungeons Only: Only dungeon pots/flying pots are shuffled.
 
-            Note: Only pots which normally drop an item are shuffled.
-            Empty pots are not shuffled. Pots containing fairies are not shuffled.
-
             When this setting is enabled, the pots in Ganon's Tower will be
             accessible without Ganon's Boss Key. Proceeding up the tower out
             of the room with the pots will require Ganon's Boss Key.
@@ -2701,6 +2432,22 @@ class SettingInfos:
             'randomize_key': 'randomize_settings',
         },
         shared         = True,
+        disable        = {
+            'off': {'settings': ['shuffle_empty_pots']},
+        }
+    )
+
+    shuffle_empty_pots = Checkbutton(
+        gui_text       = 'Include Empty Pots',
+        default        = False,
+        gui_tooltip    = '''\
+            Enabling this will include empty pots into the location
+            pool based on the Shuffle Pots setting chosen.
+        ''',
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+        shared         = True
     )
 
     shuffle_crates = Combobox(
@@ -2726,6 +2473,22 @@ class SettingInfos:
             'randomize_key': 'randomize_settings',
         },
         shared         = True,
+        disable        = {
+            'off': {'settings': ['shuffle_empty_crates']},
+        }
+    )
+
+    shuffle_empty_crates = Checkbutton(
+        gui_text       = 'Include Empty Crates',
+        default        = False,
+        gui_tooltip    = '''\
+            Enabling this will include empty crates into the location
+            pool based on the Shuffle Crates setting chosen.
+        ''',
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+        shared         = True
     )
 
     shuffle_cows = Checkbutton(
@@ -2879,12 +2642,12 @@ class SettingInfos:
         },
     )
 
-    shuffle_individual_ocarina_notes = Checkbutton(
-        gui_text       = 'Shuffle Individual Ocarina Notes',
+    shuffle_100_skulltula_rupee = Checkbutton(
+        gui_text       = 'Shuffle 100 Skulltula Reward',
         gui_tooltip    = '''\
-            Enabling this locks all Ocarina inputs, and adds 5
-            new items to find that each unlock one of the 5
-            Ocarina notes.
+            Enabling this adds the repeatable Huge Rupee reward
+            from the Skulltula house to the item pool. This is obtained
+            by collecting all 100 gold skulltulas.
         ''',
         default        = False,
         shared         = True,
@@ -2928,6 +2691,553 @@ class SettingInfos:
                 ('vanilla',      1),
                 ('easy',         1),
             ],
+        },
+    )
+
+    shuffle_individual_ocarina_notes = Checkbutton(
+        gui_text       = 'Shuffle Individual Ocarina Notes',
+        gui_tooltip    = '''\
+            Enabling this locks all Ocarina inputs, and adds 5
+            new items to find that each unlock one of the 5
+            Ocarina notes.
+        ''',
+        default        = False,
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    )
+
+    shuffle_dungeon_rewards = Combobox(
+        gui_text       = 'Shuffle Dungeon Rewards',
+        default        = 'reward',
+        choices        = {
+            'vanilla':     'Vanilla Locations',
+            'reward':      'Dungeon Reward Locations',
+            'dungeon':     'Own Dungeon',
+            'regional':    'Regional',
+            'overworld':   'Overworld Only',
+            'any_dungeon': 'Any Dungeon',
+            'anywhere':    'Anywhere',
+        },
+        gui_tooltip    = '''\
+            This controls where Medallions and Spiritual Stones can
+            appear.
+
+            'Vanilla Locations': Medallions and Spiritual Stones will
+            appear in their vanilla locations.
+
+            'Dungeon Reward Locations': Medallions and Spiritual
+            Stones will be awarded when stepping into the blue warps
+            of boss rooms, but not necessarily the boss's vanilla
+            reward. In Multiworld, dungeon rewards will only appear
+            in their own world.
+
+            If you use one of the following options, note that after
+            receiving the last required medallion for the Burning
+            Kakariko cutscene while already in Kakariko, the cutscene
+            doesn't play until you leave and reenter Kakariko (or enter
+            and exit a building).
+
+            'Own Dungeon': Each dungeon reward appears in its respective
+            dungeon, but not necessarily on the boss. If boss entrances
+            are mixed, boss rooms that aren't in a dungeon can't have
+            dungeon rewards. The Light Medallion appears in the Temple
+            of Time, or may be a starting item if the "Free Reward from
+            Rauru" setting is enabled.
+
+            'Regional': Dungeon rewards can only appear in regions
+            near the original dungeon (including the dungeon
+            itself or other dungeons in the region).
+            <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
+
+            'Overworld Only': Dungeon rewards can only appear
+            outside of dungeons.
+
+            'Any Dungeon': Dungeon rewards can only appear
+            inside of dungeons.
+
+            'Anywhere': Dungeon rewards can appear anywhere
+            in the world.
+        ''',
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+        shared         = True,
+    )
+
+    shuffle_mapcompass = Combobox(
+        gui_text       = 'Maps & Compasses',
+        default        = 'dungeon',
+        choices        = {
+            'remove':      'Remove',
+            'startwith':   'Start With',
+            'vanilla':     'Vanilla Locations',
+            'dungeon':     'Own Dungeon',
+            'regional':    'Regional',
+            'overworld':   'Overworld Only',
+            'any_dungeon': 'Any Dungeon',
+            'keysanity':   'Anywhere',
+        },
+        gui_tooltip    = '''\
+            'Remove': Maps and Compasses are removed.
+            This will add a small amount of money and refill items to the pool.
+
+            'Start With': Maps and Compasses are given to you from the start.
+            This will add a small amount of money and refill items to the pool.
+
+            'Vanilla': Maps and Compasses will appear in their vanilla locations.
+
+            'Own Dungeon': Maps and Compasses can only appear in their respective
+            dungeon.
+
+            'Regional': Maps and Compasses can only appear in regions near the
+            original dungeon (including the dungeon itself or other dungeons in
+            the region). <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
+
+            'Overworld Only': Maps and Compasses can only appear
+            outside of dungeons.
+
+            'Any Dungeon': Maps and Compasses can only appear in a dungeon, but
+            not necessarily the dungeon they are for.
+
+            'Anywhere': Maps and Compasses can appear anywhere in the world.
+
+            Setting 'Remove', 'Start With', 'Overworld', or 'Anywhere' will add 2
+            more possible locations to each Dungeons. This makes dungeons more
+            profitable, especially Ice Cavern, Water Temple, and Jabu Jabu's Belly.
+
+            Regardless of the selected option, maps and compasses from pre-completed
+            dungeons won't be placed outside their respective dungeons and maps and
+            compasses from other dungeons won't be placed inside pre-completed dungeons.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    )
+
+    shuffle_smallkeys = Combobox(
+        gui_text       = 'Small Keys',
+        default        = 'dungeon',
+        choices        = {
+            'remove':      'Remove (Keysy)',
+            'vanilla':     'Vanilla Locations',
+            'dungeon':     'Own Dungeon',
+            'regional':    'Regional',
+            'overworld':   'Overworld Only',
+            'any_dungeon': 'Any Dungeon',
+            'keysanity':   'Anywhere (Keysanity)',
+        },
+        gui_tooltip    = '''\
+            'Remove': Small Keys are removed. All locked doors in dungeons
+            will be unlocked. An easier mode.
+
+            'Vanilla': Small Keys will appear in their vanilla locations. You start
+            with 3 keys in Spirit Temple MQ because the vanilla key layout is
+            not beatable in logic. You start with 2 keys in Vanilla/MQ Shadow
+            Temple with its dungeon shortcut enabled to prevent softlocks.
+
+            'Own Dungeon': Small Keys can only appear in their respective
+            dungeon. If Fire Temple is not a Master Quest dungeon, the door to
+            the Boss Key chest will be unlocked.
+
+            'Regional': Small Keys can only appear
+            in regions near the original dungeon (including
+            the dungeon itself or other dungeons in the region).
+            <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
+
+            'Overworld Only': Small Keys can only appear outside
+            of dungeons. You may need to enter a dungeon multiple
+            times to gain items to access the overworld locations
+            with the keys required to finish a dungeon.
+
+            'Any Dungeon': Small Keys can only appear inside of any dungeon, but
+            won't necessarily be in the dungeon that the key is for. A difficult mode
+            since it is more likely to need to enter a dungeon multiple times.
+
+            'Anywhere': Small Keys can appear anywhere in the world. A difficult
+            mode since it is more likely to need to enter a dungeon multiple times.
+
+            Try different combination out, such as:
+            'Small Keys: Dungeon' + 'Boss Keys: Anywhere'
+            for a milder Keysanity experience.
+
+            Regardless of the selected option, small keys from pre-completed dungeons
+            won't be placed outside their respective dungeons and small keys from
+            other dungeons won't be placed inside pre-completed dungeons.
+        ''',
+        disable        = {
+            'any_dungeon': {'settings': ['one_item_per_dungeon']}
+        },
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    )
+
+    shuffle_hideoutkeys = Combobox(
+        gui_text       = "Thieves' Hideout Keys",
+        default        = 'vanilla',
+        disabled_default = 'remove',
+        choices        = {
+            'vanilla':     "Vanilla Locations",
+            'fortress':    "Gerudo Fortress Region",
+            'regional':    "Regional",
+            'overworld':   "Overworld Only",
+            'any_dungeon': "Any Dungeon",
+            'keysanity':   "Anywhere (Keysanity)",
+        },
+        gui_tooltip    = '''\
+            "Vanilla": Thieves' Hideout Keys will appear in their
+            vanilla location, dropping from fighting Gerudo guards
+            that attack when trying to free the jailed carpenters.
+
+            "Gerudo Fortress Region": Thieves' Hideout Keys can only
+            appear in Gerudo Fortress or Thieves' Hideout.
+
+            "Regional": Thieves' Hideout Keys can only appear in
+            Gerudo Valley, Gerudo Fortress, Thieves' Hideout, Gerudo
+            Training Ground, Haunted Wasteland, Desert Colossus, or
+            Spirit Temple.
+
+            "Overworld Only": Thieves' Hideout Keys can only appear
+            outside of dungeons.
+
+            "Any Dungeon": Thieves' Hideout Keys can only appear
+            inside of dungeons.
+
+            "Anywhere": Thieves' Hideout Keys can appear anywhere
+            in the world.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+            'option_remove': ['fortress'],
+        },
+    )
+
+    shuffle_tcgkeys = Combobox(
+        gui_text       = 'Treasure Chest Game Keys',
+        default        = 'vanilla',
+        choices        = {
+            'remove':      "Remove (Keysy)",
+            'vanilla':     "Vanilla Locations",
+            'regional':    "Regional",
+            'overworld':   "Overworld Only",
+            'any_dungeon': "Any Dungeon",
+            'keysanity':   "Anywhere (Keysanity)",
+        },
+        gui_tooltip    = '''\
+            'Remove': All Treasure Chest Game keys will be removed
+            and all doors will remained unlocked.
+
+            'Vanilla': Treasure Chest Game keys will have vanilla
+            behavior (one random per room). The minigame will
+            also have vanilla behavior.
+
+            'Regional': Treasure Chest Game keys can only appear
+            in Hyrule Field, Lon Lon Ranch, the Market, the Temple
+            of Time, Hyrule Castle, outside Ganon's Castle, or
+            inside Ganon's Castle.
+
+            'Overworld Only': Treasure Chest Game keys can only appear
+            outside of dungeons.
+
+            'Any Dungeon': Treasure Chest Game keys can only appear
+            inside of dungeons.
+
+            'Anywhere': Treasure Chest Game keys can appear anywhere
+            in the world.
+        ''',
+        disable        = {
+            '!vanilla': {'settings': ['tcg_requires_lens']}
+        },
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    )
+
+    key_rings_choice = Combobox(
+        gui_text       = 'Key Rings Mode',
+        default        = 'off',
+        choices        = {
+            'off':       'Off',
+            'choice':    'Choose Dungeons',
+            'all':       'All Dungeons',
+            'random':    'Random Selection'
+        },
+        gui_tooltip     = '''\
+            Selected dungeons will have all of their keys found
+            at once in a ring rather than individually.
+
+            For example, instead of shuffling 5 Forest Temple
+            small keys into the pool, you will find a single
+            key ring which will give you all 5 keys at once.
+
+            Selecting key ring for dungeons will have no effect
+            if Small Keys are set to Remove or Vanilla.
+
+            Selecting key ring for Thieves' Hideout will have
+            no effect if Thieves' Hideout keys are in vanilla
+            locations or Gerudo's Fortress is set to Rescue
+            One Carpenter.
+
+            Similarly, selecting Treasure Chest Game will have
+            no effect if the keys aren't shuffled. Treasure Chest
+            Game will be considered when selecting 'All dungeons'
+            or 'Random selection'.
+        ''',
+        shared         = True,
+        disable={
+            'off':    {'settings': ['key_rings', 'keyring_give_bk']},
+            'all':    {'settings': ['key_rings']},
+            'random': {'settings': ['key_rings']},
+        },
+    )
+
+    key_rings = MultipleSelect(
+        gui_text        = 'Key Rings',
+        choices         = {
+            'Thieves Hideout':        "Thieves' Hideout",
+            'Treasure Chest Game':    "Treasure Chest Game",
+            'Forest Temple':          "Forest Temple",
+            'Fire Temple':            "Fire Temple",
+            'Water Temple':           "Water Temple",
+            'Shadow Temple':          "Shadow Temple",
+            'Spirit Temple':          "Spirit Temple",
+            'Bottom of the Well':     "Bottom of the Well",
+            'Gerudo Training Ground': "Gerudo Training Ground",
+            'Ganons Castle':          "Ganon's Castle"
+        },
+        default         = [],
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+        gui_tooltip    = '''\
+            Select areas with keyring instead of multiple keys
+        ''',
+        shared          = True,
+    )
+
+    keyring_give_bk = Checkbutton(
+        gui_text       = 'Key Rings give Boss Keys',
+        gui_tooltip    = '''\
+            Boss Keys will be included in the Key Ring for the specific dungeon.
+            This does not apply to the Ganon's Castle Boss Key.
+        ''',
+        default        = False,
+        shared         = True,
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+    )
+
+    shuffle_bosskeys = Combobox(
+        gui_text       = 'Boss Keys',
+        default        = 'dungeon',
+        choices        = {
+            'remove':      'Remove (Keysy)',
+            'vanilla':     'Vanilla Locations',
+            'dungeon':     'Own Dungeon',
+            'regional':    'Regional',
+            'overworld':   'Overworld Only',
+            'any_dungeon': 'Any Dungeon',
+            'keysanity':   'Anywhere (Keysanity)',
+        },
+        gui_tooltip    = '''\
+            'Remove': Boss Keys are removed. All locked
+            doors in dungeons will be unlocked. An easier
+            mode.
+
+            'Vanilla': Boss Keys will appear in their
+            vanilla locations.
+
+            'Own Dungeon': Boss Keys can only appear in their
+            respective dungeon.
+
+            'Regional': Boss Keys can only appear in regions
+            near the original dungeon (including the dungeon
+            itself or other dungeons in the region).
+            <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
+
+            'Overworld Only': Boss Keys can only appear outside
+            of dungeons. You may need to enter a dungeon without
+            the boss key to get items required to find the key
+            in the overworld.
+
+            'Any Dungeon': Boss Keys can only appear inside
+            of any dungeon, but won't necessarily be in the
+            dungeon that the key is for. A difficult mode since
+            it is more likely to need to enter a dungeon
+            multiple times.
+
+            'Anywhere': Boss Keys can appear
+            anywhere in the world. A difficult mode since
+            it is more likely to need to enter a dungeon
+            multiple times.
+
+            Try different combinations out, such as:
+            'Small Keys: Dungeon' + 'Boss Keys: Anywhere'
+            for a milder Keysanity experience.
+
+            Regardless of the selected option, boss keys from
+            pre-completed dungeons won't be placed outside their
+            respective dungeons and boss keys from other dungeons
+            won't be placed inside pre-completed dungeons.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    )
+
+    shuffle_silver_rupees = Combobox(
+        gui_text       = 'Shuffle Silver Rupees',
+        default        = 'vanilla',
+        choices        = {
+            'remove':      'Remove',
+            'vanilla':     'Vanilla Locations',
+            'dungeon':     'Own Dungeon',
+            'regional':    'Regional',
+            'overworld':   'Overworld Only',
+            'any_dungeon': 'Any Dungeon',
+            'anywhere':    'Anywhere',
+        },
+        gui_tooltip    = '''\
+            Enabling this shuffles the Silver Rupee puzzles into to the
+            item pool.
+
+            Silver Rupees are grouped into sets of 5 (except for some
+            Master Quest dungeons, which have sets of other amounts), each
+            of which permanently unlocks something in a dungeon once all
+            the rupees in that set are collected. Hints will only tell you
+            the dungeon a Silver Rupee corresponds to, but upon collecting
+            it, you will be told the exact room.
+            The vanilla locations of Silver Rupees hold shuffled items.
+
+            'Remove': Silver Rupees are removed and the puzzles are
+            solved. This will add a small amount of money and
+            refill items to the pool.
+
+            'Vanilla': Silver Rupees will appear in their vanilla
+            locations. You will have to collect all of a set in one go to
+            to solve a puzzle.
+
+            'Own Dungeon': Silver Rupees can only appear
+            in their respective dungeon.
+
+            'Regional': Silver Rupees can only appear in regions
+            near the original dungeon (including the dungeon
+            itself or other dungeons in the region).
+            <a href="https://wiki.ootrandomizer.com/index.php?title=Hints#Hint_Regions" target="_blank">The Wiki has a list of corresponding regions here.</a>
+
+            'Overworld Only': Silver Rupees can only appear
+            outside of dungeons.
+
+            'Any Dungeon': Silver Rupees can only appear in a
+            dungeon, but not necessarily the dungeon they are for.
+
+            'Anywhere': Silver Rupees can appear
+            anywhere in the world.
+        ''',
+        shared         = True,
+        disable        = {
+            'remove':  {'settings': ['silver_rupee_pouches_choice', 'silver_rupee_pouches']},
+            'vanilla': {'settings': ['silver_rupee_pouches_choice', 'silver_rupee_pouches']},
+        },
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    )
+
+    silver_rupee_pouches_choice = Combobox(
+        gui_text       = 'Silver Rupee Pouches Mode',
+        default        = 'off',
+        choices        = {
+            'off':       'Off',
+            'choice':    'Choose Puzzles',
+            'all':       'All Puzzles',
+            'random':    'Random Puzzles'
+        },
+        gui_tooltip     = '''\
+            Selected silver rupee puzzles will have all of
+            their silver rupees found at once in a pouch
+            rather than individually.
+
+            For example, instead of shuffling 5 silver
+            rupees for the Fire Trial in Ganon's Castle
+            into the pool, you will find a single pouch
+            which will give you all 5 of them at once.
+        ''',
+        shared         = True,
+        disable        = {
+            'off':    {'settings': ['silver_rupee_pouches']},
+            'all':    {'settings': ['silver_rupee_pouches']},
+            'random': {'settings': ['silver_rupee_pouches']},
+        },
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+    )
+
+    silver_rupee_pouches = MultipleSelect(
+        gui_text        = 'Silver Rupee Pouches',
+        choices         = {
+            'Dodongos Cavern Staircase': "Dodongo's Cavern Staircase",
+            'Ice Cavern Spinning Scythe': "Ice Cavern Spinning Scythe",
+            'Ice Cavern Push Block': "Ice Cavern Push Block",
+            'Bottom of the Well Basement': "Bottom of the Well Basement",
+            'Shadow Temple Scythe Shortcut': "Shadow Temple Scythe Shortcut",
+            'Shadow Temple Invisible Blades': "Shadow Temple Invisible Blades",
+            'Shadow Temple Huge Pit': "Shadow Temple Huge Pit",
+            'Shadow Temple Invisible Spikes': "Shadow Temple Invisible Spikes",
+            'Gerudo Training Ground Slopes': "Gerudo Training Ground Slopes",
+            'Gerudo Training Ground Lava': "Gerudo Training Ground Lava",
+            'Gerudo Training Ground Water': "Gerudo Training Ground Water",
+            'Spirit Temple Child Early Torches': "Spirit Temple Child Early Torches",
+            'Spirit Temple Adult Boulders': "Spirit Temple Adult Boulders",
+            'Spirit Temple Lobby and Lower Adult': "Spirit Temple Lobby and Lower Adult",
+            'Spirit Temple Sun Block': "Spirit Temple Sun Block",
+            'Spirit Temple Adult Climb': "Spirit Temple Adult Climb",
+            'Ganons Castle Spirit Trial': "Ganon's Castle Spirit Trial",
+            'Ganons Castle Light Trial': "Ganon's Castle Light Trial",
+            'Ganons Castle Fire Trial': "Ganon's Castle Fire Trial",
+            'Ganons Castle Shadow Trial': "Ganon's Castle Shadow Trial",
+            'Ganons Castle Water Trial': "Ganon's Castle Water Trial",
+            'Ganons Castle Forest Trial': "Ganon's Castle Forest Trial",
+        },
+        gui_tooltip    = '''\
+            Select puzzles with silver rupee pouches
+            instead of individual silver rupees.
+        ''',
+        default         = [],
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+        shared          = True,
+    )
+
+    enhance_map_compass = Checkbutton(
+        gui_text       = 'Maps and Compasses Give Information',
+        gui_tooltip    = '''\
+            Gives the Map and Compass extra functionality.
+            Map will tell if a dungeon is vanilla or Master Quest.
+            Compass will tell what medallion or stone is within.
+            The Temple of Time Altar will no longer provide
+            information on the location of medallions and stones.
+
+            'Maps/Compasses: Remove': The dungeon information is
+            not available anywhere in the game.
+
+            'Maps/Compasses: Start With': The dungeon information
+            is available immediately from the dungeon menu.
+        ''',
+        default        = False,
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
         },
     )
 
@@ -2987,8 +3297,26 @@ class SettingInfos:
             and MAY be required to complete the game.
 
             Tricks in the left column are NEVER required.
+        '''
+    )
 
-            Tricks are only relevant for Glitchless logic.
+    advanced_allowed_tricks = SearchBox(
+        gui_text       = "Enable Advanced Tricks",
+        shared         = True,
+        choices        = {
+            val['name']: gui_text for gui_text, val in advanced_logic_tricks.items()
+        },
+        default        = [],
+        gui_params     = {
+            'choice_tooltip': {choice['name']: choice['tooltip'] for choice in advanced_logic_tricks.values()},
+            'filterdata': {val['name']: val['tags'] for _, val in advanced_logic_tricks.items()},
+            "hide_when_disabled": True,
+        },
+        gui_tooltip='''
+            Tricks moved to the right column are in-logic
+            and MAY be required to complete the game.
+
+            Tricks in the left column are NEVER required.
         '''
     )
 
@@ -3008,18 +3336,6 @@ class SettingInfos:
         ''',
     )
 
-    starting_songs = SearchBox(
-        gui_text       = "Starting Songs",
-        shared         = True,
-        choices        = {
-            key: value.gui_text for key, value in StartingItems.songs.items()
-        },
-        default        = [],
-        gui_tooltip    = '''\
-            Begin the game with the selected songs already learnt.
-        ''',
-    )
-
     starting_inventory = SearchBox(
         gui_text       = "Starting Items",
         shared         = True,
@@ -3034,6 +3350,18 @@ class SettingInfos:
 
             If playing with Open Zora's Fountain, the Ruto's Letter
             is converted to a regular Bottle.
+        ''',
+    )
+
+    starting_songs = SearchBox(
+        gui_text       = "Starting Songs",
+        shared         = True,
+        choices        = {
+            key: value.gui_text for key, value in StartingItems.songs.items()
+        },
+        default        = [],
+        gui_tooltip    = '''\
+            Begin the game with the selected songs already learnt.
         ''',
     )
 
@@ -3069,6 +3397,16 @@ class SettingInfos:
     )
 
     # Other
+
+    skip_reward_from_rauru = Checkbutton(
+        gui_text       = 'Free Reward from Rauru',
+        gui_tooltip    = '''\
+            The item given by Rauru beyond the Door of Time
+            (the Light Medallion in the vanilla game) is
+            given as a starting item instead.
+        ''',
+        shared         = True,
+    )
 
     no_escape_sequence = Checkbutton(
         gui_text       = 'Skip Tower Escape Sequence',
@@ -3146,12 +3484,22 @@ class SettingInfos:
         shared         = True,
     )
 
-    free_scarecrow = Checkbutton(
-        gui_text       = "Free Scarecrow's Song",
+    scarecrow_behavior = Combobox(
+        gui_text       = 'Scarecrow Behavior',
+        default        = 'vanilla',
+        choices        = {
+            'vanilla':   'Vanilla',
+            'fast':   'Fast',
+            'free':  'Free',
+        },
         gui_tooltip    = '''\
-            Pulling out the Ocarina near a
-            spot at which Pierre can spawn will
-            do so, without needing the song.
+            "Fast" will require setting the same song
+            both as child and adult, but pulling out
+            the Ocarina near a spot at which Pierre can
+            spawn will do so, without needing the song.
+
+            "Free" removes both the need to set the song first
+            and to play the song to summon Pierre.
         ''',
         shared         = True,
     )
@@ -3187,58 +3535,6 @@ class SettingInfos:
         ''',
         default        = False,
         shared         = True,
-    )
-
-    chicken_count_random = Checkbutton(
-        gui_text       = 'Random Cucco Count',
-        gui_tooltip    = '''\
-            Anju will give a reward for collecting a random
-            number of Cuccos.
-        ''',
-        disable        = {
-            True: {'settings' : ['chicken_count']},
-        },
-        shared         = True,
-    )
-
-    chicken_count = Scale(
-        gui_text       = 'Cucco Count',
-        default        = 7,
-        minimum        = 0,
-        maximum        = 7,
-        gui_tooltip    = '''\
-            Anju will give a reward for turning
-            in the chosen number of Cuccos.
-        ''',
-        shared         = True,
-        gui_params     = {
-            'no_line_break': True,
-        },
-    )
-
-    big_poe_count_random = Checkbutton(
-        gui_text       = 'Random Big Poe Target Count',
-        gui_tooltip    = '''\
-            The Poe buyer will give a reward for turning
-            in a random number of Big Poes.
-        ''',
-        disable        = {
-            True: {'settings' : ['big_poe_count']},
-        },
-        shared         = True,
-    )
-
-    big_poe_count = Scale(
-        gui_text         = "Big Poe Target Count",
-        default          = 10,
-        minimum          = 1,
-        maximum          = 10,
-        gui_tooltip      = '''\
-            The Poe buyer will give a reward for turning
-            in the chosen number of Big Poes.
-        ''',
-        disabled_default = 1,
-        shared           = True,
     )
 
     easier_fire_arrow_entry = Checkbutton(
@@ -3294,29 +3590,254 @@ class SettingInfos:
         gui_tooltip    = '''\
             The door leading to the boat room in Shadow Temple will
             be one-way only.  This also removes the lock on the door,
-            since one-way doors cannot be locked by small keys. 
+            since one-way doors cannot be locked by small keys.
         ''',
         default        = False,
         shared         = True,
     )
 
+    song_of_time_changes_age = Checkbutton(
+        gui_text       = 'Song of Time Changes Age',
+        gui_tooltip    = '''\
+            Playing the Song of Time will offer a choice to switch from
+            child to adult or vice versa.  Changing age will reload the
+            current area.
+        ''',
+        default        = False,
+        shared         = True,
+    )
 
-    ocarina_songs = Combobox(
-        gui_text       = 'Randomize Ocarina Melodies',
-        default        = 'off',
+    fast_shadow_boat = Checkbutton(
+        gui_text       = 'Fast Shadow Boat',
+        gui_tooltip    = '''\
+            The boat sequence in Shadow Temple will be massively sped up.
+            The two Stalfos will still fall on the boat, but you
+            won't have time to fight them.
+        ''',
+        default        = False,
+        shared         = True,
+    )
+
+    chicken_count_random = Checkbutton(
+        gui_text       = 'Random Cucco Count',
+        gui_tooltip    = '''\
+            Anju will give a reward for collecting a random
+            number of Cuccos.
+        ''',
+        disable        = {
+            True: {'settings': ['chicken_count']},
+        },
+        shared         = True,
+    )
+
+    chicken_count = Scale(
+        gui_text       = 'Cucco Count',
+        default        = 7,
+        minimum        = 0,
+        maximum        = 7,
+        gui_tooltip    = '''\
+            Anju will give a reward for turning
+            in the chosen number of Cuccos.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'no_line_break': True,
+        },
+    )
+
+    big_poe_count_random = Checkbutton(
+        gui_text       = 'Random Big Poe Target Count',
+        gui_tooltip    = '''\
+            The Poe buyer will give a reward for turning
+            in a random number of Big Poes.
+        ''',
+        disable        = {
+            True: {'settings': ['big_poe_count']},
+        },
+        shared         = True,
+    )
+
+    big_poe_count = Scale(
+        gui_text         = "Big Poe Target Count",
+        default          = 10,
+        minimum          = 1,
+        maximum          = 10,
+        gui_tooltip      = '''\
+            The Poe buyer will give a reward for turning
+            in the chosen number of Big Poes.
+        ''',
+        disabled_default = 1,
+        shared           = True,
+    )
+
+    clearer_hints = Checkbutton(
+        gui_text       = 'Clearer Hints',
+        gui_tooltip    = '''\
+            The hints provided by Gossip Stones will
+            be very direct if this option is enabled.
+        ''',
+        shared         = True,
+        default        = True,
+    )
+
+    hints = Combobox(
+        gui_text       = 'Gossip Stones',
+        default        = 'always',
         choices        = {
-            'off': 'Off',
-            'frog': 'Frog Songs Only',
-            'warp': 'Warp Songs Only',
-            'all':  'All Songs',
+            'none':   'No Hints',
+            'mask':   'Hints; Need Mask of Truth',
+            'agony':  'Hints; Need Stone of Agony',
+            'always': 'Hints; Need Nothing',
         },
         gui_tooltip    = '''\
-            Will need to memorize a new set of songs.
-            Can be silly, but difficult. All songs are
-            generally sensible, but warp songs are
-            typically more difficult than frog songs.
-            ''',
+            Gossip Stones can be made to give hints
+            about where items can be found.
+
+            Different settings can be chosen to
+            decide which item is needed to
+            speak to Gossip Stones. Choosing to
+            stick with the Mask of Truth will
+            make the hints very difficult to
+            obtain.
+
+            Hints for 'on the way of the hero' are
+            locations that contain items that are
+            required to beat the game.
+        ''',
         shared         = True,
+    )
+
+    hint_dist = Combobox(
+        gui_text       = 'Hint Distribution',
+        default        = 'balanced',
+        choices        =hint_dist_list(),
+        gui_tooltip    =hint_dist_tips(),
+        gui_params     = {
+            "dynamic": True,
+        },
+        shared         = True,
+        disable        = {
+            '!bingo' : {'settings': ['bingosync_url']},
+        },
+    )
+
+    bingosync_url = Textinput(
+        gui_text       = "Bingosync URL",
+        shared         = False,
+        gui_tooltip    = '''\
+            Enter a URL to a Bingosync bingo board in
+            order to have hints specific to items needed
+            to beat the board. Goals which are completed simply
+            by finding a specific item are not hinted
+            (e.g. "Boomerang").
+            In addition, overworld tokensanity will always
+            hint the location of Sun's Song, and shopsanity
+            will always hint the location of a wallet.
+
+            Leaving this entry blank or providing an
+            invalid URL will generate generic item hints
+            designed to allow completion of most bingo goals.
+            Non Bingosync bingo boards are not directly
+            supported, and will also generate generic item hints.
+        ''',
+        disabled_default = None,
+        gui_params       = {
+            "size"               : "full",
+            "hide_when_disabled" : True,
+        },
+    )
+
+    item_hints = SettingInfoList(
+        gui_type       = None,
+        gui_text       = None,
+        shared         = True,
+        choices        = [name for name, item in ItemInfo.items.items() if item.type not in ('Drop', 'Event', 'Refill', 'Shop')]
+    )
+
+    hint_dist_user = SettingInfoDict(None, None, True, {})
+    plandomized_locations = SettingInfoDict("Plandomized Locations", None, True, {})
+
+    misc_hints = MultipleSelect(
+        gui_text        = 'Misc. Hints',
+        choices         = {
+            'altar':               'Temple of Time Altar',
+            'dampe_diary':         "Dampé's Diary (Hookshot)",
+            'ganondorf':           'Ganondorf (Light Arrows)',
+            'warp_songs_and_owls': 'Warp Songs and Owls',
+            '10_skulltulas':       'House of Skulltula: 10',
+            '20_skulltulas':       'House of Skulltula: 20',
+            '30_skulltulas':       'House of Skulltula: 30',
+            '40_skulltulas':       'House of Skulltula: 40',
+            '50_skulltulas':       'House of Skulltula: 50',
+            '100_skulltulas':      'House of Skulltula: 100',
+            'frogs2':              'Frogs Ocarina Game',
+            'mask_shop':           'Shuffled Mask Shop',
+            'unique_merchants':    'Unique Merchants',
+            'big_poes':            'Market Big Poes',
+            'skull_mask':          'Deku Theater Skull Mask',
+            'mask_of_truth':       'Deku Theater Mask of Truth',
+        },
+        gui_tooltip    = '''\
+            This setting adds some hints at locations
+            other than Gossip Stones:
+
+            Reading the Temple of Time altar as child
+            will tell you the locations of the
+            Spiritual Stones (unless Maps and Compasses
+            Give Information is enabled).
+
+            Reading the Temple of Time altar as adult
+            will tell you the locations of the Medallions
+            (unless Maps and Compasses Give Information
+            is enabled), as well as the conditions for
+            building the Rainbow Bridge and getting the
+            Boss Key for Ganon's Castle.
+
+            Reading the diary of Dampé the gravekeeper
+            as adult will tell you the location of one
+            of the Hookshots.
+
+            Talking to Ganondorf in his boss room will
+            tell you the location of the Light Arrows.
+            If this option is enabled and Ganondorf
+            is reachable without Light Arrows, Gossip
+            Stones will never hint the Light Arrows.
+
+            Playing a warp song will tell you where
+            it leads. (If warp song destinations
+            are vanilla, this is always enabled.)
+            The two Owls at Lake Hylia and Death Mountain
+            that move you around will tell you where they go.
+
+            Talking to a cursed House of Skulltula
+            resident will tell you the reward they will
+            give you for removing their curse.
+
+            Placing yourself on the log at Zora River
+            where you play the songs for the frogs will
+            tell you what the reward is for playing all
+            six non-warp songs.
+
+            If shuffled, right side items in the mask
+            shop will be visible but not obtainable
+            before completing the child trade quest.
+            Mask of Truth's shelf slot is always visible.
+
+            If Shuffle Expensive Merchants is enabled, the
+            three characters that sell a new item will tell
+            what the reward is for buying their item.
+            If Shuffle Magic Beans is enabled, the Magic bean
+            salesman will tell what the reward is for buying
+            the 60 Rupees item.
+
+            The Poe collector will tell the reward for selling
+            him Big Poes.
+
+            The sign in Deku Theater will tell the reward for showing
+            the Skull Mask and/or the Mask of Truth.
+        ''',
+        shared         = True,
+        default        = ['altar', 'ganondorf', 'warp_songs_and_owls'],
     )
 
     correct_chest_appearances = Combobox(
@@ -3407,32 +3928,15 @@ class SettingInfos:
         shared         = True,
         default        = [],
         gui_params     = {
-            "hide_when_disabled" : True,
-        },
-    )
-
-    minor_items_special_texture = MultipleSelect(
-        gui_text       = 'Minor Items use Chext Texture',
-        choices        = {
-            'bombchus': 'Bombchus',
-            'hearts':   'Heart Pieces & Containers',
-        },
-        gui_tooltip    = '''\
-            Chests with Heart Pieces, Heart Containers, or Bombchus 
-            will appear in chests with an item-specific texture.
-        ''',
-        shared         = True,
-        default        = ['hearts'],
-        gui_params     = {
-            "hide_when_disabled" : True,
+            "hide_when_disabled": True,
         },
     )
 
     invisible_chests = Checkbutton(
         gui_text       = 'Invisible Chests',
         gui_tooltip    = '''\
-            Chests will be only be visible with
-            the Lens of Truth. Lens is not logically
+            Chests will only be visible with the
+            Lens of Truth. Lens is not logically
             required for normally visible chests.
         ''',
         shared         = True,
@@ -3471,6 +3975,15 @@ class SettingInfos:
         },
     )
 
+    key_appearance_match_dungeon = Checkbutton(
+        gui_text       = 'Key Appearance Matches Dungeon',
+        gui_tooltip    = '''\
+            Small keys and boss keys (not key rings)
+            will use custom models to match their dungeon.
+        ''',
+        shared         = True,
+    )
+
     potcrate_textures_specific = MultipleSelect(
         gui_text        = 'Pot and Crate Textures',
         choices         = {
@@ -3504,173 +4017,35 @@ class SettingInfos:
         },
     )
 
-    key_appearance_match_dungeon = Checkbutton(
-        gui_text       = 'Key Appearance Matches Dungeon',
-        gui_tooltip    = '''\
-            Small keys and boss keys (not key rings)
-            will use custom models to match their dungeon.
-        ''',
-        shared         = True,
-    )
-
-    clearer_hints = Checkbutton(
-        gui_text       = 'Clearer Hints',
-        gui_tooltip    = '''\
-            The hints provided by Gossip Stones will
-            be very direct if this option is enabled.
-        ''',
-        shared         = True,
-        default        = True,
-    )
-
-    hints = Combobox(
-        gui_text       = 'Gossip Stones',
-        default        = 'always',
+    ocarina_songs = MultipleSelect(
+        gui_text       = 'Randomize Ocarina Melodies',
+        default        = [],
         choices        = {
-            'none':   'No Hints',
-            'mask':   'Hints; Need Mask of Truth',
-            'agony':  'Hints; Need Stone of Agony',
-            'always': 'Hints; Need Nothing',
+            'frog':   'Top Row Songs',
+            'warp':   'Warp Songs',
+            'frogs2': 'Frogs Ocarina Game',
         },
         gui_tooltip    = '''\
-            Gossip Stones can be made to give hints
-            about where items can be found.
+            Will need to memorize a new set of songs.
+            Can be silly, but difficult. All songs are
+            generally sensible, but warp songs are
+            typically more difficult than top row
+            songs.
 
-            Different settings can be chosen to
-            decide which item is needed to
-            speak to Gossip Stones. Choosing to
-            stick with the Mask of Truth will
-            make the hints very difficult to
-            obtain.
+            "Top Row Songs": Randomizes Zelda's Lullaby,
+            Epona's Song, Saria's Song, Sun's Song,
+            Song of Time, and Song of Storms.
 
-            Hints for 'on the way of the hero' are
-            locations that contain items that are
-            required to beat the game.
-        ''',
+            "Warp Songs": Randomizes Minuet of Forest,
+            Bolero of Fire, Serenade of Water, Requiem
+            of Spirit, Nocturne of Shadow, and Prelude
+            of Light.
+
+            "Frogs Ocarina Game": Randomizes the 14
+            notes of the final song of the Fabulous
+            Five Froggish Tenors.
+            ''',
         shared         = True,
-    )
-
-    hint_dist = Combobox(
-        gui_text       = 'Hint Distribution',
-        default        = 'balanced',
-        choices        =hint_dist_list(),
-        gui_tooltip    =hint_dist_tips(),
-        gui_params     = {
-            "dynamic": True,
-        },
-        shared         = True,
-        disable        = {
-            '!bingo' : {'settings' : ['bingosync_url']},
-        },
-    )
-
-    bingosync_url = Textinput(
-        gui_text       = "Bingosync URL",
-        shared         = False,
-        gui_tooltip    = '''\
-            Enter a URL to a Bingosync bingo board in
-            order to have hints specific to items needed
-            to beat the board. Goals which are completed simply
-            by finding a specific item are not hinted
-            (e.g. "Boomerang").
-            In addition, overworld tokensanity will always
-            hint the location of Sun's Song, and shopsanity
-            will always hint the location of a wallet.
-
-            Leaving this entry blank or providing an
-            invalid URL will generate generic item hints
-            designed to allow completion of most bingo goals.
-            Non Bingosync bingo boards are not directly
-            supported, and will also generate generic item hints.
-        ''',
-        disabled_default = None,
-        gui_params       = {
-            "size"               : "full",
-            "hide_when_disabled" : True,
-        },
-    )
-
-    item_hints = SettingInfoList(
-        gui_type       = None,
-        gui_text       = None,
-        shared         = True,
-        choices        = [name for name, item in ItemInfo.items.items() if item.type not in ('Drop', 'Event', 'Refill', 'Shop')]
-    )
-
-    hint_dist_user = SettingInfoDict(None, None, True, {})
-    plandomized_locations = SettingInfoDict("Plandomized Locations", None, True, {})
-
-    misc_hints = MultipleSelect(
-        gui_text        = 'Misc. Hints',
-        choices         = {
-            'altar':       'Temple of Time Altar',
-            'dampe_diary': "Dampé's Diary (Hookshot)",
-            'ganondorf':   'Ganondorf (Light Arrows)',
-            'warp_songs_and_owls':  'Warp Songs and Owls',
-            '10_skulltulas':  'House of Skulltula: 10',
-            '20_skulltulas':  'House of Skulltula: 20',
-            '30_skulltulas':  'House of Skulltula: 30',
-            '40_skulltulas':  'House of Skulltula: 40',
-            '50_skulltulas':  'House of Skulltula: 50',
-            'frogs2':         'Frogs Ocarina Game',
-            'mask_shop':  'Shuffled Mask Shop',
-            'unique_merchants':  'Unique Merchants',
-        },
-        gui_tooltip    = '''\
-            This setting adds some hints at locations
-            other than Gossip Stones:
-
-            Reading the Temple of Time altar as child
-            will tell you the locations of the
-            Spiritual Stones (unless Maps and Compasses
-            Give Information is enabled).
-
-            Reading the Temple of Time altar as adult
-            will tell you the locations of the Medallions
-            (unless Maps and Compasses Give Information
-            is enabled), as well as the conditions for
-            building the Rainbow Bridge and getting the
-            Boss Key for Ganon's Castle.
-
-            Reading the diary of Dampé the gravekeeper
-            as adult will tell you the location of one
-            of the Hookshots.
-
-            Talking to Ganondorf in his boss room will
-            tell you the location of the Light Arrows.
-            If this option is enabled and Ganondorf
-            is reachable without Light Arrows, Gossip
-            Stones will never hint the Light Arrows.
-
-            Playing a warp song will tell you where
-            it leads. (If warp song destinations
-            are vanilla, this is always enabled.)
-            The two Owls at Lake Hylia and Death Mountain
-            that move you around will tell you where they go.
-
-            Talking to a cursed House of Skulltula
-            resident will tell you the reward they will
-            give you for removing their curse.
-
-            Placing yourself on the log at Zora River
-            where you play the songs for the frogs will
-            tell you what the reward is for playing all
-            six non warp songs.
-
-            If shuffled, right side items in the mask
-            shop will be visible but not obtainable
-            before completing the child trade quest.
-            Mask of Truth's shelf slot is always visible.
-
-            If Shuffle Expensive Merchants is enabled, the
-            three characters that sell a new item will tell
-            what the reward is for buying their item.
-            If Shuffle Magic Beans is enabled, the Magic bean
-            salesman will tell what the reward is for buying
-            the 60 Rupees item.
-        ''',
-        shared         = True,
-        default        = ['altar', 'ganondorf', 'warp_songs_and_owls'],
     )
 
     text_shuffle = Combobox(
@@ -3731,18 +4106,6 @@ class SettingInfos:
         shared         = True,
     )
 
-    no_collectible_hearts = Checkbutton(
-        gui_text       = 'Hero Mode',
-        gui_tooltip    = '''\
-            No recovery hearts will drop from
-            enemies or objects.
-            (You might still find some freestanding
-            or in chests depending on other settings.)
-        ''',
-        default        = False,
-        shared         = True,
-    )
-
     starting_tod = Combobox(
         gui_text       = 'Starting Time of Day',
         default        = 'default',
@@ -3768,14 +4131,18 @@ class SettingInfos:
     )
 
     blue_fire_arrows = Checkbutton(
-        gui_text       = 'Blue Fire Arrows',
-        gui_tooltip    = '''\
+        gui_text            = 'Blue Fire Arrows',
+        gui_tooltip         = '''\
             Ice arrows gain the power of blue fire.
             They can be used to melt red ice
             and break the mud walls in Dodongo's Cavern.
         ''',
-        default        = False,
-        shared         = True,
+        default             = False,
+        disabled_default    = True,
+        gui_params          = {
+            "hide_when_disabled": True,
+        },
+        shared              = True,
     )
 
     fix_broken_drops = Checkbutton(
@@ -3788,6 +4155,71 @@ class SettingInfos:
             logic might require you to get a deku shield this way. There is a
             magic jar on top of the Gerudo Training Ground eye statue that does
             not always refill your magic in the vanilla game.
+        ''',
+        shared         = True,
+    )
+
+    tcg_requires_lens = Checkbutton(
+        gui_text       = 'Require Lens of Truth for Treasure Chest Game',
+        gui_tooltip    = '''\
+            Force the player to always lose the
+            treasure chest game in the first room
+            unless they have the Lens of Truth and
+            a Magic Meter.
+            Does not function if Treasure Chest Game
+            small keys are shuffled.
+        ''',
+        shared         = True,
+    )
+
+    no_collectible_hearts = Checkbutton(
+        gui_text       = 'Hero Mode',
+        gui_tooltip    = '''\
+            No recovery hearts will drop from
+            enemies or objects.
+            (You might still find some freestanding
+            or in chests depending on other settings.)
+        ''',
+        default        = False,
+        shared         = True,
+    )
+
+    one_item_per_dungeon = Checkbutton(
+        gui_text       = 'Dungeons Have One Major Item',
+        gui_tooltip    = '''\
+            Dungeons have exactly one major item.
+            This naturally makes each dungeon similar in value
+            rather than vary based on shuffled locations.
+
+            Spirit Temple Colossus hands count as part
+            of the dungeon. Spirit Temple has TWO items
+            to match vanilla distribution.
+
+            Boss Keys and Fortress Keys only count as
+            major items if they are shuffled Anywhere
+            (Keysanity) or in Any Dungeon, and Small
+            Keys only count as major items if they are
+            shuffled Anywhere (Keysanity). This setting
+            is disabled if Small Keys are shuffled in
+            Any Dungeon.
+
+            GS Tokens only count as major items if the
+            bridge or Ganon Boss Key requirements are
+            set to "GS Tokens".
+
+            Heart Containers and Pieces of Heart only
+            count as major items if the bridge or Ganon
+            Boss Key requirements are set to "Hearts".
+
+            Bombchus only count as major items if the
+            "Add Bombchu Bag and Drops" setting is enabled.
+
+            Pre-completed dungeons (if any) won't have
+            a major item.
+
+            This setting has potential to conflict with
+            other randomizer settings. Should seeds continuously
+            fail to generate, consider turning this option off.
         ''',
         shared         = True,
     )
@@ -3832,11 +4264,13 @@ class SettingInfos:
         gui_text       = 'Ice Traps',
         default        = 'normal',
         choices        = {
-            'off':       'No Ice Traps',
-            'normal':    'Normal Ice Traps',
-            'on':        'Extra Ice Traps',
-            'mayhem':    'Ice Trap Mayhem',
-            'onslaught': 'Ice Trap Onslaught',
+            'off':            'No Ice Traps',
+            'normal':         'Normal Ice Traps',
+            'on':             'Extra Ice Traps',
+            'mayhem':         'Ice Trap Mayhem',
+            'onslaught':      'Ice Trap Onslaught',
+            'custom_count':   'Custom (count)',
+            'custom_percent': 'Custom (%)',
         },
         gui_tooltip    = '''\
             'Off': All Ice Traps are removed.
@@ -3853,8 +4287,54 @@ class SettingInfos:
             'Ice Trap Onslaught': All junk items will be
             replaced by Ice Traps, even those in the
             base pool.
+
+            'Custom (count)': Allows specifying a specific number of
+            "Junk items" to be converted to Ice Traps in the pool.
+
+            'Custom (%)': Allows specifiying a percentage of
+            "Junk" items to be converted to Ice Traps in the pool.
         ''',
         shared         = True,
+        disable        = {
+            'off' : {'settings': ['custom_ice_trap_percent', 'custom_ice_trap_count']},
+            'normal' : {'settings': ['custom_ice_trap_percent', 'custom_ice_trap_count']},
+            'on' : {'settings': ['custom_ice_trap_percent', 'custom_ice_trap_count']},
+            'mayhem' : {'settings': ['custom_ice_trap_percent', 'custom_ice_trap_count']},
+            'onslaught' : {'settings': ['custom_ice_trap_percent', 'custom_ice_trap_count']},
+            'custom_percent' : {'settings': ['custom_ice_trap_count']},
+            'custom_count' : {'settings': ['custom_ice_trap_percent']},
+        },
+    )
+
+    custom_ice_trap_percent = Scale(
+        gui_text       = 'Custom Ice Trap Percent',
+        default        = 50,
+        minimum        = 0,
+        maximum        = 100,
+        gui_tooltip    = '''\
+            Percentage of junk items that will be replaced
+            with Ice Traps when using 'Custom' Ice Traps setting.
+        ''',
+        shared         = True,
+        gui_params     = {
+            "hide_when_disabled": True,
+        },
+    )
+
+    custom_ice_trap_count = Scale(
+        gui_text       = 'Custom Ice Trap Count',
+        default        = 100,
+        minimum        = 0,
+        maximum        = 2000,
+        gui_tooltip    = '''\
+            Number of junk items that will be replaced
+            with Ice Traps when using 'Custom' Ice Traps setting.
+        ''',
+        shared         = True,
+        gui_params     = {
+            "hide_when_disabled": True,
+            "size": "medium",
+        },
     )
 
     ice_trap_appearance = Combobox(
@@ -3877,40 +4357,6 @@ class SettingInfos:
             Items (and in small chests if CSMC enabled).
 
             'Anything': Ice Traps may appear as anything.
-        ''',
-        shared         = True,
-    )
-
-    adult_trade_shuffle = Checkbutton(
-        gui_text       = 'Shuffle All Adult Trade Items',
-        gui_tooltip    = '''\
-            Shuffle all adult trade sequence items. If disabled,
-            a random item will be selected, and Anju will always
-            give an item even if Pocket Egg is not shuffled.
-        ''',
-        shared         = True,
-        default        = False,
-    )
-
-    adult_trade_start = MultipleSelect(
-        gui_text       = 'Adult Trade Sequence Items',
-        default        = ['Pocket Egg', 'Pocket Cucco', 'Cojiro', 'Odd Mushroom', 'Odd Potion', 'Poachers Saw',
-                          'Broken Sword', 'Prescription', 'Eyeball Frog', 'Eyedrops', 'Claim Check'],
-        choices        = {
-            'Pocket Egg':   'Pocket Egg',
-            'Pocket Cucco': 'Pocket Cucco',
-            'Cojiro':       'Cojiro',
-            'Odd Mushroom': 'Odd Mushroom',
-            'Odd Potion':   'Odd Potion',
-            'Poachers Saw': "Poacher's Saw",
-            'Broken Sword': 'Broken Sword',
-            'Prescription': 'Prescription',
-            'Eyeball Frog': 'Eyeball Frog',
-            'Eyedrops':     'Eyedrops',
-            'Claim Check':  'Claim Check',
-        },
-        gui_tooltip    = '''\
-            Select the items to shuffle in the adult trade sequence.
         ''',
         shared         = True,
     )
@@ -4713,6 +5159,40 @@ class SettingInfos:
         default        = False,
     )
 
+    slowdown_music_when_lowhp = Checkbutton(
+        gui_text       = 'Slow Down Music When Low HP',
+        shared         = False,
+        cosmetic       = True,
+        gui_tooltip    = '''\
+            The music will slow down slightly when being low on HP.
+            Does not apply on the standard battle enemy music.
+        ''',
+        default        = False,
+    )
+
+    custom_music_directorypicker = Directoryinput(
+        gui_text   = "Custom Music",
+        shared     = False,
+        cosmetic   = True,
+        gui_tooltip = '''\
+            Upload custom music files in OoTR's dedicated .ootrs format.
+            You can upload individual files or directories consisting of multiple
+            custom sequences. Implementation into the seed is controlled by
+            the background_music setting.
+            Note: Multiple directories at once can only be uploaded by dragging them
+            onto the text field.
+        ''',
+        gui_params = {
+            "file_types": [
+                {
+                  "name": "OoTR Sequence Files",
+                  "extensions": ["ootrs"]
+                }
+            ],
+            "hide_when_disabled": True,
+        },
+    )
+
     background_music = Combobox(
         gui_text       = 'Background Music',
         shared         = False,
@@ -4806,29 +5286,6 @@ class SettingInfos:
             ],
         },
         default        = False,
-    )
-
-    custom_music_directorypicker = Directoryinput(
-        gui_text   = "Custom Music",
-        shared     = False,
-        cosmetic   = True,
-        gui_tooltip = '''\
-            Upload custom music files in OoTR's dedicated .ootrs format.
-            You can upload individual files or directories consisting of multiple
-            custom sequences. Implementation into the seed is controlled by
-            the background_music setting.
-            Note: Multiple directories at once can only be uploaded by dragging them
-            onto the text field.
-        ''',
-        gui_params = {
-            "file_types": [
-                {
-                  "name": "OoTR Sequence Files",
-                  "extensions": ["ootrs"]
-                }
-            ],
-            "hide_when_disabled": True,
-        },
     )
 
     credits_music = Checkbutton(
@@ -5214,17 +5671,6 @@ class SettingInfos:
                 ('random-ear-safe', 1),
             ]
         }
-    )
-
-    slowdown_music_when_lowhp = Checkbutton(
-        gui_text       = 'Slow Down Music When Low HP',
-        shared         = False,
-        cosmetic       = True,
-        gui_tooltip    = '''\
-            The music will slow down slightly when being low on HP.
-            Does not apply on the standard battle enemy music.
-        ''',
-        default        = False,
     )
 
     sfx_silver_rupee = Combobox(

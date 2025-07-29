@@ -89,11 +89,12 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
     ice_traps = [item for item in itempool if item.name == 'Ice Trap']
     # Extend with ice traps manually placed in plandomizer
     ice_traps.extend(
-        location.item for location in cloakable_locations
-        if (location.has_preview()
-            and location.item is not None
-            and location.item.name == 'Ice Trap'
-            and location.item.looks_like_item is None))
+        location.item
+        for location in cloakable_locations
+        if location.item is not None
+        and location.item.name == 'Ice Trap'
+        and location.item.looks_like_item is None
+    )
     junk_items = remove_junk_items.copy()
     junk_items.remove('Ice Trap')
     major_items = [name for name, item in ItemInfo.items.items() if item.type == 'Item' and item.advancement and item.index is not None]
@@ -141,7 +142,7 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
         for triforce in triforcepool:
             tokenpool.pop()
         progitempool = list(filter(lambda item: item not in triforcepool and item not in tokenpool, progitempool))
-        
+
         skull_locations = list(filter(lambda loc: loc.type == 'GS Token', fill_locations))
         fill_locations = list(filter(lambda loc: loc not in skull_locations, fill_locations))
         fill_restrictive_fast(worlds, skull_locations, triforcepool)
@@ -158,8 +159,11 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
 
     # If some dungeons are supposed to be empty, fill them with useless items.
     if worlds[0].settings.empty_dungeons_mode != 'none':
-        empty_locations = [location for location in fill_locations
-                           if location.world.empty_dungeons[HintArea.at(location).dungeon_name].empty]
+        empty_locations = [
+            location
+            for location in fill_locations
+            if location.world.precompleted_dungeons.get(HintArea.at(location).dungeon_name, False)
+        ]
         for location in empty_locations:
             fill_locations.remove(location)
 
@@ -172,12 +176,18 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
                     restdungeon.append(item)
                 else:
                     restother.append(item)
-            fast_fill(empty_locations, restother)
+            if worlds[0].settings.triforce_blitz_s4_coop:
+                fast_ownworld_fill(worlds, empty_locations, restother)
+            else:
+                fast_fill(empty_locations, restother)
             restitempool = restdungeon + restother
             random.shuffle(restitempool)
         else:
             # We don't have to worry about this if dungeon items stay in their own dungeons
-            fast_fill(empty_locations, restitempool)
+            if worlds[0].settings.triforce_blitz_s4_coop:
+                fast_ownworld_fill(worlds, empty_locations, restitempool)
+            else:
+                fast_fill(empty_locations, restitempool)
 
     # places the songs into the world
     # Currently places songs only at song locations. if there's an option
@@ -216,7 +226,10 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
     # No restrictions at all. Places them completely randomly. Since they
     # cannot affect the beatability, we don't need to check them
     logger.info('Placing the rest of the items.')
-    fast_fill(fill_locations, restitempool)
+    if worlds[0].settings.triforce_blitz_s4_coop:
+        fast_ownworld_fill(worlds, fill_locations, restitempool)
+    else:
+        fast_fill(fill_locations, restitempool)
 
     # Log unplaced item/location warnings
     for item in progitempool + prioitempool + restitempool:
@@ -261,7 +274,7 @@ def fill_dungeons_restrictive(worlds: list[World], search: Search, shuffled_loca
     # sort in the order Other, Small Key, Boss Key before placing dungeon items
     # python sort is stable, so the ordering is still random within groups
     # fill_restrictive processes the resulting list backwards so the Boss Keys will actually be placed first
-    sort_order = {"BossKey": 3, "GanonBossKey": 3, "SmallKey": 2}
+    sort_order = {"BossKey": 3, "GanonBossKey": 3, "SmallKey": 2, "SmallKeyRing": 2}
     dungeon_items.sort(key=lambda item: sort_order.get(item.type, 1))
 
     # place dungeon items
@@ -280,7 +293,7 @@ def fill_dungeon_unique_item(worlds: list[World], search: Search, fill_locations
     minor_items = [item for item in itempool if not item.majoritem]
 
     if worlds[0].settings.empty_dungeons_mode != 'none':
-        dungeons = [dungeon for world in worlds for dungeon in world.dungeons if not world.empty_dungeons[dungeon.name].empty]
+        dungeons = [dungeon for world in worlds for dungeon in world.dungeons if not world.precompleted_dungeons.get(dungeon.name, False)]
     else:
         dungeons = [dungeon for world in worlds for dungeon in world.dungeons]
 
@@ -418,10 +431,22 @@ def fill_restrictive(worlds: list[World], base_search: Search, locations: list[L
 
     dungeons = [dungeon for world in worlds for dungeon in world.dungeons]
     all_dungeon_locations = []
-
+    # iterate of all the dungeons in a random order, placing the item there
     for dungeon in dungeons:
-        dungeon_locations = [location for region in dungeon.regions for location in region.locations]
+        # Need to re-get dungeon regions to ensure boss rooms are considered
+        regions = []
+        for region in dungeon.world.regions:
+            try:
+                if HintArea.at(region).dungeon_name == dungeon.name:
+                    regions.append(region)
+            except:
+                pass
+        dungeon_locations = [location for region in regions for location in region.locations if location in locations]
+
+        # cache this list to flag afterwards
         all_dungeon_locations.extend(dungeon_locations)
+
+    chose_tfb_duality_piece = False
 
     # loop until there are no items or locations
     while itempool and locations:
@@ -437,6 +462,11 @@ def fill_restrictive(worlds: list[World], base_search: Search, locations: list[L
             l2cations = [l for l in locations if not l.minor_only]
         else:
             l2cations = locations
+
+        # In TFB S4 Co-op, only place items in their own world
+        if worlds[0].settings.triforce_blitz_s4_coop:
+            l2cations = [l for l in l2cations if item_to_place.world.id == l.world.id]
+
         random.shuffle(l2cations)
 
         # generate the max search with every remaining item
@@ -521,6 +551,32 @@ def fill_restrictive(worlds: list[World], base_search: Search, locations: list[L
         # decrement count
         count -= 1
 
+        if item_to_place.name in triforce_blitz_items:
+            logger.debug('Placed %s (%d) at %s', item_to_place.name, item_to_place.world.id, spot_to_fill.worldAndName)
+            if worlds[0].settings.triforce_blitz_mw_linked_tf_pieces == 'duality' and not chose_tfb_duality_piece and len(worlds) == 2:
+                linked_item = get_duality_item(item_to_place, itempool, len(worlds))
+                chose_tfb_duality_piece = True
+            elif worlds[0].settings.triforce_blitz_mw_linked_tf_pieces == 'trinity' and len(worlds) == 3:
+                linked_item = get_trinity_item(item_to_place, itempool, len(worlds))
+            elif worlds[0].settings.triforce_blitz_mw_linked_tf_pieces == 'linked' and len(worlds) > 1:
+                linked_item = get_linked_item(item_to_place, itempool, len(worlds))
+            else:
+                linked_item = None
+
+            if linked_item:
+                linked_spot = linked_item.world.get_location(spot_to_fill.name)
+                linked_item.world.push_item(linked_spot, linked_item)
+                logger.debug('Trinity of piece %s (%d) is %s (%d)', item_to_place.name, item_to_place.world.id, linked_item.name, linked_item.world.id)
+                logger.debug('Placed %s (%d) at %s', linked_item.name, linked_item.world.id, linked_spot.worldAndName)
+
+                itempool.remove(linked_item)
+                if linked_spot in locations:
+                    locations.remove(linked_spot)
+                else:
+                    raise FillError(f'Generation failed: Trinity {item_to_place} [World {item_to_place.world.id + 1}] could not be placed at {linked_spot.worldAndName} because the location is already filled')
+
+                count -= 1
+
     # assert that the specified number of items were placed
     if count > 0:
         raise FillError(f'Could not place the specified number of item. {count} remaining to be placed.')
@@ -529,6 +585,59 @@ def fill_restrictive(worlds: list[World], base_search: Search, locations: list[L
     # re-add unplaced items that were skipped
     itempool.extend(unplaced_items)
 
+def get_linked_item(item: Item, itempool: list[Item], world_count: int) -> Optional[Item]:
+    if item.name not in triforce_blitz_items: return None
+    tf_index = triforce_blitz_items.index(item.name)
+    triforce_piece_count = len(triforce_blitz_items)
+
+    # Get the previous world's Triforce of Courage
+    if tf_index == 0:
+        for _, unplaced_item in enumerate(itempool):
+            target_world_id = ((item.world.id - 1 + world_count) % world_count)
+            if target_world_id == unplaced_item.world.id and unplaced_item.name == triforce_blitz_items[(triforce_piece_count - 1)]:
+                return unplaced_item
+
+    # Get the next world's Triforce of Power
+    if tf_index == (triforce_piece_count - 1):
+        for _, unplaced_item in enumerate(itempool):
+            target_world_id = ((item.world.id + 1) % world_count)
+            if target_world_id == unplaced_item.world.id and unplaced_item.name == triforce_blitz_items[0]:
+                return unplaced_item
+
+    return None
+
+def get_duality_item(item: Item, itempool: list[Item], world_count: int) -> Optional[Item]:
+    if item.name not in triforce_blitz_items: return None
+    tf_index = triforce_blitz_items.index(item.name)
+
+    # Get the other world's matching Triforce piece
+    for _, unplaced_item in enumerate(itempool):
+        target_world_id = ((item.world.id + 1) % world_count)
+        if target_world_id == unplaced_item.world.id and unplaced_item.name == triforce_blitz_items[tf_index]:
+            return unplaced_item
+
+    return None
+
+def get_trinity_item(item: Item, itempool: list[Item], world_count: int) -> Optional[Item]:
+    if item.name not in triforce_blitz_items: return None
+    tf_index = triforce_blitz_items.index(item.name)
+    triforce_piece_count = len(triforce_blitz_items)
+
+    # Get the next world's matching Triforce piece
+    if tf_index == ((item.world.id + 1) % triforce_piece_count):
+        for _, unplaced_item in enumerate(itempool):
+            target_world_id = ((item.world.id + 1) % world_count)
+            if target_world_id == unplaced_item.world.id and unplaced_item.name == triforce_blitz_items[((item.world.id) % triforce_piece_count)]:
+                return unplaced_item
+
+    # Get the previous world's matching Triforce piece
+    if tf_index == ((item.world.id - 1 + triforce_piece_count) % triforce_piece_count):
+        for _, unplaced_item in enumerate(itempool):
+            target_world_id = ((item.world.id - 1 + world_count) % world_count)
+            if target_world_id == unplaced_item.world.id and unplaced_item.name == triforce_blitz_items[item.world.id % triforce_piece_count]:
+                return unplaced_item
+
+    return None
 
 # This places items in the itempool into the locations
 # It does not check for reachability, only that the item is
@@ -541,7 +650,8 @@ def fill_restrictive_fast(worlds: list[World], locations: list[Location], itempo
         # get location that allows this item
         spot_to_fill = None
         for location in locations:
-            if location.can_fill_fast(item_to_place):
+            tfbs4_coop_valid_location = not (worlds[0].settings.triforce_blitz_s4_coop and location.world.id != item_to_place.world.id)
+            if location.can_fill_fast(item_to_place) and tfbs4_coop_valid_location:
                 spot_to_fill = location
                 break
 
@@ -567,3 +677,16 @@ def fast_fill(locations: list[Location], itempool: list[Item]) -> None:
         spot_to_fill = locations.pop()
         item_to_place = itempool.pop()
         spot_to_fill.world.push_item(spot_to_fill, item_to_place)
+
+# this behaves like fast_fill, except items only get placed in their own world
+def fast_ownworld_fill(worlds: list[World], locations: list[Location], itempool: list[Item]) -> None:
+    for world in worlds:
+        world_locations = [l for l in locations if l.world.id == world.id]
+        world_itempool = [i for i in itempool if i.world.id == world.id]
+        random.shuffle(world_locations)
+        while world_itempool and world_locations:
+            spot_to_fill = world_locations.pop()
+            item_to_place = world_itempool.pop()
+            locations.remove(spot_to_fill)
+            itempool.remove(item_to_place)
+            spot_to_fill.world.push_item(spot_to_fill, item_to_place)

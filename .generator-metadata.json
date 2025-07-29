@@ -1,0 +1,12 @@
+{
+  "version": "8.2.46-blitz-0.84",
+  "presets": {
+    "default": {
+      "preset": "tfb"
+    },
+    "triforce-blitz-s4-coop": {
+      "preset": "Triforce Blitz S4 Co-op",
+      "ordinal": 401
+    }
+  }
+}

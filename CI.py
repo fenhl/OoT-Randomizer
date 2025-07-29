@@ -11,22 +11,23 @@ import sys
 import unittest
 from io import StringIO
 from typing import NoReturn
-
+from Main import resolve_settings
+from Patches import get_override_table, get_override_table_bytes
+from Rom import Rom
+import Unittest as Tests
 from Messages import ITEM_MESSAGES, KEYSANITY_MESSAGES, MISC_MESSAGES
 from SettingsList import SettingInfos, logic_tricks, validate_settings
 import Unittest as Tests
 from Utils import data_path
 
 
-def error(msg: str, can_fix: bool | str) -> None:
+def error(msg: str, can_fix: bool) -> None:
     if not hasattr(error, "count"):
         error.count = 0
     print(msg, file=sys.stderr)
     error.count += 1
     if can_fix:
         error.can_fix = True
-        if can_fix == 'release':
-            error.can_fix_release = True
     else:
         error.cannot_fix = True
 
@@ -94,6 +95,7 @@ def check_presets_formatting(fix_errors: bool = False) -> None:
 
 def check_hell_mode_tricks(fix_errors: bool = False) -> None:
     # Check for tricks missing from Hell Mode preset.
+    # Not checking for advanced logic tricks since hellmode is still glitchless logic
     with open(data_path('presets_default.json'), encoding='utf-8') as f:
         presets = json.load(f)
 
@@ -112,14 +114,14 @@ def check_hell_mode_tricks(fix_errors: bool = False) -> None:
             print(file=file)
 
 
-def check_release_presets(fix_errors: bool = False) -> None:
+def check_preset_spoilers(fix_errors: bool = False) -> None:
     # Check to make sure spoiler logs are enabled for all presets.
     with open(data_path('presets_default.json'), encoding='utf-8') as f:
         presets = json.load(f)
 
     for preset_name, preset in presets.items():
         if not preset['create_spoiler']:
-            error(f'{preset_name} preset does not create spoiler logs', 'release')
+            error(f'{preset_name} preset does not create spoiler logs', True)
             preset['create_spoiler'] = True
 
     if fix_errors:
@@ -195,6 +197,10 @@ def check_code_style(fix_errors: bool = False) -> None:
     for path in (repo_dir / 'ASM' / 'src').iterdir():
         if path.suffix == '.asm':
             check_file_format(path)
+    for subdir in ('drop_overrides', 'hacks'):
+        for path in (repo_dir / 'ASM' / 'src' / subdir).iterdir():
+            if path.suffix == '.asm':
+                check_file_format(path)
     for subdir in ('Glitched World', 'Hints', 'World'):
         for path in (repo_dir / 'data' / subdir).iterdir():
             if path.suffix == '.json':
@@ -207,6 +213,35 @@ def check_code_style(fix_errors: bool = False) -> None:
     check_file_format(repo_dir / 'data' / 'presets_default.json')
     check_file_format(repo_dir / 'data' / 'settings_mapping.json')
 
+# Check the sizes of the xflag, alt_override, and cfg_item_override tables, using hopefully the worst case
+def check_table_sizes() -> None:
+    from SceneFlags import build_xflag_tables, build_xflags_from_world, get_alt_list_bytes, get_collectible_flag_table_bytes
+    from World import World
+    from Settings import Settings
+    filename = 'plando-table-tests'
+    distribution_file = Tests.load_spoiler(os.path.join(Tests.test_dir, 'plando', filename + '.json'))
+    settings = Tests.load_settings(distribution_file['settings'], seed='TESTTESTTEST', filename=filename)
+    resolve_settings(settings)
+    world = World(0,settings)
+    for filename in ('Overworld.json', 'Bosses.json'):
+        world.load_regions_from_json(os.path.join(data_path('World'), filename))
+    world.create_dungeons()
+
+    xflags_tables, alt_list = build_xflags_from_world(world)
+    xflag_scene_table, xflag_room_table, xflag_room_blob, max_bit = build_xflag_tables(xflags_tables)
+    rom = Rom()
+    if len(xflag_room_table) > rom.sym_length('xflag_room_table'):
+        error(f'Exceeded xflag room table size: {len(xflag_room_table)}', False)
+    if len(xflag_room_blob) > rom.sym_length('xflag_room_blob'):
+        error(f'Exceed xflag blob table size: {len(xflag_room_blob)}', False)
+    alt_list_bytes = get_alt_list_bytes(alt_list)
+    if len(alt_list_bytes) > rom.sym_length('alt_overrides'):
+        error(f'Exceeded alt override table size: {len(alt_list)}', False)
+
+    override_table = get_override_table(world)
+    override_table_bytes = get_override_table_bytes(override_table)
+    if len(override_table_bytes) >= rom.sym_length('cfg_item_overrides'):
+        error(f'Exceeded override table size: {len(override_table)}', False)
 
 def run_ci_checks() -> NoReturn:
     parser = argparse.ArgumentParser()
@@ -223,12 +258,11 @@ def run_ci_checks() -> NoReturn:
         check_hell_mode_tricks(args.fix)
         check_code_style(args.fix)
         check_presets_formatting(args.fix)
-        if args.release:
-            check_release_presets(args.fix)
+        check_table_sizes()
+        check_preset_spoilers(args.fix)
         check_message_duplicates()
 
     exit_ci(args.fix)
-
 
 def exit_ci(fix_errors: bool = False) -> NoReturn:
     if hasattr(error, "count") and error.count:
@@ -250,7 +284,7 @@ def exit_ci(fix_errors: bool = False) -> NoReturn:
                     which_errors = 'some of these errors'
                 else:
                     which_errors = 'these errors'
-                print(f'Run `CI.py --fix --no_unit_tests{release_arg}` to automatically fix {which_errors}.', file=sys.stderr)
+                print(f'Run `./CI.py --fix --no_unit_tests{release_arg}` to automatically fix {which_errors}.', file=sys.stderr)
             sys.exit(1)
     else:
         print(f'CI checks successful.')

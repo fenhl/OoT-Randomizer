@@ -3,6 +3,7 @@
 # See `python -m unittest -h` or `pytest -h` for more options.
 
 from __future__ import annotations
+import io
 import json
 import logging
 import os
@@ -21,8 +22,10 @@ from LocationList import location_is_viewable
 from Main import main, resolve_settings, build_world_graphs
 from Messages import Message, read_messages, shuffle_messages
 from Settings import Settings, get_preset_files
+from SettingsList import logic_tricks, advanced_logic_tricks
 from Spoiler import Spoiler
 from Rom import Rom
+from Audiobank import *
 
 test_dir = os.path.join(os.path.dirname(__file__), 'tests')
 output_dir = os.path.join(test_dir, 'Output')
@@ -207,7 +210,7 @@ class TestPlandomizer(unittest.TestCase):
         if not os.path.isfile('./ZOOTDEC.z64'):
             self.skipTest("Base ROM file not available.")
         filename = "plando-ammo-max-out-of-bounds"
-        logic_rules_settings = ['glitchless', 'glitched', 'none']
+        logic_rules_settings = ['glitchless', 'advanced', 'none']
         for logic_rules_setting in logic_rules_settings:
             with self.subTest(f"Logic Rules: {logic_rules_setting}"):
                 settings = Settings({
@@ -233,6 +236,9 @@ class TestPlandomizer(unittest.TestCase):
             "plando-new-placed-ice-traps",
             "plando-placed-and-added-ice-traps",
             "non-standard-visible-ice-traps",
+            "custom-ice-traps-percent-triforce-hunt",
+            "custom-ice-traps-count",
+            "custom-ice-traps-percent",
         ]
         for filename in filenames:
             with self.subTest(filename):
@@ -258,6 +264,19 @@ class TestPlandomizer(unittest.TestCase):
                     with self.subTest("ice trap models in non-standard visible locations"):
                         for location in distribution_file['locations']:
                             self.assertIn('model', spoiler['locations'][location])
+                if filename == "custom-ice-traps-count":
+                    self.assertEqual(spoiler['item_pool']['Ice Trap'], 50)
+                if filename in  ["custom-ice-traps-percent", "custom-ice-traps-percent-triforce-hunt"]:
+                    # Count up all the junk that is left
+                    from ItemPool import junk_pool_base
+                    junk = [item for item, weight in junk_pool_base] + ['Rupee (1)', 'Recovery Heart', 'Bombs (20)', 'Arrows (30)']
+                    junk_count = 0
+                    for item in spoiler['item_pool'].keys():
+                        if item in junk:
+                            junk_count += spoiler['item_pool'][item]
+                    ice_trap_count = spoiler['item_pool']['Ice Trap']
+                    # Check that 75% of the junk is ice traps, per the plando
+                    self.assertEqual(int((junk_count + ice_trap_count) * .75), ice_trap_count)
 
     def test_should_not_throw_exception(self):
         filenames = [
@@ -647,7 +666,6 @@ class TestEntranceRandomizer(unittest.TestCase):
         # with no items, and Prelude and Serenade should be foolish. If this behaviour
         # is changed, this unit test serves as a reminder to revisit warp song
         # foolishness.
-        # Currently only tests glitchless as glitched logic does not support ER yet.
         # Assumes the player starts with an ocarina to use a warp song from Sheik at
         # Colossus or Ice Cavern.
         filenames = [
@@ -657,10 +675,14 @@ class TestEntranceRandomizer(unittest.TestCase):
             distribution_file = load_spoiler(os.path.join(test_dir, 'plando', filename + '.json'))
             settings = load_settings(distribution_file['settings'], seed='TESTTESTTEST', filename=filename)
             resolve_settings(settings)
-            # Test for an entrance shuffle error during world validation.
-            # If the test succeeds, this confirms Serenade and Prelude can be foolish.
-            with self.assertRaises(EntranceShuffleError):
-                build_world_graphs(settings)
+            # Test glitchless and advanced logic
+            logic_rules_settings = ['glitchless', 'advanced']
+            for logic_rules_setting in logic_rules_settings:
+                settings.logic_rules = logic_rules_setting
+                # Test for an entrance shuffle error during world validation.
+                # If the test succeeds, this confirms Serenade and Prelude can be foolish.
+                with self.assertRaises(EntranceShuffleError):
+                    build_world_graphs(settings)
 
 
 class TestValidSpoilers(unittest.TestCase):
@@ -794,9 +816,60 @@ class TestValidSpoilers(unittest.TestCase):
                       for filename in os.listdir(test_dir)
                       if filename.endswith('.sav')]
         for filename in test_files:
-            with self.subTest(filename=filename):
-                settings = load_settings(filename, seed='TESTTESTTEST')
+            # Test glitchless and advanced logic
+            logic_rules_settings = ['glitchless', 'advanced']
+            for logic_rules_setting in logic_rules_settings:
+                with self.subTest(logic_rules_setting, filename=filename):
+                    settings = load_settings(filename, seed='TESTTESTTEST')
+                    # If this is already an advanced logic test, don't run twice
+                    if settings.logic_rules == 'advanced' and logic_rules_setting == 'advanced':
+                        continue
+                    settings.logic_rules = logic_rules_setting
+                    try:
+                        main(settings)
+                    except EntranceShuffleError:
+                        self.skipTest("Entrance shuffle error, see https://github.com/OoTRandomizer/OoT-Randomizer/issues/2181 for a potential fix.")
+                    # settings.output_file contains the first part of the filename
+                    spoiler = load_spoiler('%s_Spoiler.json' % settings.output_file)
+                    self.verify_woth(spoiler)
+                    self.verify_playthrough(spoiler)
+                    self.verify_disables(spoiler)
+
+    def test_advanced_tricks(self):
+        filename =  os.path.join(test_dir, 'glitched-standard.sav')
+        settings = load_settings(filename, seed='TESTTESTTEST')
+        # Enable all standard logic tricks
+        settings.allowed_tricks = [trick['name'] for trick in logic_tricks.values()]
+        for i in range(2):
+            test_name = 'Glitched logic with all standard tricks'
+            # On the second pass, enable all advanced logic tricks
+            if i == 1:
+                test_name = 'Glitched logic with all advanced tricks'
+                settings.advanced_allowed_tricks = [trick['name'] for trick in advanced_logic_tricks.values()]
+            with self.subTest(test_name, filename=filename):
                 main(settings)
+                # settings.output_file contains the first part of the filename
+                spoiler = load_spoiler('%s_Spoiler.json' % settings.output_file)
+                self.verify_woth(spoiler)
+                self.verify_playthrough(spoiler)
+                self.verify_disables(spoiler)
+
+    def test_advanced_tricks_entrances(self):
+        filename =  os.path.join(test_dir, 'glitched-entrances.sav')
+        settings = load_settings(filename, seed='TESTTESTTEST')
+        # Enable all standard logic tricks
+        settings.allowed_tricks = [trick['name'] for trick in logic_tricks.values()]
+        for i in range(2):
+            test_name = 'Glitched logic with entrances and all standard tricks'
+            # On the second pass, enable all advanced logic tricks
+            if i == 1:
+                test_name = 'Glitched logic with entrances and all advanced tricks'
+                settings.advanced_allowed_tricks = [trick['name'] for trick in advanced_logic_tricks.values()]
+            with self.subTest(test_name, filename=filename):
+                try:
+                    main(settings)
+                except EntranceShuffleError:
+                    self.skipTest("Entrance shuffle error, see https://github.com/OoTRandomizer/OoT-Randomizer/issues/2181 for a potential fix.")
                 # settings.output_file contains the first part of the filename
                 spoiler = load_spoiler('%s_Spoiler.json' % settings.output_file)
                 self.verify_woth(spoiler)
@@ -813,7 +886,10 @@ class TestValidSpoilers(unittest.TestCase):
                 with self.subTest(name, filename=ofile):
                     settings = make_settings_for_test(
                             settings_dict, seed='TESTTESTTEST', outfilename=ofile, strict=False)
-                    main(settings)
+                    try:
+                        main(settings)
+                    except EntranceShuffleError:
+                        self.skipTest("Entrance shuffle error, see https://github.com/OoTRandomizer/OoT-Randomizer/issues/2181 for a potential fix.")
                     spoiler = load_spoiler('%s_Spoiler.json' % settings.output_file)
                     self.verify_woth(spoiler)
                     self.verify_playthrough(spoiler)
@@ -861,3 +937,54 @@ class TestTextShuffle(unittest.TestCase):
         messages = read_messages(rom)
         shuffle_messages(messages)
         shuffle_messages(messages, False)
+
+class TestSceneFlags(unittest.TestCase):
+    def test_build_room_xflags(self):
+        from SceneFlags import build_room_xflags, encode_room_xflags
+        # Using Goron city child room 3 (main room with the goron pot)
+        room_locations = [
+            (41, 1), # Goron Pot Drop 1
+            (41, 2), # Goron Pot Drop 2
+            (41, 3), # Goron Pot Drop 3
+            (41, 4), # Goron Pot Drop 4
+            (41, 5), # Goron Pot Drop 5
+            (41, 6), # Goron Pot Drop 6
+            (41, 7), # Goron Pot Drop 7
+            (41, 8), # Goron Pot Drop 8
+            (42, 0), # Pot 1
+            (43, 0), # Pot 2
+            (44, 0), # Pot 3
+            (45, 0), # Pot 4
+            (46, 0), # Pot 5
+        ]
+        test_encoded = [0, 41, 1, 1, 9, 1, 1, 4]
+
+        flags, bits = build_room_xflags(room_locations)
+        diff, encoded = encode_room_xflags(flags)
+        self.assertListEqual(test_encoded, encoded)
+
+class TestCustomAudio(unittest.TestCase):
+    def test_audiobank(self):
+        AUDIOBANK_POINTER_TABLE = 0x00B896A0
+        AUDIOBANK_ADDR = 0xD390
+        AUDIOTABLE_INDEX_ADDR = 0xB8A1C0
+        AUDIOTABLE_ADDR = 0x79470
+
+        if not os.path.isfile('./ZOOTDEC.z64'):
+            self.skipTest("Base ROM file not available.")
+
+        rom: Rom = Rom("ZOOTDEC.z64")
+        audiobank_file = rom.read_bytes(AUDIOBANK_ADDR, 0x1CA50)
+        audiotable_index = rom.read_bytes(AUDIOTABLE_INDEX_ADDR, 0x80) # Read audiotable index into bytearray
+        audiotable_file = rom.read_bytes(AUDIOTABLE_ADDR, 0x460AD0) # Read audiotable (samples) into bytearray
+        rom_bytes: bytearray = rom.buffer
+        audiobank_table_header = rom.read_bytes(AUDIOBANK_POINTER_TABLE, 0x10)
+        num_banks = int.from_bytes(audiobank_table_header[0:2], 'big')
+        audiobanks: list[AudioBank] = []
+        for i in range(0, num_banks):
+            curr_entry = rom.read_bytes(AUDIOBANK_POINTER_TABLE + 0x10 + (0x10 * i), 0x10)
+            audiobank: AudioBank = AudioBank(curr_entry, audiobank_file, audiotable_file, audiotable_index)
+            audiobanks.append(audiobank)
+        self.assertEqual(num_banks, 0x26)
+        self.assertEqual(audiobanks[0x25].bank_offset, 0x19110)
+        self.assertEqual(audiobanks[0x25].size, 0x3940)

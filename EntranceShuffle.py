@@ -110,7 +110,7 @@ entrance_shuffle_table = [
     ('Dungeon',         ('Gerudo Fortress -> Gerudo Training Ground Lobby',                 { 'index': 0x0008 }),
                         ('Gerudo Training Ground Lobby -> Gerudo Fortress',                 { 'index': 0x03A8 })),
 
-    ('DungeonSpecial',  ('Ganons Castle Grounds -> Ganons Castle Lobby',                    { 'index': 0x0467 }),
+    ('DungeonSpecial',  ('Ganons Castle Ledge -> Ganons Castle Lobby',                      { 'index': 0x0467 }),
                         ('Ganons Castle Lobby -> Castle Grounds From Ganons Castle',        { 'index': 0x023D })),
 
     ('ChildBoss',       ('Deku Tree Before Boss -> Queen Gohma Boss Room',                  { 'index': 0x040f, 'savewarp_addresses': [ 0xB06292, 0xBC6162, 0xBC60AE ] }),
@@ -129,6 +129,9 @@ entrance_shuffle_table = [
                         ('Bongo Bongo Boss Room -> Shadow Temple Before Boss',              { 'index': 0x02B2 })),
     ('AdultBoss',       ('Spirit Temple Before Boss -> Twinrova Boss Room',                 { 'index': 0x008D, 'savewarp_addresses': [ 0xB062F2, 0xBC6122 ] }),
                         ('Twinrova Boss Room -> Spirit Temple Before Boss',                 { 'index': 0x02F5 })),
+
+    ('SpecialBoss',     ('Ganons Castle Main -> Ganons Castle Tower',                       { 'index': 0x041B }),
+                        ('Ganons Castle Tower -> Ganons Castle Main',                       { 'index': 0x0534 })),
 
     ('Interior',        ('Kokiri Forest -> KF Midos House',                                 { 'index': 0x0433 }),
                         ('KF Midos House -> Kokiri Forest',                                 { 'index': 0x0443 })),
@@ -385,14 +388,14 @@ entrance_shuffle_table = [
     ('WarpSong',        ('Nocturne of Shadow Warp -> Graveyard Warp Pad Region',            { 'index': 0x0568, 'addresses': [0xBF0244] })),
     ('WarpSong',        ('Prelude of Light Warp -> Temple of Time',                         { 'index': 0x05F4, 'addresses': [0xBF0246] })),
 
-    ('BlueWarp',        ('Queen Gohma Boss Room -> KF Outside Deku Tree',                   { 'index': 0x0457, 'addresses': [0xAC93A2, 0xCA3142] })),
-    ('BlueWarp',        ('King Dodongo Boss Room -> Death Mountain',                        { 'index': 0x047A, 'addresses': [0xAC9336, 0xCA30CA] })),
-    ('BlueWarp',        ('Barinade Boss Room -> Zoras Fountain',                            { 'index': 0x010E, 'addresses': [0xAC936A, 0xCA31B2] })),
-    ('BlueWarp',        ('Phantom Ganon Boss Room -> Sacred Forest Meadow',                 { 'index': 0x0608, 'addresses': [0xAC9F96, 0xCA3D66, 0xCA3D5A], 'child_index': 0x0600 })),
-    ('BlueWarp',        ('Volvagia Boss Room -> DMC Central Local',                         { 'index': 0x0564, 'addresses': [0xACA516, 0xCA3DF2, 0xCA3DE6], 'child_index': 0x04F6 })),
-    ('BlueWarp',        ('Morpha Boss Room -> Lake Hylia',                                  { 'index': 0x060C, 'addresses': [0xAC995A, 0xCA3E82, 0xCA3E76], 'child_index': 0x0604 })),
-    ('BlueWarp',        ('Bongo Bongo Boss Room -> Graveyard Warp Pad Region',              { 'index': 0x0580, 'addresses': [0xACA496, 0xCA3FA2, 0xCA3F96], 'child_index': 0x0568 })),
-    ('BlueWarp',        ('Twinrova Boss Room -> Desert Colossus',                           { 'index': 0x0610, 'addresses': [0xACA402, 0xCA3F12, 0xCA3F06], 'child_index': 0x01F1 })),
+    ('BlueWarp',        ('Queen Gohma Blue Warp -> KF Outside Deku Tree',                   { 'index': 0x0457, 'addresses': [0xAC93A2, 0xCA3142, 0xCA316A] })),
+    ('BlueWarp',        ('King Dodongo Blue Warp -> Death Mountain',                        { 'index': 0x047A, 'addresses': [0xAC9336, 0xCA30CA, 0xCA30EA] })),
+    ('BlueWarp',        ('Barinade Blue Warp -> Zoras Fountain',                            { 'index': 0x010E, 'addresses': [0xAC936A, 0xCA31B2, 0xCA3702] })),
+    ('BlueWarp',        ('Phantom Ganon Blue Warp -> Sacred Forest Meadow',                 { 'index': 0x0608, 'addresses': [0xAC9F96, 0xCA3D66, 0xCA3D5A, 0xCA3D32], 'child_index': 0x0600 })),
+    ('BlueWarp',        ('Volvagia Blue Warp -> DMC Central Local',                         { 'index': 0x0564, 'addresses': [0xACA516, 0xCA3DF2, 0xCA3DE6, 0xCA3DBE], 'child_index': 0x04F6 })),
+    ('BlueWarp',        ('Morpha Blue Warp -> Lake Hylia',                                  { 'index': 0x060C, 'addresses': [0xAC995A, 0xCA3E82, 0xCA3E76, 0xCA3E4A], 'child_index': 0x0604 })),
+    ('BlueWarp',        ('Bongo Bongo Blue Warp -> Graveyard Warp Pad Region',              { 'index': 0x0580, 'addresses': [0xACA496, 0xCA3FA2, 0xCA3F96, 0xCA3F6A], 'child_index': 0x0568 })),
+    ('BlueWarp',        ('Twinrova Blue Warp -> Desert Colossus',                           { 'index': 0x0610, 'addresses': [0xACA402, 0xCA3F12, 0xCA3F06, 0xCA3EDA], 'child_index': 0x01F1 })),
 
     ('Extra',           ('ZD Eyeball Frog Timeout -> Zoras Domain',                         { 'index': 0x0153 })),
     ('Extra',           ('ZR Top of Waterfall -> Zora River',                               { 'index': 0x0199 })),
@@ -412,6 +415,15 @@ priority_entrance_table = {
     'Requiem': (['Desert Colossus', 'Desert Colossus From Spirit Lobby'], ['OwlDrop', 'Spawn', 'WarpSong', 'OverworldOneWay']),
 }
 
+escape_from_kak_child_spawn = 'Temple of Time -> ToT Entrance'
+escape_from_kak_adult_spawn = 'DMT Owl Flight -> Kak Impas Rooftop'
+
+escape_from_kak_entrances = [
+    'Kakariko Village -> Hyrule Field',
+    'Kak Behind Gate -> Death Mountain',
+    'Kakariko Village -> Graveyard'
+]
+escape_from_kak_side_entrance = 'Kakariko Village -> Kak Windmill'
 
 class EntranceShuffleError(ShuffleError):
     pass
@@ -427,9 +439,8 @@ def set_entrances(worlds: list[World], savewarps_to_connect: list[tuple[Entrance
         savewarp.connect(savewarp.replaces.connected_region)
 
     for world in worlds:
-        if world.settings.logic_rules != 'glitched':
-            # Set entrance data for all entrances, even those we aren't shuffling
-            set_all_entrances_data(world)
+        # Set entrance data for all entrances, even those we aren't shuffling
+        set_all_entrances_data(world)
 
     if worlds[0].entrance_shuffle:
         shuffle_random_entrances(worlds)
@@ -472,9 +483,14 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
             one_way_entrance_pools['WarpSong'] = world.get_shufflable_entrances(type='WarpSong')
             if worlds[0].settings.reachable_locations != 'beatable' and worlds[0].settings.logic_rules == 'glitchless':
                 # In glitchless, there aren't any other ways to access these areas
-                wincons = [worlds[0].settings.bridge, worlds[0].settings.shuffle_ganon_bosskey]
+                wincons = {worlds[0].settings.bridge, worlds[0].settings.shuffle_ganon_bosskey}
                 if worlds[0].settings.shuffle_ganon_bosskey == 'on_lacs':
-                    wincons.append(worlds[0].settings.lacs_condition)
+                    wincons.add(worlds[0].settings.lacs_condition)
+                if worlds[0].settings.shuffle_dungeon_rewards != 'dungeon' and (
+                    worlds[0].settings.shuffle_dungeon_rewards not in ('vanilla', 'reward')
+                    or worlds[0].mixed_pools_bosses
+                ):
+                    wincons -= {'dungeons', 'stones', 'medallions'}
                 if (
                     worlds[0].settings.reachable_locations == 'all'
                     or ('tokens' in wincons and worlds[0].settings.tokensanity in ('off', 'dungeons'))
@@ -503,6 +519,8 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
         if worlds[0].settings.shuffle_bosses == 'full':
             entrance_pools['Boss'] = world.get_shufflable_entrances(type='ChildBoss', only_primary=True)
             entrance_pools['Boss'] += world.get_shufflable_entrances(type='AdultBoss', only_primary=True)
+            if worlds[0].settings.shuffle_ganon_tower:
+                entrance_pools['Boss'] += world.get_shufflable_entrances(type='SpecialBoss', only_primary=True)
             if worlds[0].settings.open_forest == 'closed':
                 # Deku is forced vanilla below, so Queen Gohma must be vanilla to ensure she is reachable.
                 # This is already enforced by the fill algorithm in most cases, but this covers the odd settings combination where it isn't.
@@ -510,20 +528,34 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
         elif worlds[0].settings.shuffle_bosses == 'limited':
             entrance_pools['ChildBoss'] = world.get_shufflable_entrances(type='ChildBoss', only_primary=True)
             entrance_pools['AdultBoss'] = world.get_shufflable_entrances(type='AdultBoss', only_primary=True)
+            if worlds[0].settings.shuffle_ganon_tower:
+                entrance_pools['AdultBoss'] += world.get_shufflable_entrances(type='SpecialBoss', only_primary=True)
             if worlds[0].settings.open_forest == 'closed':
                 # Deku is forced vanilla below, so Queen Gohma must be vanilla to ensure she is reachable.
                 # This is already enforced by the fill algorithm in most cases, but this covers the odd settings combination where it isn't.
                 entrance_pools['ChildBoss'].remove(world.get_entrance('Deku Tree Before Boss -> Queen Gohma Boss Room'))
 
         if worlds[0].shuffle_dungeon_entrances:
-            entrance_pools['Dungeon'] = world.get_shufflable_entrances(type='Dungeon', only_primary=True)
-            # The fill algorithm will already make sure gohma is reachable, however it can end up putting
-            # a forest escape via the hands of spirit on Deku leading to Deku on spirit in logic. This is
-            # not really a closed forest anymore, so specifically remove Deku Tree from closed forest.
-            if worlds[0].settings.open_forest == 'closed':
-                entrance_pools['Dungeon'].remove(world.get_entrance('KF Outside Deku Tree -> Deku Tree Lobby'))
-            if worlds[0].shuffle_special_dungeon_entrances:
-                entrance_pools['Dungeon'] += world.get_shufflable_entrances(type='DungeonSpecial', only_primary=True)
+            if worlds[0].settings.shuffle_dungeon_entrances == 'tfbs4':
+                all_boss_dungeons = [dungeon for dungeon in world.dungeons if dungeon.vanilla_boss_name]
+                all_medallion_dungeon_names = [dungeon.name for dungeon in all_boss_dungeons if 'Medallion' in dungeon.vanilla_reward]
+                all_stone_dungeons_names = [dungeon.name for dungeon in all_boss_dungeons if 'Medallion' not in dungeon.vanilla_reward]
+
+                all_dungeons_entrances = world.get_shufflable_entrances(type='Dungeon', only_primary=True)
+                all_medallion_dungeon_entrances = list(filter(lambda entrance: entrance.connected_region.dungeon_name in all_medallion_dungeon_names, all_dungeons_entrances))
+                all_stone_dungeon_entrances = list(filter(lambda entrance: entrance.connected_region.dungeon_name in all_stone_dungeons_names, all_dungeons_entrances))
+
+                entrance_pools['DungeonMedallion'] = all_medallion_dungeon_entrances
+                entrance_pools['DungeonStone'] = all_stone_dungeon_entrances
+            else:
+                entrance_pools['Dungeon'] = world.get_shufflable_entrances(type='Dungeon', only_primary=True)
+                # The fill algorithm will already make sure gohma is reachable, however it can end up putting
+                # a forest escape via the hands of spirit on Deku leading to Deku on spirit in logic. This is
+                # not really a closed forest anymore, so specifically remove Deku Tree from closed forest.
+                if worlds[0].settings.open_forest == 'closed':
+                    entrance_pools['Dungeon'].remove(world.get_entrance('KF Outside Deku Tree -> Deku Tree Lobby'))
+                if worlds[0].shuffle_special_dungeon_entrances:
+                    entrance_pools['Dungeon'] += world.get_shufflable_entrances(type='DungeonSpecial', only_primary=True)
 
         if worlds[0].shuffle_interior_entrances:
             entrance_pools['Interior'] = world.get_shufflable_entrances(type='Interior', only_primary=True)
@@ -538,6 +570,40 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
 
         if worlds[0].settings.shuffle_overworld_entrances:
             entrance_pools['Overworld'] = world.get_shufflable_entrances(type='Overworld')
+
+        if worlds[0].settings.escape_from_kak:
+            del one_way_entrance_pools['Spawn']
+            one_way_entrance_pools['ChildSpawn'] = [world.get_entrance('Child Spawn -> KF Links House')]
+            one_way_entrance_pools['AdultSpawn'] = [world.get_entrance('Adult Spawn -> Temple of Time')]
+
+            all_dungeons_entrances = world.get_shufflable_entrances(type='Dungeon', only_primary=True)
+            chosen_dungeons = world.escape_from_kak_data['boss_dungeons']
+
+            escape_from_kak_boss_pool = [
+                next(filter(lambda entrance: entrance.connected_region.dungeon_name == chosen_dungeons[0].name, all_dungeons_entrances)),
+                next(filter(lambda entrance: entrance.connected_region.dungeon_name == chosen_dungeons[1].name, all_dungeons_entrances)),
+                next(filter(lambda entrance: entrance.connected_region.dungeon_name == chosen_dungeons[2].name, all_dungeons_entrances))
+            ]
+            kak_entrances = list(map(lambda entrance: world.get_entrance(entrance), escape_from_kak_entrances))
+
+            entrance_pools['EscapeBossDungeon1'] = [kak_entrances[0], escape_from_kak_boss_pool[0]]
+            entrance_pools['EscapeBossDungeon2'] = [kak_entrances[1], escape_from_kak_boss_pool[1]]
+            entrance_pools['EscapeBossDungeon3'] = [kak_entrances[2], escape_from_kak_boss_pool[2]]
+
+            chosen_side_dungeon = world.escape_from_kak_data['side_dungeon']
+            chosen_side_dungeon_entrance = next(filter(lambda entrance: entrance.connected_region.dungeon_name == chosen_side_dungeon.name, all_dungeons_entrances))
+            escape_from_kak_side_pool = [chosen_side_dungeon_entrance, world.get_entrance(escape_from_kak_side_entrance)]
+            entrance_pools['EscapeSideDungeon'] = escape_from_kak_side_pool
+
+            entrance_pools['EscapeKakLock1'] = [world.get_entrance('Kakariko Village -> Kak Carpenter Boss House'),
+                                                world.get_entrance('Market -> ToT Entrance')]
+            entrance_pools['EscapeKakLock2'] = [world.get_entrance('Kak Impas House -> Kakariko Village'),
+                                                world.get_entrance('ToT Entrance -> Temple of Time')]
+            if chosen_side_dungeon.name != 'Bottom of the Well':
+                entrance_pools['EscapeKakLock3'] = [world.get_entrance('Kakariko Village -> Bottom of the Well'),
+                                                    world.get_entrance('Kokiri Forest -> KF House of Twins')]
+            entrance_pools['EscapeKakLock4'] = [world.get_entrance('Kakariko Village -> Kak House of Skulltula'),
+                                                world.get_entrance('Market Entrance -> Market Guard House')]
 
         # Set shuffled entrances as such
         for entrance in list(chain.from_iterable(one_way_entrance_pools.values())) + list(chain.from_iterable(entrance_pools.values())):
@@ -560,7 +626,11 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
             elif pool_type == 'Spawn':
                 valid_target_types = ('Spawn', 'WarpSong', 'BlueWarp', 'OwlDrop', 'OverworldOneWay', 'Overworld', 'Interior', 'SpecialInterior', 'Extra')
                 # Restrict spawn entrances from linking to regions with no or extremely specific glitchless itemless escapes.
-                one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, exclude=['Volvagia Boss Room -> DMC Central Local', 'Bolero of Fire Warp -> DMC Central Local', 'Queen Gohma Boss Room -> KF Outside Deku Tree'])
+                one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types, exclude=['Volvagia Blue Warp -> DMC Central Local', 'Bolero of Fire Warp -> DMC Central Local', 'Queen Gohma Blue Warp -> KF Outside Deku Tree'])
+            elif pool_type == 'ChildSpawn' and worlds[0].settings.escape_from_kak:
+                one_way_target_entrance_pools['ChildSpawn'] = [world.get_entrance(escape_from_kak_child_spawn).get_new_target()]
+            elif pool_type == 'AdultSpawn' and worlds[0].settings.escape_from_kak:
+                one_way_target_entrance_pools['AdultSpawn'] = [world.get_entrance(escape_from_kak_adult_spawn).get_new_target()]
             elif pool_type == 'WarpSong':
                 valid_target_types = ('Spawn', 'WarpSong', 'BlueWarp', 'OwlDrop', 'OverworldOneWay', 'Overworld', 'Interior', 'SpecialInterior', 'Extra')
                 one_way_target_entrance_pools[pool_type] = build_one_way_targets(world, valid_target_types)
@@ -568,6 +638,16 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
             for target in one_way_target_entrance_pools[pool_type]:
                 target.add_rule((lambda entrances=entrance_pool: (lambda state, **kwargs: any(
                     entrance.connected_region is None for entrance in entrances)))())
+
+        if worlds[0].settings.escape_from_kak:
+            # Set blue warp targets
+            blue_warps = world.get_shufflable_entrances(type='BlueWarp')
+            for index, dungeon_entrance in enumerate(escape_from_kak_boss_pool):
+                boss_name = dungeon_entrance.connected_region.dungeon.vanilla_boss_name
+                dungeon_blue_warp = next(filter(lambda exit: boss_name in exit.name, blue_warps))
+                one_way_entrance_pools[f'EscapeKakBlueWarp{index}'] = [dungeon_blue_warp]
+                one_way_target_entrance_pools[f'EscapeKakBlueWarp{index}'] = [world.get_entrance(escape_from_kak_entrances[index]).reverse.get_new_target()]
+
         # Disconnect all one way entrances at this point (they need to be connected during all of the above process)
         for entrance in chain.from_iterable(one_way_entrance_pools.values()):
             entrance.disconnect()
@@ -634,25 +714,25 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
         }
         # if a boss room is inside a dungeon entrance (or inside a dungeon which is inside a dungeon entrance), make the blue warp go to that dungeon's blue warp target
         dungeon_exits = {
-            'Deku Tree Lobby -> KF Outside Deku Tree': world.get_entrance('Queen Gohma Boss Room -> KF Outside Deku Tree'),
-            'Dodongos Cavern Beginning -> Death Mountain': world.get_entrance('King Dodongo Boss Room -> Death Mountain'),
-            'Jabu Jabus Belly Beginning -> Zoras Fountain': world.get_entrance('Barinade Boss Room -> Zoras Fountain'),
-            'Forest Temple Lobby -> SFM Forest Temple Entrance Ledge': world.get_entrance('Phantom Ganon Boss Room -> Sacred Forest Meadow'),
-            'Fire Temple Lower -> DMC Fire Temple Entrance': world.get_entrance('Volvagia Boss Room -> DMC Central Local'),
-            'Water Temple Lobby -> Lake Hylia': world.get_entrance('Morpha Boss Room -> Lake Hylia'),
-            'Shadow Temple Entryway -> Graveyard Warp Pad Region': world.get_entrance('Bongo Bongo Boss Room -> Graveyard Warp Pad Region'),
-            'Spirit Temple Lobby -> Desert Colossus From Spirit Lobby': world.get_entrance('Twinrova Boss Room -> Desert Colossus'),
+            'Deku Tree Lobby -> KF Outside Deku Tree': world.get_entrance('Queen Gohma Blue Warp -> KF Outside Deku Tree'),
+            'Dodongos Cavern Beginning -> Death Mountain': world.get_entrance('King Dodongo Blue Warp -> Death Mountain'),
+            'Jabu Jabus Belly Beginning -> Zoras Fountain': world.get_entrance('Barinade Blue Warp -> Zoras Fountain'),
+            'Forest Temple Lobby -> SFM Forest Temple Entrance Ledge': world.get_entrance('Phantom Ganon Blue Warp -> Sacred Forest Meadow'),
+            'Fire Temple Lower -> DMC Fire Temple Entrance': world.get_entrance('Volvagia Blue Warp -> DMC Central Local'),
+            'Water Temple Lobby -> Lake Hylia': world.get_entrance('Morpha Blue Warp -> Lake Hylia'),
+            'Shadow Temple Entryway -> Graveyard Warp Pad Region': world.get_entrance('Bongo Bongo Blue Warp -> Graveyard Warp Pad Region'),
+            'Spirit Temple Lobby -> Desert Colossus From Spirit Lobby': world.get_entrance('Twinrova Blue Warp -> Desert Colossus'),
         }
 
         for (blue_warp, boss_door_exit) in (
-            (world.get_entrance('Queen Gohma Boss Room -> KF Outside Deku Tree'), world.get_entrance('Queen Gohma Boss Room -> Deku Tree Before Boss')),
-            (world.get_entrance('King Dodongo Boss Room -> Death Mountain'), world.get_entrance('King Dodongo Boss Room -> Dodongos Cavern Mouth')),
-            (world.get_entrance('Barinade Boss Room -> Zoras Fountain'), world.get_entrance('Barinade Boss Room -> Jabu Jabus Belly Before Boss')),
-            (world.get_entrance('Phantom Ganon Boss Room -> Sacred Forest Meadow'), world.get_entrance('Phantom Ganon Boss Room -> Forest Temple Before Boss')),
-            (world.get_entrance('Volvagia Boss Room -> DMC Central Local'), world.get_entrance('Volvagia Boss Room -> Fire Temple Before Boss')),
-            (world.get_entrance('Morpha Boss Room -> Lake Hylia'), world.get_entrance('Morpha Boss Room -> Water Temple Before Boss')),
-            (world.get_entrance('Bongo Bongo Boss Room -> Graveyard Warp Pad Region'), world.get_entrance('Bongo Bongo Boss Room -> Shadow Temple Before Boss')),
-            (world.get_entrance('Twinrova Boss Room -> Desert Colossus'), world.get_entrance('Twinrova Boss Room -> Spirit Temple Before Boss')),
+            (world.get_entrance('Queen Gohma Blue Warp -> KF Outside Deku Tree'), world.get_entrance('Queen Gohma Boss Room -> Deku Tree Before Boss')),
+            (world.get_entrance('King Dodongo Blue Warp -> Death Mountain'), world.get_entrance('King Dodongo Boss Room -> Dodongos Cavern Mouth')),
+            (world.get_entrance('Barinade Blue Warp -> Zoras Fountain'), world.get_entrance('Barinade Boss Room -> Jabu Jabus Belly Before Boss')),
+            (world.get_entrance('Phantom Ganon Blue Warp -> Sacred Forest Meadow'), world.get_entrance('Phantom Ganon Boss Room -> Forest Temple Before Boss')),
+            (world.get_entrance('Volvagia Blue Warp -> DMC Central Local'), world.get_entrance('Volvagia Boss Room -> Fire Temple Before Boss')),
+            (world.get_entrance('Morpha Blue Warp -> Lake Hylia'), world.get_entrance('Morpha Boss Room -> Water Temple Before Boss')),
+            (world.get_entrance('Bongo Bongo Blue Warp -> Graveyard Warp Pad Region'), world.get_entrance('Bongo Bongo Boss Room -> Shadow Temple Before Boss')),
+            (world.get_entrance('Twinrova Blue Warp -> Desert Colossus'), world.get_entrance('Twinrova Boss Room -> Spirit Temple Before Boss')),
         ):
             target = boss_door_exit.replaces or boss_door_exit
             if True: #TODO not world.settings.decouple_entrances
@@ -873,6 +953,10 @@ def shuffle_entrances(worlds: list[World], entrances: list[Entrance], target_ent
             if target.connected_region is None:
                 continue
 
+            # Force a entrance to actually get swapped to a different target in the pool
+            if target.replaces.name == entrance.name and worlds[0].settings.escape_from_kak:
+                continue
+
             if replace_entrance(worlds, entrance, target, rollbacks, locations_to_ensure_reachable, complete_itempool, placed_one_way_entrances=placed_one_way_entrances):
                 break
 
@@ -922,6 +1006,9 @@ def validate_world(world: World, worlds: list[World], entrance_placed: Optional[
         CHILD_FORBIDDEN.append('Phantom Ganon Boss Room -> Forest Temple Before Boss')
         ADULT_FORBIDDEN.append('Phantom Ganon Boss Room -> Forest Temple Before Boss')
 
+    if world.settings.logic_rules != 'glitchless':
+        CHILD_FORBIDDEN.remove('GV Carpenter Tent -> GV Fortress Side')
+
     for entrance in world.get_shufflable_entrances():
         if entrance.shuffled:
             if entrance.replaces:
@@ -957,8 +1044,8 @@ def validate_world(world: World, worlds: list[World], entrance_placed: Optional[
 
     if (
         world.shuffle_interior_entrances and (
-            (world.dungeon_rewards_hinted and world.mixed_pools_bosses) or #TODO also enable if boss reward shuffle is on
-            any(hint_type in world.settings.misc_hints for hint_type in misc_item_hint_table) or world.settings.hints != 'none'
+            (world.dungeon_rewards_hinted and (world.mixed_pools_bosses or world.settings.shuffle_dungeon_rewards in ('regional', 'overworld', 'anywhere')))
+            or any(hint_type in world.settings.misc_hints for hint_type in misc_item_hint_table) or world.settings.hints != 'none'
         ) and (entrance_placed is None or entrance_placed.type in ['Interior', 'SpecialInterior'])
     ):
         # Ensure Kak Potion Shop entrances are in the same hint area so there is no ambiguity as to which entrance is used for hints
@@ -980,7 +1067,10 @@ def validate_world(world: World, worlds: list[World], entrance_placed: Optional[
         # Note this creates new empty states rather than reuse the worlds' states (which already have starting items)
         no_items_search = Search([State(w) for w in worlds])
 
-        valid_starting_regions = ('Kokiri Forest', 'Kakariko Village')
+        if not world.settings.escape_from_kak:
+            valid_starting_regions = ('Kokiri Forest', 'Kakariko Village')
+        else:
+            valid_starting_regions = ('Kokiri Forest', 'Kakariko Village', 'Market')
         if not any(no_items_search.can_reach(world.get_region(region)) for region in valid_starting_regions):
             raise EntranceShuffleError('Invalid starting area')
 
@@ -1020,7 +1110,7 @@ def validate_world(world: World, worlds: list[World], entrance_placed: Optional[
             for idx2 in range(idx1):
                 try:
                     entrance2 = placed_one_way_entrances[idx2][0]
-                    if entrance1.type == entrance2.type and hint_area1 == HintArea.at(entrance2.connected_region):
+                    if entrance1.type == entrance2.type and hint_area1 == HintArea.at(entrance2.connected_region) and not world.settings.escape_from_kak:
                         raise EntranceShuffleError(f'Multiple {entrance1.type} entrances lead to {hint_area1}')
                 except HintAreaNotFound:
                     pass

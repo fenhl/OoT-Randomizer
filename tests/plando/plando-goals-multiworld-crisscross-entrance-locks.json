@@ -27,7 +27,7 @@
     "complete_mask_quest":                     false,
     "fast_chests":                             true,
     "logic_no_night_tokens_without_suns_song": false,
-    "free_scarecrow":                          false,
+    "scarecrow_behavior":                      "vanilla",
     "fast_bunny_hood":                         true,
     "start_with_rupees":                       false,
     "start_with_consumables":                  true,
@@ -238,7 +238,7 @@
   },
   "locations":                 {
     "World 1": {
-      "Links Pocket":                                         {"item": "Fire Medallion", "player": 1},
+      "ToT Reward from Rauru":                                {"item": "Fire Medallion", "player": 1},
       "Queen Gohma":                                          {"item": "Water Medallion", "player": 1},
       "King Dodongo":                                         {"item": "Forest Medallion", "player": 1},
       "Barinade":                                             {"item": "Kokiri Emerald", "player": 1},
@@ -503,7 +503,7 @@
       "Ganons Tower Boss Key Chest":                          {"item": "Small Key (Ganons Castle)", "player": 1}
     },
     "World 2": {
-      "Links Pocket":                                         {"item": "Light Medallion", "player": 2},
+      "ToT Reward from Rauru":                                {"item": "Light Medallion", "player": 2},
       "Queen Gohma":                                          {"item": "Water Medallion", "player": 2},
       "King Dodongo":                                         {"item": "Zora Sapphire", "player": 2},
       "Barinade":                                             {"item": "Fire Medallion", "player": 2},
