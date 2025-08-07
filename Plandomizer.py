@@ -281,11 +281,12 @@ class WorldDistribution:
         self.rewards_as_items: bool = False
         self.songs_as_items: bool = False
         self.skipped_locations: list[Location] = []
-        self.random_starting_items: dict[str, StarterRecord] = self.set_random_starting_items(self.distribution.settings.starting_items)
+        self.random_starting_items: dict[str, StarterRecord] = {}
         self.effective_starting_items: dict[str, StarterRecord] = {}
 
         src_dict = {} if src_dict is None else src_dict
         self.update(src_dict, update_all=True)
+        self.set_random_starting_items(self.distribution.settings.starting_items)
 
     def update(self, src_dict: dict[str, Any], update_all: bool = False) -> None:
         update_dict = {
@@ -575,7 +576,6 @@ class WorldDistribution:
             self.pool_add_item(pool, '#Bottle', -bottles)
 
         self.alter_starting_items(world, pool, self.starting_items)
-
         if world.settings.add_random_starting_items:
             self.alter_starting_items(world, pool, self.random_starting_items)
 
@@ -587,11 +587,11 @@ class WorldDistribution:
 
         return pool
 
-    def alter_starting_items(self, world: World, pool: list[str], starting_items_dict: dict[str, StarterRecord]) -> None:
+    def alter_starting_items(self, world: World, pool: list[str], starting_items: dict[str, StarterRecord]) -> None:
         bottle_matcher = self.pattern_matcher("#Bottle")
         adult_trade_matcher = self.pattern_matcher("#AdultTrade")
 
-        for item_name, record in starting_items_dict.items():
+        for item_name, record in starting_items.items():
             if bottle_matcher(item_name):
                 self.pool_remove_item([pool], "#Bottle", record.count)
             elif item_name in ('Pocket Egg', 'Pocket Cucco') and world.settings.adult_trade_shuffle:
@@ -641,8 +641,8 @@ class WorldDistribution:
             else:
                 self.item_pool[item.name] = ItemPoolRecord()
 
-    def collect_starters(self, state: State, item_dict: dict[str, StarterRecord]) -> None:
-        for (name, record) in item_dict.items():
+    def collect_starters(self, state: State, starting_items: dict[str, StarterRecord]) -> None:
+        for (name, record) in starting_items.items():
             for _ in range(record.count):
                 item = ItemFactory("Bottle" if name == "Bottle with Milk (Half)" else name, state.world)
                 state.collect(item)
@@ -1129,21 +1129,17 @@ class WorldDistribution:
         return available_items
 
     def set_random_starting_items(self, starting_items: dict[str, StarterRecord]) -> dict[str, StarterRecord]:
-        selected_items_dict = {}
-
-        if self.distribution.settings.add_random_starting_items:
+        if self.distribution.settings.add_random_starting_items and len(self.random_starting_items) == 0:
             item_pool = self.build_random_starting_items_pool(starting_items)
 
             if self.distribution.settings.add_random_starting_items < len(item_pool):
-                selected_items_list = random.sample(item_pool, self.distribution.settings.add_random_starting_items)
+                selected_items = random.sample(item_pool, self.distribution.settings.add_random_starting_items)
             else:
                 # if there's not enough items to select, just start with all items rather than erroring
-                selected_items_list = item_pool
+                selected_items = item_pool
 
-            for item in selected_items_list:
-                add_starting_item_with_ammo(selected_items_dict, item)
-
-        return selected_items_dict
+            for item in selected_items:
+                add_starting_item_with_ammo(self.random_starting_items, item)
 
     def configure_effective_starting_items(self, worlds: list[World], world: World) -> None:
         items = {item_name: record.copy() for item_name, record in self.starting_items.items()}
