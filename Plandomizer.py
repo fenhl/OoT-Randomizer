@@ -281,6 +281,7 @@ class WorldDistribution:
         self.rewards_as_items: bool = False
         self.songs_as_items: bool = False
         self.skipped_locations: list[Location] = []
+        self.random_starting_items: dict[str, StarterRecord] = self.set_random_starting_items(self.distribution.settings.starting_items)
         self.effective_starting_items: dict[str, StarterRecord] = {}
 
         src_dict = {} if src_dict is None else src_dict
@@ -573,7 +574,24 @@ class WorldDistribution:
         else:
             self.pool_add_item(pool, '#Bottle', -bottles)
 
-        for item_name, record in self.starting_items.items():
+        self.alter_starting_items(world, pool, self.starting_items)
+
+        if world.settings.add_random_starting_items:
+            self.alter_starting_items(world, pool, self.random_starting_items)
+
+        junk_to_add = pool_size - len(pool)
+        if junk_to_add > 0:
+            self.pool_add_item(pool, "#Junk", junk_to_add)
+        else:
+            self.pool_remove_item([pool], "#Junk", -junk_to_add)
+
+        return pool
+
+    def alter_starting_items(self, world: World, pool: list[str], starting_items_dict: dict[str, StarterRecord]) -> None:
+        bottle_matcher = self.pattern_matcher("#Bottle")
+        adult_trade_matcher = self.pattern_matcher("#AdultTrade")
+
+        for item_name, record in starting_items_dict.items():
             if bottle_matcher(item_name):
                 self.pool_remove_item([pool], "#Bottle", record.count)
             elif item_name in ('Pocket Egg', 'Pocket Cucco') and world.settings.adult_trade_shuffle:
@@ -613,14 +631,6 @@ class WorldDistribution:
                 if item_name in item_groups["Song"]:
                     self.songs_as_items = True
 
-        junk_to_add = pool_size - len(pool)
-        if junk_to_add > 0:
-            self.pool_add_item(pool, "#Junk", junk_to_add)
-        else:
-            self.pool_remove_item([pool], "#Junk", -junk_to_add)
-
-        return pool
-
     def set_complete_itempool(self, pool: list[Item]) -> None:
         self.item_pool = {}
         for item in pool:
@@ -631,8 +641,8 @@ class WorldDistribution:
             else:
                 self.item_pool[item.name] = ItemPoolRecord()
 
-    def collect_starters(self, state: State) -> None:
-        for (name, record) in self.starting_items.items():
+    def collect_starters(self, state: State, item_dict: dict[str, StarterRecord]) -> None:
+        for (name, record) in item_dict.items():
             for _ in range(record.count):
                 item = ItemFactory("Bottle" if name == "Bottle with Milk (Half)" else name, state.world)
                 state.collect(item)
@@ -1068,9 +1078,79 @@ class WorldDistribution:
         )
 
         return data
+    
+    def build_random_starting_items_pool(self, starting_items: dict[str, StarterRecord]) -> list[str]:
+        available_items: list[StartingItems.Entry] = []
+
+        for entry in StartingItems.everything.values():
+            if not entry.special:
+                item = entry.item_name
+            else:
+                if entry.item_name == 'Rutos Letter' and self.distribution.settings.zora_fountain != 'open':
+                    item = 'Rutos Letter'
+                elif entry.item_name in ('Bottle', 'Rutos Letter'):
+                    item = 'Bottle'
+                else:
+                    raise KeyError(f'invalid special item: {entry.item_name}')
+            if item not in item_groups['MajorItem'] and item not in ('Giants Knife', 'Biggoron Sword', 'Magic Bean'):
+                continue
+            if item in starting_items and entry.i >= self.distribution.settings.starting_items[item].count:
+                available_items.append(item)
+            elif item not in starting_items:
+                available_items.append(item)
+
+        if ('Giants Knife' in starting_items and starting_items['Giants Knife'].count > 0 
+                or 'Biggoron Sword' in starting_items and starting_items['Biggoron Sword'].count > 0):
+            if 'Giants Knife' in available_items:
+                available_items.remove('Giants Knife')
+            if 'Biggoron Sword' in available_items:
+                available_items.remove('Biggoron Sword')
+        elif 'Giants Knife' in available_items and 'Biggoron Sword' in available_items:
+            available_items.remove(random.choice(('Giants Knife', 'Biggoron Sword')))
+        if self.distribution.settings.plant_beans and 'Magic Bean' in available_items:
+            available_items.remove('Magic Bean')
+        for item_name in child_trade_items:
+            if item_name not in self.distribution.settings.shuffle_child_trade and item_name in available_items:
+                available_items.remove(item_name)
+        for item_name in trade_items:
+            if item_name not in self.distribution.settings.adult_trade_start and item_name in available_items:
+                available_items.remove(item_name)
+        if not self.distribution.settings.adult_trade_shuffle:
+            # only allow one adult trade item
+            available_trade_items = [item_name for item_name in trade_items if item_name in available_items]
+            for item_name in available_trade_items:
+                available_items.remove(item_name)
+            if not any(starting_items[item_name].count > 0 for item_name in trade_items if item_name in starting_items):
+                available_items.append(random.choice(available_trade_items))
+        for item_name in ocarina_buttons:
+            if not self.distribution.settings.shuffle_individual_ocarina_notes and item_name in available_items:
+                available_items.remove(item_name)
+
+        return available_items
+
+    def set_random_starting_items(self, starting_items: dict[str, StarterRecord]) -> dict[str, StarterRecord]:
+        selected_items_dict = {}
+
+        if self.distribution.settings.add_random_starting_items:
+            item_pool = self.build_random_starting_items_pool(starting_items)
+
+            if self.distribution.settings.add_random_starting_items < len(item_pool):
+                selected_items_list = random.sample(item_pool, self.distribution.settings.add_random_starting_items)
+            else:
+                # if there's not enough items to select, just start with all items rather than erroring
+                selected_items_list = item_pool
+
+            for item in selected_items_list:
+                add_starting_item_with_ammo(selected_items_dict, item)
+
+        return selected_items_dict
 
     def configure_effective_starting_items(self, worlds: list[World], world: World) -> None:
         items = {item_name: record.copy() for item_name, record in self.starting_items.items()}
+
+        if world.settings.add_random_starting_items:
+            for name in self.random_starting_items:
+                add_starting_item_with_ammo(items, name)
 
         if world.settings.start_with_rupees:
             add_starting_item_with_ammo(items, 'Rupees', 999)
@@ -1284,56 +1364,7 @@ class Distribution:
                 # removing an extra 4 pieces in case of an odd number since there's 9*4 of them but only 8 containers
                 data['Piece of Heart'].count += 4 * math.ceil(num_hearts_to_collect / 2)
                 data['Heart Container'].count += math.floor(num_hearts_to_collect / 2)
-        # add random starting items
-        if self.settings.add_random_starting_items > 0:
-            available_items: list[StartingItems.Entry] = []
-            for entry in StartingItems.everything.values():
-                if not entry.special:
-                    item = entry.item_name
-                else:
-                    if entry.item_name == 'Rutos Letter' and self.settings.zora_fountain != 'open':
-                        item = 'Rutos Letter'
-                    elif entry.item_name in ('Bottle', 'Rutos Letter'):
-                        item = 'Bottle'
-                    else:
-                        raise KeyError(f'invalid special item: {entry.item_name}')
-                if entry.i >= data[item].count:
-                    available_items.append(item)
-
-            if data['Giants Knife'].count > 0 or data['Biggoron Sword'].count > 0:
-                if 'Giants Knife' in available_items:
-                    available_items.remove('Giants Knife')
-                if 'Biggoron Sword' in available_items:
-                    available_items.remove('Biggoron Sword')
-            elif 'Giants Knife' in available_items and 'Biggoron Sword' in available_items:
-                available_items.remove(random.choice(('Giants Knife', 'Biggoron Sword')))
-            if self.settings.plant_beans and 'Magic Bean' in available_items:
-                available_items.remove('Magic Bean')
-            for item_name in child_trade_items:
-                if item_name not in self.settings.shuffle_child_trade and item_name in available_items:
-                    available_items.remove(item_name)
-            for item_name in trade_items:
-                if item_name not in self.settings.adult_trade_start and item_name in available_items:
-                    available_items.remove(item_name)
-            if not self.settings.adult_trade_shuffle:
-                # only allow one adult trade item
-                available_trade_items = [item_name for item_name in trade_items if item_name in available_items]
-                for item_name in available_trade_items:
-                    available_items.remove(item_name)
-                if not any(data[item_name].count > 0 for item_name in trade_items):
-                    available_items.append(random.choice(available_trade_items))
-            for item_name in ocarina_buttons:
-                if not self.settings.shuffle_individual_ocarina_notes and item_name in available_items:
-                    available_items.remove(item_name)
-
-            if self.settings.add_random_starting_items < len(available_items):
-                selected_items = random.sample(available_items, self.settings.add_random_starting_items)
-            else:
-                # if there's not enough items to select, just start with all items rather than erroring
-                selected_items = available_items
-            for item_name in selected_items:
-                add_starting_item_with_ammo(data, item_name)
-        self.settings.starting_items = {item_name: record for item_name, record in data.items() if record.count != 0}
+        self.settings.starting_items = data
 
     def to_json(self, include_output: bool = True, spoiler: bool = True) -> dict[str, Any]:
         self_dict = {

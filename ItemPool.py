@@ -1071,7 +1071,9 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
         item_groups['Junk'] = remove_junk_items
         world.distribution.distribution.search_groups['Junk'] = remove_junk_items
 
-    world.distribution.collect_starters(world.state)
+    world.distribution.collect_starters(world.state, world.distribution.starting_items)
+    if world.settings.add_random_starting_items:
+        world.distribution.collect_starters(world.state, world.distribution.random_starting_items)
 
     if not world.settings.shuffle_individual_ocarina_notes:
         for ocarina_button in ocarina_buttons:
