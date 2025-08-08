@@ -1142,10 +1142,6 @@ class WorldDistribution:
             for item in selected_items:
                 add_starting_item_with_ammo(self.random_starting_items, item)
 
-            self.distribution.settings.random_starting_items.update({
-                (name, record.count) for name, record in self.random_starting_items.items()
-            })
-
     def configure_effective_starting_items(self, worlds: list[World], world: World) -> None:
         items = {item_name: record.copy() for item_name, record in self.starting_items.items()}
 
