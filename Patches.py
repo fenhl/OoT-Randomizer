@@ -440,14 +440,16 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     rewards_as_items = (
         world.settings.shuffle_dungeon_rewards not in ('vanilla', 'reward')
         or world.distribution.rewards_as_items
-        or any(name in reward_list and record.count for name, record in world.settings.starting_items.items())
+        or any((name in reward_list and record.count for name, record in world.settings.starting_items.items())
+               or (name in reward_list and record.count for name, record in world.distribution.random_starting_items.items()))
     )
     if rewards_as_items:
         rom.write_byte(rom.sym('REWARDS_AS_ITEMS'), 1)
     songs_as_items = (
         world.settings.shuffle_song_items != 'song'
         or world.distribution.songs_as_items
-        or any(name in song_list and record.count for name, record in world.settings.starting_items.items())
+        or any((name in song_list and record.count for name, record in world.settings.starting_items.items())
+               or (name in song_list and record.count for name, record in world.distribution.random_starting_items.items()))
         or world.settings.shuffle_individual_ocarina_notes
     )
     if songs_as_items:

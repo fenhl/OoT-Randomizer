@@ -283,10 +283,11 @@ class WorldDistribution:
         self.skipped_locations: list[Location] = []
         self.random_starting_items: dict[str, StarterRecord] = {}
         self.effective_starting_items: dict[str, StarterRecord] = {}
+        
+        self.set_random_starting_items(self.distribution.settings.starting_items)
 
         src_dict = {} if src_dict is None else src_dict
         self.update(src_dict, update_all=True)
-        self.set_random_starting_items(self.distribution.settings.starting_items)
 
     def update(self, src_dict: dict[str, Any], update_all: bool = False) -> None:
         update_dict = {
@@ -1092,7 +1093,7 @@ class WorldDistribution:
                     item = 'Bottle'
                 else:
                     raise KeyError(f'invalid special item: {entry.item_name}')
-            if item not in item_groups['MajorItem'] and item not in ('Giants Knife', 'Biggoron Sword', 'Magic Bean'):
+            if item not in item_groups['MajorItem'] and item not in ('Giants Knife', 'Biggoron Sword', 'Magic Bean', 'Double Defense'):
                 continue
             if item in starting_items and entry.i >= self.distribution.settings.starting_items[item].count:
                 available_items.append(item)
@@ -1140,6 +1141,10 @@ class WorldDistribution:
 
             for item in selected_items:
                 add_starting_item_with_ammo(self.random_starting_items, item)
+
+            self.distribution.settings.random_starting_items.update({
+                (name, record.count) for name, record in self.random_starting_items.items()
+            })
 
     def configure_effective_starting_items(self, worlds: list[World], world: World) -> None:
         items = {item_name: record.copy() for item_name, record in self.starting_items.items()}

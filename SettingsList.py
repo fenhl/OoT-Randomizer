@@ -3213,6 +3213,8 @@ class SettingInfos:
 
     starting_items = SettingInfoDict(None, None, True, {})
 
+    random_starting_items = SettingInfoDict(None, None, True, {})
+
     starting_equipment = SearchBox(
         gui_text       = "Starting Equipment",
         shared         = True,

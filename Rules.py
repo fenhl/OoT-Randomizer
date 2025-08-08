@@ -29,7 +29,8 @@ def set_rules(world: World) -> None:
             if location.type == 'Song':
                 # allow junk items, but songs must still have matching world
                 add_item_rule(location, lambda location, item:
-                    ((location.world.distribution.songs_as_items or any(name in song_list and record.count for name, record in world.settings.starting_items.items()))
+                    ((location.world.distribution.songs_as_items or any((name in song_list and record.count for name, record in world.settings.starting_items.items())
+                                                                        or (name in song_list and record.count for name, record in world.distribution.random_starting_items.items())))
                         and item.type != 'Song')
                     or (item.type == 'Song' and item.world.id == location.world.id))
             else:

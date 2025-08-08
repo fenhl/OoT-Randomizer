@@ -57,7 +57,7 @@ def check_presets_formatting(fix_errors: bool = False) -> None:
         except Exception as e:
             error(f'Error in {preset_name} preset: {e}', False)
         for setting_name, setting in SettingInfos.setting_infos.items():
-            if setting_name != 'starting_items' and setting.shared and setting_name not in preset:
+            if setting_name not in ('starting_items', 'random_starting_items') and setting.shared and setting_name not in preset:
                 error(f'Missing setting {setting_name} in {preset_name} preset', False)
                 any_errors = True
     if any_errors:
@@ -80,7 +80,7 @@ def check_presets_formatting(fix_errors: bool = False) -> None:
             # sort the settings within each preset
             setting_name: preset[setting_name]
             for setting_name, setting in SettingInfos.setting_infos.items()
-            if setting_name != 'starting_items' and (setting.shared or setting_name == 'aliases') and setting_name in preset
+            if setting_name not in ('starting_items', 'random_starting_items') and (setting.shared or setting_name == 'aliases') and setting_name in preset
         }
         for preset_name, preset in presets.items()
     }

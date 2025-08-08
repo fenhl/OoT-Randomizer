@@ -1160,7 +1160,7 @@ def get_important_check_hint(spoiler: Spoiler, world: World, checked: set[str]) 
                 and not location.locked
                 # exclude triforce pieces as it defeats the idea of a triforce hunt
                 and not location.item.name == 'Triforce Piece'
-                and not (location.name == 'Song from Impa' and 'Zeldas Letter' in world.settings.starting_items and 'Zeldas Letter' not in world.settings.shuffle_child_trade)
+                and not (location.name == 'Song from Impa' and ('Zeldas Letter' in world.settings.starting_items or 'Zeldas Letter' in world.distribution.random_starting_items) and 'Zeldas Letter' not in world.settings.shuffle_child_trade)
                 # Special cases where the item is only considered major for important checks hints
                 or location.item.name == 'Biggoron Sword'
                 or location.item.name == 'Double Defense'

@@ -1711,7 +1711,7 @@ def write_settings_dependent_save_context_flags(save_context: SaveContext, world
         save_context.write_bits(0x0EDD, 0x01) # "Obtained Zelda's Letter"
         save_context.write_bits(0x0EDE, 0x02) # "Learned Zelda's Lullaby"
         save_context.write_permanent_flag(Scenes.HYRULE_CASTLE, FlagType.SWITCH, 0x3, 0x10) # "Moved crates to access the courtyard"
-    if 'Zeldas Letter' in world.distribution.starting_items:
+    if 'Zeldas Letter' in (world.distribution.starting_items, world.distribution.random_starting_items):
         if world.settings.open_kakariko != 'closed':
             save_context.write_bits(0x0F07, 0x40)  # "Spoke to Gate Guard About Mask Shop"
         if world.settings.complete_mask_quest:
