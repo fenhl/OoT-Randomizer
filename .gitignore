@@ -3,6 +3,7 @@
 .vscode
 .idea
 /ASM/build/asm_symbols.txt
+/ASM/build/c_symbols.txt
 /ASM/build/bin
 /Output
 /build
