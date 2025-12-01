@@ -117,8 +117,8 @@ async fn main(Args { log_level, settings_string, convert_settings, settings, set
     match subcommand {
         None => match Python::with_gil(|py| {
             let py_version = py.version_info();
-            if py_version < (3, 8) {
-                panic!("Randomizer requires at least Python 3.8 and you are using {}.{}.{}", py_version.major, py_version.minor, py_version.patch);
+            if py_version < (3, 9) {
+                panic!("Randomizer requires at least Python 3.9 and you are using {}.{}.{}", py_version.major, py_version.minor, py_version.patch);
             }
             let sys = py.import("sys")?;
             sys.getattr("path")?.call_method1("append", (concat!(env!("CARGO_MANIFEST_DIR"), "/../.."),))?;

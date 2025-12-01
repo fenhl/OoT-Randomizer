@@ -138,7 +138,7 @@ enum Error {
     #[error(transparent)] Wheel(#[from] wheel::Error),
     #[cfg(target_arch = "wasm32")] #[error(transparent)] Zip(#[from] zip::result::ZipError),
     #[cfg(not(target_arch = "wasm32"))] #[error(transparent)] Zip(#[from] async_zip::error::ZipError),
-    #[error("Randomizer requires at least Python 3.8 and you are using {major}.{minor}.{patch}")]
+    #[error("Randomizer requires at least Python 3.9 and you are using {major}.{minor}.{patch}")]
     PythonVersion {
         major: u8,
         minor: u8,
@@ -1805,7 +1805,7 @@ fn main() -> Result<(), Error> {
             let icon = icon::from_file_data(include_bytes!("../../../assets/ootr-arrows.ico"), Some(ImageFormat::Ico))?;
             let () = spawn_blocking(move || Python::with_gil(|py| {
                 let py_version = py.version_info();
-                if py_version < (3, 8) {
+                if py_version < (3, 9) {
                     return Err(Error::PythonVersion {
                         major: py_version.major,
                         minor: py_version.minor,
