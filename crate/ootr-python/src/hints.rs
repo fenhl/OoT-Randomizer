@@ -14,7 +14,7 @@ use {
 };
 
 macro_rules! hint_areas {
-    ($($variant:ident, $vague:expr, $clear:expr, $display:expr, $short:expr, $shorter:expr, $color:expr, $dungeon:expr);* $(;)?) => {
+    ($($variant:ident, $vague:expr, $clear:expr, $display:expr, $idx:expr, $shorter:expr, $color:expr, $dungeon:expr);* $(;)?) => {
         #[pyclass(frozen, eq, hash)]
         #[allow(non_camel_case_types)] //TODO
         #[derive(Clone, Copy, PartialEq, Eq, Hash)]
@@ -129,11 +129,12 @@ macro_rules! hint_areas {
                 }
             }
 
-            /// used for dungeon reward locations in the pause menu
+            /// Used for dungeon reward locations in the pause menu.
+            /// Must match the value of the corresponding `opt_hint_area_t` variant in C.
             #[getter]
-            fn short_name(&self) -> Option<&'static str> {
+            fn c_index(&self) -> Option<u8> {
                 match self {
-                    $(Self::$variant => $short.into()),*
+                    $(Self::$variant => $idx.into()),*
                 }
             }
 
@@ -242,46 +243,46 @@ macro_rules! hint_areas {
 }
 
 hint_areas! {
-    // internal name        prepositions        display name                  short name                shorter name color         internal dungeon name
+    // internal name        prepositions        display name                  C index     shorter name color         internal dungeon name
     //                      vague     clear
-    ROOT,                   "in",     "in",     "Link's pocket",              "Free",                   None,        "White",      None;
-    HYRULE_FIELD,           "in",     "in",     "Hyrule Field",               "Hyrule Field",           "Field",     "Light Blue", None;
-    LON_LON_RANCH,          "at",     "at",     "Lon Lon Ranch",              "Lon Lon Ranch",          "Ranch",     "Light Blue", None;
-    MARKET,                 "in",     "in",     "the Market",                 "Market",                 "Market",    "Light Blue", None;
-    TEMPLE_OF_TIME,         "inside", "inside", "the Temple of Time",         "Temple of Time",         "ToT",       "Light Blue", None;
-    CASTLE_GROUNDS,         "on",     "on",     "the Castle Grounds",         None,                     "Castle",    "Light Blue", None; // required for warp songs
-    HYRULE_CASTLE,          "at",     "at",     "Hyrule Castle",              "Hyrule Castle",          "HC",        "Light Blue", None;
-    OUTSIDE_GANONS_CASTLE,  None,     None,     "outside Ganon's Castle",     "Outside Ganon's Castle", "OGC",       "Light Blue", None;
-    INSIDE_GANONS_CASTLE,   "inside", None,     "inside Ganon's Castle",      "Inside Ganon's Castle",  "Ganon",     "Light Blue", "Ganons Castle";
-    GANONDORFS_CHAMBER,     "in",     "in",     "Ganondorf's Chamber",        "Ganondorf's Chamber",    None,        "Light Blue", None;
-    KOKIRI_FOREST,          "in",     "in",     "Kokiri Forest",              "Kokiri Forest",          "Kokiri",    "Green",      None;
-    DEKU_TREE,              "inside", "inside", "the Deku Tree",              "Deku Tree",              "Deku",      "Green",      "Deku Tree";
-    LOST_WOODS,             "in",     "in",     "the Lost Woods",             "Lost Woods",             "Woods",     "Green",      None;
-    SACRED_FOREST_MEADOW,   "at",     "at",     "the Sacred Forest Meadow",   "Sacred Forest Meadow",   "Meadow",    "Green",      None;
-    FOREST_TEMPLE,          "in",     "in",     "the Forest Temple",          "Forest Temple",          "Forest",    "Green",      "Forest Temple";
-    DEATH_MOUNTAIN_TRAIL,   "on",     "on",     "the Death Mountain Trail",   "Death Mountain Trail",   "Trail",     "Red",        None;
-    DODONGOS_CAVERN,        "within", "in",     "Dodongo's Cavern",           "Dodongo's Cavern",       "DC",        "Red",        "Dodongos Cavern";
-    GORON_CITY,             "in",     "in",     "Goron City",                 "Goron City",             "Goron",     "Red",        None;
-    DEATH_MOUNTAIN_CRATER,  "in",     "in",     "the Death Mountain Crater",  "Death Mountain Crater",  "Crater",    "Red",        None;
-    FIRE_TEMPLE,            "on",     "in",     "the Fire Temple",            "Fire Temple",            "Fire",      "Red",        "Fire Temple";
-    ZORA_RIVER,             "at",     "at",     "Zora's River",               "Zora's River",           "River",     "Blue",       None;
-    ZORAS_DOMAIN,           "at",     "at",     "Zora's Domain",              "Zora's Domain",          "Domain",    "Blue",       None;
-    ZORAS_FOUNTAIN,         "at",     "at",     "Zora's Fountain",            "Zora's Fountain",        "Fountain",  "Blue",       None;
-    JABU_JABUS_BELLY,       "in",     "inside", "Jabu Jabu's Belly",          "Jabu Jabu's Belly",      "Jabu",      "Blue",       "Jabu Jabus Belly";
-    ICE_CAVERN,             "inside", "in"    , "the Ice Cavern",             "Ice Cavern",             "Ice",       "Blue",       "Ice Cavern";
-    LAKE_HYLIA,             "at",     "at",     "Lake Hylia",                 "Lake Hylia",             "Lake",      "Blue",       None;
-    WATER_TEMPLE,           "under",  "in",     "the Water Temple",           "Water Temple",           "Water",     "Blue",       "Water Temple";
-    KAKARIKO_VILLAGE,       "in",     "in",     "Kakariko Village",           "Kakariko Village",       "Kakariko",  "Pink",       None;
-    BOTTOM_OF_THE_WELL,     "within", "at",     "the Bottom of the Well",     "Bottom of the Well",     "BotW",      "Pink",       "Bottom of the Well";
-    GRAVEYARD,              "in",     "in",     "the Graveyard",              "Graveyard",              "GY",        "Pink",       None;
-    SHADOW_TEMPLE,          "within", "in",     "the Shadow Temple",          "Shadow Temple",          "Shadow",    "Pink",       "Shadow Temple";
-    GERUDO_VALLEY,          "at",     "at",     "Gerudo Valley",              "Gerudo Valley",          "Valley",    "Yellow",     None;
-    GERUDO_FORTRESS,        "at",     "at",     "Gerudo's Fortress",          "Gerudo's Fortress",      "Fortress",  "Yellow",     None;
-    THIEVES_HIDEOUT,        "in",     "in",     "the Thieves' Hideout",       "Thieves' Hideout",       "Hideout",   "Yellow",     None;
-    GERUDO_TRAINING_GROUND, "within", "on",     "the Gerudo Training Ground", "Gerudo Training Ground", "GTG",       "Yellow",     "Gerudo Training Ground";
-    HAUNTED_WASTELAND,      "in",     "in",     "the Haunted Wasteland",      "Haunted Wasteland",      "Wasteland", "Yellow",     None;
-    DESERT_COLOSSUS,        "at",     "at",     "the Desert Colossus",        "Desert Colossus",        "Colossus",  "Yellow",     None;
-    SPIRIT_TEMPLE,          "inside", "in",     "the Spirit Temple",          "Spirit Temple",          "Spirit",    "Yellow",     "Spirit Temple";
+    ROOT,                   "in",     "in",     "Link's pocket",              Some(0x01), None,        "White",      None;
+    HYRULE_FIELD,           "in",     "in",     "Hyrule Field",               Some(0x02), "Field",     "Light Blue", None;
+    LON_LON_RANCH,          "at",     "at",     "Lon Lon Ranch",              Some(0x03), "Ranch",     "Light Blue", None;
+    MARKET,                 "in",     "in",     "the Market",                 Some(0x04), "Market",    "Light Blue", None;
+    TEMPLE_OF_TIME,         "inside", "inside", "the Temple of Time",         Some(0x05), "ToT",       "Light Blue", None;
+    CASTLE_GROUNDS,         "on",     "on",     "the Castle Grounds",         None,       "Castle",    "Light Blue", None; // required for warp songs
+    HYRULE_CASTLE,          "at",     "at",     "Hyrule Castle",              Some(0x06), "HC",        "Light Blue", None;
+    OUTSIDE_GANONS_CASTLE,  None,     None,     "outside Ganon's Castle",     Some(0x07), "OGC",       "Light Blue", None;
+    INSIDE_GANONS_CASTLE,   "inside", None,     "inside Ganon's Castle",      Some(0x08), "Ganon",     "Light Blue", "Ganons Castle";
+    GANONDORFS_CHAMBER,     "in",     "in",     "Ganondorf's Chamber",        None,       None,        "Light Blue", None;
+    KOKIRI_FOREST,          "in",     "in",     "Kokiri Forest",              Some(0x09), "Kokiri",    "Green",      None;
+    DEKU_TREE,              "inside", "inside", "the Deku Tree",              Some(0x0A), "Deku",      "Green",      "Deku Tree";
+    LOST_WOODS,             "in",     "in",     "the Lost Woods",             Some(0x0B), "Woods",     "Green",      None;
+    SACRED_FOREST_MEADOW,   "at",     "at",     "the Sacred Forest Meadow",   Some(0x0C), "Meadow",    "Green",      None;
+    FOREST_TEMPLE,          "in",     "in",     "the Forest Temple",          Some(0x0D), "Forest",    "Green",      "Forest Temple";
+    DEATH_MOUNTAIN_TRAIL,   "on",     "on",     "the Death Mountain Trail",   Some(0x0E), "Trail",     "Red",        None;
+    DODONGOS_CAVERN,        "within", "in",     "Dodongo's Cavern",           Some(0x0F), "DC",        "Red",        "Dodongos Cavern";
+    GORON_CITY,             "in",     "in",     "Goron City",                 Some(0x10), "Goron",     "Red",        None;
+    DEATH_MOUNTAIN_CRATER,  "in",     "in",     "the Death Mountain Crater",  Some(0x11), "Crater",    "Red",        None;
+    FIRE_TEMPLE,            "on",     "in",     "the Fire Temple",            Some(0x12), "Fire",      "Red",        "Fire Temple";
+    ZORA_RIVER,             "at",     "at",     "Zora's River",               Some(0x13), "River",     "Blue",       None;
+    ZORAS_DOMAIN,           "at",     "at",     "Zora's Domain",              Some(0x14), "Domain",    "Blue",       None;
+    ZORAS_FOUNTAIN,         "at",     "at",     "Zora's Fountain",            Some(0x15), "Fountain",  "Blue",       None;
+    JABU_JABUS_BELLY,       "in",     "inside", "Jabu Jabu's Belly",          Some(0x16), "Jabu",      "Blue",       "Jabu Jabus Belly";
+    ICE_CAVERN,             "inside", "in"    , "the Ice Cavern",             Some(0x17), "Ice",       "Blue",       "Ice Cavern";
+    LAKE_HYLIA,             "at",     "at",     "Lake Hylia",                 Some(0x18), "Lake",      "Blue",       None;
+    WATER_TEMPLE,           "under",  "in",     "the Water Temple",           Some(0x19), "Water",     "Blue",       "Water Temple";
+    KAKARIKO_VILLAGE,       "in",     "in",     "Kakariko Village",           Some(0x1A), "Kakariko",  "Pink",       None;
+    BOTTOM_OF_THE_WELL,     "within", "at",     "the Bottom of the Well",     Some(0x1B), "BotW",      "Pink",       "Bottom of the Well";
+    GRAVEYARD,              "in",     "in",     "the Graveyard",              Some(0x1C), "GY",        "Pink",       None;
+    SHADOW_TEMPLE,          "within", "in",     "the Shadow Temple",          Some(0x1D), "Shadow",    "Pink",       "Shadow Temple";
+    GERUDO_VALLEY,          "at",     "at",     "Gerudo Valley",              Some(0x1E), "Valley",    "Yellow",     None;
+    GERUDO_FORTRESS,        "at",     "at",     "Gerudo's Fortress",          Some(0x1F), "Fortress",  "Yellow",     None;
+    THIEVES_HIDEOUT,        "in",     "in",     "the Thieves' Hideout",       Some(0x20), "Hideout",   "Yellow",     None;
+    GERUDO_TRAINING_GROUND, "within", "on",     "the Gerudo Training Ground", Some(0x21), "GTG",       "Yellow",     "Gerudo Training Ground";
+    HAUNTED_WASTELAND,      "in",     "in",     "the Haunted Wasteland",      Some(0x22), "Wasteland", "Yellow",     None;
+    DESERT_COLOSSUS,        "at",     "at",     "the Desert Colossus",        Some(0x23), "Colossus",  "Yellow",     None;
+    SPIRIT_TEMPLE,          "inside", "in",     "the Spirit Temple",          Some(0x24), "Spirit",    "Yellow",     "Spirit Temple";
 }
 
 create_exception!(hints, HintAreaNotFound, PyRuntimeError);

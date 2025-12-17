@@ -453,9 +453,6 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     # include version info
     rom.write_bytes(rom.sym('CFG_RANDO_VERSION_MAJOR'), get_version_bytes(base_version, branch_identifier, supplementary_version))
 
-    # initialize world ID
-    rom.write_byte(rom.sym('PLAYER_ID'), world.id + 1)
-
     # set fallback player names
     for player_name_id in range(256):
         if player_name_id < 10:
@@ -1996,13 +1993,16 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
 
     # Fix Dead Hand spawn coordinates in vanilla shadow temple and bottom of the well to be the exact centre of the room
     # This prevents the extremely small possibility of Dead Hand spawning outside of collision
+    # He can still spawn outside of the room if the xz spawn rolls in the specific corner of the room where there is rubble, so
+    # also elevate its y coordinate. This way, Dead Hand will correctly be projected down at the ground for all possible values.
     if not world.dungeon_mq['Shadow Temple']:
-        rom.write_int16(0x27DC0AE, 0xF67E) # x-coordinate spawn in shadow temple
-        rom.write_int16(0x27DC0B2, 0xFE6B) # z-coordinate spawn in shadow temple
+        rom.write_int16(0x27DC0AE, 0xF67E) # x-coordinate spawn in shadow temple, original value is -2424
+        rom.write_int16(0x27DC0B0, 0x0003) # y-coordinate spawn in shadow temple, original value is -63
+        rom.write_int16(0x27DC0B2, 0xFE6B) # z-coordinate spawn in shadow temple, original value is -413
     if not world.dungeon_mq['Bottom of the Well']:
-        rom.write_int16(0x32FB08E, 0x0500) # x-coordinate spawn in bottom of the well
-        rom.write_int16(0x32FB092, 0x00D2) # z-coordinate spawn in bottom of the well
-
+        rom.write_int16(0x32FB08E, 0x0500) # x-coordinate spawn in bottom of the well, original value is 1276
+        rom.write_int16(0x32FB090, 0x0032) # y-coordinate spawn in bottom of the well, original value is -16
+        rom.write_int16(0x32FB092, 0x00D2) # z-coordinate spawn in bottom of the well, original value is 209
     # update happy mask shop to use new SOLD OUT text id
     rom.write_int16(shop_item_file.start + 0x1726, shop_items[0x26].description_message)
 
@@ -2745,7 +2745,7 @@ def configure_dungeon_info(rom: Rom, world: World) -> None:
              'Gerudo Training Ground', 'Hideout (N/A)', 'Ganons Castle']
 
     dungeon_rewards = [0xff] * 14
-    dungeon_reward_areas = bytearray()
+    dungeon_reward_areas = []
     dungeon_reward_worlds = []
     if world.dungeon_rewards_hinted:
         for reward in REWARD_COLORS:
@@ -2754,7 +2754,7 @@ def configure_dungeon_info(rom: Rom, world: World) -> None:
                 area = HintArea.ROOT
             else:
                 area = HintArea.at(location)
-            dungeon_reward_areas += area.short_name.encode('ascii').ljust(0x16) + b'\0'
+            dungeon_reward_areas.append(area.c_index)
             dungeon_reward_worlds.append((world.id if location is None else location.world.id) + 1)
             if location is not None and location.world.id == world.id and area.is_dungeon:
                 dungeon_rewards[codes.index(area.dungeon_name)] = boss_reward_index(location.item)
@@ -2767,9 +2767,11 @@ def configure_dungeon_info(rom: Rom, world: World) -> None:
                               'Graveyard Warp Pad Region -> Shadow Temple Entryway', 'Desert Colossus -> Spirit Temple Lobby', 'Kakariko Village -> Bottom of the Well',
                               'ZF Ice Ledge -> Ice Cavern Beginning', 'Gerudo Fortress -> Gerudo Training Ground Lobby', 'Ganons Castle Ledge -> Ganons Castle Lobby']
 
-    dungeon_names_list = ["Deku Tree", "Dodongo's Cavern", "Jabu Jabu's Belly",
-                          "Forest Temple", "Fire Temple", "Water Temple",
-                          "Shadow Temple", "Spirit Temple", "Inside Ganon's Castle"]
+    dungeon_names_list = [
+        HintArea.DEKU_TREE, HintArea.DODONGOS_CAVERN, HintArea.JABU_JABUS_BELLY,
+        HintArea.FOREST_TEMPLE, HintArea.FIRE_TEMPLE, HintArea.WATER_TEMPLE,
+        HintArea.SHADOW_TEMPLE, HintArea.SPIRIT_TEMPLE, HintArea.INSIDE_GANONS_CASTLE,
+    ]
 
     dungeon_info = []
     dungeon_entrances = bytearray()
@@ -2799,7 +2801,7 @@ def configure_dungeon_info(rom: Rom, world: World) -> None:
                 if (area in [HintArea.GERUDO_TRAINING_GROUND, HintArea.ICE_CAVERN, HintArea.BOTTOM_OF_THE_WELL]):
                     boss_index.append(-1)
                 else:
-                    boss_index.append(dungeon_names_list.index(area.short_name))
+                    boss_index.append(dungeon_names_list.index(area))
     else:
         dungeon_info.append(0)
         boss_index = [0, 1, 2, 3, 4, 5, 6, 7, -1, -1, -1, 8]
