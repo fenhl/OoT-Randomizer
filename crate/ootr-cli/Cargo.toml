@@ -9,14 +9,14 @@ workspace = true
 [dependencies]
 clap = { version = "4", features = ["derive"] }
 crossterm = "0.28"
-decompress = { git = "https://github.com/fenhl/OoT_Decompressor", branch = "riir" }
+decompress = { git = "https://github.com/fenhl/OoT_Decompressor" }
 mimalloc = "0.1.44"
 ootr-common = { path = "../ootr-common" }
 pyo3 = { version = "0.25", features = ["auto-initialize"] }
 thiserror = "2"
 tokio = { version = "1.46.1", features = ["io-std"] }
 tokio-util = "0.7.15"
-wheel = { git = "https://github.com/fenhl/wheel", branch = "main", features = ["pyo3"] }
+wheel = { git = "https://github.com/fenhl/wheel", features = ["pyo3"] }
 
 [build-dependencies]
 pyo3-build-config = "0.25"

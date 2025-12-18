@@ -7,7 +7,7 @@ from collections.abc import Iterable, Callable
 from itertools import chain
 from typing import TYPE_CHECKING, Optional, Any
 
-import Colors
+import rs.color
 import IconManip
 import Music
 import Sounds
@@ -57,7 +57,7 @@ def patch_music(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: dict[s
         rom.write_byte(0xBE447F, 0x00)
 
 
-def patch_model_colors(rom: Rom, color: Optional[list[int]], model_addresses: tuple[list[int], list[int], list[int]]) -> None:
+def patch_model_colors(rom: Rom, color: Optional[Color], model_addresses: tuple[list[int], list[int], list[int]]) -> None:
     main_addresses, dark_addresses, light_addresses = model_addresses
 
     if color is None:
@@ -67,18 +67,18 @@ def patch_model_colors(rom: Rom, color: Optional[list[int]], model_addresses: tu
         return
 
     for address in main_addresses:
-        rom.write_bytes(address, color)
+        rom.write_bytes(address, color.bytes())
 
-    darkened_color = list(map(lambda main_color: int(max((main_color - 0x32) * 0.6, 0)), color))
+    darkened_color = list(map(lambda main_color: int(max((main_color - 0x32) * 0.6, 0)), color.bytes()))
     for address in dark_addresses:
         rom.write_bytes(address, darkened_color)
 
-    lightened_color = list(map(lambda main_color: int(min((main_color / 0.6) + 0x32, 255)), color))
+    lightened_color = list(map(lambda main_color: int(min((main_color / 0.6) + 0x32, 255)), color.bytes()))
     for address in light_addresses:
         rom.write_bytes(address, lightened_color)
 
 
-def patch_tunic_icon(rom: Rom, tunic: str, color: Optional[list[int]], rainbow: bool = False) -> None:
+def patch_tunic_icon(rom: Rom, tunic: str, color: Optional[rs.color.Color], rainbow: bool = False) -> None:
     # patch tunic icon colors
     icon_locations = {
         'Kokiri Tunic': 0x007FE000,
@@ -87,7 +87,7 @@ def patch_tunic_icon(rom: Rom, tunic: str, color: Optional[list[int]], rainbow: 
     }
 
     if color is not None:
-        tunic_icon = IconManip.generate_rainbow_tunic_icon() if rainbow else IconManip.generate_tunic_icon(color)
+        tunic_icon = IconManip.generate_rainbow_tunic_icon() if rainbow else IconManip.generate_tunic_icon(color.bytes())
     else:
         tunic_icon = rom.original.read_bytes(icon_locations[tunic], 0x1000)
 
@@ -104,7 +104,7 @@ def patch_tunic_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
         ('Zora Tunic',   'zora_color',   tunic_address+6),
     ]
 
-    tunic_color_list = Colors.get_tunic_colors()
+    tunic_color_list = rs.color.get_tunic_colors()
     rainbow_error = None
 
     for tunic, tunic_setting, address in tunics:
@@ -136,18 +136,18 @@ def patch_tunic_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
 
         # handle completely random
         if tunic_option == 'Completely Random':
-            color = Colors.generate_random_color()
+            color = rs.color.generate_random_color()
         # grab the color from the list
-        elif tunic_option in Colors.tunic_colors:
-            color = list(Colors.tunic_colors[tunic_option])
+        elif tunic_option in rs.color.tunic_colors:
+            color = rs.color.tunic_colors[tunic_option]
         elif tunic_option == 'Rainbow':
-            color = list(Colors.Color(0x00, 0x00, 0x00))
+            color = rs.color.Color(0x00, 0x00, 0x00)
         # build color from hex code
         else:
-            color = Colors.hex_to_color(tunic_option)
+            color = rs.color.hex_to_color(tunic_option)
             tunic_option = 'Custom'
 
-        rom.write_bytes(address, color)
+        rom.write_bytes(address, color.bytes())
 
         # patch the tunic icon
         if [tunic, tunic_option] not in [['Kokiri Tunic', 'Kokiri Green'], ['Goron Tunic', 'Goron Red'], ['Zora Tunic', 'Zora Blue']]:
@@ -157,7 +157,7 @@ def patch_tunic_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
 
         log.equipment_colors[tunic] = CollapseDict({
             ':option': tunic_option,
-            'color': Colors.color_to_hex(color),
+            'color': rs.color.color_to_hex(color),
         })
 
         if rainbow_error:
@@ -183,7 +183,7 @@ def patch_navi_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: 
             symbols.get('CFG_RAINBOW_NAVI_PROP_INNER_ENABLED', None), symbols.get('CFG_RAINBOW_NAVI_PROP_OUTER_ENABLED', None)),
     ]
 
-    navi_color_list = Colors.get_navi_colors()
+    navi_color_list = rs.color.get_navi_colors()
     rainbow_error = None
 
     for navi_action, navi_setting, navi_addresses, rainbow_inner_symbol, rainbow_outer_symbol in navi:
@@ -213,12 +213,12 @@ def patch_navi_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: 
 
                 # Plando
                 if len(plando_colors) > address_index and plando_colors[address_index].get(navi_part, ''):
-                    color = Colors.hex_to_color(plando_colors[address_index][navi_part])
+                    color = rs.color.hex_to_color(plando_colors[address_index][navi_part])
 
                 # set rainbow option
                 if rainbow_symbol is not None and option == 'Rainbow':
                     rom.write_byte(rainbow_symbol, 0x01)
-                    color = [0x00, 0x00, 0x00]
+                    color = rs.color.Color(0x00, 0x00, 0x00)
                 elif rainbow_symbol is not None:
                     rom.write_byte(rainbow_symbol, 0x00)
                 elif option == 'Rainbow':
@@ -227,15 +227,15 @@ def patch_navi_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: 
 
                 # completely random is random for every subgroup
                 if color is None and option == 'Completely Random':
-                    color = Colors.generate_random_color()
+                    color = rs.color.generate_random_color()
 
                 # grab the color from the list
-                if color is None and option in Colors.NaviColors:
-                    color = list(Colors.NaviColors[option][index])
+                if color is None and option in rs.color.NaviColors:
+                    color = rs.color.NaviColors[option][index]
 
                 # build color from hex code
                 if color is None:
-                    color = Colors.hex_to_color(option)
+                    color = rs.color.hex_to_color(option)
                     option = 'Custom'
 
                 # Check color validity
@@ -246,7 +246,7 @@ def patch_navi_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: 
                 option_dict[navi_part] = option
 
             # write color
-            color = address_colors['inner'] + [0xFF] + address_colors['outer'] + [0xFF]
+            color = [*address_colors['inner'].bytes(), 0xFF, *address_colors['outer'].bytes(), 0xFF]
             rom.write_bytes(address, color)
 
         # Get the colors into the log.
@@ -261,7 +261,7 @@ def patch_navi_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: 
                 log.misc_colors[navi_action]['colors'].append(address_colors_str)
                 for part, color in address_colors.items():
                     if log.misc_colors[navi_action][f':option_{part}'] != "Rainbow" or rainbow_error:
-                        address_colors_str[part] = Colors.color_to_hex(color)
+                        address_colors_str[part] = rs.color.color_to_hex(color)
         else:
             del log.misc_colors[navi_action]['colors']
 
@@ -280,7 +280,7 @@ def patch_sword_trails(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
             symbols.get('CFG_RAINBOW_SWORD_INNER_ENABLED', None), symbols.get('CFG_RAINBOW_SWORD_OUTER_ENABLED', None)),
     ]
 
-    sword_trail_color_list = Colors.get_sword_trail_colors()
+    sword_trail_color_list = rs.color.get_sword_trail_colors()
     rainbow_error = None
 
     for trail_name, trail_setting, trail_addresses, rainbow_inner_symbol, rainbow_outer_symbol in sword_trails:
@@ -311,12 +311,12 @@ def patch_sword_trails(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
 
                 # Plando
                 if len(plando_colors) > address_index and plando_colors[address_index].get(trail_part, ''):
-                    color = Colors.hex_to_color(plando_colors[address_index][trail_part])
+                    color = rs.color.hex_to_color(plando_colors[address_index][trail_part])
 
                 # set rainbow option
                 if rainbow_symbol is not None and option == 'Rainbow':
                     rom.write_byte(rainbow_symbol, 0x01)
-                    color = [0x00, 0x00, 0x00]
+                    color = rs.color.Color(0x00, 0x00, 0x00)
                 elif rainbow_symbol is not None:
                     rom.write_byte(rainbow_symbol, 0x00)
                 elif option == 'Rainbow':
@@ -325,15 +325,15 @@ def patch_sword_trails(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
 
                 # completely random is random for every subgroup
                 if color is None and option == 'Completely Random':
-                    color = Colors.generate_random_color()
+                    color = rs.color.generate_random_color()
 
                 # grab the color from the list
-                if color is None and option in Colors.sword_trail_colors:
-                    color = list(Colors.sword_trail_colors[option])
+                if color is None and option in rs.color.sword_trail_colors:
+                    color = rs.color.sword_trail_colors[option]
 
                 # build color from hex code
                 if color is None:
-                    color = Colors.hex_to_color(option)
+                    color = rs.color.hex_to_color(option)
                     option = 'Custom'
 
                 # Check color validity
@@ -350,7 +350,7 @@ def patch_sword_trails(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
                 option_dict[trail_part] = option
 
             # write color
-            color = address_colors['outer'] + [transparency_dict['outer']] + address_colors['inner'] + [transparency_dict['inner']]
+            color = [*address_colors['outer'].bytes(), transparency_dict['outer'], *address_colors['inner'].bytes(), transparency_dict['inner']]
             rom.write_bytes(address, color)
 
         # Get the colors into the log.
@@ -365,7 +365,7 @@ def patch_sword_trails(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
                 log.misc_colors[trail_name]['colors'].append(address_colors_str)
                 for part, color in address_colors.items():
                     if log.misc_colors[trail_name][f':option_{part}'] != "Rainbow" or rainbow_error:
-                        address_colors_str[part] = Colors.color_to_hex(color)
+                        address_colors_str[part] = rs.color.color_to_hex(color)
         else:
             del log.misc_colors[trail_name]['colors']
 
@@ -376,7 +376,7 @@ def patch_sword_trails(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
 def patch_bombchu_trails(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: dict[str, int]) -> None:
     # patch bombchu trail colors
     bombchu_trails = [
-        ('Bombchu Trail', 'bombchu_trail_color', Colors.get_bombchu_trail_colors(), Colors.bombchu_trail_colors,
+        ('Bombchu Trail', 'bombchu_trail_color', rs.color.get_bombchu_trail_colors(), rs.color.bombchu_trail_colors,
             (symbols['CFG_BOMBCHU_TRAIL_INNER_COLOR'], symbols['CFG_BOMBCHU_TRAIL_OUTER_COLOR'],
              symbols['CFG_RAINBOW_BOMBCHU_TRAIL_INNER_ENABLED'], symbols['CFG_RAINBOW_BOMBCHU_TRAIL_OUTER_ENABLED'])),
     ]
@@ -387,7 +387,7 @@ def patch_bombchu_trails(rom: Rom, settings: Settings, log: CosmeticsLog, symbol
 def patch_boomerang_trails(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: dict[str, int]) -> None:
     # patch boomerang trail colors
     boomerang_trails = [
-        ('Boomerang Trail', 'boomerang_trail_color', Colors.get_boomerang_trail_colors(), Colors.boomerang_trail_colors,
+        ('Boomerang Trail', 'boomerang_trail_color', rs.color.get_boomerang_trail_colors(), rs.color.boomerang_trail_colors,
             (symbols['CFG_BOOM_TRAIL_INNER_COLOR'], symbols['CFG_BOOM_TRAIL_OUTER_COLOR'],
              symbols['CFG_RAINBOW_BOOM_TRAIL_INNER_ENABLED'], symbols['CFG_RAINBOW_BOOM_TRAIL_OUTER_ENABLED'])),
     ]
@@ -422,12 +422,12 @@ def patch_trails(rom: Rom, settings: Settings, log: CosmeticsLog, trails) -> Non
 
             # Plando
             if len(plando_colors) > 0 and plando_colors[0].get(trail_part, ''):
-                color = Colors.hex_to_color(plando_colors[0][trail_part])
+                color = rs.color.hex_to_color(plando_colors[0][trail_part])
 
             # set rainbow option
             if option == 'Rainbow':
                 rom.write_byte(rainbow_symbol, 0x01)
-                color = [0x00, 0x00, 0x00]
+                color = rs.color.Color(0x00, 0x00, 0x00)
             else:
                 rom.write_byte(rainbow_symbol, 0x00)
 
@@ -435,28 +435,28 @@ def patch_trails(rom: Rom, settings: Settings, log: CosmeticsLog, trails) -> Non
             if color is None and option == 'Completely Random':
                 # Specific handling for inner bombchu trails for contrast purposes.
                 if trail_name == 'Bombchu Trail' and trail_part == 'inner':
-                    fixed_dark_color = [0, 0, 0]
-                    color = [0, 0, 0]
+                    fixed_dark_color = rs.color.Color(0, 0, 0)
+                    color = rs.color.Color(0, 0, 0)
                     # Avoid colors which have a low contrast so the bombchu ticking is still visible
-                    while Colors.contrast_ratio(color, fixed_dark_color) <= 4:
-                        color = Colors.generate_random_color()
+                    while rs.color.contrast_ratio(color, fixed_dark_color) <= 4:
+                        color = rs.color.generate_random_color()
                 else:
-                    color = Colors.generate_random_color()
+                    color = rs.color.generate_random_color()
 
             # grab the color from the list
             if color is None and option in trail_color_dict:
-                color = list(trail_color_dict[option])
+                color = trail_color_dict[option]
 
             # build color from hex code
             if color is None:
-                color = Colors.hex_to_color(option)
+                color = rs.color.hex_to_color(option)
                 option = 'Custom'
 
             option_dict[trail_part] = option
             colors[trail_part] = color
 
             # write color
-            rom.write_bytes(color_symbol, color)
+            rom.write_bytes(color_symbol, color.bytes())
 
         # Get the colors into the log.
         log.misc_colors[trail_name] = CollapseDict({
@@ -469,7 +469,7 @@ def patch_trails(rom: Rom, settings: Settings, log: CosmeticsLog, trails) -> Non
             log.misc_colors[trail_name]['colors'].append(colors_str)
             for part, color in colors.items():
                 if log.misc_colors[trail_name][f':option_{part}'] != "Rainbow":
-                    colors_str[part] = Colors.color_to_hex(color)
+                    colors_str[part] = rs.color.color_to_hex(color)
         else:
             del log.misc_colors[trail_name]['colors']
 
@@ -482,7 +482,7 @@ def patch_gauntlet_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbo
         ('Gold Gauntlets', 'golden_gauntlets_color',  0x00B6DA47,
             ([0x173B4EC], [0x173B4F4, 0x173B52C, 0x173B534], [])), # GI Model DList colors
     ]
-    gauntlet_color_list = Colors.get_gauntlet_colors()
+    gauntlet_color_list = rs.color.get_gauntlet_colors()
 
     for gauntlet, gauntlet_setting, address, model_addresses in gauntlets:
         gauntlet_option = getattr(settings, gauntlet_setting)
@@ -496,22 +496,22 @@ def patch_gauntlet_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbo
             gauntlet_option = random.choice(gauntlet_color_list)
         # handle completely random
         if gauntlet_option == 'Completely Random':
-            color = Colors.generate_random_color()
+            color = rs.color.generate_random_color()
         # grab the color from the list
-        elif gauntlet_option in Colors.gauntlet_colors:
-            color = list(Colors.gauntlet_colors[gauntlet_option])
+        elif gauntlet_option in rs.color.gauntlet_colors:
+            color = rs.color.gauntlet_colors[gauntlet_option]
         # build color from hex code
         else:
-            color = Colors.hex_to_color(gauntlet_option)
+            color = rs.color.hex_to_color(gauntlet_option)
             gauntlet_option = 'Custom'
-        rom.write_bytes(address, color)
+        rom.write_bytes(address, color.bytes())
         if settings.correct_model_colors:
             patch_model_colors(rom, color, model_addresses)
         else:
             patch_model_colors(rom, None, model_addresses)
         log.equipment_colors[gauntlet] = CollapseDict({
             ':option': gauntlet_option,
-            'color': Colors.color_to_hex(color),
+            'color': rs.color.color_to_hex(color),
         })
 
 
@@ -522,7 +522,7 @@ def patch_shield_frame_colors(rom: Rom, settings: Settings, log: CosmeticsLog, s
             [0xFA7274, 0xFA776C, 0xFAA27C, 0xFAC564, 0xFAC984, 0xFAEDD4],
             ([0x1616FCC], [0x1616FD4], [])),
     ]
-    shield_frame_color_list = Colors.get_shield_frame_colors()
+    shield_frame_color_list = rs.color.get_shield_frame_colors()
 
     for shield_frame, shield_frame_setting, addresses, model_addresses in shield_frames:
         shield_frame_option = getattr(settings, shield_frame_setting)
@@ -536,16 +536,16 @@ def patch_shield_frame_colors(rom: Rom, settings: Settings, log: CosmeticsLog, s
             shield_frame_option = random.choice(shield_frame_color_list)
         # handle completely random
         if shield_frame_option == 'Completely Random':
-            color = [random.getrandbits(8), random.getrandbits(8), random.getrandbits(8)]
+            color = rs.color.generate_random_color()
         # grab the color from the list
-        elif shield_frame_option in Colors.shield_frame_colors:
-            color = list(Colors.shield_frame_colors[shield_frame_option])
+        elif shield_frame_option in rs.color.shield_frame_colors:
+            color = rs.color.shield_frame_colors[shield_frame_option]
         # build color from hex code
         else:
-            color = Colors.hex_to_color(shield_frame_option)
+            color = rs.color.hex_to_color(shield_frame_option)
             shield_frame_option = 'Custom'
         for address in addresses:
-            rom.write_bytes(address, color)
+            rom.write_bytes(address, color.bytes())
         if settings.correct_model_colors and shield_frame_option != 'Red':
             patch_model_colors(rom, color, model_addresses)
         else:
@@ -553,7 +553,7 @@ def patch_shield_frame_colors(rom: Rom, settings: Settings, log: CosmeticsLog, s
 
         log.equipment_colors[shield_frame] = CollapseDict({
             ':option': shield_frame_option,
-            'color': Colors.color_to_hex(color),
+            'color': rs.color.color_to_hex(color),
         })
 
 
@@ -566,7 +566,7 @@ def patch_heart_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
               0x14B706C, 0x14B707C, 0x14B708C, 0x14B709C, 0x14B70AC, 0x14B70BC, 0x14B70CC, 0x16092A4],
              [0x16092FC, 0x1609394])), # GI Model and Potion DList colors
     ]
-    heart_color_list = Colors.get_heart_colors()
+    heart_color_list = rs.color.get_heart_colors()
 
     for heart, heart_setting, symbol, file_select_address, model_addresses in hearts:
         heart_option = getattr(settings, heart_setting)
@@ -580,30 +580,30 @@ def patch_heart_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
             heart_option = random.choice(heart_color_list)
         # handle completely random
         if heart_option == 'Completely Random':
-            color = Colors.generate_random_color()
+            color = rs.color.generate_random_color()
         # grab the color from the list
-        elif heart_option in Colors.heart_colors:
-            color = list(Colors.heart_colors[heart_option])
+        elif heart_option in rs.color.heart_colors:
+            color = rs.color.heart_colors[heart_option]
         # build color from hex code
         else:
-            color = Colors.hex_to_color(heart_option)
+            color = rs.color.hex_to_color(heart_option)
             heart_option = 'Custom'
-        rom.write_int16s(symbol, color)  # symbol for ingame HUD
-        rom.write_int16s(file_select_address, color)  # file select normal hearts
+        rom.write_int16s(symbol, color.bytes())  # symbol for ingame HUD
+        rom.write_int16s(file_select_address, color.bytes())  # file select normal hearts
         if heart_option != 'Red':
-            rom.write_int16s(file_select_address + 6, color)  # file select DD hearts
+            rom.write_int16s(file_select_address + 6, color.bytes())  # file select DD hearts
         else:
             original_dd_color = rom.original.read_bytes(file_select_address + 6, 6)
             rom.write_bytes(file_select_address + 6, original_dd_color)
         if settings.correct_model_colors and heart_option != 'Red':
             patch_model_colors(rom, color, model_addresses) # heart model colors
-            IconManip.patch_overworld_icon(rom, color, 0xF43D80)  # Overworld Heart Icon
+            IconManip.patch_overworld_icon(rom, color.bytes(), 0xF43D80)  # Overworld Heart Icon
         else:
             patch_model_colors(rom, None, model_addresses)
             IconManip.patch_overworld_icon(rom, None, 0xF43D80)
         log.ui_colors[heart] = CollapseDict({
             ':option': heart_option,
-            'color': Colors.color_to_hex(color),
+            'color': rs.color.color_to_hex(color),
         })
 
 
@@ -615,7 +615,7 @@ def patch_magic_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
              [0x154C65C, 0x154CFBC, 0x1609284],
              [0x16092DC, 0x160933C])), # GI Model and Potion DList colors
     ]
-    magic_color_list = Colors.get_magic_colors()
+    magic_color_list = rs.color.get_magic_colors()
 
     for magic_color, magic_setting, symbol, model_addresses in magic:
         magic_option = getattr(settings, magic_setting)
@@ -628,30 +628,30 @@ def patch_magic_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols:
            magic_option = random.choice(magic_color_list)
 
         if magic_option == 'Completely Random':
-            color = Colors.generate_random_color()
-        elif magic_option in Colors.magic_colors:
-            color = list(Colors.magic_colors[magic_option])
+            color = rs.color.generate_random_color()
+        elif magic_option in rs.color.magic_colors:
+            color = rs.color.magic_colors[magic_option]
         else:
-            color = Colors.hex_to_color(magic_option)
+            color = rs.color.hex_to_color(magic_option)
             magic_option = 'Custom'
-        rom.write_int16s(symbol, color)
+        rom.write_int16s(symbol, color.bytes())
         if magic_option != 'Green' and settings.correct_model_colors:
             patch_model_colors(rom, color, model_addresses)
-            IconManip.patch_overworld_icon(rom, color, 0xF45650, data_path('icons/magicSmallExtras.raw'))  # Overworld Small Pot
-            IconManip.patch_overworld_icon(rom, color, 0xF47650, data_path('icons/magicLargeExtras.raw'))  # Overworld Big Pot
+            IconManip.patch_overworld_icon(rom, color.bytes(), 0xF45650, data_path('icons/magicSmallExtras.raw'))  # Overworld Small Pot
+            IconManip.patch_overworld_icon(rom, color.bytes(), 0xF47650, data_path('icons/magicLargeExtras.raw'))  # Overworld Big Pot
         else:
             patch_model_colors(rom, None, model_addresses)
             IconManip.patch_overworld_icon(rom, None, 0xF45650)
             IconManip.patch_overworld_icon(rom, None, 0xF47650)
         log.ui_colors[magic_color] = CollapseDict({
             ':option': magic_option,
-            'color': Colors.color_to_hex(color),
+            'color': rs.color.color_to_hex(color),
         })
 
 
 def patch_button_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: dict[str, int]) -> None:
     buttons = [
-        ('A Button Color', 'a_button_color', Colors.a_button_colors,
+        ('A Button Color', 'a_button_color', rs.color.a_button_colors,
             [('A Button Color', symbols['CFG_A_BUTTON_COLOR'],
                 None),
              ('Text Cursor Color', symbols['CFG_TEXT_CURSOR_COLOR'],
@@ -667,11 +667,11 @@ def patch_button_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols
              ('A Note Color', symbols['CFG_A_NOTE_COLOR'], # For Textbox Song Display
                 [(0xBB299A, 0xBB299B, 0xBB299E), (0xBB2C8E, 0xBB2C8F, 0xBB2C92), (0xBB2F8A, 0xBB2F8B, 0xBB2F96)]), # Pause Menu Song Display
             ]),
-        ('B Button Color', 'b_button_color', Colors.b_button_colors,
+        ('B Button Color', 'b_button_color', rs.color.b_button_colors,
             [('B Button Color', symbols['CFG_B_BUTTON_COLOR'],
                 None),
             ]),
-        ('C Button Color', 'c_button_color', Colors.c_button_colors,
+        ('C Button Color', 'c_button_color', rs.color.c_button_colors,
             [('C Button Color', symbols['CFG_C_BUTTON_COLOR'],
                 None),
              ('Pause Menu C Cursor Color', None,
@@ -681,7 +681,7 @@ def patch_button_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols
              ('C Note Color', symbols['CFG_C_NOTE_COLOR'], # For Textbox Song Display
                 [(0xBB2996, 0xBB2997, 0xBB29A2), (0xBB2C8A, 0xBB2C8B, 0xBB2C96), (0xBB2F86, 0xBB2F87, 0xBB2F9A)]), # Pause Menu Song Display
             ]),
-        ('Start Button Color', 'start_button_color', Colors.start_button_colors,
+        ('Start Button Color', 'start_button_color', rs.color.start_button_colors,
             [('Start Button Color', None,
                 [(0xAE9EC6, 0xAE9EC7, 0xAE9EDA)]),
             ]),
@@ -703,39 +703,39 @@ def patch_button_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols
         # handle completely random
         if button_option == 'Completely Random':
             fixed_font_color = [10, 10, 10]
-            color = [0, 0, 0]
+            color = rs.color.Color(0, 0, 0)
             # Avoid colors which have a low contrast with the font inside buttons (eg. the A letter)
-            while Colors.contrast_ratio(color, fixed_font_color) <= 3:
-                color = Colors.generate_random_color()
+            while rs.color.contrast_ratio(color, fixed_font_color) <= 3:
+                color = rs.color.generate_random_color()
         # grab the color from the list
         elif button_option in button_colors:
-            color_set = [button_colors[button_option]] if isinstance(button_colors[button_option][0], int) else list(button_colors[button_option])
+            color_set = [button_colors[button_option]] if isinstance(button_colors[button_option], rs.color.Color) else list(button_colors[button_option])
             color = color_set[0]
         # build color from hex code
         else:
-            color = Colors.hex_to_color(button_option)
+            color = rs.color.hex_to_color(button_option)
             button_option = 'Custom'
         log_dict[':option'] = button_option
 
         # apply all button color patches
         for i, (patch, symbol, byte_addresses) in enumerate(patches):
             if plando_colors.get(patch, ''):
-                colors[patch] = Colors.hex_to_color(plando_colors[patch])
+                colors[patch] = rs.color.hex_to_color(plando_colors[patch])
             elif color_set is not None and len(color_set) > i and color_set[i]:
                 colors[patch] = color_set[i]
             else:
                 colors[patch] = color
 
             if symbol:
-                rom.write_int16s(symbol, colors[patch])
+                rom.write_int16s(symbol, colors[patch].bytes())
 
             if byte_addresses:
                 for r_addr, g_addr, b_addr in byte_addresses:
-                    rom.write_byte(r_addr, colors[patch][0])
-                    rom.write_byte(g_addr, colors[patch][1])
-                    rom.write_byte(b_addr, colors[patch][2])
+                    rom.write_byte(r_addr, colors[patch].bytes()[0])
+                    rom.write_byte(g_addr, colors[patch].bytes()[1])
+                    rom.write_byte(b_addr, colors[patch].bytes()[2])
 
-            log_dict['colors'][patch] = Colors.color_to_hex(colors[patch])
+            log_dict['colors'][patch] = rs.color.color_to_hex(colors[patch])
 
 
 def patch_extra_equip_colors(rom: Rom, settings: Settings, log: CosmeticsLog, symbols: dict[str, int]) -> None:
@@ -765,17 +765,17 @@ def patch_extra_equip_colors(rom: Rom, settings: Settings, log: CosmeticsLog, sy
 
         # handle completely random
         if option == 'Completely Random':
-            color = [random.getrandbits(8), random.getrandbits(8), random.getrandbits(8)]
+            color = rs.color.generate_random_color()
         # handle vanilla
         elif option == 'Vanilla':
-            color = rom.original.read_bytes(addresses[0], 3)
+            color = rs.color.Color(*rom.original.read_bytes(addresses[0], 3))
         # build color from hex code
         else:
-            color = Colors.hex_to_color(option)
+            color = rs.color.hex_to_color(option)
             option = 'Custom'
 
         for address in addresses:
-            rom.write_bytes(address, color)
+            rom.write_bytes(address, color.bytes())
 
         if settings.correct_model_colors and option != 'Vanilla':
             patch_model_colors(rom, color, model_addresses)
@@ -784,7 +784,7 @@ def patch_extra_equip_colors(rom: Rom, settings: Settings, log: CosmeticsLog, sy
 
         log.equipment_colors[name] = CollapseDict({
             ':option': option,
-            'color': Colors.color_to_hex(color),
+            'color': rs.color.color_to_hex(color),
         })
 
 

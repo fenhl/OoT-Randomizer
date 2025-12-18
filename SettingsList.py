@@ -5,7 +5,7 @@ import re
 from collections.abc import Iterable
 from typing import TYPE_CHECKING, Optional, Any
 
-import Colors
+import rs.color
 from Hints import hint_dist_list, hint_dist_tips, gossipLocations
 from Item import ItemInfo
 from Location import LocationIterator
@@ -5099,7 +5099,7 @@ class SettingInfos:
         gui_text       = "Kokiri Tunic",
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_tunic_color_options(),
+        choices        = rs.color.get_tunic_color_options(),
         default        = 'Kokiri Green',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5119,7 +5119,7 @@ class SettingInfos:
         gui_text       = "Goron Tunic",
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_tunic_color_options(),
+        choices        = rs.color.get_tunic_color_options(),
         default        = 'Goron Red',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5139,7 +5139,7 @@ class SettingInfos:
         gui_text       = "Zora Tunic",
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_tunic_color_options(),
+        choices        = rs.color.get_tunic_color_options(),
         default        = 'Zora Blue',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5159,7 +5159,7 @@ class SettingInfos:
         gui_text       = 'Silver Gauntlets Color',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_gauntlet_color_options(),
+        choices        = rs.color.get_gauntlet_color_options(),
         default        = 'Silver',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5179,7 +5179,7 @@ class SettingInfos:
         gui_text       = 'Golden Gauntlets Color',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_gauntlet_color_options(),
+        choices        = rs.color.get_gauntlet_color_options(),
         default        = 'Gold',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5199,7 +5199,7 @@ class SettingInfos:
         gui_text       = 'Mirror Shield Frame Color',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_shield_frame_color_options(),
+        choices        = rs.color.get_shield_frame_color_options(),
         default        = 'Red',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5237,7 +5237,7 @@ class SettingInfos:
         gui_text       = 'Heart Color',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_heart_color_options(),
+        choices        = rs.color.get_heart_color_options(),
         default        = 'Red',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5257,7 +5257,7 @@ class SettingInfos:
         gui_text       = 'Magic Color',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_magic_color_options(),
+        choices        = rs.color.get_magic_color_options(),
         default        = 'Green',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5277,7 +5277,7 @@ class SettingInfos:
         gui_text       = 'A Button Color',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_a_button_color_options(),
+        choices        = rs.color.get_a_button_color_options(),
         default        = 'N64 Blue',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5297,7 +5297,7 @@ class SettingInfos:
         gui_text       = 'B Button Color',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_b_button_color_options(),
+        choices        = rs.color.get_b_button_color_options(),
         default        = 'N64 Green',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5317,7 +5317,7 @@ class SettingInfos:
         gui_text       = 'C Button Color',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_c_button_color_options(),
+        choices        = rs.color.get_c_button_color_options(),
         default        = 'Yellow',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5337,7 +5337,7 @@ class SettingInfos:
         gui_text       = 'Start Button Color',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_start_button_color_options(),
+        choices        = rs.color.get_start_button_color_options(),
         default        = 'N64 Red',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5357,7 +5357,7 @@ class SettingInfos:
         gui_text       = "Navi Idle Inner",
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_navi_color_options(),
+        choices        = rs.color.get_navi_color_options(),
         default        = 'White',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5379,7 +5379,7 @@ class SettingInfos:
         gui_text       = "Outer",
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_navi_color_options(True),
+        choices        = rs.color.get_navi_color_options(True),
         default        = '[Same as Inner]',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5400,7 +5400,7 @@ class SettingInfos:
         gui_text       = 'Navi Targeting Enemy Inner',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_navi_color_options(),
+        choices        = rs.color.get_navi_color_options(),
         default        = 'Yellow',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5422,7 +5422,7 @@ class SettingInfos:
         gui_text       = 'Outer',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_navi_color_options(True),
+        choices        = rs.color.get_navi_color_options(True),
         default        = '[Same as Inner]',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5443,7 +5443,7 @@ class SettingInfos:
         gui_text       = 'Navi Targeting NPC Inner',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_navi_color_options(),
+        choices        = rs.color.get_navi_color_options(),
         default        = 'Light Blue',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5465,7 +5465,7 @@ class SettingInfos:
         gui_text       = 'Outer',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_navi_color_options(True),
+        choices        = rs.color.get_navi_color_options(True),
         default        = '[Same as Inner]',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5486,7 +5486,7 @@ class SettingInfos:
         gui_text       = 'Navi Targeting Prop Inner',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_navi_color_options(),
+        choices        = rs.color.get_navi_color_options(),
         default        = 'Green',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5508,7 +5508,7 @@ class SettingInfos:
         gui_text       = 'Outer',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_navi_color_options(True),
+        choices        = rs.color.get_navi_color_options(True),
         default        = '[Same as Inner]',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5529,7 +5529,7 @@ class SettingInfos:
         gui_text       = 'Bombchu Trail Inner',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_bombchu_trail_color_options(),
+        choices        = rs.color.get_bombchu_trail_color_options(),
         default        = 'Red',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5551,7 +5551,7 @@ class SettingInfos:
         gui_text       = 'Outer',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_bombchu_trail_color_options(True),
+        choices        = rs.color.get_bombchu_trail_color_options(True),
         default        = '[Same as Inner]',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5572,7 +5572,7 @@ class SettingInfos:
         gui_text       = 'Boomerang Trail Inner',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_boomerang_trail_color_options(),
+        choices        = rs.color.get_boomerang_trail_color_options(),
         default        = 'Yellow',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5594,7 +5594,7 @@ class SettingInfos:
         gui_text       = 'Outer',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_boomerang_trail_color_options(True),
+        choices        = rs.color.get_boomerang_trail_color_options(True),
         default        = '[Same as Inner]',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5615,7 +5615,7 @@ class SettingInfos:
         gui_text       = 'Sword Trail Inner',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_sword_trail_color_options(),
+        choices        = rs.color.get_sword_trail_color_options(),
         default        = 'White',
         gui_tooltip    = '''\
             'Random Choice': Choose a random
@@ -5637,7 +5637,7 @@ class SettingInfos:
         gui_text       = 'Outer',
         shared         = False,
         cosmetic       = True,
-        choices        = Colors.get_sword_trail_color_options(True),
+        choices        = rs.color.get_sword_trail_color_options(True),
         default        = '[Same as Inner]',
         gui_tooltip    = '''\
             'Random Choice': Choose a random

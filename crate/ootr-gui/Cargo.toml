@@ -17,7 +17,7 @@ warnings = "deny"
 collect-mac = "0.1.0"
 enum-iterator = "2.1.0"
 futures = "0.3"
-gres = { git = "https://github.com/fenhl/gres", branch = "main" }
+gres = { git = "https://github.com/fenhl/gres" }
 iced = { version = "0.13", default-features = false, features = ["auto-detect-theme", "image", "multi-window", "tiny-skia", "tokio"] }
 if_chain = "1.0.2"
 image = { version = "0.24", default-features = false, features = ["ico"] } # transitive dependency of iced
@@ -44,7 +44,7 @@ serenity = { version = "0.12.4", default-features = false, features = ["utils"] 
 smart-default = "0.7.1"
 thiserror = "2"
 tokio = { version = "1", features = ["rt-multi-thread"] }
-wheel = { git = "https://github.com/fenhl/wheel", branch = "main", features = ["gui", "serde_json"] }
+wheel = { git = "https://github.com/fenhl/wheel", features = ["gui", "serde_json"] }
 
 [build-dependencies]
 pyo3-build-config = "0.25"

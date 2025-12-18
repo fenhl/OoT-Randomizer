@@ -18,6 +18,7 @@ macro_rules! py_mod {
 }
 
 py_mod!(
+    color,
     entrance_shuffle,
     hints,
     rom,
