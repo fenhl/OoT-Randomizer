@@ -3154,7 +3154,9 @@
         "silver_rupee_pouches_choice": "off",
         "silver_rupee_pouches": [],
         "shuffle_mapcompass": "startwith",
-        "enhance_map_compass": true,
+        "enhance_map_compass": [
+            "compass_reward"
+        ],
         "open_forest": "closed_deku",
         "open_kakariko": "open",
         "open_door_of_time": true,
@@ -3457,7 +3459,7 @@
         "shuffle_bosskeys": "remove",
         "shuffle_ganon_bosskey": "remove",
         "lacs_condition": "vanilla",
-        "enhance_map_compass": false,
+        "enhance_map_compass": [],
         "mq_dungeons_mode": "vanilla",
         "mq_dungeons_specific": [],
         "mq_dungeons_count": 0,
@@ -3594,7 +3596,7 @@
         "shuffle_bosskeys": "remove",
         "shuffle_ganon_bosskey": "remove",
         "lacs_condition": "vanilla",
-        "enhance_map_compass": false,
+        "enhance_map_compass": [],
         "mq_dungeons_mode": "vanilla",
         "mq_dungeons_specific": [],
         "mq_dungeons_count": 0,
@@ -3741,7 +3743,7 @@
         "shuffle_bosskeys": "remove",
         "shuffle_ganon_bosskey": "remove",
         "lacs_condition": "vanilla",
-        "enhance_map_compass": false,
+        "enhance_map_compass": [],
         "mq_dungeons_mode": "vanilla",
         "mq_dungeons_specific": [],
         "mq_dungeons_count": 0,
@@ -3895,7 +3897,9 @@
         "shuffle_bosskeys": "remove",
         "shuffle_ganon_bosskey": "remove",
         "lacs_condition": "vanilla",
-        "enhance_map_compass": true,
+        "enhance_map_compass": [
+            "compass_reward"
+        ],
         "mq_dungeons_mode": "vanilla",
         "mq_dungeons_specific": [],
         "mq_dungeons_count": 0,
@@ -4088,7 +4092,9 @@
         "shuffle_silver_rupees": "vanilla",
         "silver_rupee_pouches_choice": "off",
         "silver_rupee_pouches": [],
-        "enhance_map_compass": true,
+        "enhance_map_compass": [
+            "compass_reward"
+        ],
         "logic_no_night_tokens_without_suns_song": false,
         "disabled_locations": [
             "Deku Theater Skull Mask",
@@ -4315,7 +4321,9 @@
         "shuffle_silver_rupees": "vanilla",
         "silver_rupee_pouches_choice": "off",
         "silver_rupee_pouches": [],
-        "enhance_map_compass": true,
+        "enhance_map_compass": [
+            "compass_reward"
+        ],
         "logic_no_night_tokens_without_suns_song": false,
         "disabled_locations": [
             "Deku Theater Skull Mask",
