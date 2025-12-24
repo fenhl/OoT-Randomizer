@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Optional
 
 from Item import Item, ItemInfo, ItemFactory
 from Location import DisableType
+import StartingItems
 
 if TYPE_CHECKING:
     from Plandomizer import ItemPoolRecord
@@ -334,6 +335,14 @@ child_trade_items: tuple[str, ...] = (
     "Mask of Truth",
 )
 
+ocarina_buttons: tuple[str, ...] = (
+    'Ocarina A Button',
+    'Ocarina C down Button',
+    'Ocarina C right Button',
+    'Ocarina C left Button',
+    'Ocarina C up Button',
+)
+
 normal_bottles: list[str] = [bottle for bottle in sorted(ItemInfo.bottles) if bottle not in ('Deliver Letter', 'Sell Big Poe')] + ['Bottle with Big Poe']
 reward_list: list[str] = [item.name for item in sorted([i for n, i in ItemInfo.items.items() if i.type == 'DungeonReward'], key=lambda x: x.special['item_id'])]
 song_list: list[str] = [item.name for item in sorted([i for n, i in ItemInfo.items.items() if i.type == 'Song'], key=lambda x: x.index if x.index is not None else 0)]
@@ -511,9 +520,8 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
             if 'Pocket Egg' in world.settings.adult_trade_start and 'Pocket Cucco' in world.settings.adult_trade_start:
                 pending_junk_pool.remove('Pocket Cucco')
         elif world.settings.adult_trade_start:
-            # With adult trade shuffle off, add a random extra adult trade item
-            item = random.choice(world.settings.adult_trade_start)
-            pending_junk_pool.append(item)
+            # With adult trade shuffle off, add another copy of the selected adult trade item
+            pending_junk_pool.append(world.selected_adult_trade_item)
         if world.settings.zora_fountain != 'open':
             ruto_bottles += 1
         if world.settings.shuffle_kokiri_sword:
@@ -559,16 +567,12 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
         if world.settings.shuffle_song_items == 'any':
             pending_junk_pool.extend(song_list)
         if world.settings.shuffle_individual_ocarina_notes:
-            pending_junk_pool.extend(['Ocarina A Button', 'Ocarina C up Button', 'Ocarina C left Button', 'Ocarina C down Button', 'Ocarina C right Button'])
+            pending_junk_pool.extend(ocarina_buttons)
 
     if world.settings.triforce_hunt:
         pending_junk_pool.extend(['Triforce Piece'] * world.settings.triforce_count_per_world)
     if world.settings.shuffle_individual_ocarina_notes:
-        pending_junk_pool.append('Ocarina A Button')
-        pending_junk_pool.append('Ocarina C up Button')
-        pending_junk_pool.append('Ocarina C left Button')
-        pending_junk_pool.append('Ocarina C down Button')
-        pending_junk_pool.append('Ocarina C right Button')
+        pending_junk_pool.extend(ocarina_buttons)
 
     if world.settings.triforce_blitz:
         pending_junk_pool.extend(triforce_blitz_items)
@@ -1071,6 +1075,26 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
             pool.remove(junk_item)
             pool.append(pending_item)
 
+    world.distribution.collect_starters(world.state)
+
+    if not world.settings.shuffle_individual_ocarina_notes:
+        for ocarina_button in ocarina_buttons:
+            world.state.collect(ItemFactory(ocarina_button, world))
+
+    for _ in range(world.settings.random_starting_items_count):
+        random_starting_items_pool = configure_random_starting_items_pool(world, pool)
+        selected_item = random.choice(random_starting_items_pool)
+        world.randomized_starting_items[selected_item] = world.randomized_starting_items.get(selected_item, 0) + 1
+        pool.remove(selected_item)
+        pool.extend(get_junk_item())
+    add_random_starting_items_ammo(world.randomized_starting_items)
+    for item, count in world.randomized_starting_items.items():
+        item = ItemFactory(item, world)
+        for _ in range(count):
+            if item.solver_id is not None:
+                world.state.collect(item)
+    world.distribution.randomized_starting_items = world.randomized_starting_items
+
     if world.settings.junk_ice_traps in ('custom_count', 'custom_percent'):
         junk_pool[:] = [('Ice Trap', 1)]
         # Get a list of all "junk" type items
@@ -1134,13 +1158,30 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
         item_groups['Junk'] = remove_junk_items
         world.distribution.distribution.search_groups['Junk'] = remove_junk_items
 
-    world.distribution.collect_starters(world.state)
-
-    if not world.settings.shuffle_individual_ocarina_notes:
-        world.state.collect(ItemFactory('Ocarina A Button', world))
-        world.state.collect(ItemFactory('Ocarina C up Button', world))
-        world.state.collect(ItemFactory('Ocarina C down Button', world))
-        world.state.collect(ItemFactory('Ocarina C left Button', world))
-        world.state.collect(ItemFactory('Ocarina C right Button', world))
-
     return pool, placed_items
+
+
+def configure_random_starting_items_pool(world: World, pool: list[str]) -> list[str]:
+    exclude_list = []
+
+    if 'songs' in world.settings.random_starting_items_exclude:
+        exclude_list.extend(item_groups['Song'])
+    if 'bombchus' in world.settings.random_starting_items_exclude:
+        exclude_list.extend((item for item in pool if 'Bombchus' in item))
+    if 'shields' in world.settings.random_starting_items_exclude:
+        exclude_list.extend(item_groups['Shield'])
+    if 'deku_upgrades' in world.settings.random_starting_items_exclude:
+        exclude_list.extend(('Deku Stick Capacity', 'Deku Nut Capacity'))
+    if 'health_upgrades' in world.settings.random_starting_items_exclude:
+        exclude_list.extend(item_groups['HealthUpgrade'])
+    if 'junk' in world.settings.random_starting_items_exclude:
+        exclude_list.extend(ItemInfo.junk_weight)
+
+    return sorted({item for item in pool if item not in exclude_list and ItemInfo.items[item].type != 'Shop'}) # give each item the same weight regardless of how many copies there are
+
+
+def add_random_starting_items_ammo(randomized_starting_items: dict[str, int]) -> None:
+    for item in StartingItems.inventory.values():
+        if item.item_name in randomized_starting_items and item.ammo:
+            for ammo, qty in item.ammo.items():
+                randomized_starting_items[ammo] = qty[randomized_starting_items[item.item_name] - 1]

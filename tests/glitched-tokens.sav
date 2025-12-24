@@ -13,7 +13,7 @@
 "randomize_settings": false,
 "open_forest": "open",
 "open_kakariko": "open",
-"open_door_of_time": true,
+"open_door_of_time": "open",
 "zora_fountain": "open",
 "gerudo_fortress": "fast",
 "bridge": "tokens",
@@ -37,7 +37,7 @@
 "shuffle_mapcompass": "startwith",
 "shuffle_smallkeys": "dungeon",
 "shuffle_bosskeys": "dungeon",
-"enhance_map_compass": false,
+"enhance_map_compass": [],
 "shuffle_ganon_bosskey": "dungeon",
 "mq_dungeons_mode": "vanilla",
 "disabled_locations": [

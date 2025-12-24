@@ -324,6 +324,7 @@ class TestPlandomizer(unittest.TestCase):
             "plando-potscrates-allmq",
             "plando-beehives",
             "plando-freestanding-pots-crates-beehives-triforcehunt",
+            "random_starting_items",
         ]
         for filename in filenames:
             with self.subTest(filename):
@@ -825,10 +826,7 @@ class TestValidSpoilers(unittest.TestCase):
                     if settings.logic_rules == 'advanced' and logic_rules_setting == 'advanced':
                         continue
                     settings.logic_rules = logic_rules_setting
-                    try:
-                        main(settings)
-                    except EntranceShuffleError:
-                        self.skipTest("Entrance shuffle error, see https://github.com/OoTRandomizer/OoT-Randomizer/issues/2181 for a potential fix.")
+                    main(settings)
                     # settings.output_file contains the first part of the filename
                     spoiler = load_spoiler('%s_Spoiler.json' % settings.output_file)
                     self.verify_woth(spoiler)
@@ -836,7 +834,7 @@ class TestValidSpoilers(unittest.TestCase):
                     self.verify_disables(spoiler)
 
     def test_advanced_tricks(self):
-        filename =  os.path.join(test_dir, 'glitched-standard.sav')
+        filename = 'glitched-standard.sav'
         settings = load_settings(filename, seed='TESTTESTTEST')
         # Enable all standard logic tricks
         settings.allowed_tricks = [trick['name'] for trick in logic_tricks.values()]
@@ -855,7 +853,7 @@ class TestValidSpoilers(unittest.TestCase):
                 self.verify_disables(spoiler)
 
     def test_advanced_tricks_entrances(self):
-        filename =  os.path.join(test_dir, 'glitched-entrances.sav')
+        filename = 'glitched-entrances.sav'
         settings = load_settings(filename, seed='TESTTESTTEST')
         # Enable all standard logic tricks
         settings.allowed_tricks = [trick['name'] for trick in logic_tricks.values()]
@@ -866,10 +864,7 @@ class TestValidSpoilers(unittest.TestCase):
                 test_name = 'Glitched logic with entrances and all advanced tricks'
                 settings.advanced_allowed_tricks = [trick['name'] for trick in advanced_logic_tricks.values()]
             with self.subTest(test_name, filename=filename):
-                try:
-                    main(settings)
-                except EntranceShuffleError:
-                    self.skipTest("Entrance shuffle error, see https://github.com/OoTRandomizer/OoT-Randomizer/issues/2181 for a potential fix.")
+                main(settings)
                 # settings.output_file contains the first part of the filename
                 spoiler = load_spoiler('%s_Spoiler.json' % settings.output_file)
                 self.verify_woth(spoiler)
@@ -889,7 +884,10 @@ class TestValidSpoilers(unittest.TestCase):
                     try:
                         main(settings)
                     except EntranceShuffleError:
-                        self.skipTest("Entrance shuffle error, see https://github.com/OoTRandomizer/OoT-Randomizer/issues/2181 for a potential fix.")
+                        if 'hell' in settings_dict.get('aliases', []):
+                            self.skipTest("Entrance shuffle error, see https://github.com/OoTRandomizer/OoT-Randomizer/issues/2181 for a potential fix.")
+                        else:
+                            raise
                     spoiler = load_spoiler('%s_Spoiler.json' % settings.output_file)
                     self.verify_woth(spoiler)
                     self.verify_playthrough(spoiler)

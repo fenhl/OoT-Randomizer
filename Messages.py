@@ -5,6 +5,7 @@ import random
 from collections.abc import Callable, Iterable
 from typing import TYPE_CHECKING, Optional, Any
 
+from ItemList import REWARD_COLORS
 from HintList import misc_item_hint_table, misc_location_hint_table
 from TextBox import line_wrap
 from Utils import find_last
@@ -214,7 +215,6 @@ ITEM_MESSAGES: list[tuple[int, str]] = [
     (0x00AD, "\x08\x13\x05You got \x05\x41Din's Fire\x05\x40!\x01Its fireball engulfs everything!"),
     (0x00AE, "\x08\x13\x0DYou got \x05\x42Farore's Wind\x05\x40!\x01This is warp magic you can use!"),
     (0x00AF, "\x08\x13\x13You got \x05\x43Nayru's Love\x05\x40!\x01Cast this to create a powerful\x01protective barrier."),
-    (0x00B4, "\x08You got a \x05\x41Gold Skulltula Token\x05\x40!\x01You've collected \x05\x41\x19\x05\x40 tokens in total."),
     (0x00B5, "\x08You destroyed a \x05\x41Gold Skulltula\x05\x40.\x01You got a token proving you \x01destroyed it!"), #Unused
     (0x00C2, "\x08\x13\x73You got a \x05\x41Piece of Heart\x05\x40!\x01Collect four pieces total to get\x01another Heart Container."),
     (0x90C2, "\x08\x13\x73You got a \x05\x41Piece of Heart\x05\x40!\x01You are already at\x01maximum health."),
@@ -296,7 +296,7 @@ ITEM_MESSAGES: list[tuple[int, str]] = [
     (0x90E2, "\x08You found the \x05\x42Triforce of Courage\x05\x40!"),
 ]
 
-KEYSANITY_MESSAGES: list[tuple[int, str]] = [
+IMPORTANT_ITEM_MESSAGES: list[tuple[int, str]] = [
     (0x001C, "\x13\x74\x08You got the \x05\x41Boss Key\x05\x40\x01for the \x05\x41Fire Temple\x05\x40!\x09"),
     (0x0006, "\x13\x74\x08You got the \x05\x41Boss Key\x05\x40\x01for the \x05\x42Forest Temple\x05\x40!\x09"),
     (0x001D, "\x13\x74\x08You got the \x05\x41Boss Key\x05\x40\x01for the \x05\x43Water Temple\x05\x40!\x09"),
@@ -332,6 +332,7 @@ KEYSANITY_MESSAGES: list[tuple[int, str]] = [
     (0x00A5, "\x13\x76\x08You found the \x05\x41Dungeon Map\x05\x40\x01for the \x05\x45Bottom of the Well\x05\x40!\x09"),
     (0x00A6, "\x13\x77\x08You found a \x05\x41Small Key\x05\x40\x01for the \x05\x46Spirit Temple\x05\x40!\x09"),
     (0x00A9, "\x13\x77\x08You found a \x05\x41Small Key\x05\x40\x01for the \x05\x45Shadow Temple\x05\x40!\x09"),
+    (0x00B4, "\x08You got a \x05\x41Gold Skulltula Token\x05\x40!\x01You've collected \x05\x41\x19\x05\x40 tokens in total."),
     (0x00F3, "\x13\x77\x08You found a \x05\x41Small Key\x05\x40\x01for the \x05\x44Treasure Box Shop\x05\x40!\x09"),
     # 0x9019 and 0x901A used above
     # Silver Rupee Messages with count.
@@ -476,24 +477,24 @@ i = 0x9101
 
 for dungeon_name in dungeon_names:
     if dungeon_name is not None:
-        KEYSANITY_MESSAGES.append((i, f"\x13\x77\x08You found a \x05\x41Small Key\x05\x40\x01for {dungeon_name}!\x01It's your \x05\x41first\x05\x40 one!\x09"))
+        IMPORTANT_ITEM_MESSAGES.append((i, f"\x13\x77\x08You found a \x05\x41Small Key\x05\x40\x01for {dungeon_name}!\x01It's your \x05\x41first\x05\x40 one!\x09"))
     i += 1
 c = 0
 for dungeon_name in dungeon_names:
     if dungeon_name is not None:
-        KEYSANITY_MESSAGES.append((i, f"\x13\x77\x08You found a \x05\x41Small Key\x05\x40\x01for {dungeon_name}!\x01You've collected \x05\x41" + "\xF1" + c.to_bytes(1, 'big').decode() + "\x05\x40 of them.\x09"))
+        IMPORTANT_ITEM_MESSAGES.append((i, f"\x13\x77\x08You found a \x05\x41Small Key\x05\x40\x01for {dungeon_name}!\x01You've collected \x05\x41" + "\xF1" + c.to_bytes(1, 'big').decode() + "\x05\x40 of them.\x09"))
     i += 1
     c += 1
 for dungeon_name in dungeon_names:
     if dungeon_name is not None:
-        KEYSANITY_MESSAGES.append((i, f"\x13\x77\x08You found a \x05\x41Small Key\x05\x40\x01for {dungeon_name}!\x01You already have enough keys.\x09"))
+        IMPORTANT_ITEM_MESSAGES.append((i, f"\x13\x77\x08You found a \x05\x41Small Key\x05\x40\x01for {dungeon_name}!\x01You already have enough keys.\x09"))
     i += 1
 
 # Add key ring messages starting at 0x9200
 i = 0x9200
 for dungeon_name in dungeon_names:
     if dungeon_name is not None:
-        KEYSANITY_MESSAGES.append((i, f"\x13\x77\x08You found a \x05\x41Small Key Ring\x05\x40\x01for {dungeon_name}!\x09"))
+        IMPORTANT_ITEM_MESSAGES.append((i, f"\x13\x77\x08You found a \x05\x41Small Key Ring\x05\x40\x01for {dungeon_name}!\x09"))
     i += 1
 
 key_rings_with_bk_dungeon_names = [
@@ -504,7 +505,7 @@ key_rings_with_bk_dungeon_names = [
     "the \x05\x45Shadow Temple\x05\x40"
 ]
 for dungeon_name in key_rings_with_bk_dungeon_names:
-    KEYSANITY_MESSAGES.append((i, f"\x13\x77\x08You found a \x05\x41Key Ring\x05\x40\x01for {dungeon_name}!\x09\x01It includes the \x05\x41Boss Key\x05\x40!"))
+    IMPORTANT_ITEM_MESSAGES.append((i, f"\x13\x77\x08You found a \x05\x41Key Ring\x05\x40\x01for {dungeon_name}!\x09\x01It includes the \x05\x41Boss Key\x05\x40!"))
     i += 1
 
 COLOR_MAP: dict[str, str] = {
@@ -1148,7 +1149,7 @@ def make_player_message(text: str) -> str:
 # reduce item message sizes and add new item messages
 # make sure to call this AFTER move_shop_item_messages()
 def update_item_messages(messages: list[Message], world: World) -> None:
-    new_item_messages = ITEM_MESSAGES + KEYSANITY_MESSAGES
+    new_item_messages = ITEM_MESSAGES + IMPORTANT_ITEM_MESSAGES
     for id, text in new_item_messages:
         if world.settings.world_count > 1 and not world.settings.triforce_blitz_s4_coop:
             update_message_by_id(messages, id, make_player_message(text), 0x23)
@@ -1309,7 +1310,7 @@ def shuffle_messages(messages: list[Message], except_hints: bool = True) -> list
         GOSSIP_STONE_MESSAGES + TEMPLE_HINTS_MESSAGES +
         [data['id'] for data in misc_item_hint_table.values()] +
         [data['id'] for data in misc_location_hint_table.values()] +
-        [message_id for (message_id, message) in KEYSANITY_MESSAGES] + shuffle_messages.shop_item_messages +
+        [message_id for (message_id, message) in IMPORTANT_ITEM_MESSAGES] + shuffle_messages.shop_item_messages +
         shuffle_messages.scrubs_message_ids +
         [0x5036, 0x70F5] # Chicken count and poe count respectively
     )
@@ -1321,7 +1322,7 @@ def shuffle_messages(messages: list[Message], except_hints: bool = True) -> list
             GOSSIP_STONE_MESSAGES + TEMPLE_HINTS_MESSAGES +
             [data['id'] for data in misc_item_hint_table.values()] +
             [data['id'] for data in misc_location_hint_table.values()] +
-            [message_id for (message_id, message) in KEYSANITY_MESSAGES] +
+            [message_id for (message_id, message) in IMPORTANT_ITEM_MESSAGES] +
             shuffle_messages.shop_item_messages +
             shuffle_messages.scrubs_message_ids +
             [0x5036, 0x70F5] # Chicken count and poe count respectively
@@ -1408,3 +1409,119 @@ def update_warp_song_text(messages: list[Message], world: World) -> None:
 
             new_msg = f"Hold on to my talons! I'll fly you\x01\x08\x05{color}{destination_name}\x05\40\x09!"
             update_message_by_id(messages, id, new_msg)
+
+def update_map_compass_messages(messages: list[Message], world: World):
+    from Hints import HintArea, GossipText
+    if world.settings.enhance_map_compass and world.settings.shuffle_mapcompass != 'remove' and world.settings.world_count == 1:
+        dungeon_list = {
+            #                      dungeon name                      compass map  name of the entrance leading to the boss
+            'Deku Tree':          ("the \x05\x42Deku Tree",          0x62, 0x88, "Deku Tree Before Boss -> Queen Gohma Boss Room"),
+            'Dodongos Cavern':    ("\x05\x41Dodongo\'s Cavern",      0x63, 0x89, "Dodongos Cavern Before Boss -> King Dodongo Boss Room"),
+            'Jabu Jabus Belly':   ("\x05\x43Jabu Jabu\'s Belly",     0x64, 0x8a, "Jabu Jabus Belly Before Boss -> Barinade Boss Room"),
+            'Forest Temple':      ("the \x05\x42Forest Temple",      0x65, 0x8b, "Forest Temple Before Boss -> Phantom Ganon Boss Room"),
+            'Fire Temple':        ("the \x05\x41Fire Temple",        0x7c, 0x8c, "Fire Temple Before Boss -> Volvagia Boss Room"),
+            'Water Temple':       ("the \x05\x43Water Temple",       0x7d, 0x8e, "Water Temple Before Boss -> Morpha Boss Room"),
+            'Spirit Temple':      ("the \x05\x46Spirit Temple",      0x7e, 0x8f, "Shadow Temple Before Boss -> Bongo Bongo Boss Room"),
+            'Ice Cavern':         ("the \x05\x44Ice Cavern",         0x87, 0x92),
+            'Bottom of the Well': ("the \x05\x45Bottom of the Well", 0xa2, 0xa5),
+            'Shadow Temple':      ("the \x05\x45Shadow Temple",      0x7f, 0xa3, "Spirit Temple Before Boss -> Twinrova Boss Room"),
+        }
+        dungeon_entrances_list = [
+            "KF Outside Deku Tree -> Deku Tree Lobby", "Death Mountain -> Dodongos Cavern Beginning", "Zoras Fountain -> Jabu Jabus Belly Beginning",
+            "SFM Forest Temple Entrance Ledge -> Forest Temple Lobby", "DMC Fire Temple Entrance -> Fire Temple Lower", "Lake Hylia -> Water Temple Lobby",
+            "Graveyard Warp Pad Region -> Shadow Temple Entryway", "Desert Colossus -> Spirit Temple Lobby", "Kakariko Village -> Bottom of the Well",
+            "ZF Ice Ledge -> Ice Cavern Beginning", "Gerudo Fortress -> Gerudo Training Ground Lobby", "Ganons Castle Ledge -> Ganons Castle Lobby",
+        ]
+
+        dungeon_textbox_list = [
+            "the \x05\x42Deku Tree", "\x05\x41Dodongo\'s Cavern", "\x05\x43Jabu Jabu\'s Belly",
+            "the \x05\x42Forest Temple", "the \x05\x41Fire Temple", "the \x05\x43Water Temple",
+            "the \x05\x45Shadow Temple", "the \x05\x46Spirit Temple", "the \x05\x45Bottom of the Well",
+            "the \x05\x44Ice Cavern", '\x05\x46Gerudo Training Grounds', "\x05\x41Ganons Castle",
+        ]
+
+        dungeon_entrances = []
+        if 'map_dungeon_location' in world.settings.enhance_map_compass and world.settings.shuffle_dungeon_entrances != 'off':
+            for dungeon_entrance in dungeon_entrances_list:
+                connected_region = world.get_entrance(dungeon_entrance).connected_region
+                dungeon_entrances.append(connected_region.name)
+
+        boss_textboxes = {
+            'Queen Gohma Boss Room': "\x05\x41Queen Gohma",
+            'King Dodongo Boss Room': "\x05\x41King Dodongo",
+            'Barinade Boss Room': "\x05\x41Barinade",
+            'Phantom Ganon Boss Room': "\x05\x41Phantom Ganon",
+            'Volvagia Boss Room': "\x05\x41Volvagia",
+            'Morpha Boss Room': "\x05\x41Morpha",
+            'Bongo Bongo Boss Room': "\x05\x41Bongo Bongo",
+            'Twinrova Boss Room': "\x05\x41Twinrova",
+            'Ganons Castle Tower': "\x05\x41Ganondorf",
+        }
+
+        for dungeon in world.dungeons:
+            if dungeon.name in ('Gerudo Training Ground', 'Ganons Castle'):
+                pass
+            elif dungeon.name in ('Bottom of the Well', 'Ice Cavern'):
+                dungeon_name, compass_id, map_id = dungeon_list[dungeon.name]
+                if 'map_dungeon_location' in world.settings.enhance_map_compass and world.settings.shuffle_dungeon_entrances != 'off':
+                    dungeon_index = [i for i, c in enumerate(dungeon_entrances) if dungeon.name in c]
+                    if dungeon.name not in ('Dodongos Cavern', 'Jabu Jabus Belly'):
+                        dungeon_name = dungeon_name.split(' ', 1)[1] # Remove the "the" to make room.
+                    if 'map_mq' in world.settings.enhance_map_compass and (world.settings.mq_dungeons_mode == 'random' or world.settings.mq_dungeons_count != 0 and world.settings.mq_dungeons_count != 12):
+                        map_message = f"\x13\x76\x08You found the \x05\x41Map\x05\x40 for\x05{COLOR_MAP['Red'] + 'masterful' if world.dungeon_mq[dungeon.name] else COLOR_MAP['Green'] + 'ordinary'}\x05\x40\x01{dungeon_name}\x05\x40! This dungeon\x01is at {dungeon_textbox_list[dungeon_index[0]]}!\x05\x40\x09"
+                    else:
+                        map_message = f"\x13\x76\x08You found the \x05\x41Map\x05\x40 for\x01{dungeon_name}\x05\x40!\x01This dungeon is at \x01{dungeon_textbox_list[dungeon_index[0]]}!\x05\x40\x09"
+                    update_message_by_id(messages, map_id, map_message, allow_duplicates=True)
+                else:
+                    if 'map_mq' in world.settings.enhance_map_compass:
+                        map_message = f"\x13\x76\x08You found the \x05\x41Map\x05\x40\x01for {dungeon_name}\x05\x40!\x01It\'s \x05{COLOR_MAP['Red'] + 'masterful' if world.dungeon_mq[dungeon.name] else COLOR_MAP['Green'] + 'ordinary'}\x05\x40!\x09"
+                        if world.settings.mq_dungeons_mode == 'random' or world.settings.mq_dungeons_count != 0 and world.settings.mq_dungeons_count != 12:
+                            update_message_by_id(messages, map_id, map_message, allow_duplicates=True)
+            else:
+                dungeon_name, compass_id, map_id, boss_entrance = dungeon_list[dungeon.name]
+                if 'compass_reward' in world.settings.enhance_map_compass:
+                    if world.settings.shuffle_dungeon_rewards != 'dungeon':
+                        if world.entrance_rando_reward_hints:
+                            vanilla_reward = world.get_location(dungeon.vanilla_boss_name).vanilla_item
+                            vanilla_reward_location = world.hinted_dungeon_reward_locations[vanilla_reward]
+                            if vanilla_reward_location is None:
+                                area = HintArea.ROOT
+                            else:
+                                area = HintArea.at(vanilla_reward_location)
+                            area = GossipText(area.text(world.settings.clearer_hints, preposition=True, use_2nd_person=True), [area.color], prefix='', capitalize=False)
+                            if 'compass_boss_location' in world.settings.enhance_map_compass and world.settings.shuffle_bosses != 'off':
+                                boss_room = world.get_entrance(boss_entrance).connected_region.name
+                                compass_message = f"\x13\x75\x08You found the \x05\x41Compass\x05\x40 for\x01{dungeon_name}\x05\x40! {boss_textboxes[boss_room]}\x05\x40\x01lurks, and the {vanilla_reward}\x01is {area}!\x09"
+                            else:
+                                compass_message = f"\x13\x75\x08You found the \x05\x41Compass\x05\x40\x01for {dungeon_name}\x05\x40!\x01The {vanilla_reward} can be found\x01{area}!\x09"
+                        else:
+                            boss_location = next(filter(lambda loc: loc.type == 'Boss', world.get_entrance(f'{dungeon} Before Boss -> {dungeon.vanilla_boss_name} Boss Room').connected_region.locations))
+                            dungeon_reward = boss_location.item.name
+                            if 'compass_boss_location' in world.settings.enhance_map_compass and world.settings.shuffle_bosses != 'off':
+                                boss_room = world.get_entrance(boss_entrance).connected_region.name
+                                compass_message = f"\x13\x75\x08You found the \x05\x41Compass\x05\x40 for\x01{dungeon_name}\x05\x40!\x01In this dungeon, {boss_textboxes[boss_room]}\x05\x40\x01guards the \x05{COLOR_MAP[REWARD_COLORS[dungeon_reward]]}{dungeon_reward}\x05\x40!\x09"
+                            else:
+                                compass_message = f"\x13\x75\x08You found the \x05\x41Compass\x05\x40\x01for {dungeon_name}\x05\x40!\x01It holds the \x05{COLOR_MAP[REWARD_COLORS[dungeon_reward]]}{dungeon_reward}\x05\x40!\x09"
+                        update_message_by_id(messages, compass_id, compass_message, allow_duplicates=True)
+                    else:
+                        if 'compass_boss_location' in world.settings.enhance_map_compass and world.settings.shuffle_bosses != 'off':
+                            boss_room = world.get_entrance(boss_entrance).connected_region.name
+                            compass_message = f"\x13\x75\x08You found the \x05\x41Compass\x05\x40 for\x01{dungeon_name}\x05\x40! In this dungeon,\x01{boss_textboxes[boss_room]}\x05\x40 lurks!\x09"
+                            update_message_by_id(messages, compass_id, compass_message, allow_duplicates=True)
+                else:
+                    if 'compass_boss_location' in world.settings.enhance_map_compass and world.settings.shuffle_bosses != 'off':
+                        boss_room = world.get_entrance(boss_entrance).connected_region.name
+                        compass_message = f"\x13\x75\x08You found the \x05\x41Compass\x05\x40 for\x01{dungeon_name}\x05\x40! In this dungeon,\x01{boss_textboxes[boss_room]}\x05\x40 lurks!\x09"
+                        update_message_by_id(messages, compass_id, compass_message, allow_duplicates=True)
+                if 'map_dungeon_location' in world.settings.enhance_map_compass and world.settings.shuffle_dungeon_entrances != 'off':
+                    dungeon_index = [i for i, c in enumerate(dungeon_entrances) if dungeon.name in c]
+                    dungeon_name = dungeon_name.removeprefix('the ') # to make room
+                    if 'map_mq' in world.settings.enhance_map_compass and (world.settings.mq_dungeons_mode == 'random' or world.settings.mq_dungeons_count != 0 and world.settings.mq_dungeons_count != 12):
+                        map_message = f"\x13\x76\x08You found the \x05\x41Map\x05\x40 for \x05{COLOR_MAP['Red'] + 'masterful' if world.dungeon_mq[dungeon.name] else COLOR_MAP['Green'] + 'ordinary'}\x05\x40\x01{dungeon_name}\x05\x40! This dungeon\x01is at {dungeon_textbox_list[dungeon_index[0]]}\x05\x40!\x09"
+                    else:
+                        map_message = f"\x13\x76\x08You found the \x05\x41Map\x05\x40 for\x01{dungeon_name}\x05\x40! This dungeon is\x01at {dungeon_textbox_list[dungeon_index[0]]}\x05\x40!\x09"
+                    update_message_by_id(messages, map_id, map_message, allow_duplicates=True)
+                else:
+                    if 'map_mq' in world.settings.enhance_map_compass and (world.settings.mq_dungeons_mode == 'random' or world.settings.mq_dungeons_count != 0 and world.settings.mq_dungeons_count != 12):
+                        map_message = f"\x13\x76\x08You found the \x05\x41Map\x05\x40 for\x01{dungeon_name}\x05\x40!\x01It\'s \x05{COLOR_MAP['Red'] + 'masterful' if world.dungeon_mq[dungeon.name] else COLOR_MAP['Green'] + 'ordinary'}\x05\x40!\x09"
+                        update_message_by_id(messages, map_id, map_message, allow_duplicates=True)

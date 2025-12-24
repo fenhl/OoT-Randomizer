@@ -9,7 +9,7 @@
 "distribution_file": "tests/cfairy.dist",
 "randomize_settings": false,
 "open_forest": "open",
-"open_door_of_time": false,
+"open_door_of_time": "sot",
 "zora_fountain": "closed",
 "gerudo_fortress": "fast",
 "bridge": "medallions",
@@ -42,7 +42,7 @@
 "shuffle_smallkeys": "dungeon",
 "shuffle_bosskeys": "dungeon",
 "shuffle_ganon_bosskey": "remove",
-"enhance_map_compass": false,
+"enhance_map_compass": [],
 "mq_dungeons_mode": "vanilla",
 "disabled_locations": [
   "Deku Theater Mask of Truth"
