@@ -579,15 +579,6 @@ class HintArea(Enum):
             text = f'{self.preposition(clearer_hints)} {text}'
         return text
 
-def get_blitz_percent_hint(spoiler, world, checked):
-    hint = get_dual_woth_hint(spoiler, world, checked)
-    if not hint:
-        hint = get_goal_hint(spoiler, world, checked)
-    if not hint:
-        hint = get_playthrough_location_hint(spoiler, world, checked)
-
-    return hint
-
 class CheckedKind(Enum):
     IMPORTANT_CHECK = auto()
     ALWAYS = auto()
@@ -621,44 +612,6 @@ def get_woth_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, 
     location_text = hint_area.text(world.settings.clearer_hints)
 
     return (GossipText('%s is on the way of the hero.' % location_text, ['Light Blue'], [location.name], [location.item.name]), [location])
-
-def get_dual_woth_hint(spoiler, world, checked):
-    locations = spoiler.required_locations[world.id]
-    locations = list(filter(lambda location:
-        location.name not in checked
-        and not (world.woth_dungeon >= world.hint_dist_user['dungeons_woth_limit'] and HintArea.at(location).is_dungeon)
-        and location.name not in world.hint_exclusions
-        and location.name not in world.hint_type_overrides['woth']
-        and location.item.name not in world.item_hint_type_overrides['woth']
-        and location.item.name not in unHintableWothItems,
-        locations))
-
-    dual_woth_filter = 'dual_woth_filter' in world.hint_dist_user and world.hint_dist_user['dual_woth_filter']
-    if dual_woth_filter == 'dungeons':
-        locations = list(filter(lambda location: HintArea.at(location).is_dungeon, locations))
-
-    if not locations:
-        return None
-
-    if len(locations) == 1:
-        return get_woth_hint(spoiler, world, checked)
-
-    random.shuffle(locations)
-    selected = locations[:2]
-
-    location_names = list(map(lambda location: location.name, selected))
-    checked.update(location_names)
-
-    hint_areas = list(map(lambda location: HintArea.at(location), selected))
-    for area in hint_areas:
-        if area.is_dungeon:
-            world.woth_dungeon += 1
-    location_texts = list(map(lambda area: area.text(world.settings.clearer_hints), hint_areas))
-    location_item_names = list(map(lambda location: location.item.name, selected))
-    location_colors = list(map(lambda location: 'Light Blue', selected))
-
-    return (GossipText('%s and %s are on the way of the hero.' % tuple(location_texts),
-        location_colors, location_names, location_item_names), selected)
 
 def get_woth_count_hint(spoiler, world, checked):
     woth_locations = spoiler.required_locations[world.id]
@@ -718,7 +671,7 @@ def get_goal_category(spoiler: Spoiler, world: World, goal_categories: dict[str,
 
     return goal_category
 
-def get_echo_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintReturn:
+def get_echo_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]]) -> HintReturn:
 
     hint_pool = spoiler.echo_hint_pool[world.id]
     if len(hint_pool) == 0:
@@ -733,7 +686,7 @@ def get_echo_hint(spoiler: Spoiler, world: World, checked: set[str]) -> HintRetu
     return (GossipText(hint_tuple[0].text.replace("They say that", ""),
                colors, list(hint_tuple[0].hinted_locations), list(hint_tuple[0].hinted_items), "They #echo# that"), None)
 
-def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], custom_prefix: str = "They say that ") -> HintReturn:
+def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]], custom_prefix: str = "They say that ") -> HintReturn:
 
     hinted_world = get_hinted_world(world, spoiler.worlds, 'goal')
     goal_categories = hinted_world.goal_categories.copy()
@@ -810,7 +763,7 @@ def get_goal_legacy_hint(spoiler: Spoiler, world: World, checked: set[str], cust
         else:
             location = random.choice(goal_locations)
 
-    checked.add(location.worldAndName)
+    mark_checked(checked, location.worldAndName)
 
     location_text = HintArea.at(location).text(world.settings.clearer_hints, world=None if location.world.id == world.id else location.world.id + 1)
 
@@ -914,7 +867,7 @@ def get_goal_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, 
 
     return GossipText('%s is on %s %s.' % (location_text, player_text, goal_text), ['Light Blue', goal.color], [location.name], [location.item.name]), [location]
 
-def get_goal_count_hint(spoiler, world, checked):
+def get_goal_count_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]]) -> HintReturn:
     goal_categories = world.goal_categories.copy()
     goal_category = get_goal_category(spoiler, world, goal_categories, skip_empty=False)
 
@@ -960,7 +913,7 @@ def get_goal_count_hint(spoiler, world, checked):
         else:
             goal = random.choices(unchecked_goals, weights=weights)[0]
 
-    checked.add(goal.worldAndName)
+    mark_checked(checked, goal.worldAndName)
     item_count = reduce(lambda acc, locations: acc + len(locations), spoiler.goal_locations[world.id][goal_category.name][goal.name].values(), 0)
     item_text = 'step' if item_count == 1 else 'steps'
 
@@ -968,7 +921,7 @@ def get_goal_count_hint(spoiler, world, checked):
 
     return (GossipText('%s %s requires #%d# %s.' % (prefix, goal.hint_text, item_count, item_text), [goal.color, 'Light Blue']), None)
 
-def get_area_woth_count_hint(spoiler, world, checked) -> HintReturn:
+def get_area_woth_count_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]]) -> HintReturn:
     stone_dungeons = world.escape_from_kak_data['boss_dungeons']
     side_dungeon = world.escape_from_kak_data['side_dungeon']
 
@@ -983,11 +936,11 @@ def get_area_woth_count_hint(spoiler, world, checked) -> HintReturn:
                                  spoiler.required_locations[world.id])))
     item_text = 'step' if item_count == 1 else 'steps'
 
-    checked.add(dungeon_to_hint.worldAndName)
+    mark_checked(checked, dungeon_to_hint.worldAndName)
 
     return GossipText('%s hides #%d# %s towards the escape from Kakariko.' % (location_text, item_count, item_text), ['Red', 'Light Blue'], [], []), []
 
-def get_wanderer_hint(spoiler, world, checked):
+def get_wanderer_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]]) -> HintReturn:
 
     hint_types = [get_playthrough_location_hint, get_unlock_playthrough_hint]
     random.shuffle(hint_types)
@@ -998,7 +951,7 @@ def get_wanderer_hint(spoiler, world, checked):
 
     return hint
 
-def get_playthrough_location_hint(spoiler, world, checked):
+def get_playthrough_location_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]]) -> HintReturn:
 
     hinted_world = get_hinted_world(world, spoiler.worlds, 'playthrough-location')
     locations = dict(filter(lambda locations:
@@ -1019,7 +972,7 @@ def get_playthrough_location_hint(spoiler, world, checked):
         return None
 
     location = random.choice(locations)
-    checked.add(location.worldAndName)
+    mark_checked(checked, location.worldAndName)
 
     hint_area = HintArea.at(location)
     location_text = hint_area.text(world.settings.clearer_hints, world=hinted_world.id + 1)
@@ -1032,7 +985,7 @@ def get_unlock_woth_hint(spoiler, world, checked):
 def get_unlock_playthrough_hint(spoiler, world, checked):
     return get_unlock_hint(spoiler, world, checked, 'unlock-playthrough')
 
-def get_unlock_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type: str):
+def get_unlock_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]], hint_type: str) -> HintReturn:
 
     hinted_world = get_hinted_world(world, spoiler.worlds, hint_type)
     if hint_type == 'unlock-playthrough':
@@ -1083,7 +1036,7 @@ def get_unlock_hint(spoiler: Spoiler, world: World, checked: set[str], hint_type
     location = random.choices(hintable_locations, location_weights)[0]
     required_location_weights = list(map(lambda req_loc: len(required_locations[req_loc]) + 1, required_locations[location]))
     required_location = random.choices(required_locations[location], required_location_weights)[0]
-    checked.add(location.worldAndName + ' - unlock')
+    mark_checked(checked, location.worldAndName + ' - unlock')
 
     item_text = get_hint(get_item_generic_name(location.item), hinted_world.settings.clearer_hints).text
     required_item_text = get_hint(get_item_generic_name(required_location.item), hinted_world.settings.clearer_hints).text
@@ -1133,7 +1086,7 @@ def get_barren_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str
         and not (hinted_world.barren_dungeon >= hinted_world.hint_dist_user['dungeons_barren_limit'] and world.empty_areas[area]['dungeon'])
         and any(
             location.name not in checked
-            and location.name not in world.hint_exclusions
+            and location.name not in hinted_world.hint_exclusions
             and location.name not in hint_exclusions(world)
             and HintArea.at(location) == area
             for location in hinted_world.get_filled_locations()
@@ -1627,9 +1580,7 @@ hint_func: dict[str, HintFunc | BarrenFunc] = {
     'always':           lambda spoiler, world, checked: None,
     'dual_always':      lambda spoiler, world, checked: None,
     'entrance_always':  lambda spoiler, world, checked: None,
-    'blitz%':           get_blitz_percent_hint,
     'woth':             get_woth_hint,
-    'dual-woth':        get_dual_woth_hint,
     'woth-count':       get_woth_count_hint,
     'goal':             get_goal_hint,
     'goal-legacy':      get_goal_legacy_hint,
