@@ -167,6 +167,13 @@
     # Bridge Requirements
     "has_all_stones": "Kokiri_Emerald and Goron_Ruby and Zora_Sapphire",
     "has_all_medallions": "Forest_Medallion and Fire_Medallion and Water_Medallion and Shadow_Medallion and Spirit_Medallion and Light_Medallion",
+    "can_open_door_of_time": "(
+        (open_door_of_time == 'open') or
+        (open_door_of_time == 'sot' and can_play(Song_of_Time)) or
+        (open_door_of_time == 'oot_sot' and (Ocarina, 2) and can_play(Song_of_Time)) or
+        (open_door_of_time == 'stones' and has_all_stones) or
+        (open_door_of_time == 'stones_sot' and has_all_stones and can_play(Song_of_Time)) or
+        (open_door_of_time == 'stones_oot_sot' and has_all_stones and (Ocarina, 2) and can_play(Song_of_Time)))",
     "can_build_rainbow_bridge": "(
         (bridge == 'open') or
         (bridge == 'vanilla' and Shadow_Medallion and Spirit_Medallion and Light_Arrows) or

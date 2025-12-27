@@ -1751,6 +1751,3 @@ def write_settings_dependent_save_context_flags(save_context: SaveContext, world
 
     if world.settings.open_forest == 'open':
         save_context.write_bits(0xED5, 0x10)  # "Showed Mido Sword & Shield"
-
-    if world.settings.open_door_of_time:
-        save_context.write_bits(0xEDC, 0x08)  # "Opened the Door of Time"

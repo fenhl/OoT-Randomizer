@@ -4147,6 +4147,7 @@ DemoEffect_DrawJewel_AfterHook:
 .include "hacks/ovl_bg_gate_shutter.asm"
 .include "hacks/ovl_bg_haka_tubo.asm"
 .include "hacks/ovl_bg_spot18_basket.asm"
+.include "hacks/ovl_demo_kankyo.asm"
 .include "hacks/ovl_en_dns.asm"
 .include "hacks/ovl_en_ko.asm"
 .include "hacks/ovl_en_kz.asm"
@@ -4157,4 +4158,5 @@ DemoEffect_DrawJewel_AfterHook:
 .include "hacks/z_file_choose.asm"
 .include "hacks/ovl_en_changer.asm"
 .include "hacks/ovl_en_ssh.asm"
+.include "hacks/ovl_en_okarina_tag.asm"
 .include "hacks/message.asm"
