@@ -1139,9 +1139,6 @@ def get_barren_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str
     return GossipText("plundering %s is a foolish choice." % area_text, ['Pink']), None
 
 
-    return GossipText("plundering %s is a foolish choice." % area.text(world.settings.clearer_hints), ['Pink']), None
-
-
 def is_checked(locations: Iterable[Location], checked: dict[HintArea | str, set[CheckedKind]], *, ignore: Iterable[CheckedKind] = ()) -> bool:
     for location in locations:
         if any(kind not in ignore for kind in checked.get(location.worldAndName, set())):
@@ -1731,7 +1728,9 @@ def build_gossip_hints(spoiler: Spoiler, worlds: list[World]) -> None:
 
     for world in worlds:
         if share_checked_locations:
-            world_checked_locations = reduce(lambda acc, locations: acc.union(locations), checked_locations.values(), set())
+            world_checked_locations = {}
+            for locations in checked_locations.values():
+                world_checked_locations.update(locations)
         else:
             world_checked_locations = checked_locations.pop(world.id, {})
         build_world_gossip_hints(spoiler, world, world_checked_locations)
