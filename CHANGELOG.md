@@ -1,4 +1,4 @@
-# Dev
+# 9.0
 
 ## New Settings and Options
 * New settings for more control over special deal prices.
