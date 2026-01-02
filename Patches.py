@@ -2692,7 +2692,7 @@ def configure_dungeon_info(rom: Rom, world: World) -> None:
     for dungeon_entrance in dungeon_entrances_list:
         connected_region = world.get_entrance(dungeon_entrance).connected_region
         area = HintArea.at(connected_region)
-        dungeon_info.append(dungeon_map_index[area.shorter_name])
+        dungeon_info.append(dungeon_map_index.get(area.shorter_name, 64))
 
     # Mixed pools
     # In this case, the dungeon location should point to the world area instead.
