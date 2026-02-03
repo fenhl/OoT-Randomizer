@@ -665,7 +665,7 @@ class SettingInfos:
             these use no logic.
 
             The set of <b>Standard Anti-Weekly Settings</b> presets disables every location that's enabled in
-            “S8 Tournament” and enables every location that's disabled there, as well as changing some
+            “S9 Tournament” and enables every location that's disabled there, as well as changing some
             miscellaneous settings. See <a href="https://docs.google.com/document/d/1vS7JrYjlWFkXfUnT5BJSQ19ywJa-TiB7RPK7Uz0JLsU/edit">the SAWS document</a> for details.
 
             The other presets are for racing and/or tournaments.
@@ -3909,6 +3909,7 @@ class SettingInfos:
             'deku_upgrades':   'Deku Stick/Nut Upgrades',
             'health_upgrades': 'Health Upgrades',
             'junk':            'Junk Items',
+            'other':           'Everything Else',
         },
         default          = [],
         disabled_default = [],
