@@ -233,7 +233,7 @@ async fn main(Args { debug }: Args) -> Result<(), Error> {
     }
     cargo.arg("--package=ootr-python");
     cargo.current_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/../.."));
-    cargo.check("cargo build").await?;
+    cargo.spawn().at_command("cargo build")?.check("cargo build").await?;
     #[cfg(target_os = "windows")] fs::copy(concat!(env!("CARGO_MANIFEST_DIR"), "/../../target/release/rs.dll"), concat!(env!("CARGO_MANIFEST_DIR"), "/../../rs.pyd")).await?;
     #[cfg(target_os = "linux")] fs::copy(concat!(env!("CARGO_MANIFEST_DIR"), "/../../target/release/librs.so"), concat!(env!("CARGO_MANIFEST_DIR"), "/../../rs.so")).await?;
     #[cfg(target_os = "macos")] fs::copy(concat!(env!("CARGO_MANIFEST_DIR"), "/../../target/release/librs.dylib"), concat!(env!("CARGO_MANIFEST_DIR"), "/../../rs.so")).await?;
