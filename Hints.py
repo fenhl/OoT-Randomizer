@@ -613,7 +613,7 @@ def get_woth_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, 
 
     return (GossipText('%s is on the way of the hero.' % location_text, ['Light Blue'], [location.name], [location.item.name]), [location])
 
-def get_woth_count_hint(spoiler, world, checked):
+def get_woth_count_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]]) -> HintReturn:
     woth_locations = spoiler.required_locations[world.id]
     item_count = len(woth_locations)
     item_text = 'step' if item_count == 1 else 'steps'
@@ -621,7 +621,7 @@ def get_woth_count_hint(spoiler, world, checked):
     return (GossipText('walking the way of the hero requires #%d# %s.' % (item_count, item_text), ['Light Blue']), None)
 
 def get_checked_areas(world: World, checked: set[str]) -> set[HintArea | str]:
-    def get_area_from_name(check):
+    def get_area_from_name(check: str) -> HintArea | str | None:
         try:
             location = world.get_location(check)
         except Exception:
@@ -979,10 +979,10 @@ def get_playthrough_location_hint(spoiler: Spoiler, world: World, checked: dict[
 
     return (GossipText('%s is on the way of the #wanderer#.' % location_text, ['Light Blue', 'Yellow'], [location.name], [location.item.name]), [location])
 
-def get_unlock_woth_hint(spoiler, world, checked):
+def get_unlock_woth_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]]) -> HintReturn:
     return get_unlock_hint(spoiler, world, checked, 'unlock-woth')
 
-def get_unlock_playthrough_hint(spoiler, world, checked):
+def get_unlock_playthrough_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]]) -> HintReturn:
     return get_unlock_hint(spoiler, world, checked, 'unlock-playthrough')
 
 def get_unlock_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]], hint_type: str) -> HintReturn:

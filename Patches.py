@@ -163,7 +163,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
                     break
             segment = BigStream(rom.read_bytes(obj_file.start + offset, size))
 
-            def copy(addr, size):
+            def copy(addr: int, size: int) -> int:
                 nonlocal seen
                 nonlocal out_size
 
@@ -874,7 +874,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     # Mark unreachable trade-ins as traded. Only applicable with trade quest shuffle off,
     # and only practically affects the Blue Potion purchase from Granny's Potion Shop.
     if not world.settings.adult_trade_shuffle and len(world.settings.adult_trade_start) > 0:
-        def calculate_traded_flags(world):
+        def calculate_traded_flags(world: World) -> int:
             traded_flags = 0
             reverting_item_map = {
                 "Cojiro": ["Odd Mushroom"],
@@ -2120,13 +2120,13 @@ def write_rom_texture(rom: Rom, texture_id: int, texture: dict[str, Any]) -> Non
     rom.write_bytes(addr, row_bytes)
 
 
-def get_override_table(world: World):
+def get_override_table(world: World) -> list[OverrideEntry]:
     return list(filter(lambda val: val is not None, map(get_override_entry, world.get_filled_locations())))
 
 override_key_struct = struct.Struct('>BBxxI')  # match override_key_t in get_items.h
 override_struct = struct.Struct('>BBxxIHBxHxx')  # match override_t in get_items.h
 
-def get_override_table_bytes(override_table):
+def get_override_table_bytes(override_table: Iterable[OverrideEntry]) -> bytes:
     return b''.join(sorted(itertools.starmap(override_struct.pack, override_table)))
 
 
@@ -2388,8 +2388,8 @@ def set_spirit_shortcut_actors(rom: Rom) -> None:
     get_actor_list(rom, set_spirit_shortcut)
 
 
-def move_fado_in_lost_woods(rom):
-    def move_fado(rom, actor_id, actor, scene):
+def move_fado_in_lost_woods(rom: Rom) -> None:
+    def move_fado(rom: Rom, actor_id: int, actor: int, scene: int) -> None:
         if actor_id == 0x163 and scene == 0x5B: # move Fado to short stump
             rom.write_int16(actor + 2, 0xFBA6)
             rom.write_int16(actor + 4, 0x0000)
@@ -2469,7 +2469,7 @@ def create_fake_name(name: str) -> str:
     return new_name
 
 
-def place_shop_items(rom: Rom, world: World, shop_items, messages, locations, init_shop_id: bool = False) -> set[int]:
+def place_shop_items(rom: Rom, world: World, shop_items: list[Any], messages: list[Any], locations: Iterable[Location], init_shop_id: bool = False) -> set[int]:
     if init_shop_id:
         place_shop_items.shop_id = 0x32
 
