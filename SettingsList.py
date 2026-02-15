@@ -5865,7 +5865,7 @@ def validate_settings(settings_dict: dict[str, Any], *, check_conflicts: bool = 
         elif isinstance(choice, dict):
             continue
         # Ensure that the given choice is a valid choice for the setting
-        elif info.choice_list and choice not in info.choice_list:
+        elif info.choice_list and choice not in info.choice_list and choice != info.disabled_default:
             raise ValueError('%r is not a valid choice for setting %r. %s' % (choice, setting, build_close_match(choice, 'choice', info.choice_list)))
         # Ensure no conflicting settings are specified
         if check_conflicts and info.disable is not None:

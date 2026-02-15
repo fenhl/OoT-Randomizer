@@ -1,11 +1,11 @@
 * text=auto
 
 *.txt  text
-*.json text
+*.json text eol=lf
 *.c    text eol=lf
 *.h    text eol=lf
 *.py   text eol=lf
-*.md   text
+*.md   text eol=lf
 *.html text
 *.asm  text eol=lf
 
