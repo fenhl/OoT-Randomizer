@@ -1636,7 +1636,9 @@ def get_hinted_world(world: World, worlds: list[World], hint_type: str = None) -
     # For TFB S4 Co-op, hint shop sells hints for the other world's items
     tfb_s4_coop_hints = 'tfb_s4_coop_hints' in world.hint_dist_user and world.hint_dist_user['tfb_s4_coop_hints']
     if tfb_s4_coop_hints:
-        return worlds[(world.id + 1) % 2]
+        if len(worlds) <= 1:
+            return world
+        return worlds[(world.id + 1) % len(worlds)]
     else:
         return world
 
