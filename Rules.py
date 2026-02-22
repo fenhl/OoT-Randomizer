@@ -117,7 +117,7 @@ def forbid_item(location: Location, item_name: str) -> None:
     location.item_rule = lambda loc, item: item.name != item_name and old_rule(loc, item)
 
 
-def limit_to_itemset(location: Location, itemset: Collection[Item]):
+def limit_to_itemset(location: Location, itemset: Collection[str]) -> None:
     old_rule = location.item_rule
     location.item_rule = lambda loc, item: item.name in itemset and old_rule(loc, item)
 
@@ -135,7 +135,7 @@ def item_in_locations(state: State, item: Item, locations: Iterable[Location]) -
 # accessible when all items are obtained and every shop item is not.
 # This function should also be called when a world is copied if the original world
 # had called this function because the world.copy does not copy the rules
-def set_shop_rules(world: World):
+def set_shop_rules(world: World) -> None:
     found_bombchus = world.parser.parse_rule('found_bombchus')
     wallet = world.parser.parse_rule('Progressive_Wallet')
     wallet2 = world.parser.parse_rule('(Progressive_Wallet, 2)')

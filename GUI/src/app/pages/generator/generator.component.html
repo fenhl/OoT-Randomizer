@@ -149,6 +149,22 @@
                           <span *ngIf="!setting.size || setting.size === 'small' || setting.size === 'medium'" class="numberTextInputLabel" [ngClass]="{'disabled': !global.generator_settingsVisibilityMap[setting.name]}">{{setting.text}}</span>
                           <p *ngIf="setting.size === 'full'" class="numberTextInputLabel" [ngClass]="{'disabled': !global.generator_settingsVisibilityMap[setting.name]}">{{setting.text}}</p>
                         </ng-container>
+                        <!--Editable JSON-->
+                        <ng-container *ngSwitchCase="'ReadonlyJson'">
+                          <p class="numberTextInputLabel" [ngClass]="{'disabled': !global.generator_settingsVisibilityMap[setting.name]}">{{setting.text}}</p>
+                          <textarea class="jsonEditorInput"
+                                    [ngClass]="{'jsonEditorInputInvalid': jsonErrorMap[setting.name]}"
+                                    [rows]="setting.rows ? setting.rows : 8"
+                                    [value]="getJsonEditorValue(setting.name)"
+                                    (input)="onJsonEditorInput(setting.name, $any($event.target).value)"
+                                    (focusout)="onJsonEditorBlur(setting.name)"
+                                    [nbPopover]="tooltipComponent"
+                                    [nbPopoverContext]="{tooltip: setting.tooltip}"
+                                    [nbPopoverTrigger]="setting.tooltip && setting.tooltip.length > 0 ? 'hint' : 'noop'"
+                                    nbPopoverPlacement="right"
+                                    nbPopoverAdjustment="counterclockwise"></textarea>
+                          <p *ngIf="jsonErrorMap[setting.name]" class="jsonEditorError">{{jsonErrorMap[setting.name]}}</p>
+                        </ng-container>
                         <!--Number-->
                         <ng-container *ngSwitchCase="'Numberinput'">
                           <span *ngIf="!setting.size || setting.size === 'small' || setting.size === 'medium'" class="numberTextInputLabel" [ngClass]="{'disabled': !global.generator_settingsVisibilityMap[setting.name]}">{{setting.text}}:</span>

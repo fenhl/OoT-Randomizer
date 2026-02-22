@@ -89,7 +89,7 @@ class Location:
         self.access_rules.append(lambda_rule)
         self.access_rule = self._run_rules
 
-    def _run_rules(self, state, **kwargs):
+    def _run_rules(self, state: State, **kwargs: Any) -> bool:
         for rule in self.access_rules:
             if not rule(state, **kwargs):
                 return False

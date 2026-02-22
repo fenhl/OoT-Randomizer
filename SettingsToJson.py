@@ -12,7 +12,7 @@ from Utils import data_path
 
 tab_keys: list[str] = ['text', 'app_type', 'footer']
 section_keys: list[str] = ['text', 'app_type', 'is_colors', 'is_sfx', 'col_span', 'row_span', 'subheader']
-setting_keys: list[str] = ['hide_when_disabled', 'min', 'max', 'size', 'max_length', 'file_types', 'no_line_break', 'function', 'option_remove', 'dynamic']
+setting_keys: list[str] = ['hide_when_disabled', 'min', 'max', 'size', 'max_length', 'rows', 'file_types', 'no_line_break', 'function', 'option_remove', 'dynamic']
 types_with_options: list[str] = ['Checkbutton', 'Radiobutton', 'Combobox', 'SearchBox', 'MultipleSelect']
 
 

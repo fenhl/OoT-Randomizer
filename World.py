@@ -1264,10 +1264,10 @@ class World:
     def get_entrances(self) -> list[Entrance]:
         return [exit for region in self.regions for exit in region.exits]
 
-    def get_shufflable_entrances(self, type=None, only_primary=False) -> list[Entrance]:
+    def get_shufflable_entrances(self, type: Optional[str] = None, only_primary: bool = False) -> list[Entrance]:
         return [entrance for entrance in self.get_entrances() if (type is None or entrance.type == type) and (not only_primary or entrance.primary)]
 
-    def get_shuffled_entrances(self, type=None, only_primary=False) -> list[Entrance]:
+    def get_shuffled_entrances(self, type: Optional[str] = None, only_primary: bool = False) -> list[Entrance]:
         return [entrance for entrance in self.get_shufflable_entrances(type=type, only_primary=only_primary) if entrance.shuffled]
 
     def region_has_shortcuts(self, region_name: str) -> bool:
@@ -1296,7 +1296,7 @@ class World:
 
     # Function to run exactly once after placing items in drop locations for each world
     # Sets all Drop locations to a unique name in order to avoid name issues and to identify locations in the spoiler
-    def set_drop_location_names(self):
+    def set_drop_location_names(self) -> None:
         for location in self.get_locations():
             if location.type == 'Drop':
                 location.name = location.parent_region.name + " " + location.name

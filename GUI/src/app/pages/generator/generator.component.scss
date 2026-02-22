@@ -347,6 +347,35 @@
     margin-right: 14px !important;
   }
 
+  .jsonEditorInput {
+    position: relative;
+    left: 0px;
+    width: calc(100% - 14px);
+    min-height: 120px;
+    margin-top: 5.6px;
+    margin-right: 14px;
+    padding: 8px;
+    resize: vertical;
+    overflow-y: auto;
+    font-family: Consolas, Monaco, 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.25;
+    white-space: pre;
+  }
+
+  .jsonEditorInputInvalid {
+    border: 1px solid #d9534f;
+    background-color: #fff5f5;
+  }
+
+  .jsonEditorError {
+    color: #d9534f;
+    margin-top: 4px !important;
+    margin-left: 2px;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
   .colorPickerContainer {
     height: 0px;
     width: 0px;

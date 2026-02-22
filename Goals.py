@@ -40,7 +40,9 @@ validColors: list[str] = [
 
 class Goal:
     def __init__(self, world: World, name: str, hint_text: str | dict[str, str], color: str, items: Optional[list[dict[str, Any]]] = None,
-                 locations=None, lock_locations=None, lock_entrances: Optional[list[str]] = None, required_locations=None, create_empty: bool = False) -> None:
+                 locations: Optional[list[Location]] = None, lock_locations: Optional[list[Location]] = None,
+                 lock_entrances: Optional[list[str]] = None,
+                 required_locations: Optional[list[tuple[Location, int, int, list[int]]]] = None, create_empty: bool = False) -> None:
         # early exit if goal initialized incorrectly
         if not items and not locations and not create_empty:
             raise Exception('Invalid goal: no items or destinations set')
@@ -95,7 +97,7 @@ class Goal:
 
 class GoalCategory:
     def __init__(self, name: str, priority: int, goal_count: int = 0, minimum_goals: int = 0,
-                 lock_locations=None, lock_entrances: list[str] = None) -> None:
+                 lock_locations: Optional[list[Location]] = None, lock_entrances: Optional[list[str]] = None) -> None:
         self.name: str = name
         self.priority: int = priority
         self.lock_locations = lock_locations  # Unused?
@@ -111,11 +113,11 @@ class GoalCategory:
         new_category.goals = list(goal.copy() for goal in self.goals)
         return new_category
 
-    def add_goal(self, goal) -> None:
+    def add_goal(self, goal: Goal) -> None:
         goal.category = self
         self.goals.append(goal)
 
-    def get_goal(self, goal) -> Goal:
+    def get_goal(self, goal: Goal | str) -> Goal:
         if isinstance(goal, Goal):
             return goal
         try:
@@ -422,7 +424,7 @@ def search_goals(categories: dict[str, GoalCategory], reachable_goals: ValidGoal
         location.maybe_set_misc_hints()
     return required_locations
 
-def calculate_playthrough_locations(spoiler):
+def calculate_playthrough_locations(spoiler: Spoiler) -> None:
 
     playthrough_locations = {}
     for sphere, sphere_locations in spoiler.playthrough.items():
@@ -442,7 +444,7 @@ def calculate_playthrough_locations(spoiler):
         requirements_by_world[world.id] = {loc: required for loc, required in requirements.items() if loc.world.id == world.id}
     spoiler.playthrough_location_requirements = requirements_by_world
 
-def search_required_locations(locations, all_locations, worlds):
+def search_required_locations(locations: Iterable[Location], all_locations: Iterable[Location], worlds: list[World]) -> dict[Location, list[Location]]:
     requirements = {}
     for location in locations:
         requirements[location] = []
