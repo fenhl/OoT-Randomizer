@@ -149,6 +149,19 @@
                           <span *ngIf="!setting.size || setting.size === 'small' || setting.size === 'medium'" class="numberTextInputLabel" [ngClass]="{'disabled': !global.generator_settingsVisibilityMap[setting.name]}">{{setting.text}}</span>
                           <p *ngIf="setting.size === 'full'" class="numberTextInputLabel" [ngClass]="{'disabled': !global.generator_settingsVisibilityMap[setting.name]}">{{setting.text}}</p>
                         </ng-container>
+                        <!--Read-only JSON-->
+                        <ng-container *ngSwitchCase="'ReadonlyJson'">
+                          <p class="numberTextInputLabel" [ngClass]="{'disabled': !global.generator_settingsVisibilityMap[setting.name]}">{{setting.text}}</p>
+                          <textarea class="readonlyJsonInput"
+                                    [rows]="setting.rows ? setting.rows : 8"
+                                    [value]="global.generator_settingsMap[setting.name] !== null && global.generator_settingsMap[setting.name] !== undefined ? (global.generator_settingsMap[setting.name] | json) : '{}'"
+                                    readonly
+                                    [nbPopover]="tooltipComponent"
+                                    [nbPopoverContext]="{tooltip: setting.tooltip}"
+                                    [nbPopoverTrigger]="setting.tooltip && setting.tooltip.length > 0 ? 'hint' : 'noop'"
+                                    nbPopoverPlacement="right"
+                                    nbPopoverAdjustment="counterclockwise"></textarea>
+                        </ng-container>
                         <!--Number-->
                         <ng-container *ngSwitchCase="'Numberinput'">
                           <span *ngIf="!setting.size || setting.size === 'small' || setting.size === 'medium'" class="numberTextInputLabel" [ngClass]="{'disabled': !global.generator_settingsVisibilityMap[setting.name]}">{{setting.text}}:</span>

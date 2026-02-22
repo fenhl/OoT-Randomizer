@@ -188,8 +188,7 @@
             "triforce_blitz_hint_shop",
             "triforce_blitz_s4_coop",
             "triforce_blitz_mw_linked_tf_pieces",
-            "free_bombchu_drops",
-            "plandomized_locations"
+            "free_bombchu_drops"
           ]
         },
         {
@@ -382,6 +381,7 @@
               "hints",
               "hint_dist",
               "bingosync_url",
+              "plandomized_locations",
               "misc_hints",
               "correct_chest_appearances",
               "chest_textures_specific",
