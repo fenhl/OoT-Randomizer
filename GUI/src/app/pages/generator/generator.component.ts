@@ -41,6 +41,9 @@ export class GeneratorComponent implements OnInit {
   seedString: string = "";
   generateSeedButtonEnabled: boolean = true;
   inputOldValue: any = null; //Used to manage input field backup/restore
+  jsonDraftMap: { [name: string]: string } = {};
+  jsonErrorMap: { [name: string]: string } = {};
+  jsonLastCommittedMap: { [name: string]: string } = {};
 
   //Static settings
   generateFromSeedTabTitle: string = "Generate New Seed";
@@ -79,6 +82,7 @@ export class GeneratorComponent implements OnInit {
 
   generatorReady() {
     this.generatorBusy = false;
+    this.resetJsonEditorState();
 
     //Set active tab on boot
     this.activeTab = this.global.getGlobalVar('generatorSettingsArray')[0].text;
@@ -485,6 +489,7 @@ export class GeneratorComponent implements OnInit {
       //console.log(res);
 
       this.global.applySettingsObject(res);
+      this.resetJsonEditorState();
       this.global.saveCurrentSettingsToFile();
 
       this.recheckAllSettings("", false, true);
@@ -533,6 +538,7 @@ export class GeneratorComponent implements OnInit {
           this.global.applySettingsObject(this.global.generator_presets[this.global.generator_settingsMap["presets"]].settings);
         }
 
+        this.resetJsonEditorState();
         this.recheckAllSettings("", false, true);
         this.afterSettingChange();
 
@@ -1376,6 +1382,77 @@ export class GeneratorComponent implements OnInit {
     }
   }
 
+  private formatJsonSettingValue(value: any): string {
+    return JSON.stringify(value ?? {}, null, 2);
+  }
+
+  private parseJsonObject(raw: string): { valid: boolean, value?: any, error?: string } {
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed === null || Array.isArray(parsed) || typeof parsed !== "object") {
+        return { valid: false, error: "JSON must be an object." };
+      }
+      return { valid: true, value: parsed };
+    } catch (_err) {
+      return { valid: false, error: "Invalid JSON." };
+    }
+  }
+
+  getJsonEditorValue(settingName: string): string {
+    if (settingName in this.jsonDraftMap) {
+      return this.jsonDraftMap[settingName];
+    }
+    return this.formatJsonSettingValue(this.global.generator_settingsMap[settingName]);
+  }
+
+  onJsonEditorInput(settingName: string, raw: string): void {
+    this.jsonDraftMap[settingName] = raw;
+    const result = this.parseJsonObject(raw);
+    if (result.valid) {
+      delete this.jsonErrorMap[settingName];
+    } else {
+      this.jsonErrorMap[settingName] = result.error;
+    }
+  }
+
+  onJsonEditorBlur(settingName: string): void {
+    const raw = this.getJsonEditorValue(settingName);
+    const result = this.parseJsonObject(raw);
+    if (!result.valid) {
+      this.jsonErrorMap[settingName] = result.error;
+      this.cd.markForCheck();
+      this.cd.detectChanges();
+      return;
+    }
+
+    const normalized = this.formatJsonSettingValue(result.value);
+    const currentNormalized = this.formatJsonSettingValue(this.global.generator_settingsMap[settingName]);
+    this.jsonDraftMap[settingName] = normalized;
+    this.jsonLastCommittedMap[settingName] = normalized;
+    delete this.jsonErrorMap[settingName];
+
+    if (normalized !== currentNormalized) {
+      this.global.generator_settingsMap[settingName] = result.value;
+      this.afterSettingChange(false);
+    } else {
+      this.cd.markForCheck();
+      this.cd.detectChanges();
+    }
+  }
+
+  resetJsonEditorState(settingName: string = ""): void {
+    if (settingName) {
+      delete this.jsonDraftMap[settingName];
+      delete this.jsonErrorMap[settingName];
+      delete this.jsonLastCommittedMap[settingName];
+      return;
+    }
+
+    this.jsonDraftMap = {};
+    this.jsonErrorMap = {};
+    this.jsonLastCommittedMap = {};
+  }
+
   numberInputFocusOut(setting: object, forceAdjust: boolean) {
 
     let newValue = this.global.generator_settingsMap[setting["name"]];
@@ -1527,6 +1604,7 @@ export class GeneratorComponent implements OnInit {
           let importedSettings = JSON.parse(localStorage.getItem(storageSettingsKey + closestFoundVersion));
 
           this.global.applySettingsObject(importedSettings);
+          this.resetJsonEditorState();
           this.recheckAllSettings("", false, true);
 
           console.log("Imported settings from prior version:", closestFoundVersion, importedSettings);

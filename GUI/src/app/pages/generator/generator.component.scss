@@ -347,7 +347,7 @@
     margin-right: 14px !important;
   }
 
-  .readonlyJsonInput {
+  .jsonEditorInput {
     position: relative;
     left: 0px;
     width: calc(100% - 14px);
@@ -361,6 +361,19 @@
     font-size: 12px;
     line-height: 1.25;
     white-space: pre;
+  }
+
+  .jsonEditorInputInvalid {
+    border: 1px solid #d9534f;
+    background-color: #fff5f5;
+  }
+
+  .jsonEditorError {
+    color: #d9534f;
+    margin-top: 4px !important;
+    margin-left: 2px;
+    font-size: 12px;
+    line-height: 1.2;
   }
 
   .colorPickerContainer {
