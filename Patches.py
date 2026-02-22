@@ -941,8 +941,13 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     if world.settings.triforce_blitz:
         rom.write_int16(rom.sym('TRIFORCE_BLITZ'), 1)
 
-    if world.settings.triforce_blitz_time_lock:
-        rom.write_int16(rom.sym('TRIFORCE_BLITZ_TIME_LOCK'), 1)
+    if world.settings.triforce_blitz_day_night_worlds:
+        day_minutes = 7 * 60
+        night_minutes = 20 * 60
+        fixed_minutes = day_minutes if (world.id % 2 == 0) else night_minutes
+        fixed_time = (fixed_minutes * 0x10000) // (24 * 60)
+        rom.write_int16(rom.sym('ENABLE_FIXED_TIME_OF_DAY'), 1)
+        rom.write_int16(rom.sym('FIXED_TIME_OF_DAY_TIME'), fixed_time)
 
     # Set up Ganon's Boss Key conditions.
     symbol = rom.sym('GANON_BOSS_KEY_CONDITION')

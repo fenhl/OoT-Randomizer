@@ -1068,7 +1068,7 @@ class SettingInfos:
         disable        = {
             True  : {'settings' : ['shuffle_ganon_bosskey', 'ganon_bosskey_stones', 'ganon_bosskey_medallions',
                                    'ganon_bosskey_rewards', 'ganon_bosskey_tokens', 'triforce_hunt', 'triforce_goal_per_world']},
-            False : {'settings' : ['triforce_blitz_jabus_revenge', 'triforce_blitz_minimum_path_count', 'triforce_blitz_time_lock']}
+            False : {'settings' : ['triforce_blitz_jabus_revenge', 'triforce_blitz_minimum_path_count', 'triforce_blitz_day_night_worlds']}
         },
     )
 
@@ -1136,10 +1136,11 @@ class SettingInfos:
         }
     )
 
-    triforce_blitz_time_lock = Checkbutton(
-        gui_text       = 'Triforce Blitz Fixed Time of Day',
+    triforce_blitz_day_night_worlds = Checkbutton(
+        gui_text       = 'Triforce Blitz Day/Night Worlds',
         gui_tooltip    = '''\
-            Clamps time of day to 21:00 during gameplay when enabled.
+            Alternates fixed time by world: even worlds are morning (07:00),
+            odd worlds are night (20:00).
         ''',
         shared         = True,
         gui_params     = {
