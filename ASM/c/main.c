@@ -27,6 +27,28 @@
 #include "agechange.h"
 void Gameplay_InitSkybox(z64_game_t* globalCtx, int16_t skyboxId);
 
+extern uint16_t TRIFORCE_BLITZ_TIME_LOCK;
+
+static uint16_t clock_time(uint16_t hours, uint16_t minutes) {
+    uint32_t total_minutes = ((uint32_t)hours * 60u) + (uint32_t)minutes;
+    return (uint16_t)((total_minutes * 0x10000u) / (24u * 60u));
+}
+
+static void clamp_triforce_blitz_time(void) {
+    if (!TRIFORCE_BLITZ_TIME_LOCK) {
+        return;
+    }
+    if ((uint32_t)z64_ctxt.state_dtor != z64_state_ovl_tab[3].vram_dtor) {
+        return;
+    }
+    if (z64_file.game_mode != 0) {
+        return;
+    }
+    uint16_t fixed_time = clock_time(21, 0);
+    z64_file.day_time = fixed_time;
+    z64_file.skybox_time = fixed_time;
+}
+
 void c_init() {
     heap_init();
     gfx_init();
@@ -40,6 +62,7 @@ void c_init() {
 }
 
 void before_game_state_update() {
+    clamp_triforce_blitz_time();
     rando_display_buffer_reset();
     handle_pending_items();
     handle_dpad();

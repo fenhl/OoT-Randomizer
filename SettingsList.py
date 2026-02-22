@@ -1068,7 +1068,7 @@ class SettingInfos:
         disable        = {
             True  : {'settings' : ['shuffle_ganon_bosskey', 'ganon_bosskey_stones', 'ganon_bosskey_medallions',
                                    'ganon_bosskey_rewards', 'ganon_bosskey_tokens', 'triforce_hunt', 'triforce_goal_per_world']},
-            False : {'settings' : ['triforce_blitz_jabus_revenge', 'triforce_blitz_minimum_path_count']}
+            False : {'settings' : ['triforce_blitz_jabus_revenge', 'triforce_blitz_minimum_path_count', 'triforce_blitz_time_lock']}
         },
     )
 
@@ -1128,6 +1128,18 @@ class SettingInfos:
         gui_text       = 'Triforce Blitz Hint Shop',
         gui_tooltip    = '''\
             Place purchasable hints at the Market shops for various progressive items.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+            'hide_when_disabled': True,
+        }
+    )
+
+    triforce_blitz_time_lock = Checkbutton(
+        gui_text       = 'Triforce Blitz Fixed Time of Day',
+        gui_tooltip    = '''\
+            Clamps time of day to 21:00 during gameplay when enabled.
         ''',
         shared         = True,
         gui_params     = {
