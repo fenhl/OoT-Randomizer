@@ -58,11 +58,15 @@ class World:
         self.randomized_list: list[str] = []
         self.randomized_starting_items: dict[str, int] = {}
         self.cached_bigocto_location: Optional[Location] = None
+        self.regular_overworld_token_locations: list[Location] = []
 
         self.parser: Rule_AST_Transformer = Rule_AST_Transformer(self)
         self.event_items: set[str] = set()
         self.settings: Settings = settings.copy()
         self.distribution: WorldDistribution = settings.distribution.world_dists[world_id]
+
+        if self.settings.triforce_blitz_day_night_worlds and (self.id % 2 == 1):
+            self.settings.tokensanity = 'overworld'
 
         # rename a few attributes...
         self.keysanity: bool = settings.shuffle_smallkeys in ('keysanity', 'remove', 'any_dungeon', 'overworld', 'regional')
