@@ -288,6 +288,18 @@ class Settings(SettingInfos):
         for location in self.plandomized_locations:
             self.distribution.add_location(location, self.plandomized_locations[location])
 
+        # In fixed day/night worlds, force Song from Impa to Prelude in odd (night) worlds.
+        if self.triforce_blitz_day_night_worlds:
+            for world_id, world_dist in enumerate(self.distribution.world_dists):
+                if world_id % 2 == 1:
+                    try:
+                        world_dist.add_location('Song from Impa', 'Prelude of Light')
+                    except KeyError:
+                        logging.getLogger('').debug(
+                            'Fixed time: Song from Impa already plando-defined in World %d; keeping existing value.',
+                            world_id + 1,
+                        )
+
     def check_dependency(self, setting_name: str, check_random: bool = True) -> bool:
         return self.get_dependency(setting_name, check_random) is None
 
