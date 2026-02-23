@@ -1139,8 +1139,8 @@ class SettingInfos:
     triforce_blitz_day_night_worlds = Checkbutton(
         gui_text       = 'Triforce Blitz Day/Night Worlds',
         gui_tooltip    = '''\
-            Alternates fixed time by world: even worlds are morning (07:00),
-            odd worlds are night (20:00).
+            Alternates fixed time by world: even worlds are day (12:00, except
+            Lake Hylia at 07:00), odd worlds are night (20:00).
         ''',
         shared         = True,
         gui_params     = {

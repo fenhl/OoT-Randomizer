@@ -29,6 +29,8 @@ void Gameplay_InitSkybox(z64_game_t* globalCtx, int16_t skyboxId);
 
 extern uint16_t ENABLE_FIXED_TIME_OF_DAY;
 extern uint16_t FIXED_TIME_OF_DAY_TIME;
+extern uint16_t ENABLE_LAKE_HYLIA_TIME_OVERRIDE;
+extern uint16_t FIXED_TIME_OF_DAY_LAKE_TIME;
 
 static void clamp_triforce_blitz_time(void) {
     if (!ENABLE_FIXED_TIME_OF_DAY) {
@@ -40,8 +42,12 @@ static void clamp_triforce_blitz_time(void) {
     if (z64_file.game_mode != 0) {
         return;
     }
-    z64_file.day_time = FIXED_TIME_OF_DAY_TIME;
-    z64_file.skybox_time = FIXED_TIME_OF_DAY_TIME;
+    uint16_t fixed_time = FIXED_TIME_OF_DAY_TIME;
+    if (ENABLE_LAKE_HYLIA_TIME_OVERRIDE && z64_game.scene_index == 0x57) {
+        fixed_time = FIXED_TIME_OF_DAY_LAKE_TIME;
+    }
+    z64_file.day_time = fixed_time;
+    z64_file.skybox_time = fixed_time;
 }
 
 void c_init() {

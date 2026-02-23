@@ -1093,7 +1093,6 @@ class WorldDistribution:
         if world.settings.start_with_consumables:
             add_starting_item_with_ammo(items, 'Deku Sticks', 99)
             add_starting_item_with_ammo(items, 'Deku Nuts', 99)
-
         for iter_world in worlds:
             skipped_locations: list[Location] = []
             if iter_world.settings.skip_reward_from_rauru:
@@ -1329,6 +1328,15 @@ class Distribution:
                     add_starting_item_with_ammo(data, item.item_name)
             else:
                 raise KeyError("invalid starting item: {}".format(itemsetting))
+
+        if self.settings.triforce_blitz_day_night_worlds:
+            for world_id in range(len(self.world_dists)):
+                if world_id % 2 == 1:
+                    world_key = f'World {world_id + 1}'
+                    if world_key not in data or not isinstance(data[world_key], dict):
+                        data[world_key] = {}
+                    add_starting_item_with_ammo(data[world_key], 'Nocturne of Shadow')
+
         self.settings.starting_equipment = []
         self.settings.starting_songs = []
         self.settings.starting_inventory = []
