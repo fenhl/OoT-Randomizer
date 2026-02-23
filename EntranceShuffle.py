@@ -429,6 +429,60 @@ class EntranceShuffleError(ShuffleError):
     pass
 
 
+def swap_two_way_entrances(a: Entrance, b: Entrance, *, world_id: Optional[int] = None, mark_shuffled: bool = False) -> None:
+    a_region = a.connected_region
+    b_region = b.connected_region
+    if a_region is None or b_region is None:
+        if world_id is not None:
+            logging.getLogger('').warning('Fixed time: missing entrance connections for swap [World %d]', world_id + 1)
+        return
+
+    a.disconnect()
+    b.disconnect()
+    a.connect(b_region)
+    b.connect(a_region)
+
+    if a.reverse and b.reverse:
+        a_rev_region = a.reverse.connected_region
+        b_rev_region = b.reverse.connected_region
+        if a_rev_region is not None and b_rev_region is not None:
+            a.reverse.disconnect()
+            b.reverse.disconnect()
+            a.reverse.connect(b_rev_region)
+            b.reverse.connect(a_rev_region)
+
+    if mark_shuffled:
+        a.shuffled = True
+        b.shuffled = True
+        a.replaces = b
+        b.replaces = a
+        if a.reverse and b.reverse:
+            a.reverse.shuffled = True
+            b.reverse.shuffled = True
+            a.reverse.replaces = b.reverse
+            b.reverse.replaces = a.reverse
+
+
+def apply_fixed_time_entrance_swaps(worlds: list[World]) -> None:
+    for world in worlds:
+        if not world.settings.triforce_blitz_day_night_worlds:
+            continue
+        if world.id % 2 != 0:
+            continue
+        if world.entrance_shuffle:
+            continue
+
+        try:
+            mask_shop = world.get_entrance('Market -> Market Mask Shop')
+            mask_shop_rev = mask_shop.reverse
+            bombchu_shop = world.get_entrance('Market Back Alley -> Market Bombchu Shop')
+            bombchu_shop_rev = bombchu_shop.reverse
+        except Exception:
+            logging.getLogger('').warning('Fixed time: failed to find Market Mask Shop/Bombchu Shop entrances [World %d]', world.id + 1)
+            continue
+
+        swap_two_way_entrances(mask_shop, bombchu_shop, world_id=world.id, mark_shuffled=True)
+
 # Set entrances of all worlds, first initializing them to their default regions, then potentially shuffling part of them
 def set_entrances(worlds: list[World], savewarps_to_connect: list[tuple[Entrance, str]]) -> None:
     for world in worlds:
@@ -444,6 +498,8 @@ def set_entrances(worlds: list[World], savewarps_to_connect: list[tuple[Entrance
 
     if worlds[0].entrance_shuffle:
         shuffle_random_entrances(worlds)
+
+    apply_fixed_time_entrance_swaps(worlds)
 
     set_entrances_based_rules(worlds)
 
