@@ -4179,7 +4179,7 @@
         "big_poe_count": 1,
         "clearer_hints": true,
         "hints": "always",
-        "hint_dist": "triforce-blitz-s5-coop",
+        "hint_dist": "triforce-blitz-s4-coop",
         "item_hints": [],
         "hint_dist_user": {},
         "plandomized_locations": {
@@ -4410,7 +4410,7 @@
         "big_poe_count": 1,
         "clearer_hints": true,
         "hints": "always",
-        "hint_dist": "triforce-blitz-s4-coop",
+        "hint_dist": "triforce-blitz-s5-coop",
         "item_hints": [],
         "hint_dist_user": {},
         "plandomized_locations": {
