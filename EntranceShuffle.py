@@ -840,6 +840,11 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
         for entrance in chain.from_iterable(one_way_entrance_pools.values()):
             entrance.disconnect()
 
+        # Disconnect boss room savewarps so they don't provide false reachability during entrance shuffle validation
+        for region in world.regions:
+            if region.is_boss_room and region.savewarp and region.savewarp.connected_region:
+                region.savewarp.disconnect()
+
         target_entrance_pools = {}
         for pool_type, entrance_pool in entrance_pools.items():
             target_entrance_pools[pool_type] = assume_entrance_pool(entrance_pool)
