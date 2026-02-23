@@ -61,6 +61,35 @@ def assume_entrance_pool(entrance_pool: list[Entrance]) -> list[Entrance]:
     return assumed_pool
 
 
+def unassume_entrance_pool(entrance_pool: list[Entrance]) -> None:
+    for entrance in entrance_pool:
+        if entrance.assumed is None:
+            continue
+
+        # Only unassume entrances that are still in assumed state
+        if entrance.connected_region is None:
+            # Move the connection back from the assumed entrance to the real one
+            if entrance.assumed.connected_region is not None:
+                entrance.connect(entrance.assumed.disconnect())
+
+            # Remove the assumed entrance from Root's exit list
+            if entrance.assumed.parent_region is not None:
+                entrance.assumed.parent_region.exits.remove(entrance.assumed)
+                entrance.assumed.parent_region = None
+            entrance.assumed = None
+
+            # Do the same for the reverse entrance if not decoupled
+            if entrance.reverse and not entrance.decoupled:
+                rev = entrance.reverse
+                if rev.assumed is not None and rev.connected_region is None:
+                    if rev.assumed.connected_region is not None:
+                        rev.connect(rev.assumed.disconnect())
+                    if rev.assumed.parent_region is not None:
+                        rev.assumed.parent_region.exits.remove(rev.assumed)
+                        rev.assumed.parent_region = None
+                    rev.assumed = None
+
+
 def build_one_way_targets(world: World, types_to_include: Iterable[str], types_to_include_reverse: Iterable[str], exclude: Container[str] = (), target_region_names: Container[str] = ()) -> list[Entrance]:
     one_way_entrances: list[Entrance] = []
     for pool_type in types_to_include:
@@ -447,6 +476,87 @@ def set_entrances(worlds: list[World], savewarps_to_connect: list[tuple[Entrance
     set_entrances_based_rules(worlds)
 
 
+# Check if a pool type needs forest/outside splitting to prevent a forest escape
+def needs_forest_split(world: World, pool_type: str) -> bool:
+    return world.settings.require_gohma and (
+        pool_type in ('Dungeon', 'ChildBoss', 'Boss', 'Overworld', 'Mixed')
+        or (pool_type in ('GrottoGrave', 'GrottoGraveReverse') and (
+            world.settings.warp_songs == 'full' # to avoid Minuet leading inside a forest grotto that has been placed outside the forest
+            or world.settings.logic_rules == 'advanced' # to avoid forest escape via Dampé's grave using groundjump
+        ))
+        or (pool_type in ('Interior', 'InteriorReverse') and (
+            world.shuffle_special_interior_entrances
+            or world.settings.shuffle_hideout_entrances != 'off'
+            or (world.shuffle_interior_entrances and (
+                world.settings.shuffle_child_spawn in ('balanced', 'full') # to avoid spawning in a forest interior that has been placed outside the forest
+                or world.settings.warp_songs in ('balanced', 'full') # to avoid Minuet leading inside a forest interior that has been placed outside the forest
+            ))
+            or world.settings.decouple_entrances
+        ))
+    )
+
+
+# Shuffle entrance pools sequentially
+def shuffle_pools_sequentially(world: World, worlds: list[World], entrance_pools: dict, target_entrance_pools: dict,
+                               locations_to_ensure_reachable: Iterable[Location], placed_one_way_entrances: list[tuple[Entrance, Entrance]]) -> None:
+    for pool_type, entrance_pool in entrance_pools.items():
+        if needs_forest_split(world, pool_type):
+            # These entrance pools can potentially be accessed from inside the forest.
+            # To prevent a forest escape, shuffle entrances of this type inside and outside the forest separately.
+            forest_entrance_pool = list(filter(lambda entrance: entrance.data.get('forest', False), entrance_pool))
+            outside_entrance_pool = list(filter(lambda entrance: not entrance.data.get('forest', False), entrance_pool))
+            forest_target_pool = list(filter(lambda entrance: entrance.replaces.data.get('forest', False), target_entrance_pools[pool_type]))
+            outside_target_pool = list(filter(lambda entrance: not entrance.replaces.data.get('forest', False), target_entrance_pools[pool_type]))
+            shuffle_entrance_pool(world, worlds, forest_entrance_pool, forest_target_pool, locations_to_ensure_reachable, placed_one_way_entrances=placed_one_way_entrances)
+            shuffle_entrance_pool(world, worlds, outside_entrance_pool, outside_target_pool, locations_to_ensure_reachable, placed_one_way_entrances=placed_one_way_entrances)
+        else:
+            shuffle_entrance_pool(world, worlds, entrance_pool, target_entrance_pools[pool_type], locations_to_ensure_reachable, placed_one_way_entrances=placed_one_way_entrances)
+
+
+# Shuffle entrance pools by assuming and shuffling one pool at a time, and then validating only at the end
+def shuffle_pools_mixed(world: World, worlds: list[World], entrance_pools: dict, target_entrance_pools: dict,
+                        locations_to_ensure_reachable: Iterable[Location], placed_one_way_entrances: list[tuple[Entrance, Entrance]],
+                        retry_count: int = 2) -> None:
+    last_error = None
+    for _ in range(retry_count):
+        # Restore all pools to vanilla connections before each attempt
+        for pool_type in entrance_pools:
+            unassume_entrance_pool(entrance_pools[pool_type])
+
+        rollbacks = []
+        try:
+            for pool_type in entrance_pools:
+                entrance_pool = entrance_pools[pool_type]
+                target_entrance_pools[pool_type] = assume_entrance_pool(entrance_pool)
+
+                # Shuffle with ``skip_confirm=True`` to keep placements tentative
+                if needs_forest_split(world, pool_type):
+                    forest_entrance_pool = list(filter(lambda entrance: entrance.data.get('forest', False), entrance_pool))
+                    outside_entrance_pool = list(filter(lambda entrance: not entrance.data.get('forest', False), entrance_pool))
+                    forest_target_pool = list(filter(lambda entrance: entrance.replaces.data.get('forest', False), target_entrance_pools[pool_type]))
+                    outside_target_pool = list(filter(lambda entrance: not entrance.replaces.data.get('forest', False), target_entrance_pools[pool_type]))
+                    rollbacks.extend(shuffle_entrance_pool(world, worlds, forest_entrance_pool, forest_target_pool, locations_to_ensure_reachable, placed_one_way_entrances=placed_one_way_entrances, skip_confirm=True))
+                    rollbacks.extend(shuffle_entrance_pool(world, worlds, outside_entrance_pool, outside_target_pool, locations_to_ensure_reachable, placed_one_way_entrances=placed_one_way_entrances, skip_confirm=True))
+                else:
+                    rollbacks.extend(shuffle_entrance_pool(world, worlds, entrance_pool, target_entrance_pools[pool_type], locations_to_ensure_reachable, placed_one_way_entrances=placed_one_way_entrances, skip_confirm=True))
+
+            # Fully validate the resulting world to ensure everything is still fine after shuffling all pools
+            complete_itempool = [item for w in worlds for item in w.get_itempool_with_dungeon_items()]
+            validate_world(world, worlds, None, locations_to_ensure_reachable, complete_itempool, placed_one_way_entrances=placed_one_way_entrances)
+
+            # If all entrances could be connected without issues, log connections and finish shuffling
+            for entrance, target in rollbacks:
+                confirm_replacement(entrance, target)
+            break
+
+        except EntranceShuffleError as error:
+            for entrance, target in rollbacks:
+                restore_connections(entrance, target)
+            last_error = error
+    else:
+        raise EntranceShuffleError('Mixed entrance pool placement failed for world %d.' % world.id) from last_error
+
+
 # Shuffles entrances that need to be shuffled in all worlds
 def shuffle_random_entrances(worlds: list[World]) -> None:
     # Store all locations reachable before shuffling to differentiate which locations were already unreachable from those we made unreachable
@@ -785,33 +895,12 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
             for unused_target in one_way_target_entrance_pools[pool_type]:
                 delete_target_entrance(unused_target)
 
-        for pool_type, entrance_pool in entrance_pools.items():
-            if world.settings.require_gohma and (
-                pool_type in ('Dungeon', 'ChildBoss', 'Boss', 'Overworld', 'Mixed')
-                or (pool_type in ('GrottoGrave', 'GrottoGraveReverse') and (
-                    world.settings.warp_songs == 'full' # to avoid Minuet leading inside a forest grotto that has been placed outside the forest
-                    or world.settings.logic_rules == 'advanced' # to avoid forest escape via Dampé's grave using groundjump
-                ))
-                or (pool_type in ('Interior', 'InteriorReverse') and (
-                    world.shuffle_special_interior_entrances
-                    or world.settings.shuffle_hideout_entrances != 'off'
-                    or (world.shuffle_interior_entrances and (
-                        world.settings.shuffle_child_spawn in ('balanced', 'full') # to avoid spawning in a forest interior that has been placed outside the forest
-                        or world.settings.warp_songs in ('balanced', 'full') # to avoid Minuet leading inside a forest interior that has been placed outside the forest
-                    ))
-                    or world.settings.decouple_entrances
-                ))
-            ):
-                # These entrance pools can potentially be accessed from inside the forest.
-                # To prevent a forest escape, shuffle entrances of this type inside and outside the forest separately.
-                forest_entrance_pool = list(filter(lambda entrance: entrance.data.get('forest', False), entrance_pool))
-                outside_entrance_pool = list(filter(lambda entrance: not entrance.data.get('forest', False), entrance_pool))
-                forest_target_pool = list(filter(lambda entrance: entrance.replaces.data.get('forest', False), target_entrance_pools[pool_type]))
-                outside_target_pool = list(filter(lambda entrance: not entrance.replaces.data.get('forest', False), target_entrance_pools[pool_type]))
-                shuffle_entrance_pool(world, worlds, forest_entrance_pool, forest_target_pool, locations_to_ensure_reachable, placed_one_way_entrances=placed_one_way_entrances)
-                shuffle_entrance_pool(world, worlds, outside_entrance_pool, outside_target_pool, locations_to_ensure_reachable, placed_one_way_entrances=placed_one_way_entrances)
-            else:
-                shuffle_entrance_pool(world, worlds, entrance_pool, target_entrance_pools[pool_type], locations_to_ensure_reachable, placed_one_way_entrances=placed_one_way_entrances)
+        if 'Mixed' in entrance_pools and len(entrance_pools) > 1:
+            # Mixed pools need special handling
+            # When all pools are assumed at once, Search sees every assumed exit on Root and considers everything reachable, making per-entrance validation ineffective
+            shuffle_pools_mixed(world, worlds, entrance_pools, target_entrance_pools, locations_to_ensure_reachable, placed_one_way_entrances)
+        else:
+            shuffle_pools_sequentially(world, worlds, entrance_pools, target_entrance_pools, locations_to_ensure_reachable, placed_one_way_entrances)
 
         # Determine boss save/death warp targets
         for pool_type, entrance_pool in entrance_pools.items():
@@ -985,7 +1074,7 @@ def shuffle_one_way_priority_entrances(worlds: list[World], world: World, one_wa
 # Shuffle all entrances within a provided pool
 def shuffle_entrance_pool(world: World, worlds: list[World], entrance_pool: list[Entrance], target_entrances: list[Entrance],
                           locations_to_ensure_reachable: Iterable[Location], check_all: bool = False, retry_count: int = 64,
-                          placed_one_way_entrances: Optional[list[tuple[Entrance, Entrance]]] = None) -> list[tuple[Entrance, Entrance]]:
+                          placed_one_way_entrances: Optional[list[tuple[Entrance, Entrance]]] = None, skip_confirm: bool = False) -> list[tuple[Entrance, Entrance]]:
     if placed_one_way_entrances is None:
         placed_one_way_entrances = []
     # Split entrances between those that have requirements (restrictive) and those that do not (soft). These are primarily age or time of day requirements.
@@ -1005,13 +1094,14 @@ def shuffle_entrance_pool(world: World, worlds: list[World], entrance_pool: list
             else:
                 shuffle_entrances(worlds, soft_entrances, target_entrances, rollbacks, placed_one_way_entrances=placed_one_way_entrances)
 
-            # Fully validate the resulting world to ensure everything is still fine after shuffling this pool
-            complete_itempool = [item for world in worlds for item in world.get_itempool_with_dungeon_items()]
-            validate_world(world, worlds, None, locations_to_ensure_reachable, complete_itempool, placed_one_way_entrances=placed_one_way_entrances)
+            if not skip_confirm:
+                # Fully validate the resulting world to ensure everything is still fine after shuffling this pool
+                complete_itempool = [item for w in worlds for item in w.get_itempool_with_dungeon_items()]
+                validate_world(world, worlds, None, locations_to_ensure_reachable, complete_itempool, placed_one_way_entrances=placed_one_way_entrances)
 
-            # If all entrances could be connected without issues, log connections and continue
-            for entrance, target in rollbacks:
-                confirm_replacement(entrance, target)
+                # If all entrances could be connected without issues, log connections and continue
+                for entrance, target in rollbacks:
+                    confirm_replacement(entrance, target)
             return rollbacks
 
         except EntranceShuffleError as error:
