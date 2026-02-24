@@ -567,6 +567,7 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
     max_search.visit_locations(non_drop_locations)
     locations_to_ensure_reachable = list(filter(max_search.visited, non_drop_locations))
     placed_one_way_entrances = None
+    all_placed_one_way_entrances = {}
 
     # Shuffle all entrances within their own worlds
     for world in worlds:
@@ -922,6 +923,8 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
         else:
             shuffle_pools_sequentially(world, worlds, entrance_pools, target_entrance_pools, locations_to_ensure_reachable, placed_one_way_entrances)
 
+        all_placed_one_way_entrances[world.id] = placed_one_way_entrances
+
         # Determine boss save/death warp targets
         for pool_type, entrance_pool in entrance_pools.items():
             for entrance in entrance_pool:
@@ -1055,7 +1058,7 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
         if not world.entrance_shuffle:
             continue
         try:
-            validate_world(world, worlds, None, locations_to_ensure_reachable, complete_itempool, placed_one_way_entrances=placed_one_way_entrances)
+            validate_world(world, worlds, None, locations_to_ensure_reachable, complete_itempool, placed_one_way_entrances=all_placed_one_way_entrances.get(world.id, []))
         except EntranceShuffleError as error:
             raise EntranceShuffleError('Worlds are not valid after shuffling entrances, Reason: %s' % error) from error
 
