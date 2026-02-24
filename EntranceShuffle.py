@@ -845,6 +845,21 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
             if region.is_boss_room and region.savewarp and region.savewarp.connected_region:
                 region.savewarp.disconnect()
 
+        # When ``blue_warps='dungeon'``, disconnect blue warps so they don't provide false reachability during entrance shuffle validation
+        if world.settings.blue_warps == 'dungeon':
+            for blue_warp in (
+                world.get_entrance('Queen Gohma Blue Warp -> KF Outside Deku Tree'),
+                world.get_entrance('King Dodongo Blue Warp -> Death Mountain'),
+                world.get_entrance('Barinade Blue Warp -> Zoras Fountain'),
+                world.get_entrance('Phantom Ganon Blue Warp -> Sacred Forest Meadow'),
+                world.get_entrance('Volvagia Blue Warp -> DMC Central Local'),
+                world.get_entrance('Morpha Blue Warp -> Lake Hylia'),
+                world.get_entrance('Bongo Bongo Blue Warp -> Graveyard Warp Pad Region'),
+                world.get_entrance('Twinrova Blue Warp -> Desert Colossus'),
+            ):
+                if blue_warp.connected_region:
+                    blue_warp.disconnect()
+
         target_entrance_pools = {}
         for pool_type, entrance_pool in entrance_pools.items():
             target_entrance_pools[pool_type] = assume_entrance_pool(entrance_pool)
