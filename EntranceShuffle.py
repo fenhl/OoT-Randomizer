@@ -1317,9 +1317,9 @@ def validate_world(world: World, worlds: list[World], entrance_placed: Optional[
     if locations_to_ensure_reachable:
         max_search = Search.max_explore([w.state for w in worlds], itempool)
         predicates = []
-        for world in worlds:
-            if world.check_beatable_only:
-                if world.settings.reachable_locations == 'goals':
+        for w in worlds:
+            if w.check_beatable_only:
+                if w.settings.reachable_locations == 'goals':
                     # If this entrance is required for a goal, it must be placed somewhere reachable.
                     # We also need to check to make sure the game is beatable, since custom goals might not imply that.
                     predicates.append(lambda state: state.won() and state.has_all_item_goals())
@@ -1342,9 +1342,9 @@ def validate_world(world: World, worlds: list[World], entrance_placed: Optional[
         world.shuffle_interior_entrances and (
             (world.dungeon_rewards_hinted and ('Boss' in world.mix_entrance_pools or world.settings.shuffle_dungeon_rewards in ('regional', 'overworld', 'anywhere')))
             or any(
-                hint_type in world.settings.misc_hints
+                hint_type in w.settings.misc_hints
                 for hint_type in misc_item_hint_table
-                for world in worlds
+                for w in worlds
             ) or world.settings.hints != 'none'
         ) and (entrance_placed is None or entrance_placed.type in ('Interior', 'SpecialInterior', 'Hideout'))
     ):
