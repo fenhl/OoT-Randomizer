@@ -925,6 +925,11 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
 
         all_placed_one_way_entrances[world.id] = placed_one_way_entrances
 
+        # Reconnect remaining boss room savewarps to vanilla targets before determining shuffled targets
+        for region in world.regions:
+            if region.is_boss_room and region.savewarp and not region.savewarp.connected_region:
+                region.savewarp.connect(world.get_region(region.savewarp.name.split(' -> ')[1]))
+
         # Determine boss save/death warp targets
         for pool_type, entrance_pool in entrance_pools.items():
             for entrance in entrance_pool:
@@ -967,6 +972,9 @@ def shuffle_random_entrances(worlds: list[World]) -> None:
                     savewarp_region = savewarp_target.parent_region
                     savewarp_target = savewarp_target.reverse
                 savewarp.replaces = savewarp_target
+                if savewarp.connected_region:
+                    # Disconnect vanilla connection first before connecting to new target
+                    savewarp.disconnect()
                 savewarp.connect(savewarp_region)
 
         # Determine blue warp targets
