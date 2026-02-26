@@ -1282,63 +1282,60 @@ class World:
         if self.cached_bigocto_location is not ...:
             return self.cached_bigocto_location
         # Find an item location behind the Jabu boss door by searching regions breadth-first without going back into Jabu proper
-        if self.settings.logic_rules == 'advanced':
-            location = self.get_location('Barinade')
-        else:
-            jabu_reward_regions = {self.get_entrance('Jabu Jabus Belly Before Boss -> Barinade Boss Room').connected_region}
-            already_checked = set()
-            location = None
-            while jabu_reward_regions:
-                locations = [
-                    loc
-                    for region in jabu_reward_regions
-                    if region is not None and region.locations is not None
-                    for loc in region.locations
-                    if not loc.locked
-                    and loc.has_item()
-                    and not loc.item.event
-                    and (loc.type != "Shop" or loc.name in self.shop_prices) # ignore regular shop items (but keep special deals)
-                ]
-                if locations:
-                    # Location types later in the list will be preferred over earlier ones or ones not in the list.
-                    # This ensures that if the region behind the boss door is a boss arena, the medallion or stone will be used.
-                    priority_types = (
-                        "Wonderitem",
-                        "Freestanding",
-                        "ActorOverride",
-                        "RupeeTower",
-                        "Pot",
-                        "Crate",
-                        "FlyingPot",
-                        "SmallCrate",
-                        "Beehive",
-                        "SilverRupee",
-                        "GS Token",
-                        "GrottoScrub",
-                        "Scrub",
-                        "Shop",
-                        "MaskShop",
-                        "NPC",
-                        "Collectable",
-                        "Chest",
-                        "Cutscene",
-                        "Song",
-                        "BossHeart",
-                        "Boss",
-                    )
-                    best_type = max((location.type for location in locations), key=lambda type: priority_types.index(type) if type in priority_types else -1)
-                    location = random.choice(list(filter(lambda loc: loc.type == best_type, locations)))
-                    break
-                already_checked |= jabu_reward_regions
-                jabu_reward_regions = {
-                    exit.connected_region
-                    for region in jabu_reward_regions
-                    if region is not None
-                    for exit in region.exits
-                    if exit.connected_region is not None
-                    and (exit.connected_region.dungeon is None or exit.connected_region.dungeon.name != 'Jabu Jabus Belly')
-                    and exit.connected_region.name not in already_checked
-                }
+        jabu_reward_regions = {self.get_entrance('Jabu Jabus Belly Before Boss -> Barinade Boss Room').connected_region}
+        already_checked = set()
+        location = None
+        while jabu_reward_regions:
+            locations = [
+                loc
+                for region in jabu_reward_regions
+                if region is not None and region.locations is not None
+                for loc in region.locations
+                if not loc.locked
+                and loc.has_item()
+                and not loc.item.event
+                and (loc.type != "Shop" or loc.name in self.shop_prices) # ignore regular shop items (but keep special deals)
+            ]
+            if locations:
+                # Location types later in the list will be preferred over earlier ones or ones not in the list.
+                # This ensures that if the region behind the boss door is a boss arena, the medallion or stone will be used.
+                priority_types = (
+                    "Wonderitem",
+                    "Freestanding",
+                    "ActorOverride",
+                    "RupeeTower",
+                    "Pot",
+                    "Crate",
+                    "FlyingPot",
+                    "SmallCrate",
+                    "Beehive",
+                    "SilverRupee",
+                    "GS Token",
+                    "GrottoScrub",
+                    "Scrub",
+                    "Shop",
+                    "MaskShop",
+                    "NPC",
+                    "Collectable",
+                    "Chest",
+                    "Cutscene",
+                    "Song",
+                    "BossHeart",
+                    "Boss",
+                )
+                best_type = max((location.type for location in locations), key=lambda type: priority_types.index(type) if type in priority_types else -1)
+                location = random.choice(list(filter(lambda loc: loc.type == best_type, locations)))
+                break
+            already_checked |= jabu_reward_regions
+            jabu_reward_regions = {
+                exit.connected_region
+                for region in jabu_reward_regions
+                if region is not None
+                for exit in region.exits
+                if exit.connected_region is not None
+                and (exit.connected_region.dungeon is None or exit.connected_region.dungeon.name != 'Jabu Jabus Belly')
+                and exit.connected_region not in already_checked
+            }
         self.cached_bigocto_location = location
         return location
 
