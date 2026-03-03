@@ -592,6 +592,17 @@ class SettingInfos:
             ''',
     )
 
+    world_presets = SettingInfoDict(
+        "World Presets",
+        "ReadonlyJson",
+        True,
+        {},
+        gui_params={
+            "rows": 6,
+            "optional": True,
+        },
+    )
+
     password_lock = Checkbutton(
         gui_text         = "Lock Seed Behind Password",
         gui_tooltip      = '''\
@@ -1136,11 +1147,21 @@ class SettingInfos:
         }
     )
 
-    triforce_blitz_day_night_worlds = Checkbutton(
-        gui_text       = 'Triforce Blitz Day/Night Worlds',
+    triforce_blitz_day_night_worlds = Combobox(
+        gui_text       = 'Triforce Blitz World Assignment',
+        default        = 'off',
+        choices        = {
+            'off':       'Off',
+            'light':     'Light',
+            'dark':      'Dark',
+            'alternate': 'Alternate',
+        },
         gui_tooltip    = '''\
-            Alternates fixed time by world: even worlds are day (12:00, except
-            Lake Hylia at 07:00), odd worlds are night (20:00).
+            Controls fixed world assignment for Triforce Blitz:
+            'Off': No fixed assignment.
+            'Light': This world uses day time (12:00, with Lake Hylia at 07:00).
+            'Dark': This world uses night time (20:00).
+            'Alternate': Even worlds are light and odd worlds are dark.
         ''',
         shared         = True,
         gui_params     = {

@@ -941,11 +941,12 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     if world.settings.triforce_blitz:
         rom.write_int16(rom.sym('TRIFORCE_BLITZ'), 1)
 
-    if world.settings.triforce_blitz_day_night_worlds:
+    assignment = world.settings.triforce_blitz_day_night_worlds
+    if assignment != 'off':
         day_minutes = 12 * 60
         lake_minutes = 7 * 60
         night_minutes = 20 * 60
-        is_day_world = (world.id % 2 == 0)
+        is_day_world = (world.id % 2 == 0) if assignment == 'alternate' else (assignment == 'light')
         fixed_minutes = day_minutes if is_day_world else night_minutes
         fixed_time = (fixed_minutes * 0x10000) // (24 * 60)
         rom.write_int16(rom.sym('ENABLE_FIXED_TIME_OF_DAY'), 1)

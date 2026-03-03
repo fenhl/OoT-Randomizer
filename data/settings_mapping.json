@@ -75,7 +75,8 @@
           "subheader": "Presets are settings that can be saved and loaded from.<br>Loading a preset will overwrite all settings that affect the seed.",
           "row_span": [1,1,1],
           "settings": [
-            "presets"
+            "presets",
+            "world_presets"
           ]
         }
       ]

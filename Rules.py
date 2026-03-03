@@ -92,10 +92,11 @@ def set_rules(world: World) -> None:
 
 
 def apply_fixed_time_exclusions(world: World, logger: logging.Logger) -> None:
-    if not world.settings.triforce_blitz_day_night_worlds:
+    assignment = world.settings.triforce_blitz_day_night_worlds
+    if assignment == 'off':
         return
 
-    is_day_world = (world.id % 2 == 0)
+    is_day_world = (world.id % 2 == 0) if assignment == 'alternate' else (assignment == 'light')
     disabled_locations: list[str] = []
     disabled_regular_overworld: list[str] = []
 
