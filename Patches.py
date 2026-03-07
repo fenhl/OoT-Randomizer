@@ -941,6 +941,21 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
     if world.settings.triforce_blitz:
         rom.write_int16(rom.sym('TRIFORCE_BLITZ'), 1)
 
+    assignment = world.settings.triforce_blitz_day_night_worlds
+    if assignment != 'off':
+        day_minutes = 12 * 60
+        lake_minutes = 7 * 60
+        night_minutes = 20 * 60
+        is_day_world = (world.id % 2 == 0) if assignment == 'alternate' else (assignment == 'light')
+        fixed_minutes = day_minutes if is_day_world else night_minutes
+        fixed_time = (fixed_minutes * 0x10000) // (24 * 60)
+        rom.write_int16(rom.sym('ENABLE_FIXED_TIME_OF_DAY'), 1)
+        rom.write_int16(rom.sym('FIXED_TIME_OF_DAY_TIME'), fixed_time)
+        if is_day_world:
+            lake_time = (lake_minutes * 0x10000) // (24 * 60)
+            rom.write_int16(rom.sym('ENABLE_LAKE_HYLIA_TIME_OVERRIDE'), 1)
+            rom.write_int16(rom.sym('FIXED_TIME_OF_DAY_LAKE_TIME'), lake_time)
+
     # Set up Ganon's Boss Key conditions.
     symbol = rom.sym('GANON_BOSS_KEY_CONDITION')
     count_symbol = rom.sym('GANON_BOSS_KEY_CONDITION_COUNT')

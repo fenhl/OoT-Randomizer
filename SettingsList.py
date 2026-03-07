@@ -592,6 +592,17 @@ class SettingInfos:
             ''',
     )
 
+    world_presets = SettingInfoDict(
+        "World Presets",
+        "ReadonlyJson",
+        True,
+        {},
+        gui_params={
+            "rows": 6,
+            "optional": True,
+        },
+    )
+
     password_lock = Checkbutton(
         gui_text         = "Lock Seed Behind Password",
         gui_tooltip      = '''\
@@ -1068,7 +1079,7 @@ class SettingInfos:
         disable        = {
             True  : {'settings' : ['shuffle_ganon_bosskey', 'ganon_bosskey_stones', 'ganon_bosskey_medallions',
                                    'ganon_bosskey_rewards', 'ganon_bosskey_tokens', 'triforce_hunt', 'triforce_goal_per_world']},
-            False : {'settings' : ['triforce_blitz_jabus_revenge', 'triforce_blitz_minimum_path_count']}
+            False : {'settings' : ['triforce_blitz_jabus_revenge', 'triforce_blitz_minimum_path_count', 'triforce_blitz_day_night_worlds']}
         },
     )
 
@@ -1128,6 +1139,29 @@ class SettingInfos:
         gui_text       = 'Triforce Blitz Hint Shop',
         gui_tooltip    = '''\
             Place purchasable hints at the Market shops for various progressive items.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+            'hide_when_disabled': True,
+        }
+    )
+
+    triforce_blitz_day_night_worlds = Combobox(
+        gui_text       = 'Triforce Blitz World Assignment',
+        default        = 'off',
+        choices        = {
+            'off':       'Off',
+            'light':     'Light',
+            'dark':      'Dark',
+            'alternate': 'Alternate',
+        },
+        gui_tooltip    = '''\
+            Controls fixed world assignment for Triforce Blitz:
+            'Off': No fixed assignment.
+            'Light': This world uses day time (12:00, with Lake Hylia at 07:00).
+            'Dark': This world uses night time (20:00).
+            'Alternate': Even worlds are light and odd worlds are dark.
         ''',
         shared         = True,
         gui_params     = {

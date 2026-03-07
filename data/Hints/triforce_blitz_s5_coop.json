@@ -1,7 +1,7 @@
 {
-    "name":                  "triforce-blitz-s4-coop",
-    "gui_name":              "Triforce Blitz S4 Co-op",
-    "description":           "Hint Distribution for Triforce Blitz S4 Co-op. 3 Path Count Hints, 10 Goal Hints, 4 Barren Hints, 3 Always hints.",
+    "name":                  "triforce-blitz-s5-coop",
+    "gui_name":              "Triforce Blitz S5 Co-op",
+    "description":           "Hint Distribution for Triforce Blitz S5 Co-op. 3 Path Count Hints, 10 Goal Hints, 4 Barren Hints, 3 Always hints.",
     "add_locations":         [],
     "remove_locations":      [],
     "add_items":             [],

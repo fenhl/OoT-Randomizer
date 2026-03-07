@@ -88,6 +88,59 @@ def set_rules(world: World) -> None:
         except:
             logger.debug('Tried to disable location that does not exist: %s' % location)
 
+    apply_fixed_time_exclusions(world, logger)
+
+
+def apply_fixed_time_exclusions(world: World, logger: logging.Logger) -> None:
+    assignment = world.settings.triforce_blitz_day_night_worlds
+    if assignment == 'off':
+        return
+
+    is_day_world = (world.id % 2 == 0) if assignment == 'alternate' else (assignment == 'light')
+    disabled_locations: list[str] = []
+    disabled_regular_overworld: list[str] = []
+
+    def has_day(rule: str) -> bool:
+        return 'at_day' in rule
+
+    def has_night(rule: str) -> bool:
+        return ('at_night' in rule) or ('at_dampe_time' in rule)
+
+    # Disable locations/events that are strictly time-gated.
+    for location in world.get_locations():
+        rule = location.rule_string
+        if not isinstance(rule, str):
+            continue
+        day = has_day(rule)
+        night = has_night(rule)
+        if is_day_world and night and not day:
+            location.disabled = DisableType.DISABLED
+            logger.debug('Fixed time: disabled night-only location %s [World %d]', location.name, world.id + 1)
+            disabled_locations.append(location.name)
+        elif (not is_day_world) and day and not night:
+            location.disabled = DisableType.DISABLED
+            logger.debug('Fixed time: disabled day-only location %s [World %d]', location.name, world.id + 1)
+            disabled_locations.append(location.name)
+
+    if not is_day_world:
+        for location in world.get_locations():
+            if location.dungeon is None and location.type in ('Chest', 'NPC', 'Collectable', 'Cutscene'):
+                location.disabled = DisableType.DISABLED
+                world.regular_overworld_token_locations.append(location)
+                logger.debug('Fixed time: disabled regular overworld location %s [World %d]', location.name, world.id + 1)
+                disabled_regular_overworld.append(location.name)
+
+    # Exits remain unchanged for now; disabling them caused generation failures.
+    if disabled_locations:
+        disabled_locations.sort()
+        logger.debug('Fixed time: disabled %d %s-only locations in World %d', len(disabled_locations), 'night' if is_day_world else 'day', world.id + 1)
+        logger.debug('Fixed time: disabled locations in World %d: %s', world.id + 1, ', '.join(disabled_locations))
+
+    if disabled_regular_overworld:
+        disabled_regular_overworld.sort()
+        logger.debug('Fixed time: disabled %d regular overworld locations in World %d', len(disabled_regular_overworld), world.id + 1)
+        logger.debug('Fixed time: disabled regular overworld locations in World %d: %s', world.id + 1, ', '.join(disabled_regular_overworld))
+
 
 def create_shop_rule(location: Location) -> AccessRule:
     def required_wallets(price: Optional[int]) -> int:

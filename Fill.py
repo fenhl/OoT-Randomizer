@@ -135,6 +135,68 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
 
     search.collect_locations()
 
+    # Place Triforce Blitz pieces early to reserve shared locations in trinity/linked modes.
+    if (worlds[0].settings.triforce_blitz
+            and worlds[0].settings.triforce_blitz_mw_linked_tf_pieces != 'off'
+            and not worlds[0].settings.triforce_blitz_jabus_revenge):
+        triforce_blitz_pool = [item for item in progitempool if item.name in triforce_blitz_items]
+        if triforce_blitz_pool:
+            logger.info('Placing Triforce Blitz pieces.')
+            dungeon_locations = [
+                location for location in fill_locations
+                if location.dungeon is not None or (location.parent_region is not None and location.parent_region.is_boss_room)
+            ]
+            fill_restrictive(worlds, search, dungeon_locations, triforce_blitz_pool, check_access=False)
+            search.collect_locations()
+            fill_locations[:] = [loc for loc in fill_locations if loc.item is None]
+            progitempool = [item for item in progitempool if item.name not in triforce_blitz_items]
+            itempool = [item for item in itempool if item.name not in triforce_blitz_items]
+
+    # Night-world regular overworld locations: place tokens there first.
+    def is_dark_world(world: World) -> bool:
+        assignment = world.settings.triforce_blitz_day_night_worlds
+        if assignment == 'alternate':
+            return world.id % 2 == 1
+        return assignment == 'dark'
+
+    regular_overworld_token_locations = [
+        loc
+        for world in worlds
+        if is_dark_world(world)
+        for loc in world.regular_overworld_token_locations
+        if loc.item is None
+    ]
+    if regular_overworld_token_locations:
+        for world in worlds:
+            if not is_dark_world(world):
+                continue
+            world_token_locations = [
+                loc for loc in regular_overworld_token_locations
+                if loc.world.id == world.id and loc.item is None
+            ]
+            if not world_token_locations:
+                continue
+            world_tokens = [
+                item for item in progitempool
+                if item.type == 'Token' and item.world.id == world.id
+            ]
+            if not world_tokens:
+                continue
+
+            random.shuffle(world_token_locations)
+            random.shuffle(world_tokens)
+            use_count = min(len(world_token_locations), len(world_tokens))
+            for _ in range(use_count):
+                location = world_token_locations.pop()
+                item = world_tokens.pop()
+                location.world.push_item(location, item)
+                if location in fill_locations:
+                    fill_locations.remove(location)
+                if item in progitempool:
+                    progitempool.remove(item)
+                if item in itempool:
+                    itempool.remove(item)
+
     if worlds[0].settings.triforce_blitz_jabus_revenge:
         triforcepool = list(filter(lambda item: item.name in triforce_blitz_items, progitempool))
         tokenpool = list(filter(lambda item: item.type == 'Token', progitempool))
@@ -420,8 +482,12 @@ def fill_ownworld_restrictive(worlds: list[World], search: Search, locations: li
 # This function will modify the location and itempool arguments. placed items and
 # filled locations will be removed. If this returns an error, then the state of
 # those two lists cannot be guaranteed.
-def fill_restrictive(worlds: list[World], base_search: Search, locations: list[Location], itempool: list[Item], count: int = -1) -> None:
+def fill_restrictive(worlds: list[World], base_search: Search, locations: list[Location], itempool: list[Item], count: int = -1, check_access: Optional[bool] = None) -> None:
     unplaced_items = []
+    all_dungeon_locations = [
+        location for location in locations
+        if location.dungeon is not None or (location.parent_region is not None and location.parent_region.is_boss_room)
+    ]
 
     # don't run over this search, just keep it as an item collection
     items_search = base_search.copy()
@@ -476,7 +542,7 @@ def fill_restrictive(worlds: list[World], base_search: Search, locations: list[L
         max_search.collect_locations()
 
         # perform_access_check checks location reachability
-        if worlds[0].check_beatable_only:
+        if check_access is None and worlds[0].check_beatable_only:
             if worlds[0].settings.reachable_locations == 'goals':
                 # If this item is required for a goal, it must be placed somewhere reachable.
                 # We also need to check to make sure the game is beatable, since custom goals might not imply that.
@@ -485,9 +551,11 @@ def fill_restrictive(worlds: list[World], base_search: Search, locations: list[L
                 # If the game is not beatable without this item, it must be placed somewhere reachable.
                 predicate = State.won
             perform_access_check = not max_search.can_beat_game(scan_for_items=False, predicate=predicate)
-        else:
+        elif check_access is None:
             # All items must be placed somewhere reachable.
             perform_access_check = True
+        else:
+            perform_access_check = check_access
 
         # find a location that the item can be placed. It must be a valid location
         # in the world we are placing it (possibly checking for reachability)
@@ -498,7 +566,7 @@ def fill_restrictive(worlds: list[World], base_search: Search, locations: list[L
                 # in the world the item is for. This is to prevent early restrictions
                 # in one world being placed late in another world. If this is not
                 # done then one player may be waiting a long time for other players.
-                if location.world.id != item_to_place.world.id:
+                if perform_access_check and location.world.id != item_to_place.world.id:
                     try:
                         source_location = item_to_place.world.get_location(location.name)
                         if not source_location.can_fill(max_search.state_list[item_to_place.world.id], item_to_place, perform_access_check):

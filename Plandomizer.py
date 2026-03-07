@@ -1093,7 +1093,6 @@ class WorldDistribution:
         if world.settings.start_with_consumables:
             add_starting_item_with_ammo(items, 'Deku Sticks', 99)
             add_starting_item_with_ammo(items, 'Deku Nuts', 99)
-
         for iter_world in worlds:
             skipped_locations: list[Location] = []
             if iter_world.settings.skip_reward_from_rauru:
@@ -1305,7 +1304,6 @@ class Distribution:
                         world.update({k: self.src_dict[k]})
 
         # normalize starting items to use the dictionary format
-        starting_items = itertools.chain(self.settings.starting_equipment, self.settings.starting_songs, self.settings.starting_inventory)
         data: dict[str, StarterRecord | dict[str, StarterRecord]] = defaultdict(lambda: StarterRecord(0))
         if isinstance(self.settings.starting_items, dict) and self.settings.starting_items:
             world_names = ['World %d' % (i + 1) for i in range(len(self.world_dists))]
@@ -1316,19 +1314,51 @@ class Distribution:
                 else:
                     data[name] = record if isinstance(record, StarterRecord) else StarterRecord(record)
             add_starting_ammo(data)
-        for itemsetting in starting_items:
-            if itemsetting in StartingItems.everything:
-                item = StartingItems.everything[itemsetting]
-                if self.settings.blue_fire_arrows and item.item_name == 'Ice Arrows':
-                    add_starting_item_with_ammo(data, 'Blue Fire Arrows')
-                elif item.item_name == 'Rutos Letter' and self.settings.zora_fountain != 'open':
-                    data['Rutos Letter'].count += 1
-                elif item.item_name in ('Bottle', 'Rutos Letter'):
-                    data['Bottle'].count += 1
-                else:
-                    add_starting_item_with_ammo(data, item.item_name)
-            else:
+
+        def add_legacy_starting_item(starting_data: dict[str, StarterRecord], itemsetting: str) -> None:
+            if itemsetting not in StartingItems.everything:
                 raise KeyError("invalid starting item: {}".format(itemsetting))
+            item = StartingItems.everything[itemsetting]
+            if self.settings.blue_fire_arrows and item.item_name == 'Ice Arrows':
+                add_starting_item_with_ammo(starting_data, 'Blue Fire Arrows')
+            elif item.item_name == 'Rutos Letter' and self.settings.zora_fountain != 'open':
+                if 'Rutos Letter' not in starting_data:
+                    starting_data['Rutos Letter'] = StarterRecord(0)
+                starting_data['Rutos Letter'].count += 1
+            elif item.item_name in ('Bottle', 'Rutos Letter'):
+                if 'Bottle' not in starting_data:
+                    starting_data['Bottle'] = StarterRecord(0)
+                starting_data['Bottle'].count += 1
+            else:
+                add_starting_item_with_ammo(starting_data, item.item_name)
+
+        world_preset_overrides = self.settings.world_presets
+        if world_preset_overrides:
+            for world_name in world_names:
+                world_data = data[world_name] if isinstance(data[world_name], dict) else {}
+                data[world_name] = world_data
+                world_override = world_preset_overrides.get(world_name, {})
+                # Consume world-specific legacy settings once so repeated reset() calls stay idempotent.
+                world_starting_equipment = world_override.pop('starting_equipment', self.settings.starting_equipment)
+                world_starting_inventory = world_override.pop('starting_inventory', self.settings.starting_inventory)
+                world_legacy_items = itertools.chain(world_starting_equipment, self.settings.starting_songs, world_starting_inventory)
+                for itemsetting in world_legacy_items:
+                    add_legacy_starting_item(world_data, itemsetting)
+        else:
+            legacy_items = itertools.chain(self.settings.starting_equipment, self.settings.starting_songs, self.settings.starting_inventory)
+            for itemsetting in legacy_items:
+                add_legacy_starting_item(data, itemsetting)
+
+        if any(self.settings.triforce_blitz_world_assignment_for_world(world_id) != 'off'
+               for world_id in range(len(self.world_dists))):
+            for world_id in range(len(self.world_dists)):
+                if self.settings.triforce_blitz_world_assignment_for_world(world_id) == 'dark':
+                    world_key = f'World {world_id + 1}'
+                    if world_key not in data or not isinstance(data[world_key], dict):
+                        data[world_key] = {}
+                    if data[world_key].get('Nocturne of Shadow', StarterRecord(0)).count < 1:
+                        add_starting_item_with_ammo(data[world_key], 'Nocturne of Shadow')
+
         self.settings.starting_equipment = []
         self.settings.starting_songs = []
         self.settings.starting_inventory = []

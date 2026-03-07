@@ -17,13 +17,14 @@ import StartingItems
 from version import __version__
 from Utils import local_path, data_path
 from SettingsList import SettingInfos, validate_settings, settings_versioning
-from Plandomizer import Distribution
+from Plandomizer import Distribution, LocationRecord
 
 LEGACY_STARTING_ITEM_SETTINGS: dict[str, dict[str, StartingItems.Entry]] = {
     'starting_equipment': StartingItems.equipment,
     'starting_inventory': StartingItems.inventory,
     'starting_songs': StartingItems.songs,
 }
+TRIFORCE_BLITZ_WORLD_ASSIGNMENTS: tuple[str, ...] = ('off', 'light', 'dark', 'alternate')
 
 
 class ArgumentDefaultsHelpFormatter(argparse.RawTextHelpFormatter):
@@ -70,12 +71,21 @@ def get_preset_files() -> list[str]:
             if fn.endswith('.json'))
 
 
+def resolve_triforce_blitz_world_assignment(value: str, world_id: int) -> str:
+    if value not in TRIFORCE_BLITZ_WORLD_ASSIGNMENTS:
+        raise ValueError(f'Invalid Triforce Blitz world assignment mode: {value!r}')
+    if value == 'alternate':
+        return 'light' if (world_id % 2 == 0) else 'dark'
+    return value
+
+
 # holds the particular choices for a run's settings
 class Settings(SettingInfos):
     # add the settings as fields, and calculate information based on them
     def __init__(self, settings_dict: dict[str, Any], strict: bool = False) -> None:
         super().__init__()
         self.numeric_seed: Optional[int] = None
+        world_presets_src = settings_dict.pop('world_presets', None)
         for setting in settings_dict:
             for setting_version in settings_versioning:
                 if setting == setting_version.old_name:
@@ -95,11 +105,50 @@ class Settings(SettingInfos):
         if self.world_count > 255:
             self.world_count = 255
 
+        self.world_presets: dict[str, dict[str, Any]] = self._validate_world_presets(world_presets_src)
         self._disabled: set[str] = set()
         self.settings_string: str = self.get_settings_string()
         self.distribution: Distribution = Distribution(self)
         self.update_seed(self.seed)
         self.custom_seed: bool = False
+
+    def _validate_world_presets(self, world_presets_src: Any) -> dict[str, dict[str, Any]]:
+        if world_presets_src is None:
+            return {}
+        if not isinstance(world_presets_src, dict):
+            raise TypeError('world_presets must be an object keyed by 0-based world index')
+
+        supported_overrides = {'starting_equipment', 'starting_inventory', 'triforce_blitz_day_night_worlds', 'start_with_rupees', 'user_message'}
+        normalized: dict[str, dict[str, Any]] = {}
+        for world_index, overrides in world_presets_src.items():
+            if isinstance(world_index, int):
+                world_id = world_index
+            elif isinstance(world_index, str) and world_index.isdigit():
+                world_id = int(world_index)
+            else:
+                raise TypeError(f'world_presets key {world_index!r} is invalid; expected a 0-based integer index')
+
+            if world_id < 0 or world_id >= self.world_count:
+                raise ValueError(f'world_presets index {world_id} is out of bounds for world_count={self.world_count}')
+
+            if not isinstance(overrides, dict):
+                raise TypeError(f'world_presets[{world_id}] must be an object of setting overrides')
+
+            invalid_keys = [key for key in overrides if key not in supported_overrides]
+            if invalid_keys:
+                invalid_list = ', '.join(repr(key) for key in invalid_keys)
+                raise TypeError(f'world_presets[{world_id}] contains unsupported override(s): {invalid_list}')
+
+            validate_settings(overrides)
+            normalized[f'World {world_id + 1}'] = copy.deepcopy(overrides)
+
+        return normalized
+
+    def triforce_blitz_world_assignment_for_world(self, world_id: int) -> str:
+        world_name = f'World {world_id + 1}'
+        world_override = self.world_presets.get(world_name, {})
+        assignment = world_override.get('triforce_blitz_day_night_worlds', self.triforce_blitz_day_night_worlds)
+        return resolve_triforce_blitz_world_assignment(assignment, world_id)
 
     def copy(self) -> Settings:
         settings = copy.copy(self)
@@ -287,6 +336,18 @@ class Settings(SettingInfos):
 
         for location in self.plandomized_locations:
             self.distribution.add_location(location, self.plandomized_locations[location])
+
+        # In fixed day/night worlds, force Song from Impa to Prelude in night worlds.
+        if any(self.triforce_blitz_world_assignment_for_world(world_id) != 'off'
+               for world_id in range(len(self.distribution.world_dists))):
+            for world_id, world_dist in enumerate(self.distribution.world_dists):
+                if self.triforce_blitz_world_assignment_for_world(world_id) == 'dark':
+                    target_location = 'Song from Impa'
+                    for location_name in list(world_dist.locations.keys()):
+                        pattern = world_dist.pattern_matcher(location_name)
+                        if pattern(target_location):
+                            del world_dist.locations[location_name]
+                    world_dist.locations[target_location] = LocationRecord('Prelude of Light')
 
     def check_dependency(self, setting_name: str, check_random: bool = True) -> bool:
         return self.get_dependency(setting_name, check_random) is None

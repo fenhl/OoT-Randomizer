@@ -22,7 +22,7 @@ from OcarinaSongs import generate_song_list, Song
 from Plandomizer import WorldDistribution, InvalidFileException
 from Region import Region, TimeOfDay
 from RuleParser import Rule_AST_Transformer
-from Settings import Settings
+from Settings import Settings, resolve_triforce_blitz_world_assignment
 from SettingsList import SettingInfos, get_settings_from_section
 from Spoiler import Spoiler
 from State import State
@@ -58,11 +58,22 @@ class World:
         self.randomized_list: list[str] = []
         self.randomized_starting_items: dict[str, int] = {}
         self.cached_bigocto_location: Optional[Location] = None
+        self.regular_overworld_token_locations: list[Location] = []
 
         self.parser: Rule_AST_Transformer = Rule_AST_Transformer(self)
         self.event_items: set[str] = set()
         self.settings: Settings = settings.copy()
         self.distribution: WorldDistribution = settings.distribution.world_dists[world_id]
+        world_preset = self.settings.world_presets.get(f'World {world_id + 1}', {})
+        if 'triforce_blitz_day_night_worlds' in world_preset:
+            self.settings.triforce_blitz_day_night_worlds = world_preset['triforce_blitz_day_night_worlds']
+        if 'start_with_rupees' in world_preset:
+            self.settings.start_with_rupees = world_preset['start_with_rupees']
+        if 'user_message' in world_preset:
+            self.settings.user_message = world_preset['user_message']
+
+        if resolve_triforce_blitz_world_assignment(self.settings.triforce_blitz_day_night_worlds, self.id) == 'dark':
+            self.settings.tokensanity = 'overworld'
 
         # rename a few attributes...
         self.keysanity: bool = settings.shuffle_smallkeys in ('keysanity', 'remove', 'any_dungeon', 'overworld', 'regional')
