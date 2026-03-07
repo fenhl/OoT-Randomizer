@@ -465,12 +465,13 @@ def swap_two_way_entrances(a: Entrance, b: Entrance, *, world_id: Optional[int] 
 
 def apply_fixed_time_entrance_swaps(worlds: list[World]) -> None:
     for world in worlds:
-        if not world.settings.triforce_blitz_day_night_worlds:
+        assignment = world.settings.triforce_blitz_world_assignment_for_world(world.id)
+        if assignment == 'off':
             continue
         if world.entrance_shuffle:
             continue
 
-        if world.id % 2 == 0:
+        if assignment == 'light':
             try:
                 mask_shop = world.get_entrance('Market -> Market Mask Shop')
                 bombchu_shop = world.get_entrance('Market Back Alley -> Market Bombchu Shop')
@@ -479,7 +480,7 @@ def apply_fixed_time_entrance_swaps(worlds: list[World]) -> None:
                 continue
 
             swap_two_way_entrances(mask_shop, bombchu_shop, world_id=world.id, mark_shuffled=True)
-        else:
+        elif assignment == 'dark':
             try:
                 bombchu_bowling = world.get_entrance('Market -> Market Bombchu Bowling')
                 market_bazaar = world.get_entrance('Market -> Market Bazaar')

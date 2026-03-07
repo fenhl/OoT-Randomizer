@@ -154,9 +154,7 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
 
     # Night-world regular overworld locations: place tokens there first.
     def is_dark_world(world: World) -> bool:
-        assignment = world.settings.triforce_blitz_day_night_worlds
-        if assignment == 'alternate':
-            return world.id % 2 == 1
+        assignment = world.settings.triforce_blitz_world_assignment_for_world(world.id)
         return assignment == 'dark'
 
     regular_overworld_token_locations = [
