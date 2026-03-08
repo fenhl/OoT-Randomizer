@@ -4192,7 +4192,8 @@
         "misc_hints": [
             "altar",
             "ganondorf",
-            "warp_songs_and_owls"
+            "warp_songs_and_owls",
+            "20_skulltulas"
         ],
         "correct_chest_appearances": "both",
         "chest_textures_specific": [
