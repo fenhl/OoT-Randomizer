@@ -1356,8 +1356,8 @@ class Distribution:
                     world_key = f'World {world_id + 1}'
                     if world_key not in data or not isinstance(data[world_key], dict):
                         data[world_key] = {}
-                    if data[world_key].get('Nocturne of Shadow', StarterRecord(0)).count < 1:
-                        add_starting_item_with_ammo(data[world_key], 'Nocturne of Shadow')
+                    if data[world_key].get('Prelude of Light', StarterRecord(0)).count < 1:
+                        add_starting_item_with_ammo(data[world_key], 'Prelude of Light')
 
         self.settings.starting_equipment = []
         self.settings.starting_songs = []
