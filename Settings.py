@@ -337,7 +337,7 @@ class Settings(SettingInfos):
         for location in self.plandomized_locations:
             self.distribution.add_location(location, self.plandomized_locations[location])
 
-        # In fixed day/night worlds, force Song from Impa to Prelude in night worlds.
+        # In fixed day/night worlds, force Song from Impa to Nocturne in night worlds.
         if any(self.triforce_blitz_world_assignment_for_world(world_id) != 'off'
                for world_id in range(len(self.distribution.world_dists))):
             for world_id, world_dist in enumerate(self.distribution.world_dists):
@@ -347,7 +347,7 @@ class Settings(SettingInfos):
                         pattern = world_dist.pattern_matcher(location_name)
                         if pattern(target_location):
                             del world_dist.locations[location_name]
-                    world_dist.locations[target_location] = LocationRecord('Prelude of Light')
+                    world_dist.locations[target_location] = LocationRecord('Nocturne of Shadow')
 
     def check_dependency(self, setting_name: str, check_random: bool = True) -> bool:
         return self.get_dependency(setting_name, check_random) is None
