@@ -6,6 +6,7 @@
         "region_name": "Queen Gohma Boss Room",
         "scene": "Deku Tree Boss",
         "is_boss_room": true,
+        "savewarp": "KF Outside Deku Tree -> Deku Tree Lobby",
         "events": {
             # You don't have to hit her for her to climb, just maneouvre to the other
             # side of a pillar
@@ -37,6 +38,7 @@
         "region_name": "King Dodongo Boss Room",
         "scene": "Dodongos Cavern Boss",
         "is_boss_room": true,
+        "savewarp": "Death Mountain -> Dodongos Cavern Beginning",
         "events": {
             "Defeat King Dodongo": "
                 has_soul(King_Dodongo) and
@@ -68,6 +70,7 @@
         "region_name": "Barinade Boss Room",
         "scene": "Jabu Jabus Belly Boss",
         "is_boss_room": true,
+        "savewarp": "Zoras Fountain -> Jabu Jabus Belly Beginning",
         "events": {
             "Defeat Barinade": "has_soul(Barinade) and can_use(Boomerang) and (Sticks or Kokiri_Sword or is_adult)"
         },
@@ -98,6 +101,7 @@
         "region_name": "Phantom Ganon Boss Room",
         "scene": "Forest Temple Boss",
         "is_boss_room": true,
+        "savewarp": "SFM Forest Temple Entrance Ledge -> Forest Temple Lobby",
         "events": {
             "Defeat Phantom Ganon": "
                 has_soul(Phantom_Ganon) and
@@ -124,6 +128,7 @@
         "region_name": "Volvagia Boss Room",
         "scene": "Fire Temple Boss",
         "is_boss_room": true,
+        "savewarp": "DMC Fire Temple Entrance -> Fire Temple Lower",
         "events": {
             "Defeat Volvagia": "
                 has_soul(Volvagia) and can_use(Goron_Tunic) and can_use(Megaton_Hammer)"
@@ -149,6 +154,7 @@
         "region_name": "Morpha Boss Room",
         "scene": "Water Temple Boss",
         "is_boss_room": true,
+        "savewarp": "Lake Hylia -> Water Temple Lobby",
         "events": {
             "Defeat Morpha": "
                 has_soul(Morpha) and
@@ -176,6 +182,7 @@
         "region_name": "Bongo Bongo Boss Room",
         "scene": "Shadow Temple Boss",
         "is_boss_room": true,
+        "savewarp": "Graveyard Warp Pad Region -> Shadow Temple Entryway",
         "events": {
             "Defeat Bongo Bongo": "
                 has_soul(Bongo_Bongo) and (Kokiri_Sword or can_use(Megaton_Hammer) or is_adult) and
@@ -203,6 +210,7 @@
         "region_name": "Twinrova Boss Room",
         "scene": "Spirit Temple Boss",
         "is_boss_room": true,
+        "savewarp": "Desert Colossus -> Spirit Temple Lobby",
         "events": {
             "Defeat Twinrova": "has_soul(Twinrova) and has_soul(Iron_Knuckle) and can_use(Mirror_Shield)"
         },
