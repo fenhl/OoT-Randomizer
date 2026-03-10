@@ -2,6 +2,8 @@
 #include "objects.h"
 #include "item_effects.h"
 #include "actor.h"
+#include "flashcart.h"
+#include "usb.h"
 
 extern uint16_t current_textbox_id;
 

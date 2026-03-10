@@ -24,7 +24,8 @@
 #include "debug.h"
 #include "inputviewer.h"
 #include "message.h"
-#include "everdrive.h"
+#include "flashcart.h"
+#include "usb.h"
 
 void Gameplay_InitSkybox(z64_game_t* globalCtx, int16_t skyboxId);
 
@@ -35,6 +36,7 @@ void c_init() {
     override_flags_init();
     models_init();
     init_textures();
+    usb_initialize();
 #if DEBUG_MODE
     SKIP_N64_LOGO = 1;
 #endif
@@ -42,7 +44,7 @@ void c_init() {
 
 void before_game_state_update() {
     rando_display_buffer_reset();
-    everdrive_frame(true);
+    flashcart_frame(true);
     handle_pending_items();
     handle_dpad();
     update_misc_colors();
