@@ -125,7 +125,9 @@ def apply_fixed_time_exclusions(world: World, logger: logging.Logger) -> None:
     if not is_day_world:
         for location in world.get_locations():
             if (
-                location.dungeon is None and (
+                location.dungeon is None and not (
+                    location.parent_region is not None and location.parent_region.is_boss_room
+                ) and (
                     location.type in ('Chest', 'NPC', 'Collectable', 'Cutscene', 'Scrub', 'GrottoScrub')
                     or location.name == 'Song from Malon'
                 )
