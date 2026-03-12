@@ -124,7 +124,12 @@ def apply_fixed_time_exclusions(world: World, logger: logging.Logger) -> None:
 
     if not is_day_world:
         for location in world.get_locations():
-            if location.dungeon is None and location.type in ('Chest', 'NPC', 'Collectable', 'Cutscene', 'Scrub', 'GrottoScrub'):
+            if (
+                location.dungeon is None and (
+                    location.type in ('Chest', 'NPC', 'Collectable', 'Cutscene', 'Scrub', 'GrottoScrub')
+                    or location.name == 'Song from Malon'
+                )
+            ):
                 location.disabled = DisableType.DISABLED
                 world.regular_overworld_token_locations.append(location)
                 logger.debug('Fixed time: disabled regular overworld location %s [World %d]', location.name, world.id + 1)
