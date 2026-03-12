@@ -80,6 +80,57 @@ def distribute_items_restrictive(worlds: list[World], fill_locations: Optional[l
     prioitempool = [item for item in itempool if not item.advancement and item.priority]
     restitempool = [item for item in itempool if not item.advancement and not item.priority]
 
+    # In fixed-time night worlds, Song from Malon is treated as a non-song check.
+    # Force it to Blue Rupee so songs fill only the remaining song locations.
+    forced_malon_blue_rupee_locations: list[Location] = []
+    for world in worlds:
+        if world.settings.triforce_blitz_world_assignment_for_world(world.id) != 'dark':
+            continue
+        try:
+            malon_location = world.get_location('Song from Malon')
+        except KeyError:
+            continue
+        if malon_location.item is None:
+            forced_malon_blue_rupee_locations.append(malon_location)
+
+    if forced_malon_blue_rupee_locations:
+        for location in forced_malon_blue_rupee_locations:
+            world_id = location.world.id
+            blue_rupee = next((item for item in restitempool if item.name == 'Rupees (5)' and item.world.id == world_id), None)
+            if blue_rupee is None:
+                blue_rupee = next((item for item in restitempool if item.name == 'Rupees (5)'), None)
+            if blue_rupee is None:
+                # Keep pool counts balanced: replace one junk filler with a synthetic Blue Rupee.
+                filler = next(
+                    (
+                        item for item in restitempool
+                        if item.world.id == world_id and item.name in remove_junk_items and item.name != 'Ice Trap'
+                    ),
+                    None,
+                )
+                if filler is None:
+                    filler = next(
+                        (
+                            item for item in restitempool
+                            if item.name in remove_junk_items and item.name != 'Ice Trap'
+                        ),
+                        None,
+                    )
+                if filler is None:
+                    raise FillError(f'Unable to reserve Blue Rupee for {location.name} in World {world_id + 1}')
+                restitempool.remove(filler)
+                if filler in itempool:
+                    itempool.remove(filler)
+                blue_rupee = ItemFactory('Rupees (5)', location.world)[0]
+
+            location.world.push_item(location, blue_rupee)
+            if blue_rupee in restitempool:
+                restitempool.remove(blue_rupee)
+            if blue_rupee in itempool:
+                itempool.remove(blue_rupee)
+            if location in song_locations:
+                song_locations.remove(location)
+
     cloakable_locations = shop_locations + song_locations + fill_locations
     all_models = shopitempool + dungeon_items + songitempool + itempool
     worlds[0].settings.distribution.fill(worlds, [shop_locations, song_locations, fill_locations], [shopitempool, dungeon_items, songitempool, progitempool, prioitempool, restitempool])
