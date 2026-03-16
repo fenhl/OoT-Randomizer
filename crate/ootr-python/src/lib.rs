@@ -21,6 +21,7 @@ py_mod!(
     color,
     entrance_shuffle,
     hints,
+    item_list,
     rom,
     search,
     version,

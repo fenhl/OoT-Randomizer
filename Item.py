@@ -2,7 +2,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable
 from typing import TYPE_CHECKING, Optional, Any, overload
 
-from ItemList import GetItemId, item_table
+from rs.item_list import GetItemId, item_table
 from RulesCommon import allowed_globals, escape_name
 
 if TYPE_CHECKING:
@@ -48,6 +48,8 @@ class ItemInfo:
         self.junk: Optional[int] = self.special.get('junk', None)
         self.trade: bool = self.special.get('trade', False)
         self.ocarina_button: bool = self.special.get('ocarina_button', False)
+        self.market_price: Optional[int] = self.special.get('market_price', None)
+        self.market_price_non_chu_drops_only: bool = self.special.get('market_price_non_chu_drops_only', False)
 
         self.solver_id: Optional[int] = None
         if name and self.junk is None:
