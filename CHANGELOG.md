@@ -5,8 +5,10 @@
 * The `Free Reward from Rauru` has a new `Yes (Forced)` option which forces the check to be a dungeon reward even if these are otherwise shuffled.
 * The `Maps & Compasses` shuffle setting has been split into separate `Maps` and `Compasses` settings.
 * The Farore's Wind text box now distinguishes between Ganon's Castle and Ganon's Tower.
-* New `Water Hop` trick added to advanced logic.
+* New `Water Hop` trick and `BotW Cucco Dive` glitch added to advanced logic.
 * Improve Debug menu with new options.
+* Refill items sold as special deals are now less likely to cost more than the "market price" of a repeatable purchase.
+* The heart chest texture has been tweaked to display heart icons on the lid rather than triangles.
 
 ## Bug fixes
 * Fix a potential softlock when talking to Pierre (the upper scarecrow) as child in Lake Hylia.
@@ -14,6 +16,10 @@
 * Fix a bug where the starting health capacity in game might be miscalculated when starting with a heart piece.
 * Fix the Chicken (child trade quest item) using the same get item text box as the Pocket Cucco (adult trade quest item).
 * Fix a vanilla bug where playing the ocarina with vibrato before recording the Scarecrow's Song could prevent Pierre from spawning.
+* Fix unshuffled treasure box shop keys showing the wrong item model while inside the chests if `Key Appearance Matches Dungeon` is enabled.
+* Add two missing locations: `Ganons Castle MQ Shadow Trial Explosives Wonderitem` and a `Bombable Fairy` in MQ Jabu.
+* Improve the error message when a settings string from the wrong randomizer version is imported.
+* Fix wrong Goal hints being generated for worlds other than the first in multiworld seeds.
 
 # 9.0
 

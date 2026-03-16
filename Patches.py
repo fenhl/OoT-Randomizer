@@ -96,6 +96,7 @@ def patch_rom(spoiler: Spoiler, world: World, rom: Rom) -> Rom:
 
     models_to_update = []
     if 'keys' in world.settings.clearer_item_models:
+        rom.write_byte(rom.sym('CUSTOM_KEY_MODELS'), 0x01)
         models_to_update.extend((
             (0x0071, 0x01A2, 0x89), # Small Key (Chest Game)
             (0x0095, 0x01A3, 0x8A), # Forest Temple Boss Key
