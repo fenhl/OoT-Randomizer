@@ -700,7 +700,7 @@ item_table! {
     "Buy Blue Fire"                                            => ("Shop",                ADVANCEMENT, 0x27,                                                      ["object" => 0x0173_i32, "price" => 300_i32]),
     "Buy Bottle Bug"                                           => ("Shop",                ADVANCEMENT, 0x28,                                                      ["object" => 0x0174_i32, "price" => 50_i32]),
     "Buy Poe"                                                  => ("Shop",                PRIORITY,    0x2A,                                                      ["object" => 0x0176_i32, "price" => 30_i32]),
-    "Buy Fairy\"s Spirit"                                      => ("Shop",                ADVANCEMENT, 0x2B,                                                      ["object" => 0x0177_i32, "price" => 50_i32]),
+    "Buy Fairy's Spirit"                                       => ("Shop",                ADVANCEMENT, 0x2B,                                                      ["object" => 0x0177_i32, "price" => 50_i32]),
     "Buy Arrows (10)"                                          => ("Shop",                PRIORITY,    0x2C,                                                      ["object" => 0x00D8_i32, "price" => 20_i32]),
     "Buy Bombs (20)"                                           => ("Shop",                PRIORITY,    0x2D,                                                      ["object" => 0x00CE_i32, "price" => 80_i32]),
     "Buy Bombs (30)"                                           => ("Shop",                PRIORITY,    0x2E,                                                      ["object" => 0x00CE_i32, "price" => 120_i32]),
