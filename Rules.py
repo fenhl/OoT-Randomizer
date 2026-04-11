@@ -100,6 +100,15 @@ def apply_fixed_time_exclusions(world: World, logger: logging.Logger) -> None:
     disabled_locations: list[str] = []
     disabled_regular_overworld: list[str] = []
 
+    # Some checks are time-gated via region exits rather than the location rule_string itself.
+    # For fixed-time Triforce Blitz worlds, explicitly disable those checks so they can't be
+    # selected for item placement in the wrong time-of-day world.
+    if is_day_world:
+        for location in world.get_locations():
+            if location.name.startswith('Market Treasure Chest Game'):
+                location.disabled = DisableType.DISABLED
+                disabled_locations.append(location.name)
+
     def has_day(rule: str) -> bool:
         return 'at_day' in rule
 
