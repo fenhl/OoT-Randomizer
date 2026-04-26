@@ -20,6 +20,17 @@
 * Add two missing locations: `Ganons Castle MQ Shadow Trial Explosives Wonderitem` and a `Bombable Fairy` in MQ Jabu.
 * Improve the error message when a settings string from the wrong randomizer version is imported.
 * Fix wrong Goal hints being generated for worlds other than the first in multiworld seeds.
+* Added some missing or incorrectly named locations in advanced logic.
+* Various minor fixes for advanced logic.
+* Fix for advanced logic tricks being cached when switching to glitchless logic.
+* Fix for failure to generate when special deal prices are set to vanilla.
+* Fix for misc hints when the hinted item was randomly selected as a starting item.
+
+## Other Changes
+* It is no longer required to have either the goron tunic or the Fewer Tunic Requirements trick for adult to go from the Bolero warp pad to the Fire temple in logic.
+* Further shortening of version number in file select screen.
+* Areas which have all locations hinted will not be selected for important checks hints.
+* Successfully entering a password will now take you back to the file select screen.
 
 # 9.0
 

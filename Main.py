@@ -97,8 +97,12 @@ def resolve_settings(settings: Settings) -> Tuple[Optional[Rom], list[Settings]]
     for settings in world_settings:
         for trick in logic_tricks.values():
             settings.settings_dict[trick['name']] = trick['name'] in settings.allowed_tricks
-        for trick in advanced_logic_tricks.values():
-            settings.settings_dict[trick['name']] = trick['name'] in settings.advanced_allowed_tricks
+        if settings.logic_rules == 'advanced':
+            for trick in advanced_logic_tricks.values():
+                settings.settings_dict[trick['name']] = trick['name'] in settings.advanced_allowed_tricks
+        else:
+            for trick in advanced_logic_tricks.values():
+                settings.settings_dict[trick['name']] = False
 
         # Set to a custom hint distribution if plando is overriding the distro
         if len(settings.hint_dist_user) != 0:
@@ -262,7 +266,7 @@ def generate_wad(wad_file: str, rom_file: str, output_file: str, channel_title: 
         with open(wad_file, 'rb') as wad_stream:
             wad_buffer = bytearray(wad_stream.read(0xFC0))
     except FileNotFoundError as ex:
-            raise FileNotFoundError(f'Invalid path to Base WAD: "{input_file}"')
+        raise FileNotFoundError(f'Invalid path to Base WAD: "{wad_file}"')
 
     wad_app1_sha1_usa = [
         [0x76, 0x3D, 0x4D, 0x3D, 0x07, 0x13, 0xE4, 0xD1, 0x0E, 0x44, 0x54, 0x0C, 0xCF, 0xA3, 0x25, 0x5E, 0x19, 0xF2, 0x8A, 0xF7], # US Wad App1

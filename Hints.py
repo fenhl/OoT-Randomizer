@@ -1447,8 +1447,11 @@ def get_junk_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, 
 def get_important_check_hint(spoiler: Spoiler, world: World, checked: dict[HintArea | str, set[CheckedKind]]) -> HintReturn:
     top_level_locations = []
     empty_dungeons = [dungeon for dungeon in world.precompleted_dungeons if world.precompleted_dungeons[dungeon]]
-    for location in world.get_filled_locations():
+    locations = [location for location in world.get_filled_locations()]
+
+    for location in locations:
         hint_area = HintArea.at(location)
+
         if (
             hint_area not in top_level_locations
             and hint_area not in checked
@@ -1456,13 +1459,23 @@ def get_important_check_hint(spoiler: Spoiler, world: World, checked: dict[HintA
             and hint_area.dungeon_name not in empty_dungeons # prevent pre-completed dungeons from being hinted
             and not location.locked # prevent areas with unshuffled checks from being hinted
         ):
+            shuffled_locations_in_region = list(filter(lambda loc: HintArea.at(loc) == hint_area and not loc.locked, locations))
+
+            # Don't hint areas with all locations already hinted
+            if shuffled_locations_in_region and all(map(lambda loc: is_checked([loc], checked), shuffled_locations_in_region)):
+                continue
             top_level_locations.append(hint_area)
+
     if not top_level_locations:
         return None
+
     hint_area = random.choice(top_level_locations)
     item_count = 0
-    for location in world.get_filled_locations():
+
+    for location in locations:
         if HintArea.at(location) == hint_area:
+            shuffled_locations_in_region = list(filter(lambda loc: HintArea.at(loc) == hint_area and not loc.locked, locations))
+
             if (location.item.majoritem
                 # exclude locked items
                 and not location.locked
@@ -1482,6 +1495,9 @@ def get_important_check_hint(spoiler: Spoiler, world: World, checked: dict[HintA
                     or world.shuffle_ganon_bosskey == 'dungeons' or world.shuffle_ganon_bosskey == 'specific_rewards'
                     or world.shuffle_ganon_bosskey == 'tokens' or world.shuffle_ganon_bosskey == 'hearts'))):
                 item_count = item_count + 1
+
+            if location in shuffled_locations_in_region and len(shuffled_locations_in_region) == 1:
+                mark_checked(checked, location.name)
 
     mark_checked(checked, hint_area, CheckedKind.IMPORTANT_CHECK)
 
@@ -2177,7 +2193,10 @@ def build_misc_item_hints(world: World, messages: list[Message], allow_duplicate
     for hint_type, data in misc_item_hint_table.items():
         if hint_type in world.settings.misc_hints:
             item = world.misc_hint_items[hint_type]
-            if item in world.distribution.effective_starting_items and world.distribution.effective_starting_items[item].count > 0:
+            if (
+                (item in world.distribution.effective_starting_items and world.distribution.effective_starting_items[item].count > 0) or
+                (item in world.distribution.randomized_starting_items and world.distribution.randomized_starting_items[item] > 0)
+            ):
                 if item == data['default_item']:
                     text = data['default_item_text'].format(area='#your pocket#')
                 else:
