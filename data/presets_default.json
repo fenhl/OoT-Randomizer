@@ -1568,19 +1568,19 @@
         "custom_ice_trap_count": 100,
         "ice_trap_appearance": "junk_only"
     },
-    "4th Mixed Pools Tournament": {
+    "5th Mixed Pools Tournament": {
         "aliases": [
             "mixed"
         ],
         "language": "english",
         "show_seed_info": true,
-        "user_message": "4th Mixed Pools Tournament",
+        "user_message": "5th Mixed Pools Tournament",
         "world_count": 1,
         "create_spoiler": true,
         "password_lock": false,
         "randomize_settings": false,
         "logic_rules": "glitchless",
-        "reachable_locations": "all",
+        "reachable_locations": "beatable",
         "triforce_hunt": false,
         "triforce_count_per_world": 30,
         "triforce_goal_per_world": 20,
@@ -1670,7 +1670,7 @@
         "shuffle_empty_pots": false,
         "shuffle_crates": "off",
         "shuffle_empty_crates": false,
-        "shuffle_cows": false,
+        "shuffle_cows": true,
         "shuffle_beehives": false,
         "shuffle_wonderitems": false,
         "shuffle_kokiri_sword": true,
@@ -1758,7 +1758,7 @@
         "easier_fire_arrow_entry": false,
         "fae_torch_count": 3,
         "ruto_already_f1_jabu": true,
-        "fast_shadow_boat": false,
+        "fast_shadow_boat": true,
         "chicken_count_random": false,
         "chicken_count": 3,
         "big_poe_count_random": false,
