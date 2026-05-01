@@ -14,7 +14,8 @@
         { "location": "Spirit Temple Before Boss -> Twinrova Boss Room", "types": ["entrance"] }
     ],
     "remove_locations":      [
-        { "location": "ZR Frogs Rewards", "types": ["dual_always", "dual"] }
+        { "location": "ZR Frogs Rewards", "types": ["dual_always", "dual"] },
+        { "location": "Deku Theater Mask of Truth", "types": ["always"] }
     ],
     "add_items":             [],
     "remove_items":          [],
