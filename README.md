@@ -64,7 +64,7 @@ Differences between [`dev-fenhl`](https://github.com/fenhl/OoT-Randomizer) and [
   * “Fast Vanilla” is “Vanilla” but with speed-ups like fast bunny hood, fast chest cutscenes, or “Skip Some Minigame Phases” enabled.
   * “Vanilla (Master Quest)” and “Fast Vanilla (Master Quest)” are “Vanilla” and “Fast Vanilla” but with all dungeons from Master Quest.
   * “Ice%” is an extremely fast-paced game mode where the goal is to reach the Iron Boots chest.
-  * 4th Mixed Pools Tournament” is used for [an upcoming tournament](https://midos.house/event/mp/4) with nearly full mixed pools entrance randomizer.
+  * “5th Mixed Pools Tournament” is used for [an upcoming tournament](https://midos.house/event/mp/5) with nearly full mixed pools entrance randomizer.
   * “Standard Anti-Weekly Settings (Beginner)” disables every location that's enabled in “S9 Tournament” and enables every location that's disabled there, as well as changing some miscellaneous settings. See [the official document](https://docs.google.com/document/d/1vS7JrYjlWFkXfUnT5BJSQ19ywJa-TiB7RPK7Uz0JLsU/edit) for details.
   * “Standard Anti-Weekly Settings (Advanced)” adds “Shuffle Rupees & Hearts”, “Shuffle Pots”, “Shuffle Crates”, “Shuffle Beehives”, and “Shuffle Silver Rupees”, has a minimal item pool, and adds extra ice traps.
   * “Triforce Blitz S2” is a fast-paced game mode with very powerful hints used for [a tournament](https://midos.house/event/tfb/2), taken from [Elagatua's `Dev` branch](https://github.com/Elagatua/OoT-Randomizer/tree/Dev). Note that the tournament itself was played on that branch, not this one. See [the official website](https://www.triforceblitz.com/) for details.
