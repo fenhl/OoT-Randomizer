@@ -12,23 +12,23 @@
 int dungeon_count = 13;
 
 dungeon_entry_t dungeons[] = {
-    {  0, 0, 0, 0, 1, 0x0F, "Deku",       "Deku Tree",              {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_DEKU_TREE },
-    {  1, 0, 0, 0, 1, 0x1F, "Dodongo",    "Dodongo's Cavern",       {-1, -1, -1, -1}, { 0, -1, -1, -1}, OPT_HINT_AREA_DODONGOS_CAVERN },
-    {  2, 0, 0, 0, 1, 0x0F, "Jabu",       "Jabu Jabu's Belly",      {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_JABU_JABUS_BELLY },
+    {  0, 0, 0, 0, 1, 0x0F, "Deku",       "Deku Tree",          {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_DEKU_TREE },
+    {  1, 0, 0, 0, 1, 0x1F, "Dodongo",    "Dodongo's Cavern",   {-1, -1, -1, -1}, { 0, -1, -1, -1}, OPT_HINT_AREA_DODONGOS_CAVERN },
+    {  2, 0, 0, 0, 1, 0x0F, "Jabu",       "Jabu Jabu's Belly",  {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_JABU_JABUS_BELLY },
 
-    {  3, 1, 1, 0, 1, 0x1F, "Forest",     "Forest Temple",          {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_FOREST_TEMPLE },
-    {  4, 1, 1, 0, 1, 0x1F, "Fire",       "Fire Temple",            {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_FIRE_TEMPLE },
-    {  5, 1, 1, 0, 1, 0x1F, "Water",      "Water Temple",           {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_WATER_TEMPLE },
-    {  7, 1, 1, 0, 1, 0x1F, "Shadow",     "Shadow Temple",          { 4,  6,  7, -1}, { 4,  5,  6,  7}, OPT_HINT_AREA_SHADOW_TEMPLE },
-    {  6, 1, 1, 0, 1, 0x1F, "Spirit",     "Spirit Temple",          {11, 14, 12, -1}, {13, 15, -1, -1}, OPT_HINT_AREA_SPIRIT_TEMPLE },
+    {  3, 1, 1, 0, 1, 0x1F, "Forest",     "Forest Temple",      {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_FOREST_TEMPLE },
+    {  4, 1, 1, 0, 1, 0x1F, "Fire",       "Fire Temple",        {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_FIRE_TEMPLE },
+    {  5, 1, 1, 0, 1, 0x1F, "Water",      "Water Temple",       {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_WATER_TEMPLE },
+    {  7, 1, 1, 0, 1, 0x1F, "Shadow",     "Shadow Temple",      { 4,  6,  7, -1}, { 4,  5,  6,  7}, OPT_HINT_AREA_SHADOW_TEMPLE },
+    {  6, 1, 1, 0, 1, 0x1F, "Spirit",     "Spirit Temple",      {11, 14, 12, -1}, {13, 15, -1, -1}, OPT_HINT_AREA_SPIRIT_TEMPLE },
 
-    {  8, 1, 0, 0, 1, 0x07, "BotW",       "Bottom of the Well",     { 3, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_BOTTOM_OF_THE_WELL },
-    {  9, 0, 0, 0, 1, 0x07, "Ice",        "Ice Cavern",             { 1,  2, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_ICE_CAVERN },
-    { 12, 1, 0, 1, 0, 0x00, "Hideout",    "Thieves' Hideout",       {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_THIEVES_HIDEOUT },
-    { 11, 1, 0, 0, 0, 0x00, "GTG",        "Gerudo Training Ground", { 8,  9, 10, -1}, { 8,  9, 10, -1}, OPT_HINT_AREA_GERUDO_TRAINING_GROUND },
-    { 10, 0, 0, 0, 0, 0x00, "Tower",      "Ganon's Tower",          {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_UNKNOWN },
-    { 13, 1, 1, 0, 0, 0x00, "Ganon",      "Ganon's Castle",         {16, 17, 18, 21}, {18, 19, 20, -1}, OPT_HINT_AREA_INSIDE_GANONS_CASTLE },
-    { 16, 1, 0, 0, 0, 0x00, "Chest Game", "Treasure Box Shop",      {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_MARKET },
+    {  8, 1, 0, 0, 1, 0x07, "BotW",       "Bottom of the Well", { 3, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_BOTTOM_OF_THE_WELL },
+    {  9, 0, 0, 0, 1, 0x07, "Ice",        "Ice Cavern",         { 1,  2, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_ICE_CAVERN },
+    { 12, 1, 0, 1, 0, 0x00, "Hideout",    "Thieves' Hideout",   {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_THIEVES_HIDEOUT },
+    { 11, 1, 0, 0, 0, 0x00, "GTG",        "GTG",                { 8,  9, 10, -1}, { 8,  9, 10, -1}, OPT_HINT_AREA_GERUDO_TRAINING_GROUND },
+    { 10, 0, 0, 0, 0, 0x00, "Tower",      "Ganon's Tower",      {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_UNKNOWN },
+    { 13, 1, 1, 0, 0, 0x00, "Ganon",      "Ganon's Castle",     {16, 17, 18, 21}, {18, 19, 20, -1}, OPT_HINT_AREA_INSIDE_GANONS_CASTLE },
+    { 16, 1, 0, 0, 0, 0x00, "Chest Game", "Treasure Box Shop",  {-1, -1, -1, -1}, {-1, -1, -1, -1}, OPT_HINT_AREA_MARKET },
 };
 
 boss_entry_t bosses[] = {
