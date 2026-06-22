@@ -118,7 +118,7 @@ async fn main(Args { debug }: Args) -> Result<(), Error> {
         return Err(Error::BaseRomSize(base_rom_size))
     }
 
-    Command::new("make").env("PATH", &path).current_dir(root_dir).check("make").await?;
+    Command::new("make").arg("MIPS_BINUTILS_PREFIX=mips64-unknown-none-elf-").env("PATH", &path).current_dir(root_dir).check("make").await?;
 
     Command::new("armips").arg("-sym2").arg("../build/asm_symbols.txt").arg("build.asm").env("PATH", path).current_dir(root_dir.join("src")).check("armips").await?;
 

@@ -1,0 +1,63 @@
+{
+  "nodes": {
+    "n64": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1781621471,
+        "narHash": "sha256-hlfjWzNtYJJGbmyYL7qAx97+2lHH6KSBZ5nPJckd1p0=",
+        "owner": "glankk",
+        "repo": "n64",
+        "rev": "5d35e3aa505080250b4f3eec0edafb0d24365da8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "glankk",
+        "repo": "n64",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1778430510,
+        "narHash": "sha256-Ti+ZBvW6yrWWAg2szExVTwCd4qOJ3KlVr1tFHfyfi8Q=",
+        "rev": "8fd9daa3db09ced9700431c5b7ad0e8ba199b575",
+        "revCount": 912511,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/NixOS/nixpkgs/0.2511.912511%2Brev-8fd9daa3db09ced9700431c5b7ad0e8ba199b575/019e183b-86be-7dd3-a0ed-142318e1ae38/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/NixOS/nixpkgs/%2A.tar.gz"
+      }
+    },
+    "root": {
+      "inputs": {
+        "n64": "n64",
+        "nixpkgs": "nixpkgs",
+        "rust-overlay": "rust-overlay"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1778642276,
+        "narHash": "sha256-bhk4lawR4ZnFhPtamB5WkCyvfgyZmsEUbWfT/3FRxFY=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "77265d2dc1e61b2abfd3b1d6609dbb66fe75e0a5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

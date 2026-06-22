@@ -1,5 +1,6 @@
 import sys
 
+import platform
 import shutil
 import subprocess
 
@@ -24,5 +25,11 @@ if old_cargo_lock == new_cargo_lock: #TODO more precisely compare the version fi
     sys.exit('Missing version bump in Cargo.lock')
 
 subprocess.run(['cargo', 'check', '--workspace', '--exclude=rust-n64-test'], check=True)
-subprocess.run(['cargo', 'build', '--release', '--package=ootr-python', '--package=ootr-cli'], check=True) # ootr-python required for testing, ootr-cli required for creating git tag in post-commit hook
-shutil.copyfile('target/release/rs.dll', 'rs.pyd')
+subprocess.run(['cargo', 'build', '--release', '--package=ootr-python'], check=True) # required for testing
+if platform.system() == 'Windows':
+    shutil.copyfile('target/release/rs.dll', 'rs.pyd')
+elif platform.system() == 'Darwin':
+    shutil.copyfile('target/release/librs.dylib', 'rs.so')
+else:
+    shutil.copyfile('target/release/librs.so', 'rs.so')
+subprocess.run(['cargo', 'build', '--release', '--package=ootr-cli'], check=True) # required for creating git tag in post-commit hook
