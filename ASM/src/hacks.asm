@@ -1392,14 +1392,6 @@ nop
 .orga 0xD12F78
     li  t7, 0
 
-;li v1, 5
-.orga 0xE29388
-    j   override_saria_song_check
-
-;lh v0, 0xa4(t6)       ; v0 = scene
-.orga 0xE2A044
-    jal  set_saria_song_flag
-
 ; li a1, 3
 .orga 0xDB532C
     jal override_song_of_time
@@ -3596,8 +3588,8 @@ courtyard_guards_kill:
 .headersize(0x8092ACC0 - 0x00CC8430)
 ; Increase the size of DemoEffect actor to store override
 .org 0x8093019c
-; Replaces: .d32 0x00000190
-.d32 0x000001C0
+; Replaces: .dw 0x00000190
+.dw 0x000001C0
 
 ; Hook the function DemoEffect_DrawJewel
 .org 0x8092e3f8
@@ -4241,3 +4233,4 @@ DemoEffect_DrawJewel_AfterHook:
 .include "hacks/ovl_en_okarina_tag.asm"
 .include "hacks/sound.asm"
 .include "hacks/z_player.asm"
+.include "hacks/z_en_sa.asm"
