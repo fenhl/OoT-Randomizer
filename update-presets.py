@@ -2,7 +2,7 @@
 
 Usage:
   update-presets.py [options]
-  update-presets.py add <preset>
+  update-presets.py add <preset> [<settings>]
   update-presets.py list-non-default [--rust-password | --rust-no-password | --compact] <preset>
   update-presets.py diff <left> <right>
   update-presets.py (-h | --help)
@@ -177,6 +177,8 @@ if __name__ == '__main__':
         preset = arguments['--preset']
         if arguments['add']:
             preset = arguments['<preset>']
+            if arguments['<settings>']:
+                source = {preset: json.loads(subprocess.run([sys.executable, 'OoTRandomizer.py', '--convert_settings', '--settings_string', arguments['<settings>']], stdout=subprocess.PIPE, encoding='utf-8', check=True).stdout)}
         complete_presets(new_presets, True, add=arguments['add'], defaults=arguments['--defaults'], preset=preset, source=source)
         with open('data/presets_default.json', 'w', encoding='utf-8', newline='\n') as f:
             json.dump(new_presets, f, indent=4)
