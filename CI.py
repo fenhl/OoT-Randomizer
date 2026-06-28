@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # This script is called by GitHub Actions, see .github/workflows/python.yml
 # To fix code style errors, run: python3 ./CI.py --fix --no_unit_tests
 
