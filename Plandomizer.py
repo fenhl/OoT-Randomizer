@@ -1396,7 +1396,10 @@ class Distribution:
                     world_dist.goal_locations[cat_name] = {}
                     for goal_name, location_worlds in goals.items():
                         goal = spoiler.goal_categories[world.id][cat_name].get_goal(goal_name)
-                        goal_text = goal.hint_text.replace('#', '')
+                        if isinstance(goal.hint_text, dict):
+                            goal_text = goal.hint_text['replace'].replace('#', '')
+                        else:
+                            goal_text = goal.hint_text.replace('#', '')
                         goal_text = goal_text[0].upper() + goal_text[1:]
                         # Add Token/Triforce Piece/heart reachability data
                         if goal.items[0]['name'] == 'Triforce Piece':
