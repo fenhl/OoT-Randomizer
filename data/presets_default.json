@@ -6659,8 +6659,13 @@
             "logic_lens_castle"
         ],
         "advanced_allowed_tricks": [],
-        "starting_equipment": [],
-        "starting_inventory": [],
+        "starting_equipment": [
+            "deku_shield"
+        ],
+        "starting_inventory": [
+            "ocarina",
+            "zeldas_letter"
+        ],
         "starting_songs": [],
         "add_random_starting_items": true,
         "random_starting_items_exclude": [
