@@ -1192,6 +1192,8 @@ def get_pool_core(world: World) -> tuple[list[str], dict[str, Item]]:
 def configure_random_starting_items_pool(world: World, pool: list[str]) -> list[str]:
     exclude_list = []
 
+    if world.settings.require_gohma:
+        exclude_list.extend(closed_forest_restricted_items)
     if 'songs' in world.settings.random_starting_items_exclude:
         exclude_list.extend(item_groups['Song'])
     if 'bombchus' in world.settings.random_starting_items_exclude:
