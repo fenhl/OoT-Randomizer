@@ -218,6 +218,9 @@ class World:
         if resolve_randomized_settings:
             self.resolve_random_settings()
 
+        if settings.require_gohma and settings.shuffle_song_items == 'dungeon' and sum(self.precompleted_dungeons.values()) > 7:
+            raise ValueError("Cannot combine Require Gohma, songs on dungeon rewards, and this many precompleted dungeons since warp songs other than the Minuet of Forest cannot be placed on precompleted dungeons.")
+
         self.song_notes: dict[str, Song] = generate_song_list(self,
             frog='frog' in settings.ocarina_songs,
             warp='warp' in settings.ocarina_songs,
