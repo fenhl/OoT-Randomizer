@@ -129,21 +129,37 @@ class Settings(SettingInfos):
             output += name + val + '\n'
         return output
 
+    def get_legacy_starting_items(self) -> dict[str, list[str]]:
+        # Starting items can be in the dict format (starting_items) or in the GUI's list format (the
+        # settings in LEGACY_STARTING_ITEM_SETTINGS), so use whichever one is populated, preferring
+        # the dict. Items that the list format can't represent are skipped.
+        counts: dict[str, int] = {
+            entry.item_name: 0
+            for items in LEGACY_STARTING_ITEM_SETTINGS.values()
+            for entry in items.values()
+        }
+        if self.starting_items:
+            for item_name in counts:
+                count = self.starting_items.get(item_name, 0)
+                counts[item_name] = count if isinstance(count, int) else count.count
+        else:
+            for setting_name, items in LEGACY_STARTING_ITEM_SETTINGS.items():
+                for setting_item in getattr(self, setting_name):
+                    if setting_item in items:
+                        counts[items[setting_item].item_name] += 1
+        return {
+            setting_name: [entry.setting_name for entry in items.values() if counts[entry.item_name] > entry.i]
+            for setting_name, items in LEGACY_STARTING_ITEM_SETTINGS.items()
+        }
+
     def get_settings_string(self) -> str:
         bits = []
+        legacy_starting_items = self.get_legacy_starting_items()
         for setting in filter(lambda s: s.shared and s.bitwidth > 0, self.setting_infos.values()):
             value = getattr(self, setting.name)
             i_bits = []
             if setting.name in LEGACY_STARTING_ITEM_SETTINGS:
-                items = LEGACY_STARTING_ITEM_SETTINGS[setting.name]
-                value = []
-                for entry in items.values():
-                    if entry.item_name in self.starting_items:
-                        count = self.starting_items[entry.item_name]
-                        if not isinstance(count, int):
-                            count = count.count
-                        if count > entry.i:
-                            value.append(entry.setting_name)
+                value = legacy_starting_items[setting.name]
             if setting.type == bool:
                 i_bits = [ 1 if value else 0 ]
             elif setting.type == str:
@@ -373,16 +389,8 @@ class Settings(SettingInfos):
     def to_json(self, *, legacy_starting_items: bool = False) -> dict[str, Any]:
         if legacy_starting_items:
             settings = self.copy()
-            for setting_name, items in LEGACY_STARTING_ITEM_SETTINGS.items():
-                starting_items = []
+            for setting_name, starting_items in self.get_legacy_starting_items().items():
                 setattr(settings, setting_name, starting_items)
-                for entry in items.values():
-                    if entry.item_name in self.starting_items:
-                        count = self.starting_items[entry.item_name]
-                        if not isinstance(count, int):
-                            count = count.count
-                        if count > entry.i:
-                            starting_items.append(entry.setting_name)
         else:
             settings = self
         return {  # TODO: This should be done in a way that is less insane than a double-digit line dictionary comprehension.
