@@ -1052,6 +1052,48 @@ class TestValidSpoilers(unittest.TestCase):
                     raise
 
 
+class TestSettingsString(unittest.TestCase):
+    def roundtrip(self, settings: Settings) -> Settings:
+        settings_string = settings.get_settings_string()
+        roundtripped = Settings({})
+        roundtripped.update_with_settings_string(settings_string)
+        # a settings string that decodes to different settings than it was encoded from is also a bug
+        self.assertEqual(settings_string, roundtripped.get_settings_string(), 'Settings string is not stable')
+        return roundtripped
+
+    def test_presets(self):
+        for fn in get_preset_files():
+            with open(fn, encoding='utf-8') as f:
+                presets = json.load(f)
+            for name, settings_dict in presets.items():
+                with self.subTest(name):
+                    settings = Settings(dict(settings_dict), strict=False)
+                    roundtripped = self.roundtrip(settings)
+                    self.assertEqual(settings.get_legacy_starting_items(), roundtripped.get_legacy_starting_items(),
+                                     'Starting items did not survive the settings string')
+
+    def test_starting_items_lists(self):
+        settings = Settings({
+            'starting_equipment': ['deku_shield'],
+            'starting_inventory': ['ocarina', 'zeldas_letter'],
+            'starting_songs': ['lullaby'],
+        })
+        roundtripped = self.roundtrip(settings)
+        # the GUI reads the list format back out of to_json
+        settings_json = roundtripped.to_json(legacy_starting_items=True)
+        self.assertEqual(['deku_shield'], settings_json['starting_equipment'])
+        self.assertEqual(['ocarina', 'zeldas_letter'], settings_json['starting_inventory'])
+        self.assertEqual(['lullaby'], settings_json['starting_songs'])
+
+    def test_starting_items_dict(self):
+        # progressive items are stored as a count in the dict format and as one entry per upgrade in the list format
+        settings = Settings({'starting_items': {'Bomb Bag': 2, 'Ocarina': 1, 'Zeldas Lullaby': 1}})
+        roundtripped = self.roundtrip(settings)
+        settings_json = roundtripped.to_json(legacy_starting_items=True)
+        self.assertEqual(['bombs', 'bombs2', 'ocarina'], settings_json['starting_inventory'])
+        self.assertEqual(['lullaby'], settings_json['starting_songs'])
+
+
 class TestTextShuffle(unittest.TestCase):
     def test_text_shuffle(self):
         if not os.path.isfile('./ZOOTDEC.z64'):
