@@ -1887,7 +1887,7 @@ multiTable: dict[str, list[str]] = {
     'Bongo Bongo Rewards':                                      ['Shadow Temple Bongo Bongo Heart', 'Bongo Bongo'],
     'Twinrova Rewards':                                         ['Spirit Temple Twinrova Heart', 'Twinrova'],
 
-    'GV Child GS':                                              ['GV GS Bean Patch', 'GV GS Small Bridge'],
+    'GV Child GS':                                              ['GV GS Small Bridge', 'GV GS Bean Patch'],
     'LW Adult Trade':                                           ['LW Trade Cojiro', 'LW Trade Odd Potion'],
     'DMT Adult Trade':                                          ['DMT Trade Broken Sword', 'DMT Trade Eyedrops'],
     'LH Lab SAWS Checks':                                       ['LH Trade Eyeball Frog', 'LH GS Lab Crate'],
